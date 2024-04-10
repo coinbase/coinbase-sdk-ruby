@@ -1,1 +1,3 @@
-require_relative "coinbase/network"
+# frozen_string_literal: true
+
+require_relative 'coinbase/network'

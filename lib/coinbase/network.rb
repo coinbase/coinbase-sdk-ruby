@@ -1,5 +1,6 @@
-module Coinbase
+# frozen_string_literal: true
 
+module Coinbase
   # A blockchain network
   class Network
     attr_reader :network_id, :display_name, :protocol_family, :is_testnet, :native_asset_id
