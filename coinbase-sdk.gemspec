@@ -10,4 +10,6 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.6.0')
   spec.metadata['rubygems_mfa_required'] = 'true'
+
+  spec.add_dependency 'money-tree'
 end
