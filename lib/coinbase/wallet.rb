@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'eth'
 require 'money-tree'
 
 module Coinbase
@@ -7,11 +8,12 @@ module Coinbase
   class Wallet
     def initialize
       @master = MoneyTree::Master.new
-      @network_id = :bitcoin_testnet
+      # TODO: Make Network an argument to the constructor.
+      @network_id = :base_sepolia
       @addresses = []
 
       # TODO: Adjust derivation path prefix based on network protocol.
-      @address_path_prefix = "m/44'/0'/0'/0"
+      @address_path_prefix = "m/44'/60'/0'/0"
       @address_index = 0
 
       create_address
@@ -22,7 +24,8 @@ module Coinbase
     def create_address
       # TODO: Register with server.
       path = "#{@address_path_prefix}/#{@address_index}"
-      address = @master.node_for_path(path).to_address
+      private_key = @master.node_for_path(path).private_key.to_hex
+      address = Eth::Key.new(priv: private_key).address.to_s
       @addresses << address
       @address_index += 1
       address
