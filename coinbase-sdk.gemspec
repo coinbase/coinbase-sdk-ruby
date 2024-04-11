@@ -15,4 +15,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'dotenv'
   spec.add_dependency 'eth'
   spec.add_dependency 'money-tree'
+  spec.add_dependency 'securerandom'
 end

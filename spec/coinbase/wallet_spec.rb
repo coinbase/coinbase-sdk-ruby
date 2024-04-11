@@ -18,7 +18,7 @@ describe Coinbase::Wallet do
   describe '#create_address' do
     it 'creates a new address' do
       address = wallet.create_address
-      expect(address).to be_a(String)
+      expect(address).to be_a(Coinbase::Address)
       expect(wallet.list_addresses.length).to eq(2)
       expect(address).not_to eq(wallet.default_address)
     end
@@ -31,9 +31,9 @@ describe Coinbase::Wallet do
   end
 
   describe '#get_address' do
-    it 'returns the first address' do
+    it 'returns the correct address' do
       default_address = wallet.default_address
-      expect(wallet.get_address(default_address)).to eq(default_address)
+      expect(wallet.get_address(default_address.address_id)).to eq(default_address)
     end
   end
 

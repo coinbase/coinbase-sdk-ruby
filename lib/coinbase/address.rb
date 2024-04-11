@@ -5,6 +5,8 @@ require 'eth'
 module Coinbase
   # A blockchain address.
   class Address
+    attr_reader :address_id
+
     # Returns a new Address object.
     # @param network_id [Symbol] The Network ID
     # @param address_id [String] The Address ID
