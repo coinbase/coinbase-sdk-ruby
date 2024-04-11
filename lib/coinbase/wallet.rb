@@ -1,10 +1,10 @@
 # frozen_string_literal: true
+
 require 'money-tree'
 
 module Coinbase
   # A crypto wallet.
   class Wallet
-
     def initialize
       @master = MoneyTree::Master.new
       @network_id = :bitcoin_testnet

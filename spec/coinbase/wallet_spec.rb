@@ -1,4 +1,4 @@
-require_relative '../../lib/coinbase/wallet'
+# frozen_string_literal: true
 
 describe Coinbase::Wallet do
   subject(:wallet) { described_class.new }
