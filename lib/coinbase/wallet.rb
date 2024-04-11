@@ -10,12 +10,22 @@ module Coinbase
       @network_id = :bitcoin_testnet
       @addresses = []
 
-      # TODO: Adjust derivation path based on network protocol.
-      first_address = @master.node_for_path('m/44h/0h/0h/0/0')
+      # TODO: Adjust derivation path prefix based on network protocol.
+      @address_path_prefix = "m/44'/0'/0'/0"
+      @address_index = 0
 
-      # TODO: Change to a list of Address objects.
+      create_address
+    end
+
+    # Creates a new Address in the Wallet.
+    # @return [String] The new Address
+    def create_address
       # TODO: Register with server.
-      @addresses << first_address.to_address
+      path = "#{@address_path_prefix}/#{@address_index}"
+      address = @master.node_for_path(path).to_address
+      @addresses << address
+      @address_index += 1
+      address
     end
 
     # Returns the default address of the Wallet.
@@ -34,6 +44,7 @@ module Coinbase
     # Returns the list of addresses in the Wallet.
     # @return [Array<String>] The list of addresses
     def list_addresses
+      # TODO: Register with server.
       @addresses
     end
   end
