@@ -24,6 +24,13 @@ module Coinbase
       @addresses.first
     end
 
+    # Returns the Address with the given ID.
+    # @param address_id [String] The ID of the Address to retrieve
+    # @return [String] The Address
+    def get_address(address_id)
+      @addresses.find { |address| address == address_id }
+    end
+
     # Returns the list of addresses in the Wallet.
     # @return [Array<String>] The list of addresses
     def list_addresses
