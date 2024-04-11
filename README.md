@@ -28,6 +28,12 @@ run the [following command](https://github.com/rbenv/ruby-build/discussions/2034
 RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
 ```
 
+### Dependencies
+
+This SDK transitively depends on [rbsecp256k1](https://github.com/etscrivner/rbsecp256k1). Follow
+[these instructions](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to
+ensure you have the necessary dependencies installed.
+
 ### Linting
 
 To autocorrect all lint errors, run:
