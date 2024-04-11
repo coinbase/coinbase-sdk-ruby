@@ -7,6 +7,8 @@ require 'money-tree'
 module Coinbase
   # A crypto wallet.
   class Wallet
+
+    # Returns a new Wallet object.
     def initialize
       @master = MoneyTree::Master.new
       # TODO: Make Network an argument to the constructor.
