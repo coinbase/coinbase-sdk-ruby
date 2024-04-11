@@ -10,7 +10,11 @@ module Coinbase
       @network_id = :bitcoin_testnet
       @addresses = []
 
+      # TODO: Adjust derivation path based on network protocol.
       first_address = @master.node_for_path('m/44h/0h/0h/0/0')
+
+      # TODO: Change to a list of Address objects.
+      # TODO: Register with server.
       @addresses << first_address.to_address
     end
 
