@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
 require 'eth'
 require 'money-tree'
 
@@ -15,6 +16,9 @@ module Coinbase
       # TODO: Adjust derivation path prefix based on network protocol.
       @address_path_prefix = "m/44'/60'/0'/0"
       @address_index = 0
+
+      # TODO: Don't hardcode the JSON RPC URL.
+      @client = Eth::Client.create(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil))
 
       create_address
     end
@@ -49,6 +53,16 @@ module Coinbase
     def list_addresses
       # TODO: Register with server.
       @addresses
+    end
+
+    # Returns the list of balances of this Wallet.
+    # @return [Hash<Symbol, BigDecimal>] The list of balances
+    def list_balances
+      # TODO: Handle multiple currencies.
+      # TODO: Handle all addresses.
+      eth_balance = @client.get_balance(default_address)
+
+      { eth: eth_balance }
     end
   end
 end

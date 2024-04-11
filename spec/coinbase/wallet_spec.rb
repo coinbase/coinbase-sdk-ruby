@@ -3,6 +3,12 @@
 describe Coinbase::Wallet do
   subject(:wallet) { described_class.new }
 
+  let(:api_key_file) { 'spec/fixtures/coinbase_cloud_api_key.json' }
+
+  before do
+    Coinbase.init_json(api_key_file)
+  end
+
   describe '#initialize' do
     it 'initializes a new Wallet' do
       expect(wallet).to be_a(Coinbase::Wallet)
@@ -34,6 +40,12 @@ describe Coinbase::Wallet do
   describe '#list_addresses' do
     it 'contains one address' do
       expect(wallet.list_addresses.length).to eq(1)
+    end
+  end
+
+  describe '#list_balances' do
+    it 'returns a hash with an ETH balance' do
+      expect(wallet.list_balances).to eq({ eth: BigDecimal(0) })
     end
   end
 end
