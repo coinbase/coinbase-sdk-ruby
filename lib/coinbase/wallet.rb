@@ -64,7 +64,7 @@ module Coinbase
       # TODO: Handle all addresses.
       eth_balance = @client.get_balance(default_address)
 
-      { eth: eth_balance }
+      { eth: BigDecimal(eth_balance) }
     end
   end
 end
