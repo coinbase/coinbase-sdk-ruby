@@ -14,6 +14,12 @@ module Coinbase
       @addresses << first_address.to_address
     end
 
+    # Returns the default address of the Wallet.
+    # @return [String] The default address
+    def default_address
+      @addresses.first
+    end
+
     # Returns the list of addresses in the Wallet.
     # @return [Array<String>] The list of addresses
     def list_addresses

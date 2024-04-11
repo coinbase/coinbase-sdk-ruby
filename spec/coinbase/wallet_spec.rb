@@ -14,4 +14,10 @@ describe Coinbase::Wallet do
       expect(wallet.list_addresses.length).to eq(1)
     end
   end
+
+  describe '#default_address' do
+    it 'returns the first address' do
+      expect(wallet.default_address).to eq(wallet.list_addresses.first)
+    end
+  end
 end
