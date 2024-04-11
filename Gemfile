@@ -2,8 +2,10 @@
 
 source 'https://rubygems.org'
 
+# Include dependencies defined in the gemspec.
 gemspec
 
+# These are dependencies required to develop in the repo.
 gem 'rake'
 gem 'rspec'
 
