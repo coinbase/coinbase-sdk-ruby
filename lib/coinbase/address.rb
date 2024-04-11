@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'eth'
 
 module Coinbase
@@ -31,6 +33,5 @@ module Coinbase
     def to_s
       @address_id
     end
-
   end
 end
