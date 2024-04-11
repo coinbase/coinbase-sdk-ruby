@@ -41,3 +41,16 @@ To detect all lint errors, run:
 ```bash
 bundle exec rake lint
 ```
+
+### Testing
+To run all tests, run:
+
+```bash
+bundle exec rake test
+```
+
+To run a specific test, run (for example):
+
+```bash
+bundle exec rspec spec/coinbase/wallet_spec.rb
+```
