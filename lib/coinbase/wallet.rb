@@ -11,7 +11,7 @@ module Coinbase
       @addresses = []
 
       first_address = @master.node_for_path('m/44h/0h/0h/0/0')
-      @addresses << first_address
+      @addresses << first_address.to_address
     end
 
     # Returns the list of addresses in the Wallet.
