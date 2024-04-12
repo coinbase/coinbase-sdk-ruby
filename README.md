@@ -29,6 +29,10 @@ Then, run:
 bundle install
 ```
 
+### Requirements
+
+- Ruby 2.6+.
+
 ## Usage
 
 > TODO
