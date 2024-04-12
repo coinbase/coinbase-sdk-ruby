@@ -30,6 +30,12 @@ RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
 
 ### Dependencies
 
+To install all dependencies, run:
+
+```bash
+bundle install
+```
+
 This SDK transitively depends on [rbsecp256k1](https://github.com/etscrivner/rbsecp256k1). Follow
 [these instructions](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to
 ensure you have the necessary dependencies installed.
@@ -59,4 +65,13 @@ To run a specific test, run (for example):
 
 ```bash
 bundle exec rspec spec/coinbase/wallet_spec.rb
+```
+
+### REPL
+
+The repository is equipped with a REPL to allow developers to play with the SDK. To start
+it, run:
+
+```bash
+bundle exec bin/repl
 ```

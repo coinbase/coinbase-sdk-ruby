@@ -6,8 +6,7 @@ source 'https://rubygems.org'
 gemspec
 
 # These are dependencies required to develop in the repo.
+gem 'pry'
 gem 'rake'
 gem 'rspec'
-
-# Pin to a specific version of RuboCop to ensure consistent linting.
-gem 'rubocop', '~> 1.63.1'
+gem 'rubocop', '~> 1.63.1' # Pin to a specific version of RuboCop to ensure consistent linting.
