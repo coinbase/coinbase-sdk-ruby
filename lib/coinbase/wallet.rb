@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'bigdecimal'
-require 'eth'
 require 'money-tree'
 require 'securerandom'
 
@@ -19,9 +17,6 @@ module Coinbase
       # TODO: Adjust derivation path prefix based on network protocol.
       @address_path_prefix = "m/44'/60'/0'/0"
       @address_index = 0
-
-      # TODO: Don't hardcode the JSON RPC URL.
-      @client = Eth::Client.create(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil))
 
       create_address
     end
@@ -67,7 +62,7 @@ module Coinbase
       @addresses.each do |address|
         address.list_balances.each do |asset_id, balance|
           balance_map[asset_id] ||= 0
-          current_balance = BigDecimal(balance_map[asset_id])
+          current_balance = balance_map[asset_id]
           new_balance = balance + current_balance
           balance_map[asset_id] = new_balance
         end
