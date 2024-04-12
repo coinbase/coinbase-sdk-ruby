@@ -82,5 +82,17 @@ module Coinbase
     def get_balance(asset_id)
       list_balances[asset_id]
     end
+
+    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
+    # Currently only the default_address is used to source the Transfer.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send. Integers are interpreted as
+    #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
+    #  itself (e.g. Ether).
+    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param to_address_id [String] The ID of the address to send the Asset to
+    # @return [String] The hash of the Transfer transaction.
+    def transfer(amount, asset_id, to_address_id)
+      default_address.transfer(amount, asset_id, to_address_id)
+    end
   end
 end
