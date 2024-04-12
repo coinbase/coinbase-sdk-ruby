@@ -11,7 +11,23 @@ one asset into another.
 
 ## Installation
 
-> TODO
+To use the package, run:
+
+```bash
+gem install coinbase-sdk
+```
+
+Or if you are using bundler, add the `coinbase-sdk` gem to your Gemfile:
+
+```
+gem 'coinbase-sdk'
+```
+
+Then, run:
+
+```
+bundle install
+```
 
 ## Usage
 
