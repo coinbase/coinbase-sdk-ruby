@@ -11,6 +11,8 @@ one asset into another.
 
 ## Installation
 
+> Note: The gem is not published yet, the instructions below are for the future.
+
 To use the package, run:
 
 ```bash
@@ -36,6 +38,31 @@ bundle install
 ## Usage
 
 > TODO
+
+### Sample Code Snippet
+
+The following creates an in-memory self-custodial wallet. After the wallet is funded with ETH, it transfers 
+some 100 Wei to a different wallet.
+
+```ruby
+# Initialize the SDK.
+Coinbase.init
+
+# Wallets are self-custodial with in-memory key management on Base Sepolia.
+# This should NOT be used in mainnet with real funds. 
+w1 = Coinbase::Wallet.new
+
+# A wallet has a default address.
+a = w.default_address
+a.to_s
+
+# At this point, fund the wallet out-of-band using a faucet.
+# Then, we can transfer 100 wei out of the wallet to another wallet.
+w2 = Coinbase::Wallet.new
+
+# We can now use the transaction hash to check the status of the transaction.
+transaction_hash = w1.transfer(100, :eth, w2)
+```
 
 ## Development
 
