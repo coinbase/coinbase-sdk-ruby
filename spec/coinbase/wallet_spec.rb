@@ -3,10 +3,8 @@
 describe Coinbase::Wallet do
   subject(:wallet) { described_class.new }
 
-  let(:api_key_file) { 'spec/fixtures/coinbase_cloud_api_key.json' }
-
   before do
-    Coinbase.init_json(api_key_file)
+    Coinbase.init
   end
 
   describe '#initialize' do

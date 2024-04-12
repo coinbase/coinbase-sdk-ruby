@@ -33,7 +33,7 @@ module Coinbase
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
       key = Eth::Key.new(priv: private_key)
-      address = Address.new(@network_id, key.address, @wallet_id, key)
+      address = Address.new(@network_id, key.address.address, @wallet_id, key)
       @addresses << address
       @address_index += 1
       address

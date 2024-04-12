@@ -23,6 +23,9 @@ module Coinbase
 
       # TODO: Don't hardcode the JSON RPC URL.
       @client = Eth::Client.create(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil))
+
+      # TODO: Make gas estimation dynamic.
+      @client.max_fee_per_gas = 2 * WEI_PER_GWEI
     end
 
     # Returns the balances of the Address.
@@ -55,7 +58,7 @@ module Coinbase
 
       Eth::Address.new(to_address_id)
       normalized_amount = normalize_eth_amount(amount)
-      @client.transfer(to_address_id, normalized_amount, @key)
+      @client.transfer(to_address_id, normalized_amount, sender_key: @key)
     end
 
     # Returns the address as a string.
