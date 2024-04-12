@@ -84,10 +84,15 @@ module Coinbase
     #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
     #  itself (e.g. Ether).
     # @param asset_id [Symbol] The ID of the Asset to send
-    # @param to_address_id [String] The ID of the address to send the Asset to
+    # @param destination [Wallet | String] The destination of the transfer. If a Wallet, sends to the Wallet's default
+    #  address. If a String, sends to the address ID.
     # @return [String] The hash of the Transfer transaction.
-    def transfer(amount, asset_id, to_address_id)
-      default_address.transfer(amount, asset_id, to_address_id)
+    def transfer(amount, asset_id, destination)
+      if destination.is_a?(Wallet)
+        destination = destination.default_address.address_id
+      end
+
+      default_address.transfer(amount, asset_id, destination)
     end
   end
 end

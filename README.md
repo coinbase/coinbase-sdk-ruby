@@ -53,7 +53,7 @@ Coinbase.init
 w1 = Coinbase::Wallet.new
 
 # A wallet has a default address.
-a = w.default_address
+a = w1.default_address
 a.to_s
 
 # At this point, fund the wallet out-of-band using a faucet.
