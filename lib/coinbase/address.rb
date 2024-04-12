@@ -38,6 +38,16 @@ module Coinbase
       list_balances[asset_id]
     end
 
+    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
+    # @param to_address_id [String] The ID of the address to send the Asset to
+    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param amount [Integer, Float, BigDecimal, String] The amount of the Asset to send. Integers are interpreted as
+    #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
+    #  itself (e.g. Ether). Strings are reduced to Integers or BigDecimals.
+    # @return [Transfer] The Transfer object representing the transfer
+    def transfer(to_address_id, asset_id, amount)
+    end
+
     # Returns the address as a string.
     # @return [String] The address
     def to_s
