@@ -46,13 +46,13 @@ module Coinbase
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
-    # @param to_address_id [String] The ID of the address to send the Asset to
-    # @param asset_id [Symbol] The ID of the Asset to send
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send. Integers are interpreted as
     #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
     #  itself (e.g. Ether).
+    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param to_address_id [String] The ID of the address to send the Asset to
     # @return [String] The hash of the Transfer transaction.
-    def transfer(to_address_id, asset_id, amount)
+    def transfer(amount, asset_id, to_address_id)
       # TODO: Handle multiple currencies.
       raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
 
