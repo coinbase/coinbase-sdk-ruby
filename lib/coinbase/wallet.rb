@@ -59,7 +59,7 @@ module Coinbase
       @addresses
     end
 
-    # Returns the list of balances of this Wallet.
+    # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [Map<Symbol, Integer>] The list of balances
     def list_balances
       balance_map = {}
@@ -74,6 +74,13 @@ module Coinbase
       end
 
       balance_map
+    end
+
+    # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
+    # @param asset_id [Symbol] The Asset to retrieve the balance for
+    # @return [Integer] The balance of the Asset
+    def get_balance(asset_id)
+      list_balances[asset_id]
     end
   end
 end

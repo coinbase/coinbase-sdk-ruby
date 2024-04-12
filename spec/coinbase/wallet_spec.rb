@@ -48,4 +48,10 @@ describe Coinbase::Wallet do
       expect(wallet.list_balances).to eq({ eth: BigDecimal(0) })
     end
   end
+
+  describe '#get_balance' do
+    it 'returns the ETH balance' do
+      expect(wallet.get_balance(:eth)).to eq(BigDecimal(0))
+    end
+  end
 end

@@ -22,12 +22,20 @@ module Coinbase
     end
 
     # Returns the balances of the Address.
-    # @return [Map<Symbol, Integer>] The balances of the Address. Ether balances are denominated in Wei.
+    # @return [Map<Symbol, Integer>] The balances of the Address, keyed by asset ID. Ether balances are denominated in
+    #   Wei.
     def list_balances
       # TODO: Handle multiple currencies.
       eth_balance_in_wei = @client.get_balance(@address_id)
 
       { eth: eth_balance_in_wei }
+    end
+
+    # Returns the balance of the provided Asset.
+    # @param asset_id [Symbol] The Asset to retrieve the balance for
+    # @return [Integer] The balance of the Asset
+    def get_balance(asset_id)
+      list_balances[asset_id]
     end
 
     # Returns the address as a string.

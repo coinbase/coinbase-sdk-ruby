@@ -28,6 +28,12 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#get_balance' do
+    it 'returns the ETH balance' do
+      expect(address.get_balance(:eth)).to be > 0
+    end
+  end
+
   describe '#to_s' do
     it 'returns the address as a string' do
       expect(address.to_s).to eq(address_id)
