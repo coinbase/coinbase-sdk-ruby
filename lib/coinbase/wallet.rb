@@ -32,8 +32,8 @@ module Coinbase
       # TODO: Register with server.
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
-      eth_address = Eth::Key.new(priv: private_key).address
-      address = Address.new(@network_id, eth_address, @wallet_id)
+      key = Eth::Key.new(priv: private_key)
+      address = Address.new(@network_id, key.address, @wallet_id, key)
       @addresses << address
       @address_index += 1
       address

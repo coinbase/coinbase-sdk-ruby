@@ -12,4 +12,7 @@ module Coinbase
     native_asset_id: :eth,
     chain_id: 84_532
   )
+
+  # The amount of Wei per Ether.
+  WEI_PER_ETHER = 1_000_000_000_000_000_000
 end

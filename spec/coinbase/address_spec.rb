@@ -4,7 +4,10 @@ describe Coinbase::Address do
   let(:address_id) { '0xd8ddbFD00B958E94a024FB8C116AE89C70c60257' }
   let(:api_key_file) { 'spec/fixtures/coinbase_cloud_api_key.json' }
 
-  subject(:address) { described_class.new(:base_sepolia, address_id, SecureRandom.uuid) }
+  subject(:address) do
+    # TODO: Pass a legitimate private key.
+    described_class.new(:base_sepolia, address_id, SecureRandom.uuid, nil)
+  end
 
   before do
     Coinbase.init_json(api_key_file)
