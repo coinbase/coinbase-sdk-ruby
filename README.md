@@ -75,7 +75,12 @@ run the [following command](https://github.com/rbenv/ruby-build/discussions/2034
 RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
 ```
 
-### Dependencies
+### Set-up
+Clone the repo by running:
+
+```bash
+git clone https://github.com/coinbase/coinbase-sdk-ruby.git
+```
 
 To install all dependencies, run:
 
@@ -86,6 +91,17 @@ bundle install
 This SDK transitively depends on [rbsecp256k1](https://github.com/etscrivner/rbsecp256k1). Follow
 [these instructions](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to
 ensure you have the necessary dependencies installed.
+
+Lastly, the SDK currently assumes you have a Base Sepolia Node provisioned through the
+[CDP Portal](https://portal.cloud.coinbase.com/products/base).
+Create an `.env` file in this directory with the following content, copying and pasting in
+your Base Sepolia RPC URL:
+
+```
+BASE_SEPOLIA_RPC_URL=YOUR-URL
+```
+
+You should now be able to run the [sample code snippet](#sample-code-snippet).
 
 ### Linting
 
