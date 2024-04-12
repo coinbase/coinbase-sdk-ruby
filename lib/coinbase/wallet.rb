@@ -60,13 +60,20 @@ module Coinbase
     end
 
     # Returns the list of balances of this Wallet.
-    # @return [Hash<Symbol, BigDecimal>] The list of balances
+    # @return [Map<Symbol, Integer>] The list of balances
     def list_balances
-      # TODO: Handle multiple currencies.
-      # TODO: Handle all addresses.
-      eth_balance = @client.get_balance(default_address.address_id)
+      balance_map = {}
 
-      { eth: BigDecimal(eth_balance) }
+      @addresses.each do |address|
+        address.list_balances.each do |asset_id, balance|
+          balance_map[asset_id] ||= 0
+          current_balance = BigDecimal(balance_map[asset_id])
+          new_balance = balance + current_balance
+          balance_map[asset_id] = new_balance
+        end
+      end
+
+      balance_map
     end
   end
 end

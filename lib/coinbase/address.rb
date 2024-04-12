@@ -22,12 +22,12 @@ module Coinbase
     end
 
     # Returns the balances of the Address.
-    # @return [Hash<Symbol, BigDecimal>] The balances
+    # @return [Map<Symbol, Integer>] The balances of the Address. Ether balances are denominated in Wei.
     def list_balances
       # TODO: Handle multiple currencies.
-      eth_balance = @client.get_balance(@address_id)
+      eth_balance_in_wei = @client.get_balance(@address_id)
 
-      { eth: BigDecimal(eth_balance) }
+      { eth: eth_balance_in_wei }
     end
 
     # Returns the address as a string.
