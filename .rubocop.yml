@@ -5,3 +5,6 @@ AllCops:
 # Tests can be long.
 Metrics/BlockLength:
   Enabled: false
+# Methods can have many parameters.
+Metrics/ParameterLists:
+  Enabled: false

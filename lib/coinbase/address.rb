@@ -45,8 +45,7 @@ module Coinbase
     #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
     #  itself (e.g. Ether). Strings are reduced to Integers or BigDecimals.
     # @return [Transfer] The Transfer object representing the transfer
-    def transfer(to_address_id, asset_id, amount)
-    end
+    def transfer(to_address_id, asset_id, amount); end
 
     # Returns the address as a string.
     # @return [String] The address
