@@ -6,6 +6,8 @@ require 'securerandom'
 module Coinbase
   # A crypto wallet.
   class Wallet
+    attr_reader :wallet_id, :network_id
+
     # Returns a new Wallet object.
     def initialize
       @wallet_id = SecureRandom.uuid
@@ -89,8 +91,12 @@ module Coinbase
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
       if destination.is_a?(Wallet)
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+
         destination = destination.default_address.address_id
       elsif destination.is_a?(Address)
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+
         destination = destination.address_id
       end
 

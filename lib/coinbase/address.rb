@@ -7,7 +7,7 @@ require 'jimson'
 module Coinbase
   # A blockchain address.
   class Address
-    attr_reader :address_id
+    attr_reader :network_id, :address_id
 
     # Returns a new Address object.
     # @param network_id [Symbol] The Network ID
@@ -48,11 +48,22 @@ module Coinbase
     #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
     #  itself (e.g. Ether).
     # @param asset_id [Symbol] The ID of the Asset to send
-    # @param to_address_id [String] The ID of the address to send the Asset to
+    # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
+    #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
-    def transfer(amount, asset_id, to_address_id)
+    def transfer(amount, asset_id, destination)
       # TODO: Handle multiple currencies.
       raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
+
+      if destination.is_a?(Wallet)
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+
+        destination = destination.default_address.address_id
+      elsif destination.is_a?(Address)
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+
+        destination = destination.address_id
+      end
 
       nonce = @client.eth_getTransactionCount(@address_id.to_s, 'latest').to_i(16)
       gas_price = @client.eth_gasPrice.to_i(16)
@@ -65,7 +76,7 @@ module Coinbase
         max_gas_fee: gas_price,
         gas_limit: 21_000, # TODO: Handle multiple currencies.
         from: Eth::Address.new(@address_id),
-        to: Eth::Address.new(to_address_id),
+        to: Eth::Address.new(destination),
         value: normalized_amount
       }
 

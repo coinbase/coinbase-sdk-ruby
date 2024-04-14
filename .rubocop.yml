@@ -10,3 +10,6 @@ Metrics/MethodLength:
 # Methods can have many parameters.
 Metrics/ParameterLists:
   Enabled: false
+# Assignment branch conditions seem reasonable.
+Metrics/AbcSize:
+  Max: 50
