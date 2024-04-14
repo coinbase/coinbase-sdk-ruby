@@ -92,16 +92,14 @@ This SDK transitively depends on [rbsecp256k1](https://github.com/etscrivner/rbs
 [these instructions](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to
 ensure you have the necessary dependencies installed.
 
-Lastly, the SDK currently assumes you have a Base Sepolia Node provisioned through the
-[CDP Portal](https://portal.cloud.coinbase.com/products/base).
-Create an `.env` file in this directory with the following content, copying and pasting in
-your Base Sepolia RPC URL:
+The SDK assumes the existence of a `BASE_SEPOLIA_RPCURL` environment variable defined in your .env file.
+By default, this is the publicly available endpoint, which is rate-limited.
+To provision your own endpoint, go to the [CDP Portal](https://portal.cloud.coinbase.com/products/base). Then
+copy and paste your Base Sepolia RPC URL in the .env file:
 
 ```
 BASE_SEPOLIA_RPC_URL=YOUR-URL
 ```
-
-You should now be able to run the [sample code snippet](#sample-code-snippet).
 
 ### Linting
 
