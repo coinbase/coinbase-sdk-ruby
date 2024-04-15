@@ -90,4 +90,16 @@ describe Coinbase::Transfer do
       expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
     end
   end
+
+  describe '#transaction' do
+    before do
+      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
+      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
+    end
+
+    it 'returns the Transfer transaction' do
+      expect(transfer.transaction).to be_a(Eth::Tx::Eip1559)
+      expect(transfer.transaction.amount).to eq(amount)
+    end
+  end
 end

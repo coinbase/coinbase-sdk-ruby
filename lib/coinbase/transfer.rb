@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'constants'
+require 'eth'
+
 module Coinbase
   # A representation of a Transfer, which moves an amount of an Asset from
   # a user-controlled Wallet to another address. The fee is assumed to be paid
@@ -48,6 +51,29 @@ module Coinbase
       @to_address_id = to_address_id
       @client = client
       @status = Status::PENDING
+    end
+
+    # Returns the underlying Transfer transaction.
+    # @return [Eth::Tx::Eip1559] The Transfer transaction
+    def transaction
+      @transaction unless @transaction.nil?
+
+      nonce = @client.eth_getTransactionCount(@from_address_id.to_s, 'latest').to_i(16)
+      gas_price = @client.eth_gasPrice.to_i(16)
+
+      params = {
+        chain_id: BASE_SEPOLIA.chain_id, # TODO: Don't hardcode Base Sepolia.
+        nonce: nonce,
+        priority_fee: gas_price, # TODO: Optimize this.
+        max_gas_fee: gas_price,
+        gas_limit: 21_000, # TODO: Handle multiple currencies.
+        from: Eth::Address.new(@from_address_id),
+        to: Eth::Address.new(@to_address_id),
+        value: amount
+      }
+
+      @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
+      @transaction
     end
 
     private
