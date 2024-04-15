@@ -5,16 +5,16 @@ require 'eth'
 require 'jimson'
 
 module Coinbase
-  # A blockchain address.
+  # A representation of a blockchain Address, which is a user-controlled account on a Network. Addresses are used to
+  # send and receive Assets. Addresses should be created using {link:Wallet}s.
   class Address
-    attr_reader :network_id, :address_id
+    attr_reader :network_id, :address_id, :wallet_id
 
     # Returns a new Address object.
-    # @param network_id [Symbol] The Network ID
-    # @param address_id [String] The Address ID
-    # @param wallet_id [String] The Wallet ID
-    # @param key [Eth::Key] The key backing the Address.
-    # @return [Address] The new Address object
+    # @param network_id [Symbol] The ID of the Network on which the Address exists
+    # @param address_id [String] The ID of the Address. On EVM Networks, for example, this is a hash of the public key.
+    # @param wallet_id [String] The ID of the Wallet to which the Address belongs
+    # @param key [Eth::Key] The key backing the Address
     def initialize(network_id, address_id, wallet_id, key)
       # TODO: Don't require key.
       @network_id = network_id
