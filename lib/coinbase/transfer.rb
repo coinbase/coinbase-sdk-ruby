@@ -45,7 +45,7 @@ module Coinbase
       @network_id = network_id
       @wallet_id = wallet_id
       @from_address_id = from_address_id
-      @amount = amount
+      @amount = normalize_eth_amount(amount)
       @asset_id = asset_id
       @to_address_id = to_address_id
       @client = client
@@ -62,7 +62,7 @@ module Coinbase
       when Integer
         amount
       when Float, BigDecimal
-        amount.to_i * Coinbase::WEI_PER_ETHER
+        (amount * Coinbase::WEI_PER_ETHER).to_i
       else
         raise ArgumentError, "Invalid amount: #{amount}"
       end

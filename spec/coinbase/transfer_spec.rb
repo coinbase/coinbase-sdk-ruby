@@ -25,4 +25,50 @@ describe Coinbase::Transfer do
       }.to raise_error(ArgumentError, 'Unsupported asset: uni')
     end
   end
+
+  describe '#network_id' do
+    it 'returns the network ID' do
+      expect(transfer.network_id).to eq(network_id)
+    end
+  end
+
+  describe '#wallet_id' do
+    it 'returns the wallet ID' do
+      expect(transfer.wallet_id).to eq(wallet_id)
+    end
+  end
+
+  describe '#from_address_id' do
+    it 'returns the source address ID' do
+      expect(transfer.from_address_id).to eq(from_address_id)
+    end
+  end
+
+  describe '#amount' do
+    it 'returns the amount' do
+      expect(transfer.amount).to eq(amount)
+    end
+
+    context 'when the amount is a float' do
+      let(:float_amount) { 0.5 }
+      let (:float_transfer) do
+        described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id, client: client)
+      end
+
+      it 'normalizes the amount' do
+        expect(float_transfer.amount).to eq(500_000_000_000_000_000)
+      end
+    end
+
+    context 'when the amount is a BigDecimal' do
+      let(:big_decimal_amount) { BigDecimal('0.5') }
+      let (:big_decimal_transfer) do
+        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id, client: client)
+      end
+
+      it 'normalizes the amount' do
+        expect(big_decimal_transfer.amount).to eq(500_000_000_000_000_000)
+      end
+    end
+  end
 end
