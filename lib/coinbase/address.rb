@@ -6,8 +6,8 @@ require 'jimson'
 
 module Coinbase
   # A representation of a blockchain Address, which is a user-controlled account on a Network. Addresses are used to
-  # send and receive Assets, and should be created using {link:Wallet}s. Addresses require a {link:Eth::Key} to sign
-  # transaction data.
+  # send and receive Assets, and should be created using {link:Wallet#create_address}. Addresses require a
+  # {link:Eth::Key} to sign transaction data.
   class Address
     attr_reader :network_id, :address_id, :wallet_id
 
@@ -27,7 +27,7 @@ module Coinbase
       @client = client
     end
 
-    # Returns the balances of the Address.
+    # Returns the balances of the Address. Currently only ETH balances are supported.
     # @return [Map<Symbol, Integer>] The balances of the Address, keyed by asset ID. Ether balances are denominated in
     #   Wei.
     def list_balances
