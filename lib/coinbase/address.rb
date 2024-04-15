@@ -37,7 +37,7 @@ module Coinbase
       { eth: eth_balance_in_wei }
     end
 
-    # Returns the balance of the provided Asset.
+    # Returns the balance of the provided Asset. Currently only ETH is supported.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [Integer] The balance of the Asset
     def get_balance(asset_id)
