@@ -212,4 +212,73 @@ describe Coinbase::Transfer do
       end
     end
   end
+
+  describe '#wait!' do
+    before do
+      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
+      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
+      # TODO: This isn't working for some reason.
+      allow(transfer).to receive(:sleep)
+    end
+
+    context 'when the transfer is completed' do
+      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
+      let(:transaction_receipt) { { 'status' => '0x1' } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+        allow(client)
+          .to receive(:eth_getTransactionReceipt)
+          .with(transfer.transaction_hash)
+          .and_return(transaction_receipt)
+      end
+
+      it 'returns the completed Transfer' do
+        expect(transfer.wait!).to eq(transfer)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE)
+      end
+    end
+
+    context 'when the transfer is failed' do
+      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
+      let(:transaction_receipt) { { 'status' => '0x0' } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+        allow(client)
+          .to receive(:eth_getTransactionReceipt)
+          .with(transfer.transaction_hash)
+          .and_return(transaction_receipt)
+      end
+
+      it 'returns the failed Transfer' do
+        expect(transfer.wait!).to eq(transfer)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED)
+      end
+    end
+
+    context 'when the transfer times out' do
+      let(:onchain_transaction) { { 'blockHash' => nil } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+      end
+
+      it 'raises a Timeout::Error' do
+        expect { transfer.wait!(0.2, 0.00001) }.to raise_error(Timeout::Error, 'Transfer timed out')
+      end
+    end
+  end
 end

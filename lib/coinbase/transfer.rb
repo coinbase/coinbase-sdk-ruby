@@ -106,7 +106,8 @@ module Coinbase
       end
     end
 
-    # Waits until the Transfer is completed or failed by polling the Network at the given interval.
+    # Waits until the Transfer is completed or failed by polling the Network at the given interval. Raises a
+    # Timeout::Error if the Transfer takes longer than the given timeout.
     # @param interval_seconds [Integer] The interval at which to poll the Network, in seconds
     # @param timeout_seconds [Integer] The maximum amount of time to wait for the Transfer to complete, in seconds
     # @return [Transfer] The completed Transfer object
@@ -118,7 +119,7 @@ module Coinbase
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
-        sleep interval_seconds
+        self.sleep interval_seconds
       end
 
       self
