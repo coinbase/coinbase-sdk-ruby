@@ -9,7 +9,7 @@ module Coinbase
   # in the native Asset of the Network. Currently only ETH transfers are supported. Transfers
   # should be created through {link:Wallet#transfer} or {link:Address#transfer}.
   class Transfer
-    attr_reader :network_id, :wallet_id, :from_address_id, :amount, :asset_id, :to_address_id, :status
+    attr_reader :network_id, :wallet_id, :from_address_id, :amount, :asset_id, :to_address_id
 
     # A representation of a Transfer status.
     module Status
@@ -50,7 +50,6 @@ module Coinbase
       @asset_id = asset_id
       @to_address_id = to_address_id
       @client = client
-      @status = Status::PENDING
     end
 
     # Returns the underlying Transfer transaction, creating it if it has not been yet.
@@ -76,10 +75,41 @@ module Coinbase
       @transaction
     end
 
+    # Returns the status of the Transfer.
+    # @return [Symbol] The status
+    def status
+      begin
+        # Create the transaction, and attempt to get the hash to see if it has been signed.
+        transaction.hash
+      rescue Eth::Signature::SignatureError
+        # If the transaction has not been signed, it is still pending.
+        return Status::PENDING
+      end
+
+      onchain_transaction = @client.eth_getTransactionByHash(transaction_hash)
+
+      if onchain_transaction.nil?
+        # If the transaction has not been broadcast, it is still pending.
+        Status::PENDING
+      elsif onchain_transaction['blockHash'].nil?
+        # If the transaction has been broadcast but hasn't been included in a block, it is
+        # broadcast.
+        Status::BROADCAST
+      else
+        transaction_receipt = @client.eth_getTransactionReceipt(transaction_hash)
+
+        if transaction_receipt['status'].to_i(16) == 1
+          Status::COMPLETE
+        else
+          Status::FAILED
+        end
+      end
+    end
+
     # Returns the transaction hash of the Transfer, or nil if not yet available.
     # @return [String] The transaction hash
     def transaction_hash
-      @transaction&.hash
+      "0x#{transaction.hash}"
     rescue Eth::Signature::SignatureError
       nil
     end

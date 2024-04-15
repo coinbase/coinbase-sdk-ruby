@@ -68,7 +68,7 @@ module Coinbase
 
       current_balance = get_balance(:eth)
       if current_balance < amount
-        raise ArgumentError, "Insufficient funds: #{amount} ETH requested, but only #{current_balance} ETH available"
+        raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
       transfer = Coinbase::Transfer.new(@network_id, @wallet_id, @address_id, amount, asset_id, destination,

@@ -119,7 +119,7 @@ describe Coinbase::Address do
       it 'raises an ArgumentError' do
         expect do
           address.transfer(amount, :eth, to_address_id)
-        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} ETH requested, but only 0 ETH available")
+        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} requested, but only 0 available")
       end
     end
   end

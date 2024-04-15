@@ -123,9 +123,36 @@ describe Coinbase::Transfer do
       end
     end
 
-    context 'when thet transaction has not been created' do
+    context 'when the transaction has not been created' do
       it 'returns nil' do
         expect(transfer.transaction_hash).to be_nil
+      end
+    end
+  end
+
+  describe '#status' do
+    before do
+      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
+      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
+    end
+
+    context 'when the transaction has not been created' do
+      it 'returns PENDING' do
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
+      end
+    end
+
+    context 'when the transaction has been created but not signed' do
+      it 'returns PENDING' do
+        transfer.transaction
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
+      end
+    end
+
+    context 'when the transaction has been signed but not broadcast' do
+      it 'returns PENDING' do
+        transfer.transaction.sign(from_key)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
       end
     end
   end
