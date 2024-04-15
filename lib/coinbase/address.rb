@@ -75,6 +75,7 @@ module Coinbase
 
       transaction = transfer.transaction
       transaction.sign(@key)
+      @client.eth_sendRawTransaction("0x#{transaction.hex}")
 
       transfer
     end

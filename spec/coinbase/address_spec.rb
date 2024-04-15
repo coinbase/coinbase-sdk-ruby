@@ -64,7 +64,8 @@ describe Coinbase::Address do
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let (:transaction_hash) { '0xdeadbeef' }
-    let (:transaction) { double('Transaction', sign: transaction_hash) }
+    let( :raw_signed_transaction) { '0123456789abcdef' }
+    let (:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
       double('Transfer', transaction: transaction)
     end
@@ -72,6 +73,7 @@ describe Coinbase::Address do
     before do
       allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
       allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
+      allow(client).to receive(:eth_sendRawTransaction).with("0x#{raw_signed_transaction}").and_return(transaction_hash)
     end
 
     # TODO: Add test case for when the destination is a Wallet.
