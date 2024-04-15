@@ -93,19 +93,5 @@ module Coinbase
     end
 
     private
-
-    # Normalizes the given Ether amount into an Integer.
-    # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @return [Integer] The normalized amount
-    def normalize_eth_amount(amount)
-      case amount
-      when Integer
-        amount
-      when Float, BigDecimal
-        amount.to_i * WEI_PER_ETHER
-      else
-        raise ArgumentError, "Invalid amount: #{amount}"
-      end
-    end
   end
 end
