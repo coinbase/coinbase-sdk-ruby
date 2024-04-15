@@ -6,7 +6,8 @@ require 'jimson'
 
 module Coinbase
   # A representation of a blockchain Address, which is a user-controlled account on a Network. Addresses are used to
-  # send and receive Assets. Addresses should be created using {link:Wallet}s.
+  # send and receive Assets, and should be created using {link:Wallet}s. Addresses require a {link:Eth::Key} to sign
+  # transaction data.
   class Address
     attr_reader :network_id, :address_id, :wallet_id
 
