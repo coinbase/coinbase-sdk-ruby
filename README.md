@@ -12,7 +12,7 @@ The SDK currently supports Developer-managed Wallets using Ethereum on Base Sepo
 
 ## Documentation
 
-> TODO
+[Click here for full SDK documentation](https://super-barnacle-n8zkznw.pages.github.io/)
 
 ## Installation
 
@@ -41,8 +41,6 @@ bundle install
 - Ruby 2.6+.
 
 ## Usage
-
-> TODO
 
 ### Sample Code Snippet
 
