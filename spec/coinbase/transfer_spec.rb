@@ -102,4 +102,31 @@ describe Coinbase::Transfer do
       expect(transfer.transaction.amount).to eq(amount)
     end
   end
+
+  describe '#transaction_hash' do
+    before do
+      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
+      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
+    end
+
+    context 'when the transaction has been signed' do
+      it 'returns the transaction hash' do
+        transfer.transaction.sign(from_key)
+        expect(transfer.transaction_hash).to eq(transfer.transaction.hash)
+      end
+    end
+
+    context 'when the transaction has been created but not signed' do
+      it 'returns nil' do
+        transfer.transaction
+        expect(transfer.transaction_hash).to be_nil
+      end
+    end
+
+    context 'when thet transaction has not been created' do
+      it 'returns nil' do
+        expect(transfer.transaction_hash).to be_nil
+      end
+    end
+  end
 end

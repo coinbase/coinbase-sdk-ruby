@@ -63,9 +63,9 @@ describe Coinbase::Address do
     let(:amount) { 500_000_000_000_000_000 }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
-    let (:transaction_hash) { '0xdeadbeef' }
-    let( :raw_signed_transaction) { '0123456789abcdef' }
-    let (:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
+    let(:transaction_hash) { '0xdeadbeef' }
+    let(:raw_signed_transaction) { '0123456789abcdef' }
+    let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
       double('Transfer', transaction: transaction)
     end
@@ -104,10 +104,10 @@ describe Coinbase::Address do
 
     context 'when the destination Address is on a different network' do
       it 'raises an ArgumentError' do
-        expect {
+        expect do
           address.transfer(amount, :eth, Coinbase::Address.new(:different_network, to_address_id, wallet_id,
                                                                to_key, client: client))
-        }.to raise_error(ArgumentError, 'Transfer must be on the same Network')
+        end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
 
@@ -117,9 +117,9 @@ describe Coinbase::Address do
       end
 
       it 'raises an ArgumentError' do
-        expect {
+        expect do
           address.transfer(amount, :eth, to_address_id)
-        }.to raise_error(ArgumentError, "Insufficient funds: #{amount} ETH requested, but only 0 ETH available")
+        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} ETH requested, but only 0 ETH available")
       end
     end
   end

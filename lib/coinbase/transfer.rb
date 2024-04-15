@@ -53,10 +53,10 @@ module Coinbase
       @status = Status::PENDING
     end
 
-    # Returns the underlying Transfer transaction.
+    # Returns the underlying Transfer transaction, creating it if it has not been yet.
     # @return [Eth::Tx::Eip1559] The Transfer transaction
     def transaction
-      @transaction unless @transaction.nil?
+      return @transaction unless @transaction.nil?
 
       nonce = @client.eth_getTransactionCount(@from_address_id.to_s, 'latest').to_i(16)
       gas_price = @client.eth_gasPrice.to_i(16)
@@ -74,6 +74,14 @@ module Coinbase
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
       @transaction
+    end
+
+    # Returns the transaction hash of the Transfer, or nil if not yet available.
+    # @return [String] The transaction hash
+    def transaction_hash
+      @transaction&.hash
+    rescue Eth::Signature::SignatureError
+      nil
     end
 
     private
