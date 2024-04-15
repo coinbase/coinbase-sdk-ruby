@@ -85,12 +85,6 @@ describe Coinbase::Transfer do
     end
   end
 
-  describe '#status' do
-    it 'returns the status' do
-      expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
-    end
-  end
-
   describe '#transaction' do
     before do
       allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
@@ -112,7 +106,7 @@ describe Coinbase::Transfer do
     context 'when the transaction has been signed' do
       it 'returns the transaction hash' do
         transfer.transaction.sign(from_key)
-        expect(transfer.transaction_hash).to eq(transfer.transaction.hash)
+        expect(transfer.transaction_hash).to eq("0x#{transfer.transaction.hash}")
       end
     end
 
@@ -150,9 +144,71 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transaction has been signed but not broadcast' do
-      it 'returns PENDING' do
+      before do
         transfer.transaction.sign(from_key)
+        allow(client).to receive(:eth_getTransactionByHash).with(transfer.transaction_hash).and_return(nil)
+      end
+
+      it 'returns PENDING' do
         expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
+      end
+    end
+
+    context 'when the transaction has been broadcast but not included in a block' do
+      let(:onchain_transaction) { { 'blockHash' => nil } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+      end
+
+      it 'returns BROADCAST' do
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::BROADCAST)
+      end
+    end
+
+    context 'when the transaction has confirmed' do
+      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
+      let(:transaction_receipt) { { 'status' => '0x1' } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+        allow(client)
+          .to receive(:eth_getTransactionReceipt)
+          .with(transfer.transaction_hash)
+          .and_return(transaction_receipt)
+      end
+
+      it 'returns COMPLETE' do
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE)
+      end
+    end
+
+    context 'when the transaction has failed' do
+      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
+      let(:transaction_receipt) { { 'status' => '0x0' } }
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+        allow(client)
+          .to receive(:eth_getTransactionReceipt)
+          .with(transfer.transaction_hash)
+          .and_return(transaction_receipt)
+      end
+
+      it 'returns FAILED' do
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED)
       end
     end
   end
