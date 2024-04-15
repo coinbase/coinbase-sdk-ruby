@@ -45,15 +45,23 @@ describe Coinbase::Address do
     end
   end
 
-  # describe '#get_balance' do
-  #   it 'returns the ETH balance' do
-  #     expect(address.get_balance(:eth)).to be > 0
-  #   end
-  # end
+  describe '#get_balance' do
+    before do
+      allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
+    end
 
-  # describe '#to_s' do
-  #   it 'returns the address as a string' do
-  #     expect(address.to_s).to eq(address_id)
-  #   end
-  # end
+    it 'returns the ETH balance' do
+      expect(address.get_balance(:eth)).to eq 1_000_000_000_000_000_000
+    end
+
+    it 'returns 0 for an unsupported asset' do
+      expect(address.get_balance(:uni)).to eq 0
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns the address as a string' do
+      expect(address.to_s).to eq(address_id)
+    end
+  end
 end

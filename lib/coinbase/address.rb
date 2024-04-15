@@ -41,7 +41,7 @@ module Coinbase
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [Integer] The balance of the Asset
     def get_balance(asset_id)
-      list_balances[asset_id]
+      list_balances[asset_id] || 0
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
