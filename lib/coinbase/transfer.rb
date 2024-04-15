@@ -106,6 +106,24 @@ module Coinbase
       end
     end
 
+    # Waits until the Transfer is completed or failed by polling the Network at the given interval.
+    # @param interval_seconds [Integer] The interval at which to poll the Network, in seconds
+    # @param timeout_seconds [Integer] The maximum amount of time to wait for the Transfer to complete, in seconds
+    # @return [Transfer] The completed Transfer object
+    def wait!(interval_seconds = 0.2, timeout_seconds = 10)
+      start_time = Time.now
+
+      loop do
+        return self if status == Status::COMPLETE || status == Status::FAILED
+
+        raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
+
+        sleep interval_seconds
+      end
+
+      self
+    end
+
     # Returns the transaction hash of the Transfer, or nil if not yet available.
     # @return [String] The transaction hash
     def transaction_hash
