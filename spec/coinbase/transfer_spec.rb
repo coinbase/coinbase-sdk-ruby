@@ -20,9 +20,9 @@ describe Coinbase::Transfer do
     end
 
     it 'does not initialize a new transfer for an invalid asset' do
-      expect {
+      expect do
         Coinbase::Transfer.new(network_id, wallet_id, from_address_id, amount, :uni, to_address_id, client: client)
-      }.to raise_error(ArgumentError, 'Unsupported asset: uni')
+      end.to raise_error(ArgumentError, 'Unsupported asset: uni')
     end
   end
 
@@ -51,7 +51,7 @@ describe Coinbase::Transfer do
 
     context 'when the amount is a float' do
       let(:float_amount) { 0.5 }
-      let (:float_transfer) do
+      let(:float_transfer) do
         described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id, client: client)
       end
 
@@ -62,13 +62,32 @@ describe Coinbase::Transfer do
 
     context 'when the amount is a BigDecimal' do
       let(:big_decimal_amount) { BigDecimal('0.5') }
-      let (:big_decimal_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id, client: client)
+      let(:big_decimal_transfer) do
+        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id,
+                            client: client)
       end
 
       it 'normalizes the amount' do
         expect(big_decimal_transfer.amount).to eq(500_000_000_000_000_000)
       end
+    end
+  end
+
+  describe '#asset_id' do
+    it 'returns the asset ID' do
+      expect(transfer.asset_id).to eq(:eth)
+    end
+  end
+
+  describe '#to_address_id' do
+    it 'returns the destination address ID' do
+      expect(transfer.to_address_id).to eq(to_address_id)
+    end
+  end
+
+  describe '#status' do
+    it 'returns the status' do
+      expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
     end
   end
 end

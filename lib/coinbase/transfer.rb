@@ -36,11 +36,9 @@ module Coinbase
     # @param to_address_id [String] The address to which the Transfer is being sent
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(network_id, wallet_id, from_address_id, amount, asset_id, to_address_id,
-                  client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
+                   client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
 
-      if asset_id != :eth
-        raise ArgumentError, "Unsupported asset: #{asset_id}"
-      end
+      raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
 
       @network_id = network_id
       @wallet_id = wallet_id

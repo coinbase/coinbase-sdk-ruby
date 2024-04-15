@@ -91,7 +91,5 @@ module Coinbase
     def to_s
       @address_id
     end
-
-    private
   end
 end
