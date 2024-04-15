@@ -16,15 +16,15 @@ module Coinbase
     # @param address_id [String] The ID of the Address. On EVM Networks, for example, this is a hash of the public key.
     # @param wallet_id [String] The ID of the Wallet to which the Address belongs
     # @param key [Eth::Key] The key backing the Address
-    def initialize(network_id, address_id, wallet_id, key)
+    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
+    def initialize(network_id, address_id, wallet_id, key,
+                   client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
       # TODO: Don't require key.
       @network_id = network_id
       @address_id = address_id
       @wallet_id = wallet_id
       @key = key
-
-      # TODO: Don't hardcode the JSON RPC URL.
-      @client = Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil))
+      @client = client
     end
 
     # Returns the balances of the Address.
