@@ -93,6 +93,35 @@ describe Coinbase::Address do
         expect(address.transfer(amount, :eth, destination)).to eq(transfer)
       end
     end
+
+    context 'when the asset is unsupported' do
+      it 'raises an ArgumentError' do
+        expect { address.transfer(amount, :uni, to_address_id) }.to raise_error(ArgumentError, 'Unsupported asset: uni')
+      end
+    end
+
+    # TODO: Add test case for when the destination is a Wallet.
+
+    context 'when the destination Address is on a different network' do
+      it 'raises an ArgumentError' do
+        expect {
+          address.transfer(amount, :eth, Coinbase::Address.new(:different_network, to_address_id, wallet_id,
+                                                               to_key, client: client))
+        }.to raise_error(ArgumentError, 'Transfer must be on the same Network')
+      end
+    end
+
+    context 'when the balance is insufficient' do
+      before do
+        allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0x0')
+      end
+
+      it 'raises an ArgumentError' do
+        expect {
+          address.transfer(amount, :eth, to_address_id)
+        }.to raise_error(ArgumentError, "Insufficient funds: #{amount} ETH requested, but only 0 ETH available")
+      end
+    end
   end
 
   describe '#to_s' do
