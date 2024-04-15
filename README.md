@@ -5,6 +5,11 @@ By calling Coinbase's Platform APIs, the SDK allows you to provision crypto wall
 send crypto into/out of those wallets, track wallet balances, and trade crypto from
 one asset into another.
 
+The SDK currently supports Developer-managed Wallets using Ethereum on Base Sepolia.
+
+**IMPORTANT: The Coinbase SDK is currently under development, and may make backwards-incompatible changes.**
+**Do not use the Coinbase SDK to manage mainnet funds.**
+
 ## Documentation
 
 > TODO
@@ -135,4 +140,12 @@ it, run:
 
 ```bash
 bundle exec bin/repl
+```
+
+### Generating Documentation
+
+To generate documentation from the Ruby comments, run:
+
+```bash
+bundle exec yardoc --output-dir ./docs
 ```

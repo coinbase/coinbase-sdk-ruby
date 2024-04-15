@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.9.36
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "README";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="file_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><div id='filecontents'>
+<h1 id="label-Coinbase+Ruby+SDK">Coinbase Ruby SDK</h1>
+
+<p>The Coinbase Ruby SDK enables the simple integration of crypto into your app. By calling Coinbase&#39;s Platform APIs, the SDK allows you to provision crypto wallets, send crypto into/out of those wallets, track wallet balances, and trade crypto from one asset into another.</p>
+
+<p>The SDK currently supports Developer-managed Wallets using Ethereum on Base Sepolia.</p>
+
+<p><strong>IMPORTANT: The Coinbase SDK is currently under development, and may make backwards-incompatible changes.</strong> <strong>Do not use the Coinbase SDK to manage mainnet funds.</strong></p>
+
+<h2 id="label-Documentation">Documentation</h2>
+
+<blockquote>
+<p>TODO</p>
+</blockquote>
+
+<h2 id="label-Installation">Installation</h2>
+
+<blockquote>
+<p>Note: The gem is not published yet, the instructions below are for the future.</p>
+</blockquote>
+
+<p>To use the package, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_coinbase'>coinbase</span><span class='op'>-</span><span class='id identifier rubyid_sdk'>sdk</span>
+</code></pre>
+
+<p>Or if you are using bundler, add the <code>coinbase-sdk</code> gem to your Gemfile:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
+
+<p>Then, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_install'>install</span>
+</code></pre>
+
+<h3 id="label-Requirements">Requirements</h3>
+<ul><li>
+<p>Ruby 2.6+.</p>
+</li></ul>
+
+<h2 id="label-Usage">Usage</h2>
+
+<blockquote>
+<p>TODO</p>
+</blockquote>
+
+<h3 id="label-Sample+Code+Snippet">Sample Code Snippet</h3>
+
+<p>The following creates an in-memory self-custodial wallet. After the wallet is funded with ETH, it transfers some 100 Wei to a different wallet.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Initialize the SDK.
+</span><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_init'><span class='object_link'><a href="Coinbase.html#init-class_method" title="Coinbase.init (method)">init</a></span></span>
+
+<span class='comment'># Wallets are self-custodial with in-memory key management on Base Sepolia.
+</span><span class='comment'># This should NOT be used in mainnet with real funds. 
+</span><span class='id identifier rubyid_w1'>w1</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Wallet.html#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span>
+
+<span class='comment'># A wallet has a default address.
+</span><span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span>
+<span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+
+<span class='comment'># At this point, fund the wallet out-of-band using a faucet.
+</span><span class='comment'># Then, we can transfer 100 wei out of the wallet to another wallet.
+</span><span class='id identifier rubyid_w2'>w2</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Wallet.html#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span>
+
+<span class='comment'># We can now use the transaction hash to check the status of the transaction.
+</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='int'>100</span><span class='comma'>,</span> <span class='symbol'>:eth</span><span class='comma'>,</span> <span class='id identifier rubyid_w2'>w2</span><span class='rparen'>)</span>
+</code></pre>
+
+<h2 id="label-Development">Development</h2>
+
+<h3 id="label-Ruby+Version">Ruby Version</h3>
+
+<p>Developing in this repository requires Ruby &gt;= 2.6.0. To install this on an M2 Mac, run the <a href="https://github.com/rbenv/ruby-build/discussions/2034">following command</a>:</p>
+
+<pre class="code ruby"><code class="ruby">RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
+</code></pre>
+
+<h3 id="label-Set-up">Set-up</h3>
+
+<p>Clone the repo by running:</p>
+
+<pre class="code ruby"><code class="ruby">git clone https://github.com/coinbase/coinbase-sdk-ruby.git
+</code></pre>
+
+<p>To install all dependencies, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_install'>install</span>
+</code></pre>
+
+<p>This SDK transitively depends on <a href="https://github.com/etscrivner/rbsecp256k1">rbsecp256k1</a>. Follow <a href="https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements">these instructions</a> to ensure you have the necessary dependencies installed.</p>
+
+<p>The SDK assumes the existence of a <code>BASE_SEPOLIA_RPCURL</code> environment variable defined in your .env file. By default, this is the publicly available endpoint, which is rate-limited. To provision your own endpoint, go to the <a href="https://portal.cloud.coinbase.com/products/base">CDP Portal</a>. Then copy and paste your Base Sepolia RPC URL in the .env file:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>BASE_SEPOLIA_RPC_URL</span><span class='op'>=</span><span class='const'>YOUR</span><span class='op'>-</span><span class='const'>URL</span>
+</code></pre>
+
+<h3 id="label-Linting">Linting</h3>
+
+<p>To autocorrect all lint errors, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rubocop'>rubocop</span> <span class='op'>-</span><span class='const'>A</span>
+</code></pre>
+
+<p>To detect all lint errors, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_lint'>lint</span>
+</code></pre>
+
+<h3 id="label-Testing">Testing</h3>
+
+<p>To run all tests, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_test'>test</span>
+</code></pre>
+
+<p>To run a specific test, run (for example):</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rspec'>rspec</span> <span class='id identifier rubyid_spec'>spec</span><span class='op'>/</span><span class='id identifier rubyid_coinbase'>coinbase</span><span class='op'>/</span><span class='id identifier rubyid_wallet_spec'>wallet_spec</span><span class='period'>.</span><span class='id identifier rubyid_rb'>rb</span>
+</code></pre>
+
+<h3 id="label-REPL">REPL</h3>
+
+<p>The repository is equipped with a REPL to allow developers to play with the SDK. To start it, run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_bin'>bin</span><span class='op'>/</span><span class='id identifier rubyid_repl'>repl</span>
+</code></pre>
+
+<h3 id="label-Generating+Documentation">Generating Documentation</h3>
+
+<p>To generate documentation from the Ruby comments, run:</p>
+
+<pre class="code ruby"><code class="ruby">bundle exec yardoc --output-dir ./docs
+</code></pre>
+</div></div>
+
+      <div id="footer">
+  Generated on Mon Apr 15 18:46:26 2024 by
+  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.36 (ruby-2.7.0).
+</div>
+
+    </div>
+  </body>
+</html>
