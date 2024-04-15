@@ -59,6 +59,29 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#transfer' do
+  let(:amount) { 500_000_000_000_000_000 }
+
+    context 'when the destination is a valid Address' do
+      let(:to_key) { Eth::Key.new }
+      let(:to_address_id) { to_key.address.to_s }
+      let(:destination) { described_class.new(network_id, to_address_id, wallet_id, to_key, client: client) }
+      let (:transaction_hash) { '0xdeadbeef' }
+      let(:transfer) do
+        double('Transfer', transaction: double('Transaction', hash: transaction_hash))
+      end
+
+      before do
+        allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
+        allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
+      end
+
+      it 'creates a Transfer' do
+        expect(address.transfer(amount, :eth, destination)).to eq(transfer)
+      end
+    end
+  end
+
   describe '#to_s' do
     it 'returns the address as a string' do
       expect(address.to_s).to eq(address_id)

@@ -66,24 +66,17 @@ module Coinbase
         destination = destination.address_id
       end
 
-      nonce = @client.eth_getTransactionCount(@address_id.to_s, 'latest').to_i(16)
-      gas_price = @client.eth_gasPrice.to_i(16)
-      normalized_amount = normalize_eth_amount(amount)
+      if get_balance(:eth) < amount
+        raise ArgumentError, 'Insufficient funds: #{amount} ETH requested, but only #{get_balance(:eth)} ETH available'
+      end
 
-      params = {
-        chain_id: BASE_SEPOLIA.chain_id,
-        nonce: nonce,
-        priority_fee: gas_price, # TODO: Optimize this.
-        max_gas_fee: gas_price,
-        gas_limit: 21_000, # TODO: Handle multiple currencies.
-        from: Eth::Address.new(@address_id),
-        to: Eth::Address.new(destination),
-        value: normalized_amount
-      }
+      transfer = Coinbase::Transfer.new(@network_id, @wallet_id, @address_id, amount, asset_id, destination,
+                                        client: @client)
 
-      transaction = Eth::Tx::Eip1559.new(params)
+      transaction = transfer.transaction
       transaction.sign(@key)
-      @client.eth_sendRawTransaction("0x#{transaction.hex}")
+
+      transfer
     end
 
     # Returns the address as a string.
