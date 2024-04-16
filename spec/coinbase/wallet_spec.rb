@@ -3,10 +3,6 @@
 describe Coinbase::Wallet do
   subject(:wallet) { described_class.new }
 
-  before do
-    Coinbase.init
-  end
-
   describe '#initialize' do
     it 'initializes a new Wallet' do
       expect(wallet).to be_a(Coinbase::Wallet)

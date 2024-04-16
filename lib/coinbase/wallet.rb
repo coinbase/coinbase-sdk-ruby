@@ -4,9 +4,9 @@ require 'money-tree'
 require 'securerandom'
 
 module Coinbase
-  # A representation of a Wallet. Wallets have a set of addresses, each of which can hold a balance of one or more
-  # Assets. Wallets can create new addresses, list their addresses, list their balances, and transfer Assets to other
-  # addresses.
+  # A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses,
+  # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
+  # list their balances, and transfer Assets to other Addresses.
   class Wallet
     attr_reader :wallet_id, :network_id
 
@@ -58,15 +58,15 @@ module Coinbase
       @addresses.find { |address| address.address_id == address_id }
     end
 
-    # Returns the list of addresses in the Wallet.
-    # @return [Array<Address>] The list of addresses
+    # Returns the list of Addresses in the Wallet.
+    # @return [Array<Address>] The list of Addresses
     def list_addresses
       # TODO: Register with server.
       @addresses
     end
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
-    # @return [Map<Symbol, Integer>] The list of balances
+    # @return [Map<Symbol, Integer>] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
       balance_map = {}
 
@@ -83,7 +83,7 @@ module Coinbase
     end
 
     # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
-    # @param asset_id [Symbol] The Asset to retrieve the balance for
+    # @param asset_id [Symbol] The ID of the Asset to retrieve the balance for
     # @return [Integer] The balance of the Asset
     def get_balance(asset_id)
       list_balances[asset_id]
