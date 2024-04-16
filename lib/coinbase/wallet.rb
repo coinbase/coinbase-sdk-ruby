@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'jimson'
 require 'money-tree'
 require 'securerandom'
 
@@ -13,7 +14,8 @@ module Coinbase
     # Returns a new Wallet object.
     # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
     #   a new seed will be generated.
-    def initialize(seed: nil)
+    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
+    def initialize(seed: nil, client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
@@ -27,6 +29,8 @@ module Coinbase
       @address_path_prefix = "m/44'/60'/0'/0"
       @address_index = 0
 
+      @client = client
+
       create_address
     end
 
@@ -37,7 +41,7 @@ module Coinbase
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
       key = Eth::Key.new(priv: private_key)
-      address = Address.new(@network_id, key.address.address, @wallet_id, key)
+      address = Address.new(@network_id, key.address.address, @wallet_id, key, client: @client)
       @addresses << address
       @address_index += 1
       address
@@ -64,7 +68,7 @@ module Coinbase
     end
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
-    # @return [Map<Symbol, Integer>] The list of balances. The key is the Asset ID, and the value is the balance.
+    # @return [Map<Symbol, BigDecimal>] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
       balance_map = {}
 
@@ -82,9 +86,26 @@ module Coinbase
 
     # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
     # @param asset_id [Symbol] The ID of the Asset to retrieve the balance for
-    # @return [Integer] The balance of the Asset
+    # @return [BigDecimal] The balance of the Asset
     def get_balance(asset_id)
-      list_balances[asset_id]
+      normalized_asset_id = if %i[wei gwei].include?(asset_id)
+                              :eth
+                            else
+                              asset_id
+                            end
+
+      eth_balance = list_balances[normalized_asset_id] || BigDecimal(0)
+
+      case asset_id
+      when :eth
+        eth_balance
+      when :gwei
+        eth_balance * Coinbase::GWEI_PER_ETHER
+      when :wei
+        eth_balance * Coinbase::WEI_PER_ETHER
+      else
+        BigDecimal(0)
+      end
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
