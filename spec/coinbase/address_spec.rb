@@ -50,8 +50,16 @@ describe Coinbase::Address do
       allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
     end
 
-    it 'returns the ETH balance' do
+    it 'returns the correct ETH balance' do
       expect(address.get_balance(:eth)).to eq BigDecimal('1')
+    end
+
+    it 'returns the correct Gwei balance' do
+      expect(address.get_balance(:gwei)).to eq BigDecimal('1_000_000_000')
+    end
+
+    it 'returns the correct Wei balance' do
+      expect(address.get_balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
     end
 
     it 'returns 0 for an unsupported asset' do
