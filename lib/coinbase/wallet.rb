@@ -4,14 +4,23 @@ require 'money-tree'
 require 'securerandom'
 
 module Coinbase
-  # A crypto wallet.
+  # A representation of a Wallet. Wallets have a set of addresses, each of which can hold a balance of one or more
+  # Assets. Wallets can create new addresses, list their addresses, list their balances, and transfer Assets to other
+  # addresses.
   class Wallet
     attr_reader :wallet_id, :network_id
 
     # Returns a new Wallet object.
-    def initialize
+    # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
+    #   a new seed will be generated.
+    def initialize(seed: nil)
+      if !seed.nil? && seed.length != 64
+        raise ArgumentError, 'Seed must be 32 bytes'
+      end
+
+      @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
+
       @wallet_id = SecureRandom.uuid
-      @master = MoneyTree::Master.new
       # TODO: Make Network an argument to the constructor.
       @network_id = :base_sepolia
       @addresses = []

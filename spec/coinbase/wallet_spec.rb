@@ -11,6 +11,21 @@ describe Coinbase::Wallet do
     it 'initializes a new Wallet' do
       expect(wallet).to be_a(Coinbase::Wallet)
     end
+
+    context 'when a seed is provided' do
+      let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
+      let(:seed_wallet) { described_class.new(seed: seed) }
+
+      it 'initializes a new Wallet with the provided seed' do
+        expect(seed_wallet).to be_a(Coinbase::Wallet)
+      end
+
+      it 'raises an error for an invalid seed' do
+        expect do
+          described_class.new(seed: 'invalid')
+        end.to raise_error(ArgumentError, 'Seed must be 32 bytes')
+      end
+    end
   end
 
   describe '#create_address' do
