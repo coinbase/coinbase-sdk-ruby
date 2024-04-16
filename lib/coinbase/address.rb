@@ -33,8 +33,8 @@ module Coinbase
     #  in ETH.
     def list_balances
       # TODO: Handle multiple currencies.
-      eth_balance_in_wei = @client.eth_getBalance(@address_id, 'latest').to_i(16)
-      eth_balance = BigDecimal(eth_balance_in_wei / Coinbase::WEI_PER_ETHER)
+      eth_balance_in_wei = BigDecimal(@client.eth_getBalance(@address_id, 'latest').to_i(16).to_s)
+      eth_balance = BigDecimal(eth_balance_in_wei / BigDecimal(Coinbase::WEI_PER_ETHER.to_s))
 
       { eth: eth_balance }
     end
