@@ -48,7 +48,7 @@ The following creates an in-memory self-custodial wallet. After the wallet is fu
 some 100 Wei to a different wallet.
 
 ```ruby
-# Initialize the SDK.
+# Initialize the SDK by loading environment variables.
 Coinbase.init
 
 # Wallets are self-custodial with in-memory key management on Base Sepolia.
@@ -59,12 +59,12 @@ w1 = Coinbase::Wallet.new
 a = w1.default_address
 a.to_s
 
-# At this point, fund the wallet out-of-band using a faucet.
+# At this point, fund the wallet out-of-band.
 # Then, we can transfer 100 wei out of the wallet to another wallet.
 w2 = Coinbase::Wallet.new
 
 # We wait for the transfer to complete.
-w1.transfer(100, :eth, w2).wait!
+w1.transfer(100, :wei, w2).wait!
 ```
 
 ## Development
