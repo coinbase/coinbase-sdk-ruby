@@ -74,7 +74,7 @@ module Coinbase
 
       @addresses.each do |address|
         address.list_balances.each do |asset_id, balance|
-          balance_map[asset_id] ||= 0
+          balance_map[asset_id] ||= BigDecimal(0)
           current_balance = balance_map[asset_id]
           new_balance = balance + current_balance
           balance_map[asset_id] = new_balance
