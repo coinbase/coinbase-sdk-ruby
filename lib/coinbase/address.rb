@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'constants'
+require 'bigdecimal'
 require 'eth'
 require 'jimson'
 
@@ -28,33 +29,49 @@ module Coinbase
     end
 
     # Returns the balances of the Address. Currently only ETH balances are supported.
-    # @return [Map<Symbol, Integer>] The balances of the Address, keyed by asset ID. Ether balances are denominated in
-    #   Wei.
+    # @return [Map<Symbol, BigDecimal>] The balances of the Address, keyed by asset ID. Ether balances are denominated
+    #  in ETH.
     def list_balances
       # TODO: Handle multiple currencies.
       eth_balance_in_wei = @client.eth_getBalance(@address_id, 'latest').to_i(16)
+      eth_balance = BigDecimal(eth_balance_in_wei / Coinbase::WEI_PER_ETHER)
 
-      { eth: eth_balance_in_wei }
+      { eth: eth_balance }
     end
 
     # Returns the balance of the provided Asset. Currently only ETH is supported.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
-    # @return [Integer] The balance of the Asset
+    # @return [BigDecimal] The balance of the Asset
     def get_balance(asset_id)
-      list_balances[asset_id] || 0
+      normalized_asset_id = if %i[wei gwei].include?(asset_id)
+                              :eth
+                            else
+                              asset_id
+                            end
+
+      eth_balance = list_balances[normalized_asset_id] || BigDecimal(0)
+
+      case asset_id
+      when :eth
+        eth_balance
+      when :gwei
+        eth_balance * Coinbase::GWEI_PER_ETHER
+      when :wei
+        eth_balance * Coinbase::WEI_PER_ETHER
+      else
+        BigDecimal(0)
+      end
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send. Integers are interpreted as
-    #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
-    #  itself (e.g. Ether).
-    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
       # TODO: Handle multiple currencies.
-      raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
+      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
 
       if destination.is_a?(Wallet)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
@@ -66,7 +83,7 @@ module Coinbase
         destination = destination.address_id
       end
 
-      current_balance = get_balance(:eth)
+      current_balance = get_balance(asset_id)
       if current_balance < amount
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
@@ -85,6 +102,25 @@ module Coinbase
     # @return [String] The address
     def to_s
       @address_id
+    end
+
+    private
+
+    # Normalizes the amount of ETH to send based on the asset ID.
+    # @param amount [Integer, Float, BigDecimal] The amount to normalize
+    # @param asset_id [Symbol] The ID of the Asset being transferred
+    # @return [BigDecimal] The normalized amount in units of ETH
+    def normalize_eth_amount(amount, asset_id)
+      case asset_id
+      when :eth
+        amount.is_a?(BigDecimal) ? amount : BigDecimal(amount.to_s)
+      when :gwei
+        BigDecimal(amount / Coinbase::GWEI_PER_ETHER)
+      when :wei
+        BigDecimal(amount / Coinbase::WEI_PER_ETHER)
+      else
+        raise ArgumentError, "Unsupported asset: #{asset_id}"
+      end
     end
   end
 end

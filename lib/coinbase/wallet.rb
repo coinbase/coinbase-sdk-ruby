@@ -14,9 +14,7 @@ module Coinbase
     # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
     #   a new seed will be generated.
     def initialize(seed: nil)
-      if !seed.nil? && seed.length != 64
-        raise ArgumentError, 'Seed must be 32 bytes'
-      end
+      raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 

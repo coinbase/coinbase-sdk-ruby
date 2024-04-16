@@ -41,7 +41,7 @@ describe Coinbase::Address do
     end
 
     it 'returns a hash with an ETH balance' do
-      expect(address.list_balances).to eq(eth: 1_000_000_000_000_000_000)
+      expect(address.list_balances).to eq(eth: BigDecimal('1'))
     end
   end
 
@@ -51,16 +51,17 @@ describe Coinbase::Address do
     end
 
     it 'returns the ETH balance' do
-      expect(address.get_balance(:eth)).to eq 1_000_000_000_000_000_000
+      expect(address.get_balance(:eth)).to eq BigDecimal('1')
     end
 
     it 'returns 0 for an unsupported asset' do
-      expect(address.get_balance(:uni)).to eq 0
+      expect(address.get_balance(:uni)).to eq BigDecimal('0')
     end
   end
 
   describe '#transfer' do
     let(:amount) { 500_000_000_000_000_000 }
+    let(:asset_id) { :wei }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
@@ -82,7 +83,7 @@ describe Coinbase::Address do
       let(:destination) { described_class.new(network_id, to_address_id, wallet_id, to_key, client: client) }
 
       it 'creates a Transfer' do
-        expect(address.transfer(amount, :eth, destination)).to eq(transfer)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
@@ -90,7 +91,7 @@ describe Coinbase::Address do
       let(:destination) { to_address_id }
 
       it 'creates a Transfer' do
-        expect(address.transfer(amount, :eth, destination)).to eq(transfer)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
@@ -105,8 +106,8 @@ describe Coinbase::Address do
     context 'when the destination Address is on a different network' do
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, :eth, Coinbase::Address.new(:different_network, to_address_id, wallet_id,
-                                                               to_key, client: client))
+          address.transfer(amount, asset_id, Coinbase::Address.new(:different_network, to_address_id, wallet_id,
+                                                                   to_key, client: client))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
@@ -118,8 +119,8 @@ describe Coinbase::Address do
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, :eth, to_address_id)
-        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} requested, but only 0 available")
+          address.transfer(amount, asset_id, to_address_id)
+        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} requested, but only 0.0 available")
       end
     end
   end
