@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'constants'
+require 'bigdecimal'
 require 'eth'
 
 module Coinbase
@@ -68,7 +69,7 @@ module Coinbase
         gas_limit: 21_000, # TODO: Handle multiple currencies.
         from: Eth::Address.new(@from_address_id),
         to: Eth::Address.new(@to_address_id),
-        value: amount
+        value: (@amount * Coinbase::WEI_PER_ETHER).to_i
       }
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
@@ -135,15 +136,15 @@ module Coinbase
 
     private
 
-    # Normalizes the given Ether amount into an Integer.
+    # Normalizes the given Ether amount into a BigDecimal.
     # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @return [Integer] The normalized amount
+    # @return [BigDecimal] The normalized amount
     def normalize_eth_amount(amount)
       case amount
-      when Integer
+      when BigDecimal
         amount
-      when Float, BigDecimal
-        (amount * Coinbase::WEI_PER_ETHER).to_i
+      when Integer, Float
+        BigDecimal(amount.to_s)
       else
         raise ArgumentError, "Invalid amount: #{amount}"
       end

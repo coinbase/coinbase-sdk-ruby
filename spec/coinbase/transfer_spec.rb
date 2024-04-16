@@ -6,7 +6,7 @@ describe Coinbase::Transfer do
   let(:network_id) { :base_sepolia }
   let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
-  let(:amount) { 500_000_000_000_000_000 }
+  let(:amount) { 5 }
   let(:to_address_id) { to_key.address.to_s }
   let(:client) { double('Jimson::Client') }
 
@@ -49,14 +49,25 @@ describe Coinbase::Transfer do
       expect(transfer.amount).to eq(amount)
     end
 
-    context 'when the amount is a float' do
+    context 'when the amount is a Float' do
       let(:float_amount) { 0.5 }
       let(:float_transfer) do
         described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id, client: client)
       end
 
       it 'normalizes the amount' do
-        expect(float_transfer.amount).to eq(500_000_000_000_000_000)
+        expect(float_transfer.amount).to eq(BigDecimal('0.5'))
+      end
+    end
+
+    context 'when the amount is an Integer' do
+      let(:integer_amount) { 5 }
+      let(:integer_transfer) do
+        described_class.new(network_id, wallet_id, from_address_id, integer_amount, :eth, to_address_id, client: client)
+      end
+
+      it 'normalizes the amount' do
+        expect(integer_transfer.amount).to eq(BigDecimal('5'))
       end
     end
 
@@ -68,7 +79,7 @@ describe Coinbase::Transfer do
       end
 
       it 'normalizes the amount' do
-        expect(big_decimal_transfer.amount).to eq(500_000_000_000_000_000)
+        expect(big_decimal_transfer.amount).to eq(big_decimal_amount)
       end
     end
   end
@@ -93,7 +104,7 @@ describe Coinbase::Transfer do
 
     it 'returns the Transfer transaction' do
       expect(transfer.transaction).to be_a(Eth::Tx::Eip1559)
-      expect(transfer.transaction.amount).to eq(amount)
+      expect(transfer.transaction.amount).to eq(amount * Coinbase::WEI_PER_ETHER)
     end
   end
 
