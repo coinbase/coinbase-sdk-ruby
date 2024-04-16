@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Coinbase::Wallet do
-  let(:client) { instance_double(Jimson::Client) }
+  let(:client) { double('Jimson::Client') }
   subject(:wallet) { described_class.new(client: client) }
 
   describe '#initialize' do
@@ -78,6 +78,50 @@ describe Coinbase::Wallet do
 
     it 'returns the correct Wei balance' do
       expect(wallet.get_balance(:wei)).to eq(BigDecimal(5 * Coinbase::WEI_PER_ETHER))
+    end
+  end
+
+  describe '#transfer' do
+    let(:transfer) { double('Coinbase::Transfer') }
+    let(:amount) { 5 }
+    let(:asset_id) { :eth }
+
+    context 'when the destination is a Wallet' do
+      let(:destination) { described_class.new(client: client) }
+      let(:to_address_id) { destination.default_address.address_id }
+
+      before do
+        expect(wallet.default_address).to receive(:transfer).with(amount, asset_id, to_address_id).and_return(transfer)
+      end
+
+      it 'creates a transfer to the default address ID' do
+        expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
+
+    context 'when the desination is an Address' do
+      let(:destination) { wallet.create_address }
+      let(:to_address_id) { destination.address_id }
+
+      before do
+        expect(wallet.default_address).to receive(:transfer).with(amount, asset_id, to_address_id).and_return(transfer)
+      end
+
+      it 'creates a transfer to the address ID' do
+        expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
+
+    context 'when the destination is a String' do
+      let(:destination) { '0x1234567890' }
+
+      before do
+        expect(wallet.default_address).to receive(:transfer).with(amount, asset_id, destination).and_return(transfer)
+      end
+
+      it 'creates a transfer to the address ID' do
+        expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
     end
   end
 end
