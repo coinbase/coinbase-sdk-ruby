@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'balance_map'
 require_relative 'constants'
 require 'bigdecimal'
 require 'eth'
@@ -29,14 +30,14 @@ module Coinbase
     end
 
     # Returns the balances of the Address. Currently only ETH balances are supported.
-    # @return [Map<Symbol, BigDecimal>] The balances of the Address, keyed by asset ID. Ether balances are denominated
+    # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
       # TODO: Handle multiple currencies.
       eth_balance_in_wei = BigDecimal(@client.eth_getBalance(@address_id, 'latest').to_i(16).to_s)
       eth_balance = BigDecimal(eth_balance_in_wei / BigDecimal(Coinbase::WEI_PER_ETHER.to_s))
 
-      { eth: eth_balance }
+      BalanceMap.new({ eth: eth_balance })
     end
 
     # Returns the balance of the provided Asset. Currently only ETH is supported.

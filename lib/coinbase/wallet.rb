@@ -68,9 +68,9 @@ module Coinbase
     end
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
-    # @return [Map<Symbol, BigDecimal>] The list of balances. The key is the Asset ID, and the value is the balance.
+    # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
-      balance_map = {}
+      balance_map = BalanceMap.new
 
       @addresses.each do |address|
         address.list_balances.each do |asset_id, balance|

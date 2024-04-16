@@ -79,7 +79,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/coinbase.rb<span class="defines">,<br />
-  lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb</span>
+  lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb,<br /> lib/coinbase/balance_map.rb</span>
 </dd>
   </dl>
   
@@ -102,7 +102,7 @@
     
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Coinbase/Address.html" title="Coinbase::Address (class)">Address</a></span>, <span class='object_link'><a href="Coinbase/Network.html" title="Coinbase::Network (class)">Network</a></span>, <span class='object_link'><a href="Coinbase/Transfer.html" title="Coinbase::Transfer (class)">Transfer</a></span>, <span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Coinbase/Address.html" title="Coinbase::Address (class)">Address</a></span>, <span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span>, <span class='object_link'><a href="Coinbase/Network.html" title="Coinbase::Network (class)">Network</a></span>, <span class='object_link'><a href="Coinbase/Transfer.html" title="Coinbase::Transfer (class)">Transfer</a></span>, <span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span>
     
   
 </p>
@@ -359,12 +359,12 @@
       <pre class="lines">
 
 
-17
 18
-19</pre>
+19
+20</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 18</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span>
   <span class='ivar'>@api_key_name</span>
@@ -389,12 +389,12 @@
       <pre class="lines">
 
 
-21
 22
-23</pre>
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name='>api_key_name=</span><span class='lparen'>(</span><span class='id identifier rubyid_api_key_name'>api_key_name</span><span class='rparen'>)</span>
   <span class='ivar'>@api_key_name</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_name'>api_key_name</span>
@@ -419,12 +419,12 @@
       <pre class="lines">
 
 
-25
 26
-27</pre>
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_key_secret'>api_key_secret</span>
   <span class='ivar'>@api_key_secret</span>
@@ -449,12 +449,12 @@
       <pre class="lines">
 
 
-29
 30
-31</pre>
+31
+32</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 30</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_key_secret='>api_key_secret=</span><span class='lparen'>(</span><span class='id identifier rubyid_api_key_secret'>api_key_secret</span><span class='rparen'>)</span>
   <span class='ivar'>@api_key_secret</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_secret'>api_key_secret</span>
@@ -490,12 +490,12 @@
       <pre class="lines">
 
 
-13
 14
-15</pre>
+15
+16</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 14</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_init'>init</span>
   <span class='const'>Dotenv</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span>
@@ -510,7 +510,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 16 14:24:54 2024 by
+  Generated on Tue Apr 16 16:30:17 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
