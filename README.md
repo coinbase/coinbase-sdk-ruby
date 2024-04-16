@@ -63,8 +63,8 @@ a.to_s
 # Then, we can transfer 100 wei out of the wallet to another wallet.
 w2 = Coinbase::Wallet.new
 
-# We can now use the transaction hash to check the status of the transaction.
-transaction_hash = w1.transfer(100, :eth, w2)
+# We wait for the transfer to complete.
+w1.transfer(100, :eth, w2).wait!
 ```
 
 ## Development
