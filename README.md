@@ -64,7 +64,7 @@ a.to_s
 w2 = Coinbase::Wallet.new
 
 # We wait for the transfer to complete.
-w1.transfer(100, :wei, w2).wait!
+w1.transfer(0.00001, :eth, w2).wait!
 ```
 
 ## Development
