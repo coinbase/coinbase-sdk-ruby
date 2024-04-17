@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Coinbase::Network do
   let(:eth) { Coinbase::Asset.new(network_id: :base_sepolia, asset_id: :eth, display_name: 'Ether') }
   let(:usdc) { Coinbase::Asset.new(network_id: :base_sepolia, asset_id: :usdc, display_name: 'USD Coin') }
@@ -46,6 +48,12 @@ describe Coinbase::Network do
 
     it 'returns nil if the asset is not found' do
       expect(network.get_asset(:btc)).to be_nil
+    end
+  end
+
+  describe '#native_asset' do
+    it 'returns the native asset of the network' do
+      expect(network.native_asset).to eq(eth)
     end
   end
 end

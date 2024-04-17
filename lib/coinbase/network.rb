@@ -50,8 +50,6 @@ module Coinbase
     # Gets the native Asset of the Network.
     #
     # @return [Asset] The native Asset of the Network
-    def native_asset
-      @native_asset
-    end
+    attr_reader :native_asset
   end
 end

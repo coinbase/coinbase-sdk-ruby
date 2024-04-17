@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Coinbase
   # A representation of an Asset.
   class Asset
