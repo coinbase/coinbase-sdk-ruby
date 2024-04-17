@@ -107,7 +107,7 @@ a = w1.default_address
 a.to_s
 
 # At this point, fund the wallet out-of-band.
-# Then, we can transfer 100 wei out of the wallet to another wallet.
+# Then, we can transfer 0.00001 ETH out of the wallet to another wallet.
 w2 = Coinbase::Wallet.new
 
 # We wait for the transfer to complete.
