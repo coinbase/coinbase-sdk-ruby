@@ -6,7 +6,8 @@ require_relative 'network'
 module Coinbase
   # The Assets supported on Base Sepolia by the Coinbase SDK.
   ETH = Asset.new(network_id: :base_sepolia, asset_id: :eth, display_name: 'Ether')
-  USDC = Asset.new(network_id: :base_sepolia, asset_id: :usdc, display_name: 'USD Coin')
+  USDC = Asset.new(network_id: :base_sepolia, asset_id: :usdc, display_name: 'USD Coin',
+                   address_id: '0x036CbD53842c5426634e7929541eC2318f3dCF7e')
 
   # The Base Sepolia Network.
   BASE_SEPOLIA = Network.new(
