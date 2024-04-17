@@ -31,5 +31,27 @@ module Coinbase
 
       @native_asset = @asset_map[native_asset_id]
     end
+
+    # Lists the Assets supported by the Network.
+    #
+    # @return [Array<Asset>] The Assets supported by the Network
+    def list_assets
+      @asset_map.values
+    end
+
+    # Gets the Asset with the given ID.
+    #
+    # @param asset_id [Symbol] The ID of the Asset
+    # @return [Asset] The Asset with the given ID
+    def get_asset(asset_id)
+      @asset_map[asset_id]
+    end
+
+    # Gets the native Asset of the Network.
+    #
+    # @return [Asset] The native Asset of the Network
+    def native_asset
+      @native_asset
+    end
   end
 end
