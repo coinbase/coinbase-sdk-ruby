@@ -48,10 +48,51 @@ bundle install
 
 ## Usage
 
-### Sample Code Snippet
+### Initialization
 
-The following creates an in-memory customer-managed wallet. After the wallet is funded with ETH, it transfers 
-0.00001 ETH to a different wallet.
+The SDK requires a Base Sepolia RPC Node URL, specified as the `BASE_SEPOLIA_RPC_URL` environment variable.
+The below uses the default RPC URL, which is rate-limited, but you can also provision your own on the
+[Coinbase Developer Platform](https://portal.cloud.coinbase.com/products/base).
+
+```bash
+BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
+```
+
+Once this is configured, initialize the SDK with:
+
+```ruby
+Coinbase.init
+```
+
+### Wallets and Addresses
+
+A Wallet is a collection of Addresses on the Base Sepolia Network, which can be used to send and receive crypto.
+
+The SDK provides customer-custodied wallets, which means that you are responsible for securely storing the data required
+to re-create wallets. The following code snippet demonstrates this:
+
+```ruby
+# Initialize the SDK by loading environment variables.
+Coinbase.init
+
+# Create a Wallet with one Address by default.
+w1 = Coinbase::Wallet.new
+
+# Export the data required to re-create the wallet.
+data = w1.export
+
+# At this point, you should implement your own "store" method to securely persist
+# the data required to re-create the wallet at a later time.
+store(data)
+
+# The wallet can be re-created using the exported data.
+# w2 will be equivalent to w1.
+w2 = Wallet.new(seed: data.seed, address_count: data.address_count)
+```
+
+### Transfers
+
+The following creates an in-memory wallet. After the wallet is funded with ETH, it transfers 0.00001 ETH to a different wallet.
 
 ```ruby
 # Initialize the SDK by loading environment variables.
@@ -70,6 +111,7 @@ a.to_s
 w2 = Coinbase::Wallet.new
 
 # We wait for the transfer to complete.
+# Base Sepolia is fast, so it should take only a few seconds.
 w1.transfer(0.00001, :eth, w2).wait!
 ```
 

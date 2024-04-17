@@ -62,9 +62,11 @@
 
 <p>The Coinbase Ruby SDK enables the simple integration of crypto into your app. By calling Coinbase&#39;s Platform APIs, the SDK allows you to provision crypto wallets, send crypto into/out of those wallets, track wallet balances, and trade crypto from one asset into another.</p>
 
-<p>The SDK currently supports Developer-managed Wallets using Ethereum on Base Sepolia.</p>
+<p>The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.</p>
 
-<p><strong>IMPORTANT: The Coinbase SDK is currently under development, and may make backwards-incompatible changes.</strong> <strong>Do not use the Coinbase SDK to manage mainnet funds.</strong></p>
+<p><strong>WARNING: The Coinbase SDK is currently in Alpha. The SDK:</strong> - <strong>may make backwards-incompatible changes between releases</strong> - <strong>should not be used on Mainnet (i.e. with real funds)</strong> - <strong>should not be considered secure for managing private keys</strong></p>
+
+<p>Currently, the SDK is intended for use on testnet for quick bootstrapping of crypto wallets at hackathons, code academies, and other development settings.</p>
 
 <h2 id="label-Documentation">Documentation</h2>
 
@@ -98,9 +100,45 @@
 
 <h2 id="label-Usage">Usage</h2>
 
-<h3 id="label-Sample+Code+Snippet">Sample Code Snippet</h3>
+<h3 id="label-Initialization">Initialization</h3>
 
-<p>The following creates an in-memory self-custodial wallet. After the wallet is funded with ETH, it transfers some 100 Wei to a different wallet.</p>
+<p>The SDK requires a Base Sepolia RPC Node URL, specified as the <code>BASE_SEPOLIA_RPC_URL</code> environment variable. The below uses the default RPC URL, which is rate-limited, but you can also provision your own on the <a href="https://portal.cloud.coinbase.com/products/base">Coinbase Developer Platform</a>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'>BASE_SEPOLIA_RPC_URL</span><span class='op'>=</span><span class='id identifier rubyid_https'>https</span><span class='symbol'>:/</span><span class='op'>/</span><span class='id identifier rubyid_sepolia'>sepolia</span><span class='period'>.</span><span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_org'>org</span>
+</code></pre>
+
+<p>Once this is configured, initialize the SDK with:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_init'><span class='object_link'><a href="Coinbase.html#init-class_method" title="Coinbase.init (method)">init</a></span></span>
+</code></pre>
+
+<h3 id="label-Wallets+and+Addresses">Wallets and Addresses</h3>
+
+<p>A Wallet is a collection of Addresses on the Base Sepolia Network, which can be used to send and receive crypto.</p>
+
+<p>The SDK provides customer-custodied wallets, which means that you are responsible for securely storing the data required to re-create wallets. The following code snippet demonstrates this:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Initialize the SDK by loading environment variables.
+</span><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_init'><span class='object_link'><a href="Coinbase.html#init-class_method" title="Coinbase.init (method)">init</a></span></span>
+
+<span class='comment'># Create a Wallet with one Address by default.
+</span><span class='id identifier rubyid_w1'>w1</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Wallet.html#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span>
+
+<span class='comment'># Export the data required to re-create the wallet.
+</span><span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_export'>export</span>
+
+<span class='comment'># At this point, you should implement your own &quot;store&quot; method to securely persist
+</span><span class='comment'># the data required to re-create the wallet at a later time.
+</span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+
+<span class='comment'># The wallet can be re-created using the exported data.
+</span><span class='comment'># w2 will be equivalent to w1.
+</span><span class='id identifier rubyid_w2'>w2</span> <span class='op'>=</span> <span class='const'>Wallet</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>seed:</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_seed'>seed</span><span class='comma'>,</span> <span class='label'>address_count:</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_address_count'>address_count</span><span class='rparen'>)</span>
+</code></pre>
+
+<h3 id="label-Transfers">Transfers</h3>
+
+<p>The following creates an in-memory wallet. After the wallet is funded with ETH, it transfers 0.00001 ETH to a different wallet.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Initialize the SDK by loading environment variables.
 </span><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_init'><span class='object_link'><a href="Coinbase.html#init-class_method" title="Coinbase.init (method)">init</a></span></span>
@@ -118,6 +156,7 @@
 </span><span class='id identifier rubyid_w2'>w2</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Wallet.html#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span>
 
 <span class='comment'># We wait for the transfer to complete.
+</span><span class='comment'># Base Sepolia is fast, so it should take only a few seconds.
 </span><span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='float'>0.00001</span><span class='comma'>,</span> <span class='symbol'>:eth</span><span class='comma'>,</span> <span class='id identifier rubyid_w2'>w2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_wait!'>wait!</span>
 </code></pre>
 
@@ -189,7 +228,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Tue Apr 16 16:30:17 2024 by
+  Generated on Wed Apr 17 10:40:36 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
