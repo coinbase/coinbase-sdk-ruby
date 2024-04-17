@@ -14,9 +14,12 @@ module Coinbase
     # Returns a new Wallet object.
     # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
     #   a new seed will be generated.
+    # @param address_count [Integer] (Optional) The number of addresses to generate for the Wallet. If not provided,
+    #   a single address will be generated.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(seed: nil, client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
+    def initialize(seed: nil, address_count: 1, client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
+      raise ArgumentError, 'Address count must be positive' if address_count < 1
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
@@ -31,7 +34,7 @@ module Coinbase
 
       @client = client
 
-      create_address
+      address_count.times { create_address }
     end
 
     # Creates a new Address in the Wallet.

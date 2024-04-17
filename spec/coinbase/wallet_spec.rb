@@ -23,6 +23,21 @@ describe Coinbase::Wallet do
         end.to raise_error(ArgumentError, 'Seed must be 32 bytes')
       end
     end
+
+    context 'when the address count is provided' do
+      let(:address_count) { 5 }
+      let(:address_wallet) { described_class.new(address_count: address_count, client: client) }
+
+      it 'initializes a new Wallet with the provided address count' do
+        expect(address_wallet.list_addresses.length).to eq(address_count)
+      end
+
+      it 'raises an error for a negative address count' do
+        expect do
+          described_class.new(address_count: -1, client: client)
+        end.to raise_error(ArgumentError, 'Address count must be positive')
+      end
+    end
   end
 
   describe '#create_address' do
