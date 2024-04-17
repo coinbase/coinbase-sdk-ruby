@@ -131,5 +131,30 @@ module Coinbase
 
       default_address.transfer(amount, asset_id, destination)
     end
+
+    # Exports the Wallet's data to a WalletData object.
+    # @return [WalletData] The Wallet data
+    def export
+      WalletData.new(@master.seed_hex, @addresses.length)
+    end
+
+    # The data required to recreate a Wallet.
+    class WalletData
+      attr_reader :seed, :address_count
+
+      # Returns a new WalletData object.
+      # @param seed [String] The seed of the Wallet
+      # @param address_count [Integer] The number of addresses in the Wallet
+      def initialize(seed, address_count)
+        @seed = seed
+        @address_count = address_count
+      end
+    end
+
+    # Returns the data required to recreate the Wallet.
+    # @return [WalletData] The Wallet data
+    def to_data
+      WalletData.new(@master.seed_hex, @addresses.length)
+    end
   end
 end

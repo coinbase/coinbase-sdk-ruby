@@ -139,4 +139,26 @@ describe Coinbase::Wallet do
       end
     end
   end
+
+  describe '#export' do
+    let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
+    let(:address_count) { 5 }
+    let(:seed_wallet) { described_class.new(seed: seed, address_count: address_count, client: client) }
+
+    it 'exports the Wallet data' do
+      wallet_data = seed_wallet.export
+      expect(wallet_data).to be_a(Coinbase::Wallet::WalletData)
+      expect(wallet_data.seed).to eq(seed)
+      expect(wallet_data.address_count).to eq(address_count)
+    end
+
+    it 'allows for re-creation of a Wallet' do
+      wallet_data = seed_wallet.export
+      new_wallet = described_class.new(seed: wallet_data.seed, address_count: wallet_data.address_count, client: client)
+      expect(new_wallet.list_addresses.length).to eq(address_count)
+      new_wallet.list_addresses.each_with_index do |address, i|
+        expect(address.address_id).to eq(seed_wallet.list_addresses[i].address_id)
+      end
+    end
+  end
 end
