@@ -5,10 +5,16 @@ By calling Coinbase's Platform APIs, the SDK allows you to provision crypto wall
 send crypto into/out of those wallets, track wallet balances, and trade crypto from
 one asset into another.
 
-The SDK currently supports Developer-managed Wallets using Ethereum on Base Sepolia.
+The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.
 
-**IMPORTANT: The Coinbase SDK is currently under development, and may make backwards-incompatible changes.**
-**Do not use the Coinbase SDK to manage mainnet funds.**
+**WARNING: The Coinbase SDK is currently in Alpha. The SDK:**
+- **may make backwards-incompatible changes between releases**
+- **should not be used on Mainnet (i.e. with real funds)**
+- **should not be considered secure for managing private keys**
+
+Currently, the SDK is intended for use on testnet for quick bootstrapping of crypto wallets at
+hackathons, code academies, and other development settings.
+
 
 ## Documentation
 
@@ -44,8 +50,8 @@ bundle install
 
 ### Sample Code Snippet
 
-The following creates an in-memory self-custodial wallet. After the wallet is funded with ETH, it transfers 
-some 100 Wei to a different wallet.
+The following creates an in-memory customer-managed wallet. After the wallet is funded with ETH, it transfers 
+0.00001 ETH to a different wallet.
 
 ```ruby
 # Initialize the SDK by loading environment variables.
