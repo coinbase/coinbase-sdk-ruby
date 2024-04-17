@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'coinbase/address'
+require_relative 'coinbase/asset'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/constants'
 require_relative 'coinbase/network'

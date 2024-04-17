@@ -8,7 +8,7 @@ module Coinbase
     # @param asset_id [Symbol] The Asset ID
     # @param display_name [String] The Asset's display name
     # @param address_id [String] (Optional) The Asset's address ID, if one exists
-    def initialize(network_id, asset_id, display_name, address_id = nil)
+    def initialize(network_id:, asset_id:, display_name:, address_id: nil)
       @network_id = network_id
       @asset_id = asset_id
       @display_name = display_name
