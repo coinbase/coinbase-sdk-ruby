@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'coinbase-sdk'
+  spec.name          = 'coinbase'
   spec.version       = '0.0.1'
   spec.authors       = ['Yuga Cohler']
 
