@@ -27,13 +27,13 @@ hackathons, code academies, and other development settings.
 To use the package, run:
 
 ```bash
-gem install coinbase-sdk
+gem install coinbase
 ```
 
-Or if you are using bundler, add the `coinbase-sdk` gem to your Gemfile:
+Or if you are using bundler, add the `coinbase` gem to your Gemfile:
 
 ```
-gem 'coinbase-sdk'
+gem 'coinbase'
 ```
 
 Then, run:
