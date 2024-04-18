@@ -146,6 +146,35 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#native_asset-instance_method" title="#native_asset (instance method)">#<strong>native_asset</strong>  &#x21d2; Asset </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Gets the native Asset of the Network.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -162,7 +191,31 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(network_id:, display_name:, protocol_family:, is_testnet:, native_asset_id:, chain_id:)  &#x21d2; Network </a>
+      <a href="#get_asset-instance_method" title="#get_asset (instance method)">#<strong>get_asset</strong>(asset_id)  &#x21d2; Asset </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Gets the Asset with the given ID.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(network_id:, display_name:, protocol_family:, is_testnet:, assets:, native_asset_id:, chain_id:)  &#x21d2; Network </a>
     
 
     
@@ -185,6 +238,30 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#list_assets-instance_method" title="#list_assets (instance method)">#<strong>list_assets</strong>  &#x21d2; Array&lt;Asset&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Lists the Assets supported by the Network.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -194,7 +271,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(network_id:, display_name:, protocol_family:, is_testnet:, native_asset_id:, chain_id:)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Network (class)">Network</a></span></tt> 
+    #<strong>initialize</strong>(network_id:, display_name:, protocol_family:, is_testnet:, assets:, native_asset_id:, chain_id:)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Network (class)">Network</a></span></tt> 
   
 
   
@@ -278,6 +355,22 @@
   
     <li>
       
+        <span class='name'>assets</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Assets supported by the Network</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
         <span class='name'>native_asset_id</span>
       
       
@@ -303,13 +396,26 @@
       
         &mdash;
         <div class='inline'>
-<p>(Optional) The Chain ID of the Network</p>
+<p>The Chain ID of the Network</p>
 </div>
       
     </li>
   
 </ul>
 
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -317,25 +423,41 @@
       <pre class="lines">
 
 
-17
 18
 19
 20
 21
 22
 23
-24</pre>
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/network.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/network.rb', line 18</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>display_name:</span><span class='comma'>,</span> <span class='label'>protocol_family:</span><span class='comma'>,</span> <span class='label'>is_testnet:</span><span class='comma'>,</span> <span class='label'>native_asset_id:</span><span class='comma'>,</span> <span class='label'>chain_id:</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>display_name:</span><span class='comma'>,</span> <span class='label'>protocol_family:</span><span class='comma'>,</span> <span class='label'>is_testnet:</span><span class='comma'>,</span> <span class='label'>assets:</span><span class='comma'>,</span> <span class='label'>native_asset_id:</span><span class='comma'>,</span> <span class='label'>chain_id:</span><span class='rparen'>)</span>
   <span class='ivar'>@network_id</span> <span class='op'>=</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='ivar'>@display_name</span> <span class='op'>=</span> <span class='id identifier rubyid_display_name'>display_name</span>
   <span class='ivar'>@protocol_family</span> <span class='op'>=</span> <span class='id identifier rubyid_protocol_family'>protocol_family</span>
   <span class='ivar'>@is_testnet</span> <span class='op'>=</span> <span class='id identifier rubyid_is_testnet'>is_testnet</span>
-  <span class='ivar'>@native_asset_id</span> <span class='op'>=</span> <span class='id identifier rubyid_native_asset_id'>native_asset_id</span>
   <span class='ivar'>@chain_id</span> <span class='op'>=</span> <span class='id identifier rubyid_chain_id'>chain_id</span>
+
+  <span class='ivar'>@asset_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_assets'>assets</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_asset'>asset</span><span class='op'>|</span>
+    <span class='ivar'>@asset_map</span><span class='lbracket'>[</span><span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_asset'>asset</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Native Asset not found</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='ivar'>@asset_map</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_native_asset_id'>native_asset_id</span><span class='rparen'>)</span>
+
+  <span class='ivar'>@native_asset</span> <span class='op'>=</span> <span class='ivar'>@asset_map</span><span class='lbracket'>[</span><span class='id identifier rubyid_native_asset_id'>native_asset_id</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -390,13 +512,218 @@
 </table>
 </div>
     
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="native_asset-instance_method">
+  
+    #<strong>native_asset</strong>  &#x21d2; <tt><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Gets the native Asset of the Network.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The native Asset of the Network</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/network.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_native_asset'>native_asset</span>
+  <span class='ivar'>@native_asset</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="get_asset-instance_method">
+  
+    #<strong>get_asset</strong>(asset_id)  &#x21d2; <tt><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Gets the Asset with the given ID.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>asset_id</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ID of the Asset</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Asset with the given ID</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+46
+47
+48</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/network.rb', line 46</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_asset'>get_asset</span><span class='lparen'>(</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rparen'>)</span>
+  <span class='ivar'>@asset_map</span><span class='lbracket'>[</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list_assets-instance_method">
+  
+    #<strong>list_assets</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Lists the Assets supported by the Network.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Assets supported by the Network</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+38
+39
+40</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/network.rb', line 38</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list_assets'>list_assets</span>
+  <span class='ivar'>@asset_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
 </div>
 
       <div id="footer">
-  Generated on Wed Apr 17 10:41:55 2024 by
+  Generated on Thu Apr 18 12:35:17 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
