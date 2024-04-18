@@ -7,10 +7,10 @@ one asset into another.
 
 The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.
 
-**WARNING: The Coinbase SDK is currently in Alpha. The SDK:**
+**WARNNOTEING: The Coinbase SDK is currently in Alpha. The SDK:**
 - **may make backwards-incompatible changes between releases**
 - **should not be used on Mainnet (i.e. with real funds)**
-- **should not be considered secure for managing private keys**
+
 
 Currently, the SDK is intended for use on testnet for quick bootstrapping of crypto wallets at
 hackathons, code academies, and other development settings.
