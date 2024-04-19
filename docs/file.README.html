@@ -95,7 +95,7 @@
 
 <h3 id="label-Requirements">Requirements</h3>
 <ul><li>
-<p>Ruby 2.6+.</p>
+<p>Ruby 2.7+.</p>
 </li></ul>
 
 <h2 id="label-Usage">Usage</h2>
@@ -164,9 +164,9 @@
 
 <h3 id="label-Ruby+Version">Ruby Version</h3>
 
-<p>Developing in this repository requires Ruby &gt;= 2.6.0. To install this on an M2 Mac, run the <a href="https://github.com/rbenv/ruby-build/discussions/2034">following command</a>:</p>
+<p>Developing in this repository requires Ruby &gt;= 2.7.0. To install this on an M2 Mac, run the <a href="https://github.com/rbenv/ruby-build/discussions/2034">following command</a>:</p>
 
-<pre class="code ruby"><code class="ruby">RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
+<pre class="code ruby"><code class="ruby">RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.7.0
 </code></pre>
 
 <h3 id="label-Set-up">Set-up</h3>
@@ -183,7 +183,7 @@
 
 <p>This SDK transitively depends on <a href="https://github.com/etscrivner/rbsecp256k1">rbsecp256k1</a>. Follow <a href="https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements">these instructions</a> to ensure you have the necessary dependencies installed.</p>
 
-<p>The SDK assumes the existence of a <code>BASE_SEPOLIA_RPCURL</code> environment variable defined in your .env file. By default, this is the publicly available endpoint, which is rate-limited. To provision your own endpoint, go to the <a href="https://portal.cloud.coinbase.com/products/base">CDP Portal</a>. Then copy and paste your Base Sepolia RPC URL in the .env file:</p>
+<p>The SDK assumes the existence of a <code>BASE_SEPOLIA_RPC_URL</code> environment variable defined in your .env file. By default, this is the publicly available endpoint, which is rate-limited. To provision your own endpoint, go to the <a href="https://portal.cloud.coinbase.com/products/base">CDP Portal</a>. Then copy and paste your Base Sepolia RPC URL in the .env file:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='const'>BASE_SEPOLIA_RPC_URL</span><span class='op'>=</span><span class='const'>YOUR</span><span class='op'>-</span><span class='const'>URL</span>
 </code></pre>
@@ -192,19 +192,19 @@
 
 <p>To autocorrect all lint errors, run:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rubocop'>rubocop</span> <span class='op'>-</span><span class='const'>A</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_make'>make</span> <span class='id identifier rubyid_format'>format</span>
 </code></pre>
 
 <p>To detect all lint errors, run:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_lint'>lint</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_make'>make</span> <span class='id identifier rubyid_lint'>lint</span>
 </code></pre>
 
 <h3 id="label-Testing">Testing</h3>
 
 <p>To run all tests, run:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_rake'>rake</span> <span class='id identifier rubyid_test'>test</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_make'>make</span> <span class='id identifier rubyid_tests'>tests</span>
 </code></pre>
 
 <p>To run a specific test, run (for example):</p>
@@ -216,19 +216,19 @@
 
 <p>The repository is equipped with a REPL to allow developers to play with the SDK. To start it, run:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_exec'>exec</span> <span class='id identifier rubyid_bin'>bin</span><span class='op'>/</span><span class='id identifier rubyid_repl'>repl</span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_make'>make</span> <span class='id identifier rubyid_repl'>repl</span>
 </code></pre>
 
 <h3 id="label-Generating+Documentation">Generating Documentation</h3>
 
 <p>To generate documentation from the Ruby comments, run:</p>
 
-<pre class="code ruby"><code class="ruby">bundle exec yardoc --output-dir ./docs
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_make'>make</span> <span class='id identifier rubyid_docs'>docs</span>
 </code></pre>
 </div></div>
 
       <div id="footer">
-  Generated on Fri Apr 19 09:00:19 2024 by
+  Generated on Fri Apr 19 10:24:27 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>

@@ -6,8 +6,8 @@ format:
 lint:
 	bundle exec rubocop
 
-.PHONY: tests
-tests:
+.PHONY: test
+test:
 	bundle exec rake test
 
 .PHONY: repl

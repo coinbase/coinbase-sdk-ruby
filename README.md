@@ -44,7 +44,7 @@ bundle install
 
 ### Requirements
 
-- Ruby 2.6+.
+- Ruby 2.7+.
 
 ## Usage
 
@@ -119,11 +119,11 @@ w1.transfer(0.00001, :eth, w2).wait!
 
 ### Ruby Version
 
-Developing in this repository requires Ruby >= 2.6.0. To install this on an M2 Mac,
+Developing in this repository requires Ruby >= 2.7.0. To install this on an M2 Mac,
 run the [following command](https://github.com/rbenv/ruby-build/discussions/2034):
 
 ```bash
-RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.6.0
+RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.7.0
 ```
 
 ### Set-up
@@ -170,7 +170,7 @@ make lint
 To run all tests, run:
 
 ```bash
-make tests
+make test
 ```
 
 To run a specific test, run (for example):
