@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Initial release of the Coinbase Ruby SDK. Purely client-side implementation.
 
 ### Added
-- Wallet creation
+- Wallet creation and export
 - Address creation
 - Send and receive ETH
-- Supported network: Base Sepolia
+- Supported networks: Base Sepolia
