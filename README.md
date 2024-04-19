@@ -7,7 +7,7 @@ one asset into another.
 
 The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.
 
-**WARNNOTEING: The Coinbase SDK is currently in Alpha. The SDK:**
+**NOTE: The Coinbase SDK is currently in Alpha. The SDK:**
 - **may make backwards-incompatible changes between releases**
 - **should not be used on Mainnet (i.e. with real funds)**
 
@@ -157,20 +157,20 @@ BASE_SEPOLIA_RPC_URL=YOUR-URL
 To autocorrect all lint errors, run:
 
 ```bash
-bundle exec rubocop -A
+make format
 ```
 
 To detect all lint errors, run:
 
 ```bash
-bundle exec rake lint
+make lint
 ```
 
 ### Testing
 To run all tests, run:
 
 ```bash
-bundle exec rake test
+make tests
 ```
 
 To run a specific test, run (for example):
@@ -185,7 +185,7 @@ The repository is equipped with a REPL to allow developers to play with the SDK.
 it, run:
 
 ```bash
-bundle exec bin/repl
+make repl
 ```
 
 ### Generating Documentation
@@ -193,5 +193,5 @@ bundle exec bin/repl
 To generate documentation from the Ruby comments, run:
 
 ```bash
-bundle exec yardoc --output-dir ./docs
+make docs
 ```
