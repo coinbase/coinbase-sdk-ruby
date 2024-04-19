@@ -54,7 +54,7 @@ gem install coinbase-sdk
 After running `irb`, require the Gem:
 
 ```irb
-require 'coinbase-sdk'
+require 'coinbase'
 ```
 
 ### Requirements
