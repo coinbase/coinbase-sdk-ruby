@@ -17,29 +17,44 @@ hackathons, code academies, and other development settings.
 
 
 ## Documentation
-
-
-
 [Click here for full SDK documentation](https://super-barnacle-n8zkznw.pages.github.io/)
 
 ## Installation
 
-To use the package, run:
+### In Your Ruby Project
+
+Add the following to your Gemfile:
+
+```
+gem 'coinbase-sdk'
+```
+
+Or if you are specifying dependencies in your Gemspec:
+
+```ruby
+Gem::Specification.new do |spec|
+  spec.add_runtime_dependency 'coinbase-sdk'
+end
+```
+
+Then run:
 
 ```bash
-gem install coinbase
+bundler install
 ```
 
-Or if you are using bundler, add the `coinbase` gem to your Gemfile:
+### In the Interactive Ruby Shell (`irb`)
 
-```
-gem 'coinbase'
+On the command-line, run:
+
+```bash
+gem install coinbase-sdk
 ```
 
-Then, run:
+After running `irb`, require the Gem:
 
-```
-bundle install
+```irb
+require 'coinbase-sdk'
 ```
 
 ### Requirements
@@ -50,18 +65,16 @@ bundle install
 
 ### Initialization
 
-The SDK requires a Base Sepolia RPC Node URL, specified as the `BASE_SEPOLIA_RPC_URL` environment variable.
-The below uses the default RPC URL, which is rate-limited, but you can also provision your own on the
+The SDK requires a Base Sepolia RPC node, and uses the public instance (https://sepolia.base.org) by default.
+This instance is rate-limited, but you can also provision your own on the
 [Coinbase Developer Platform](https://portal.cloud.coinbase.com/products/base).
 
-```bash
-BASE_SEPOLIA_RPC_URL=https://sepolia.base.org
-```
 
-Once this is configured, initialize the SDK with:
+You can configure the SDK with your Base Sepolia RPC node by copying your node URL from the CDP portal 
+and setting the following:
 
 ```ruby
-Coinbase.init
+Coinbase.base_sepolia_rpc_url = 'https://api.developer.coinbase.com/rpc/v1/base/your-node-id'
 ```
 
 ### Wallets and Addresses
@@ -72,9 +85,6 @@ The SDK provides customer-custodied wallets, which means that you are responsibl
 to re-create wallets. The following code snippet demonstrates this:
 
 ```ruby
-# Initialize the SDK by loading environment variables.
-Coinbase.init
-
 # Create a Wallet with one Address by default.
 w1 = Coinbase::Wallet.new
 
@@ -95,9 +105,6 @@ w2 = Wallet.new(seed: data.seed, address_count: data.address_count)
 The following creates an in-memory wallet. After the wallet is funded with ETH, it transfers 0.00001 ETH to a different wallet.
 
 ```ruby
-# Initialize the SDK by loading environment variables.
-Coinbase.init
-
 # Wallets are self-custodial with in-memory key management on Base Sepolia.
 # This should NOT be used in mainnet with real funds. 
 w1 = Coinbase::Wallet.new

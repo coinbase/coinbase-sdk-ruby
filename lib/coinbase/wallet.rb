@@ -17,7 +17,7 @@ module Coinbase
     # @param address_count [Integer] (Optional) The number of addresses to generate for the Wallet. If not provided,
     #   a single address will be generated.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(seed: nil, address_count: 1, client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
+    def initialize(seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
       raise ArgumentError, 'Address count must be positive' if address_count < 1
 

@@ -249,7 +249,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#init-class_method" title="init (class method)">.<strong>init</strong>  &#x21d2; Object </a>
+      <a href="#base_sepolia_rpc_url-class_method" title="base_sepolia_rpc_url (class method)">.<strong>base_sepolia_rpc_url</strong>  &#x21d2; String </a>
     
 
     
@@ -264,7 +264,31 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Initializes the Coinbase SDK.</p>
+<p>Returns the Base Sepolia RPC URL.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#base_sepolia_rpc_url=-class_method" title="base_sepolia_rpc_url= (class method)">.<strong>base_sepolia_rpc_url=</strong>(value)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the Base Sepolia RPC URL.</p>
 </div></span>
   
 </li>
@@ -280,9 +304,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="init-class_method">
+  <h3 class="signature first" id="base_sepolia_rpc_url-class_method">
   
-    .<strong>init</strong>  &#x21d2; <tt>Object</tt> 
+    .<strong>base_sepolia_rpc_url</strong>  &#x21d2; <tt>String</tt> 
   
 
   
@@ -291,13 +315,31 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Initializes the Coinbase SDK.</p>
+<p>Returns the Base Sepolia RPC URL.</p>
 
 
   </div>
 </div>
 <div class="tags">
   
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the Base Sepolia RPC URL</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -305,15 +347,76 @@
       <pre class="lines">
 
 
-15
-16
-17</pre>
+17
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 17</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_init'>init</span>
-  <span class='const'>Dotenv</span><span class='period'>.</span><span class='id identifier rubyid_load'>load</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url'>base_sepolia_rpc_url</span>
+  <span class='ivar'>@base_sepolia_rpc_url</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="base_sepolia_rpc_url=-class_method">
+  
+    .<strong>base_sepolia_rpc_url=</strong>(value)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sets the Base Sepolia RPC URL.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the Base Sepolia RPC URL</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url='>base_sepolia_rpc_url=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='ivar'>@base_sepolia_rpc_url</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -325,7 +428,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 19 10:27:04 2024 by
+  Generated on Fri Apr 19 18:33:55 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
