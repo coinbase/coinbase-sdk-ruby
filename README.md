@@ -22,8 +22,6 @@ hackathons, code academies, and other development settings.
 
 ## Installation
 
-> Note: The gem is not published yet, the instructions below are for the future.
-
 To use the package, run:
 
 ```bash
