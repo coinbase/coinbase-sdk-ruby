@@ -7,12 +7,20 @@ require_relative 'coinbase/constants'
 require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/wallet'
-require 'dotenv'
 
 # The Coinbase SDK.
 module Coinbase
-  # Initializes the Coinbase SDK.
-  def self.init
-    Dotenv.load
+  @base_sepolia_rpc_url = 'https://sepolia.base.org'
+
+  # Returns the Base Sepolia RPC URL.
+  # @return [String] the Base Sepolia RPC URL
+  def self.base_sepolia_rpc_url
+    @base_sepolia_rpc_url
+  end
+
+  # Sets the Base Sepolia RPC URL.
+  # @param value [String] the Base Sepolia RPC URL
+  def self.base_sepolia_rpc_url=(value)
+    @base_sepolia_rpc_url = value
   end
 end

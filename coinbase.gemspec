@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'coinbase'
+  spec.name          = 'coinbase-sdk'
   spec.version       = '0.0.1'
   spec.authors       = ['Yuga Cohler']
   spec.files         = Dir['lib/**/*.rb']
@@ -16,7 +16,6 @@ Gem::Specification.new do |spec|
   spec.metadata['rubygems_mfa_required'] = 'true'
 
   spec.add_runtime_dependency 'bigdecimal'
-  spec.add_runtime_dependency 'dotenv', '2.8.1'
   spec.add_runtime_dependency 'eth'
   spec.add_runtime_dependency 'jimson'
   spec.add_runtime_dependency 'money-tree'

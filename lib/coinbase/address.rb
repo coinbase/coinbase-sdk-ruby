@@ -20,7 +20,7 @@ module Coinbase
     # @param key [Eth::Key] The key backing the Address
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(network_id, address_id, wallet_id, key,
-                   client: Jimson::Client.new(ENV.fetch('BASE_SEPOLIA_RPC_URL', nil)))
+                   client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       # TODO: Don't require key.
       @network_id = network_id
       @address_id = address_id
