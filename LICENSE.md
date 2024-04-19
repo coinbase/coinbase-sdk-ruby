@@ -1,4 +1,4 @@
-Apache License, Version 2.0
+Apache License
 
 Copyright (c) 2024 Coinbase
 
