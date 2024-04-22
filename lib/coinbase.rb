@@ -2,7 +2,7 @@
 
 require_relative 'coinbase/address'
 require_relative 'coinbase/asset'
-require_relative 'coinbase/auth'
+require_relative 'coinbase/authenticator'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
