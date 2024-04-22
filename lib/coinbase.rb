@@ -80,9 +80,9 @@ module Coinbase
   # Returns the default user.
   # @return [Coinbase::User] the default user
   def self.default_user
-    @api_client |= Coinbase::Client::ApiClient.new(Middleware.config)
-    @users_api |= Coinbase::Client::UsersApi.new(@api_client)
-    @default_user |= @users_api.get_current_user
+    @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
+    @users_api ||= Coinbase::Client::UsersApi.new(@api_client)
+    @default_user ||= @users_api.get_current_user
     @default_user
   end
 end
