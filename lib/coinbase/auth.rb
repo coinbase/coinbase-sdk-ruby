@@ -7,8 +7,9 @@ require 'securerandom'
 module Coinbase
   # Methods for authenticating with the Coinbase Platform APIs.
   module Auth
-    # Builds the JWT for the given endpoint URI. The JWT is signed with the API key's private key.
-    # @param uri [String] the endpoint URI
+    # Builds the JWT for the given API endpoint URI. The JWT is signed with the API key's private key.
+    # @param uri [String] The API endpoint URI
+    # @return [String] The JWT
     def self.build_jwt(uri)
       header = {
         typ: 'JWT',
@@ -21,7 +22,7 @@ module Coinbase
         iss: 'coinbase-cloud',
         aud: ['cdp_service'],
         nbf: Time.now.to_i,
-        exp: Time.now.to_i + 60, # expiration time (1 minute from now)
+        exp: Time.now.to_i + 60, # Expiration time: 1 minute from now.
         uris: [uri]
       }
 
