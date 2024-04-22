@@ -6,6 +6,7 @@ require_relative 'coinbase/authenticator'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
+require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/wallet'
@@ -34,6 +35,10 @@ module Coinbase
     @api_key_name = api_key_name
     @api_key_private_key = api_key_private_key
     @api_url = api_url
+
+    @api_client = Coinbase::Client::ApiClient.new(Middleware.config)
+    @users_api = Coinbase::Client::UsersApi.new(@api_client)
+    @default_user = @users_api.get_current_user
   end
 
   # Returns the API key name.
@@ -76,9 +81,9 @@ module Coinbase
     @api_url = value
   end
 
-  # Returns the API URL.
-  # @return [String] the API URL
-  def self.api_url
-    @api_url
+  # Returns the default user.
+  # @return [Coinbase::User] the default user
+  def self.default_user
+    @default_user
   end
 end

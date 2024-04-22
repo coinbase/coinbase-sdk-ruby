@@ -8,7 +8,6 @@ require 'securerandom'
 module Coinbase
   # A class that builds JWTs for authenticating with the Coinbase Platform APIs.
   class Authenticator < Faraday::Middleware
-
     # Initializes the Authenticator.
     # @param app [Faraday::Connection] The Faraday connection
     def initialize(app)
