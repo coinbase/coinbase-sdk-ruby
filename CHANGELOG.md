@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Add API client into the SDK.
+
 ## [0.0.1] - 2024-04-19
 
 Initial release of the Coinbase Ruby SDK. Purely client-side implementation.

@@ -15,13 +15,13 @@ Gem::Specification.new do |spec|
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.add_runtime_dependency 'bigdecimal'
   spec.add_runtime_dependency 'eth'
+  spec.add_runtime_dependency 'faraday'
+  spec.add_runtime_dependency 'faraday-multipart'
   spec.add_runtime_dependency 'jimson'
   spec.add_runtime_dependency 'jwt'
+  spec.add_runtime_dependency 'marcel'
   spec.add_runtime_dependency 'money-tree'
-  spec.add_runtime_dependency 'openssl'
-  spec.add_runtime_dependency 'securerandom'
 
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
