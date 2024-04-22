@@ -4,6 +4,7 @@ describe Coinbase do
   after(:each) do
     Coinbase.api_key_name = nil
     Coinbase.api_key_private_key = nil
+    Coinbase.api_url = 'api.cdp.coinbase.com'
   end
 
   describe '#base_sepolia_rpc_url' do
@@ -36,6 +37,19 @@ describe Coinbase do
   describe '#api_key_private_key' do
     it 'raises an error if the API key private key is not set' do
       expect { Coinbase.api_key_private_key }.to raise_error('API key private key is not set')
+    end
+  end
+
+  describe '#api_url' do
+    it 'returns the API URL' do
+      expect(Coinbase.api_url).to eq('api.cdp.coinbase.com')
+    end
+  end
+
+  describe '#api_url=' do
+    it 'sets the API URL' do
+      Coinbase.api_url = 'api.cdp.not-coinbase.com'
+      expect(Coinbase.api_url).to eq('api.cdp.not-coinbase.com')
     end
   end
 end

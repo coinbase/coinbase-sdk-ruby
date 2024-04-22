@@ -27,11 +27,13 @@ module Coinbase
   end
 
   # Initializes the Coinbase SDK with the given API key name and private key.
-  # @param api_key_name [String] the API key name
-  # @param api_key_private_key [String] the API key's private key
-  def self.init(api_key_name, api_key_private_key)
+  # @param api_key_name [String] The API key name
+  # @param api_key_private_key [String] The API key's private key
+  # @param api_url [String] The API URL
+  def self.init(api_key_name, api_key_private_key, api_url: 'api.cdp.coinbase.com')
     @api_key_name = api_key_name
     @api_key_private_key = api_key_private_key
+    @api_url = api_url
   end
 
   # Returns the API key name.
@@ -60,5 +62,23 @@ module Coinbase
   # @param value [String] the API key's private key
   def self.api_key_private_key=(value)
     @api_key_private_key = value
+  end
+
+  # Returns the API URL.
+  # @return [String] the API URL
+  def self.api_url
+    @api_url
+  end
+
+  # Sets the API URL.
+  # @param value [String] the API URL
+  def self.api_url=(value)
+    @api_url = value
+  end
+
+  # Returns the API URL.
+  # @return [String] the API URL
+  def self.api_url
+    @api_url
   end
 end
