@@ -2,6 +2,7 @@
 
 require_relative 'coinbase/address'
 require_relative 'coinbase/asset'
+require_relative 'coinbase/auth'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/constants'
 require_relative 'coinbase/network'
@@ -22,6 +23,14 @@ module Coinbase
   # @param value [String] the Base Sepolia RPC URL
   def self.base_sepolia_rpc_url=(value)
     @base_sepolia_rpc_url = value
+  end
+
+  # Initializes the Coinbase SDK with the given API key name and private key.
+  # @param api_key_name [String] the API key name
+  # @param api_key_private_key [String] the API key's private key
+  def self.init(api_key_name, api_key_private_key)
+    @api_key_name = api_key_name
+    @api_key_private_key = api_key_private_key
   end
 
   # Returns the API key name.

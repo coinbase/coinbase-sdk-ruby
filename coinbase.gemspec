@@ -18,7 +18,9 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'bigdecimal'
   spec.add_runtime_dependency 'eth'
   spec.add_runtime_dependency 'jimson'
+  spec.add_runtime_dependency 'jwt'
   spec.add_runtime_dependency 'money-tree'
+  spec.add_runtime_dependency 'openssl'
   spec.add_runtime_dependency 'securerandom'
 
   spec.add_development_dependency 'pry'
