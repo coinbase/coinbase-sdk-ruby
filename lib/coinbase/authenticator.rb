@@ -21,7 +21,7 @@ module Coinbase
       method = env.method.downcase.to_sym
       uri = env.url.to_s
       uri_without_protocol = URI(uri).host
-      build_jwt("#{method.upcase} #{uri_without_protocol}#{env.url.path}")
+      token = build_jwt("#{method.upcase} #{uri_without_protocol}#{env.url.path}")
       env.request_headers['Authorization'] = "Bearer #{token}"
       @app.call(env)
     end
@@ -29,7 +29,7 @@ module Coinbase
     # Builds the JWT for the given API endpoint URI. The JWT is signed with the API key's private key.
     # @param uri [String] The API endpoint URI
     # @return [String] The JWT
-    def self.build_jwt(uri)
+    def build_jwt(uri)
       header = {
         typ: 'JWT',
         kid: Coinbase.api_key_name,
