@@ -1,6 +1,6 @@
 .PHONY: format
 format:
-	bundle exec rubocop -a
+	bundle exec rubocop -A
 
 .PHONY: lint
 lint:
