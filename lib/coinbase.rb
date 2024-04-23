@@ -9,6 +9,7 @@ require_relative 'coinbase/constants'
 require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
+require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
 
 # The Coinbase SDK.
