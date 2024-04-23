@@ -14,17 +14,19 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class User
-    # The ID of the user
-    attr_accessor :id
+  # An error response from the Coinbase Developer Platform API
+  class Error
+    # A short string representing the reported error. Can be use to handle errors programmatically.
+    attr_accessor :code
 
-    attr_accessor :display_name
+    # A human-readable message providing more details about the error.
+    attr_accessor :message
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'display_name' => :'display_name'
+        :'code' => :'code',
+        :'message' => :'message'
       }
     end
 
@@ -36,8 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'id' => :'String',
-        :'display_name' => :'String'
+        :'code' => :'String',
+        :'message' => :'String'
       }
     end
 
@@ -51,25 +53,27 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::User` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Error` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::User`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Error`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.key?(:'code')
+        self.code = attributes[:'code']
       else
-        self.id = nil
+        self.code = nil
       end
 
-      if attributes.key?(:'display_name')
-        self.display_name = attributes[:'display_name']
+      if attributes.key?(:'message')
+        self.message = attributes[:'message']
+      else
+        self.message = nil
       end
     end
 
@@ -78,8 +82,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @id.nil?
-        invalid_properties.push('invalid value for "id", id cannot be nil.')
+      if @code.nil?
+        invalid_properties.push('invalid value for "code", code cannot be nil.')
+      end
+
+      if @code.to_s.length > 5000
+        invalid_properties.push('invalid value for "code", the character length must be smaller than or equal to 5000.')
+      end
+
+      if @message.nil?
+        invalid_properties.push('invalid value for "message", message cannot be nil.')
+      end
+
+      if @message.to_s.length > 5000
+        invalid_properties.push('invalid value for "message", the character length must be smaller than or equal to 5000.')
       end
 
       invalid_properties
@@ -89,8 +105,39 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @id.nil?
+      return false if @code.nil?
+      return false if @code.to_s.length > 5000
+      return false if @message.nil?
+      return false if @message.to_s.length > 5000
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] code Value to be assigned
+    def code=(code)
+      if code.nil?
+        fail ArgumentError, 'code cannot be nil'
+      end
+
+      if code.to_s.length > 5000
+        fail ArgumentError, 'invalid value for "code", the character length must be smaller than or equal to 5000.'
+      end
+
+      @code = code
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] message Value to be assigned
+    def message=(message)
+      if message.nil?
+        fail ArgumentError, 'message cannot be nil'
+      end
+
+      if message.to_s.length > 5000
+        fail ArgumentError, 'invalid value for "message", the character length must be smaller than or equal to 5000.'
+      end
+
+      @message = message
     end
 
     # Checks equality by comparing each attribute.
@@ -98,8 +145,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          display_name == o.display_name
+          code == o.code &&
+          message == o.message
     end
 
     # @see the `==` method
@@ -111,7 +158,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, display_name].hash
+      [code, message].hash
     end
 
     # Builds the object from hash

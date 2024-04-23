@@ -14,17 +14,18 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class User
-    # The ID of the user
+  class Wallet
+    # The server-assigned ID for the wallet.
     attr_accessor :id
 
-    attr_accessor :display_name
+    # The ID of the blockchain network
+    attr_accessor :network
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'id' => :'id',
-        :'display_name' => :'display_name'
+        :'network' => :'network'
       }
     end
 
@@ -37,7 +38,7 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'id' => :'String',
-        :'display_name' => :'String'
+        :'network' => :'String'
       }
     end
 
@@ -51,25 +52,25 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::User` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Wallet` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::User`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Wallet`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
       if attributes.key?(:'id')
         self.id = attributes[:'id']
-      else
-        self.id = nil
       end
 
-      if attributes.key?(:'display_name')
-        self.display_name = attributes[:'display_name']
+      if attributes.key?(:'network')
+        self.network = attributes[:'network']
+      else
+        self.network = nil
       end
     end
 
@@ -78,8 +79,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @id.nil?
-        invalid_properties.push('invalid value for "id", id cannot be nil.')
+      if @network.nil?
+        invalid_properties.push('invalid value for "network", network cannot be nil.')
       end
 
       invalid_properties
@@ -89,7 +90,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @id.nil?
+      return false if @network.nil?
       true
     end
 
@@ -99,7 +100,7 @@ module Coinbase::Client
       return true if self.equal?(o)
       self.class == o.class &&
           id == o.id &&
-          display_name == o.display_name
+          network == o.network
     end
 
     # @see the `==` method
@@ -111,7 +112,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, display_name].hash
+      [id, network].hash
     end
 
     # Builds the object from hash
