@@ -1,2 +1,4 @@
 Gemfile.lock
 .yardoc
+lib/**/.DS_Store
+.idea
