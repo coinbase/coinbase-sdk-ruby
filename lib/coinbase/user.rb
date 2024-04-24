@@ -7,11 +7,11 @@ module Coinbase
   # A representation of a User. Users have Wallets, which can hold balances of Assets.
   class User
     # Returns a new User object.
-    # @param delegate [Coinbase::Client::User] the underlying User object
+    # @param model [Coinbase::Client::User] the underlying User object
     # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
-    def initialize(delegate, wallets_api, addresses_api)
-      @delegate = delegate
+    def initialize(model, wallets_api, addresses_api)
+      @model = model
       @wallets_api = wallets_api
       @addresses_api = addresses_api
     end
@@ -19,7 +19,7 @@ module Coinbase
     # Returns the User ID.
     # @return [String] the User ID
     def user_id
-      @delegate.id
+      @model.id
     end
 
     # Creates a new Wallet belonging to the User.
