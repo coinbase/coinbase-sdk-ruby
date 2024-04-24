@@ -9,15 +9,14 @@ require 'jimson'
 
 module Coinbase
   # A representation of a blockchain Address, which is a user-controlled account on a Network. Addresses are used to
-  # send and receive Assets, and should be created using {link:Wallet#create_address}. Addresses require a
-  # {link:Eth::Key} to sign transaction data.
+  # send and receive Assets, and should be created using Wallet#create_address. Addresses require an
+  # Eth::Key to sign transaction data.
   class Address
-    # Returns a new Address object.
+    # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
     # @param key [Eth::Key] The key backing the Address
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
-      # TODO: Don't require key.
       @model = model
       @key = key
       @client = client

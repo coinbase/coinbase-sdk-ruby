@@ -4,9 +4,10 @@ require_relative 'client'
 require_relative 'wallet'
 
 module Coinbase
-  # A representation of a User. Users have Wallets, which can hold balances of Assets.
+  # A representation of a User. Users have Wallets, which can hold balances of Assets. Access the default User through
+  # Coinbase#default_user.
   class User
-    # Returns a new User object.
+    # Returns a new User object. Do not use this method directly. Instead, use Coinbase#default_user.
     # @param model [Coinbase::Client::User] the underlying User object
     # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
