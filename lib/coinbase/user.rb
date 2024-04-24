@@ -8,7 +8,7 @@ module Coinbase
   class User
     # Returns a new User object.
     # @param delegate [Coinbase::Client::User] the underlying User object
-    # @param wallets_api [Coinbase::WalletAPI] the Wallets API to use
+    # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     def initialize(delegate, wallets_api)
       @delegate = delegate
       @wallets_api = wallets_api
