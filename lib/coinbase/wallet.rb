@@ -9,18 +9,18 @@ module Coinbase
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
   # list their balances, and transfer Assets to other Addresses.
   class Wallet
-    attr_reader :wallet_id, :network_id
-
     # Returns a new Wallet object.
+    # @param delegate [Coinbase::Client::Wallet] The underlying Wallet object
     # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
     #   a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses to generate for the Wallet. If not provided,
     #   a single address will be generated.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(delegate, seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
       raise ArgumentError, 'Address count must be positive' if address_count < 1
 
+      @delegate = delegate
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
       @wallet_id = SecureRandom.uuid
@@ -35,6 +35,18 @@ module Coinbase
       @client = client
 
       address_count.times { create_address }
+    end
+
+    # Returns the Wallet ID.
+    # @return [String] The Wallet ID
+    def wallet_id
+      @delegate.id
+    end
+
+    # Returns the Network ID of the Wallet.
+    # @return [Symbol] The Network ID
+    def network_id
+      Coinbase.to_sym(@delegate.network_id)
     end
 
     # Creates a new Address in the Wallet.

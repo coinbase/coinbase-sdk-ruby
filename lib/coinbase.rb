@@ -83,7 +83,15 @@ module Coinbase
   def self.default_user
     @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
     @users_api ||= Coinbase::Client::UsersApi.new(@api_client)
-    @default_user ||= @users_api.get_current_user
-    @default_user
+    @wallets_api || Coinbase::Client::WalletsApi.new(@api_client)
+    @user_model ||= @users_api.get_current_user
+    @default_user ||= Coinbase::User.new(@user_model, @wallets_api)
+  end
+
+  # Converts a string to a symbol, replacing hyphens with underscores.
+  # @param string [String] the string to convert
+  # @return [Symbol] the converted symbol
+  def self.to_sym(value)
+    value.to_s.gsub('-', '_').to_sym
   end
 end

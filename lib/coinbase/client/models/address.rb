@@ -19,7 +19,7 @@ module Coinbase::Client
     attr_accessor :wallet_id
 
     # The ID of the blockchain network
-    attr_accessor :network
+    attr_accessor :network_id
 
     # The public key that the address will be derived for.
     attr_accessor :public_key
@@ -31,7 +31,7 @@ module Coinbase::Client
     def self.attribute_map
       {
         :'wallet_id' => :'wallet_id',
-        :'network' => :'network',
+        :'network_id' => :'network_id',
         :'public_key' => :'public_key',
         :'address_id' => :'address_id'
       }
@@ -46,7 +46,7 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'wallet_id' => :'String',
-        :'network' => :'String',
+        :'network_id' => :'String',
         :'public_key' => :'String',
         :'address_id' => :'String'
       }
@@ -79,10 +79,10 @@ module Coinbase::Client
         self.wallet_id = nil
       end
 
-      if attributes.key?(:'network')
-        self.network = attributes[:'network']
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
       else
-        self.network = nil
+        self.network_id = nil
       end
 
       if attributes.key?(:'public_key')
@@ -107,8 +107,8 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
       end
 
-      if @network.nil?
-        invalid_properties.push('invalid value for "network", network cannot be nil.')
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
       if @public_key.nil?
@@ -127,7 +127,7 @@ module Coinbase::Client
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @wallet_id.nil?
-      return false if @network.nil?
+      return false if @network_id.nil?
       return false if @public_key.nil?
       return false if @address_id.nil?
       true
@@ -139,7 +139,7 @@ module Coinbase::Client
       return true if self.equal?(o)
       self.class == o.class &&
           wallet_id == o.wallet_id &&
-          network == o.network &&
+          network_id == o.network_id &&
           public_key == o.public_key &&
           address_id == o.address_id
     end
@@ -153,7 +153,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet_id, network, public_key, address_id].hash
+      [wallet_id, network_id, public_key, address_id].hash
     end
 
     # Builds the object from hash
