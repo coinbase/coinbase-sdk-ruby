@@ -48,17 +48,11 @@ module Coinbase
       Wallet.new(wallet, seed: data.seed, address_count: address_count)
     end
 
-    # Lists the Wallets belonging to the User.
-    # @return [Array<Coinbase::Wallet>] the Wallets belonging to the User
-    def list_wallets
-      raise NotImplementedError
-    end
-
-    # Returns the Wallet with the given ID.
-    # @param wallet_id [String] the ID of the Wallet to retrieve
-    # @return [Coinbase::Wallet] the Wallet
-    def get_wallet(wallet_id)
-      raise NotImplementedError
+    # Lists the IDs of the Wallets belonging to the User.
+    # @return [Array<String>] the IDs of the Wallets belonging to the User
+    def list_wallet_ids
+      wallets = @wallets_api.list_wallets
+      wallets.map(&:id)
     end
   end
 end

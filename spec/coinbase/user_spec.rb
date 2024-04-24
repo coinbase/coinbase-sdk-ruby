@@ -54,15 +54,14 @@ describe Coinbase::User do
     end
   end
 
-  describe '#list_wallets' do
-    it 'lists the wallets belonging to the user' do
-      expect { user.list_wallets }.to raise_error(NotImplementedError)
+  describe '#list_wallet_ids' do
+    let(:wallet_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:wallet_list_delegate) do
+      wallet_ids.map { |id| Coinbase::Client::Wallet.new({ 'id': id, 'network_id': 'base-sepolia' }) }
     end
-  end
-
-  describe '#get_wallet' do
-    it 'returns the wallet with the given ID' do
-      expect { user.get_wallet(SecureRandom.uuid) }.to raise_error(NotImplementedError)
+    it 'lists the wallet IDs' do
+      expect(wallets_api).to receive(:list_wallets).and_return(wallet_list_delegate)
+      expect(user.list_wallet_ids).to eq(wallet_ids)
     end
   end
 end
