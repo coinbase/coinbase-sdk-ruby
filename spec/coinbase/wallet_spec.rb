@@ -161,15 +161,15 @@ describe Coinbase::Wallet do
 
     it 'exports the Wallet data' do
       wallet_data = seed_wallet.export
-      expect(wallet_data).to be_a(Coinbase::Wallet::WalletData)
+      expect(wallet_data).to be_a(Coinbase::Wallet::Data)
+      expect(wallet_data.wallet_id).to eq(seed_wallet.wallet_id)
       expect(wallet_data.seed).to eq(seed)
-      expect(wallet_data.address_count).to eq(address_count)
     end
 
     it 'allows for re-creation of a Wallet' do
       wallet_data = seed_wallet.export
-      new_wallet = described_class.new(delegate, seed: wallet_data.seed, address_count: wallet_data.address_count,
-                                       client: client)
+      new_wallet = described_class.new(delegate, seed: wallet_data.seed, address_count: address_count,
+                                                 client: client)
       expect(new_wallet.list_addresses.length).to eq(address_count)
       new_wallet.list_addresses.each_with_index do |address, i|
         expect(address.address_id).to eq(seed_wallet.list_addresses[i].address_id)

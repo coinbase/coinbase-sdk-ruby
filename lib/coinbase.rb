@@ -84,8 +84,9 @@ module Coinbase
     @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
     @users_api ||= Coinbase::Client::UsersApi.new(@api_client)
     @wallets_api || Coinbase::Client::WalletsApi.new(@api_client)
+    @addresses_api ||= Coinbase::Client::AddressesApi.new(@api_client)
     @user_model ||= @users_api.get_current_user
-    @default_user ||= Coinbase::User.new(@user_model, @wallets_api)
+    @default_user ||= Coinbase::User.new(@user_model, @wallets_api, @addresses_api)
   end
 
   # Converts a string to a symbol, replacing hyphens with underscores.
