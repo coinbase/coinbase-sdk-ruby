@@ -2,6 +2,7 @@
 
 require_relative 'balance_map'
 require_relative 'constants'
+require_relative 'wallet'
 require 'bigdecimal'
 require 'eth'
 require 'jimson'
@@ -11,22 +12,33 @@ module Coinbase
   # send and receive Assets, and should be created using {link:Wallet#create_address}. Addresses require a
   # {link:Eth::Key} to sign transaction data.
   class Address
-    attr_reader :network_id, :address_id, :wallet_id
-
     # Returns a new Address object.
-    # @param network_id [Symbol] The ID of the Network on which the Address exists
-    # @param address_id [String] The ID of the Address. On EVM Networks, for example, this is a hash of the public key.
-    # @param wallet_id [String] The ID of the Wallet to which the Address belongs
+    # @param model [Coinbase::Client::Address] The underlying Address object
     # @param key [Eth::Key] The key backing the Address
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(network_id, address_id, wallet_id, key,
-                   client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       # TODO: Don't require key.
-      @network_id = network_id
-      @address_id = address_id
-      @wallet_id = wallet_id
+      @model = model
       @key = key
       @client = client
+    end
+
+    # Returns the Network ID of the Address.
+    # @return [Symbol] The Network ID
+    def network_id
+      Coinbase.to_sym(@model.network_id)
+    end
+
+    # Returns the Wallet ID of the Address.
+    # @return [String] The Wallet ID
+    def wallet_id
+      @model.wallet_id
+    end
+
+    # Returns the Address ID.
+    # @return [String] The Address ID
+    def address_id
+      @model.address_id
     end
 
     # Returns the balances of the Address. Currently only ETH balances are supported.
@@ -34,7 +46,7 @@ module Coinbase
     #  in ETH.
     def list_balances
       # TODO: Handle multiple currencies.
-      eth_balance_in_wei = BigDecimal(@client.eth_getBalance(@address_id, 'latest').to_i(16).to_s)
+      eth_balance_in_wei = BigDecimal(@client.eth_getBalance(address_id, 'latest').to_i(16).to_s)
       eth_balance = BigDecimal(eth_balance_in_wei / BigDecimal(Coinbase::WEI_PER_ETHER.to_s))
 
       BalanceMap.new({ eth: eth_balance })
@@ -75,11 +87,11 @@ module Coinbase
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
 
       if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
         destination = destination.default_address.address_id
       elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
         destination = destination.address_id
       end
@@ -89,7 +101,7 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      transfer = Coinbase::Transfer.new(@network_id, @wallet_id, @address_id, amount, asset_id, destination,
+      transfer = Coinbase::Transfer.new(network_id, wallet_id, address_id, amount, asset_id, destination,
                                         client: @client)
 
       transaction = transfer.transaction
@@ -102,7 +114,7 @@ module Coinbase
     # Returns the address as a string.
     # @return [String] The address
     def to_s
-      @address_id
+      address_id
     end
 
     private
