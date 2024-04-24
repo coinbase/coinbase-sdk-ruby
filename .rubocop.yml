@@ -9,6 +9,9 @@ AllCops:
 # Tests can be long.
 Metrics/BlockLength:
   Enabled: false
+# Classes can be long.
+Metrics/ClassLength:
+  Max: 1000
 Metrics/MethodLength:
   Max: 50
 # Methods can have many parameters.

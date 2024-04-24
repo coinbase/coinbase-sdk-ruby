@@ -22,6 +22,13 @@ describe Coinbase::User do
 
     before do
       expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
+      expect(addresses_api)
+        .to receive(:create_address)
+        .with(wallet_id, satisfy do |opts|
+          public_key_present = opts[:create_address_request][:public_key].is_a?(String)
+          attestation_present = opts[:create_address_request][:attestation].is_a?(String)
+          public_key_present && attestation_present
+        end)
     end
 
     it 'creates a new wallet' do
@@ -43,6 +50,7 @@ describe Coinbase::User do
     before do
       expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model)
       expect(addresses_api).to receive(:list_addresses).and_return(address_list_model)
+      expect(addresses_api).to receive(:get_address).exactly(address_count).times
     end
 
     it 'imports a wallet' do

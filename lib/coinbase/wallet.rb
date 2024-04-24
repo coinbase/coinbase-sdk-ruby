@@ -67,9 +67,9 @@ module Coinbase
       public_key = key.public_key.compressed.unpack1('H*')
 
       opts = {
-        :create_address_request => {
-          :public_key => public_key,
-          :attestation => attestation
+        create_address_request: {
+          public_key: public_key,
+          attestation: attestation
         }
       }
       address_model = @addresses_api.create_address(wallet_id, opts)
@@ -93,7 +93,6 @@ module Coinbase
     # Returns the list of Addresses in the Wallet.
     # @return [Array<Address>] The list of Addresses
     def list_addresses
-      # TODO: Register with server.
       @addresses
     end
 
@@ -196,8 +195,7 @@ module Coinbase
     def derive_key
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
-      key = Eth::Key.new(priv: private_key)
-      key
+      Eth::Key.new(priv: private_key)
     end
 
     # Caches an Address on the client-side and increments the address index.
@@ -218,11 +216,11 @@ module Coinbase
     def create_attestation(key)
       public_key = key.public_key.compressed.unpack1('H*')
       payload = {
-        :wallet_id => wallet_id,
-        :public_key => public_key
+        wallet_id: wallet_id,
+        public_key: public_key
       }.to_json
       hashed_payload = Digest::SHA256.digest(payload)
-      attestation = key.sign(hashed_payload)
+      key.sign(hashed_payload)
     end
   end
 end

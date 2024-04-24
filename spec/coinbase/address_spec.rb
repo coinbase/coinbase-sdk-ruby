@@ -5,14 +5,14 @@ describe Coinbase::Address do
   let(:network_id) { :base_sepolia }
   let(:address_id) { key.address.to_s }
   let(:wallet_id) { SecureRandom.uuid }
-  let(:model) {
+  let(:model) do
     Coinbase::Client::Address.new({
-      'network_id' => 'base-sepolia',
-      'address_id' => address_id,
-      'wallet_id' => wallet_id,
-      'public_key' => key.public_key.compressed.unpack1('H*')
-    })
-  }
+                                    'network_id' => 'base-sepolia',
+                                    'address_id' => address_id,
+                                    'wallet_id' => wallet_id,
+                                    'public_key' => key.public_key.compressed.unpack1('H*')
+                                  })
+  end
   let(:client) { double('Jimson::Client') }
 
   subject(:address) do
@@ -120,14 +120,14 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination Address is on a different network' do
-      let(:new_model) {
+      let(:new_model) do
         Coinbase::Client::Address.new({
-          'network_id' => 'base-mainnet',
-          'address_id' => address_id,
-          'wallet_id' => wallet_id,
-          'public_key' => key.public_key.compressed.unpack1('H*')
-        })
-      }
+                                        'network_id' => 'base-mainnet',
+                                        'address_id' => address_id,
+                                        'wallet_id' => wallet_id,
+                                        'public_key' => key.public_key.compressed.unpack1('H*')
+                                      })
+      end
 
       it 'raises an ArgumentError' do
         expect do
