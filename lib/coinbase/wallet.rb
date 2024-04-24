@@ -9,18 +9,18 @@ module Coinbase
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
   # list their balances, and transfer Assets to other Addresses.
   class Wallet
-    attr_reader :wallet_id, :network_id
-
     # Returns a new Wallet object.
-    # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
-    #   a new seed will be generated.
+    # @param delegate [Coinbase::Client::Wallet] The underlying Wallet object
+    # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
+    #   If not provided, a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses to generate for the Wallet. If not provided,
     #   a single address will be generated.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(delegate, seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
       raise ArgumentError, 'Address count must be positive' if address_count < 1
 
+      @delegate = delegate
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
       @wallet_id = SecureRandom.uuid
@@ -35,6 +35,18 @@ module Coinbase
       @client = client
 
       address_count.times { create_address }
+    end
+
+    # Returns the Wallet ID.
+    # @return [String] The Wallet ID
+    def wallet_id
+      @delegate.id
+    end
+
+    # Returns the Network ID of the Wallet.
+    # @return [Symbol] The Network ID
+    def network_id
+      Coinbase.to_sym(@delegate.network_id)
     end
 
     # Creates a new Address in the Wallet.
@@ -132,29 +144,23 @@ module Coinbase
       default_address.transfer(amount, asset_id, destination)
     end
 
-    # Exports the Wallet's data to a WalletData object.
-    # @return [WalletData] The Wallet data
+    # Exports the Wallet's data to a Data object.
+    # @return [Data] The Wallet data
     def export
-      WalletData.new(@master.seed_hex, @addresses.length)
+      Data.new(wallet_id, @master.seed_hex)
     end
 
     # The data required to recreate a Wallet.
-    class WalletData
-      attr_reader :seed, :address_count
+    class Data
+      attr_reader :wallet_id, :seed
 
-      # Returns a new WalletData object.
+      # Returns a new Data object.
+      # @param wallet_id [String] The ID of the Wallet
       # @param seed [String] The seed of the Wallet
-      # @param address_count [Integer] The number of addresses in the Wallet
-      def initialize(seed, address_count)
+      def initialize(wallet_id, seed)
+        @wallet_id = wallet_id
         @seed = seed
-        @address_count = address_count
       end
-    end
-
-    # Returns the data required to recreate the Wallet.
-    # @return [WalletData] The Wallet data
-    def to_data
-      WalletData.new(@master.seed_hex, @addresses.length)
     end
   end
 end

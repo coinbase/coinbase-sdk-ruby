@@ -17,10 +17,10 @@ module Coinbase::Client
   # An asset onchain scoped to a particular network, e.g. ETH on base-sepolia, or the USDC ERC20 Token on ethereum-mainnet.
   class Asset
     # The ID of the blockchain network
-    attr_accessor :network
+    attr_accessor :network_id
 
-    # The canonical symbol for the asset on the network
-    attr_accessor :currency
+    # The ID for the asset on the network
+    attr_accessor :asset_id
 
     # The number of decimals the asset supports. This is used to convert from atomic units to base units.
     attr_accessor :decimals
@@ -31,8 +31,8 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'network' => :'network',
-        :'currency' => :'currency',
+        :'network_id' => :'network_id',
+        :'asset_id' => :'asset_id',
         :'decimals' => :'decimals',
         :'contract_address' => :'contract_address'
       }
@@ -46,8 +46,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'network' => :'String',
-        :'currency' => :'String',
+        :'network_id' => :'String',
+        :'asset_id' => :'String',
         :'decimals' => :'Integer',
         :'contract_address' => :'String'
       }
@@ -74,16 +74,16 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'network')
-        self.network = attributes[:'network']
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
       else
-        self.network = nil
+        self.network_id = nil
       end
 
-      if attributes.key?(:'currency')
-        self.currency = attributes[:'currency']
+      if attributes.key?(:'asset_id')
+        self.asset_id = attributes[:'asset_id']
       else
-        self.currency = nil
+        self.asset_id = nil
       end
 
       if attributes.key?(:'decimals')
@@ -100,12 +100,12 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network.nil?
-        invalid_properties.push('invalid value for "network", network cannot be nil.')
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
-      if @currency.nil?
-        invalid_properties.push('invalid value for "currency", currency cannot be nil.')
+      if @asset_id.nil?
+        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
       end
 
       invalid_properties
@@ -115,8 +115,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network.nil?
-      return false if @currency.nil?
+      return false if @network_id.nil?
+      return false if @asset_id.nil?
       true
     end
 
@@ -125,8 +125,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          network == o.network &&
-          currency == o.currency &&
+          network_id == o.network_id &&
+          asset_id == o.asset_id &&
           decimals == o.decimals &&
           contract_address == o.contract_address
     end
@@ -140,7 +140,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network, currency, decimals, contract_address].hash
+      [network_id, asset_id, decimals, contract_address].hash
     end
 
     # Builds the object from hash

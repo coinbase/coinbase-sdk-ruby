@@ -8,8 +8,12 @@ module Coinbase
   class User
     # Returns a new User object.
     # @param delegate [Coinbase::Client::User] the underlying User object
-    def initialize(delegate)
+    # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
+    # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
+    def initialize(delegate, wallets_api, addresses_api)
       @delegate = delegate
+      @wallets_api = wallets_api
+      @addresses_api = addresses_api
     end
 
     # Returns the User ID.
@@ -19,27 +23,36 @@ module Coinbase
     end
 
     # Creates a new Wallet belonging to the User.
-    # @param seed [Integer] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal. If not provided,
-    #   a new seed will be generated.
-    # @param address_count [Integer] (Optional) The number of addresses to generate for the Wallet. If not provided,
-    #   a single address will be generated.
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     # @return [Coinbase::Wallet] the new Wallet
-    def create_wallet(seed: nil, address_count: 1, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
-      Wallet.new(seed: seed, address_count: address_count, client: client)
+    def create_wallet
+      create_wallet_request = {
+        wallet: {
+          # TODO: Don't hardcode this.
+          network_id: 'base-sepolia'
+        }
+      }
+      opts = { create_wallet_request: create_wallet_request }
+
+      wallet = @wallets_api.create_wallet(opts)
+
+      # TODO: Create and register the address.
+      Wallet.new(wallet)
     end
 
-    # Lists the Wallets belonging to the User.
-    # @return [Array<Coinbase::Wallet>] the Wallets belonging to the User
-    def list_wallets
-      raise NotImplementedError
+    # Imports a Wallet belonging to the User.
+    # @param data [Coinbase::Wallet::Data] the Wallet data to import
+    # @return [Coinbase::Wallet] the imported Wallet
+    def import_wallet(data)
+      wallet = @wallets_api.get_wallet(data.wallet_id)
+      address_count = @addresses_api.list_addresses(wallet.id).total_count
+      Wallet.new(wallet, seed: data.seed, address_count: address_count)
     end
 
-    # Returns the Wallet with the given ID.
-    # @param wallet_id [String] the ID of the Wallet to retrieve
-    # @return [Coinbase::Wallet] the Wallet
-    def get_wallet(wallet_id)
-      raise NotImplementedError
+    # Lists the IDs of the Wallets belonging to the User.
+    # @return [Array<String>] the IDs of the Wallets belonging to the User
+    def list_wallet_ids
+      wallets = @wallets_api.list_wallets
+      wallets.map(&:id)
     end
   end
 end

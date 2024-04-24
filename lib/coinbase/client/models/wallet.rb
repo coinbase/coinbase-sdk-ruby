@@ -19,13 +19,13 @@ module Coinbase::Client
     attr_accessor :id
 
     # The ID of the blockchain network
-    attr_accessor :network
+    attr_accessor :network_id
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'id' => :'id',
-        :'network' => :'network'
+        :'network_id' => :'network_id'
       }
     end
 
@@ -38,7 +38,7 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'id' => :'String',
-        :'network' => :'String'
+        :'network_id' => :'String'
       }
     end
 
@@ -67,10 +67,10 @@ module Coinbase::Client
         self.id = attributes[:'id']
       end
 
-      if attributes.key?(:'network')
-        self.network = attributes[:'network']
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
       else
-        self.network = nil
+        self.network_id = nil
       end
     end
 
@@ -79,8 +79,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network.nil?
-        invalid_properties.push('invalid value for "network", network cannot be nil.')
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
       invalid_properties
@@ -90,7 +90,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network.nil?
+      return false if @network_id.nil?
       true
     end
 
@@ -100,7 +100,7 @@ module Coinbase::Client
       return true if self.equal?(o)
       self.class == o.class &&
           id == o.id &&
-          network == o.network
+          network_id == o.network_id
     end
 
     # @see the `==` method
@@ -112,7 +112,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network].hash
+      [id, network_id].hash
     end
 
     # Builds the object from hash
