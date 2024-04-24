@@ -4,14 +4,15 @@ require_relative 'client'
 require_relative 'wallet'
 
 module Coinbase
-  # A representation of a User. Users have Wallets, which can hold balances of Assets.
+  # A representation of a User. Users have Wallets, which can hold balances of Assets. Access the default User through
+  # Coinbase#default_user.
   class User
-    # Returns a new User object.
-    # @param delegate [Coinbase::Client::User] the underlying User object
+    # Returns a new User object. Do not use this method directly. Instead, use Coinbase#default_user.
+    # @param model [Coinbase::Client::User] the underlying User object
     # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
-    def initialize(delegate, wallets_api, addresses_api)
-      @delegate = delegate
+    def initialize(model, wallets_api, addresses_api)
+      @model = model
       @wallets_api = wallets_api
       @addresses_api = addresses_api
     end
@@ -19,7 +20,7 @@ module Coinbase
     # Returns the User ID.
     # @return [String] the User ID
     def user_id
-      @delegate.id
+      @model.id
     end
 
     # Creates a new Wallet belonging to the User.
@@ -33,19 +34,18 @@ module Coinbase
       }
       opts = { create_wallet_request: create_wallet_request }
 
-      wallet = @wallets_api.create_wallet(opts)
+      model = @wallets_api.create_wallet(opts)
 
-      # TODO: Create and register the address.
-      Wallet.new(wallet)
+      Wallet.new(model, @wallets_api, @addresses_api)
     end
 
     # Imports a Wallet belonging to the User.
     # @param data [Coinbase::Wallet::Data] the Wallet data to import
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
-      wallet = @wallets_api.get_wallet(data.wallet_id)
-      address_count = @addresses_api.list_addresses(wallet.id).total_count
-      Wallet.new(wallet, seed: data.seed, address_count: address_count)
+      model = @wallets_api.get_wallet(data.wallet_id)
+      address_count = @addresses_api.list_addresses(model.id).total_count
+      Wallet.new(model, @wallets_api, @addresses_api, seed: data.seed, address_count: address_count)
     end
 
     # Lists the IDs of the Wallets belonging to the User.

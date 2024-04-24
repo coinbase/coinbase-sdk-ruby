@@ -5,10 +5,18 @@ describe Coinbase::Address do
   let(:network_id) { :base_sepolia }
   let(:address_id) { key.address.to_s }
   let(:wallet_id) { SecureRandom.uuid }
+  let(:model) do
+    Coinbase::Client::Address.new({
+                                    'network_id' => 'base-sepolia',
+                                    'address_id' => address_id,
+                                    'wallet_id' => wallet_id,
+                                    'public_key' => key.public_key.compressed.unpack1('H*')
+                                  })
+  end
   let(:client) { double('Jimson::Client') }
 
   subject(:address) do
-    described_class.new(network_id, address_id, wallet_id, key, client: client)
+    described_class.new(model, key, client: client)
   end
 
   describe '#initialize' do
@@ -88,7 +96,7 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination is a valid Address' do
-      let(:destination) { described_class.new(network_id, to_address_id, wallet_id, to_key, client: client) }
+      let(:destination) { described_class.new(model, to_key, client: client) }
 
       it 'creates a Transfer' do
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
@@ -112,10 +120,18 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination Address is on a different network' do
+      let(:new_model) do
+        Coinbase::Client::Address.new({
+                                        'network_id' => 'base-mainnet',
+                                        'address_id' => address_id,
+                                        'wallet_id' => wallet_id,
+                                        'public_key' => key.public_key.compressed.unpack1('H*')
+                                      })
+      end
+
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(:different_network, to_address_id, wallet_id,
-                                                                   to_key, client: client))
+          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, to_key, client: client))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
