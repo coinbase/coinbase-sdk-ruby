@@ -14,10 +14,12 @@ module Coinbase
   class Address
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
+    # @param addresses_api [Coinbase::Client::AddressesApi] The Addresses API object
     # @param key [Eth::Key] The key backing the Address
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, addresses_api, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       @model = model
+      @addresses_api = addresses_api
       @key = key
       @client = client
     end
@@ -44,11 +46,21 @@ module Coinbase
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
-      # TODO: Handle multiple currencies.
-      eth_balance_in_wei = BigDecimal(@client.eth_getBalance(address_id, 'latest').to_i(16).to_s)
-      eth_balance = BigDecimal(eth_balance_in_wei / BigDecimal(Coinbase::WEI_PER_ETHER.to_s))
+      response = @addresses_api.list_address_balances(wallet_id, address_id)
 
-      BalanceMap.new({ eth: eth_balance })
+      balances = {}
+
+      response.data.each do |balance|
+        asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
+        amount = if asset_id == :eth
+                   BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
+                 else
+                   BigDecimal(balance.amount)
+                 end
+        balances[asset_id] = amount
+      end
+
+      BalanceMap.new(balances)
     end
 
     # Returns the balance of the provided Asset. Currently only ETH is supported.
@@ -61,17 +73,19 @@ module Coinbase
                               asset_id
                             end
 
-      eth_balance = list_balances[normalized_asset_id] || BigDecimal(0)
+      response = @addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+
+      return BigDecimal('0') if response.nil?
+
+      amount = BigDecimal(response.amount)
 
       case asset_id
       when :eth
-        eth_balance
+        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
       when :gwei
-        eth_balance * Coinbase::GWEI_PER_ETHER
-      when :wei
-        eth_balance * Coinbase::WEI_PER_ETHER
+        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
       else
-        BigDecimal(0)
+        amount
       end
     end
 
