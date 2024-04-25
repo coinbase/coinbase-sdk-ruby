@@ -205,7 +205,7 @@ module Coinbase
     # @param client [Jimson::Client] The JSON RPC client to use for interacting with the Network
     # @return [Address] The new Address
     def cache_address(address_model, key, client)
-      address = Address.new(address_model, key, client: client)
+      address = Address.new(address_model, @addresses_api, key, client: client)
       @addresses << address
       @address_index += 1
       address
