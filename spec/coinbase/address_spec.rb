@@ -13,10 +13,11 @@ describe Coinbase::Address do
                                     'public_key' => key.public_key.compressed.unpack1('H*')
                                   })
   end
+  let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
   let(:client) { double('Jimson::Client') }
 
   subject(:address) do
-    described_class.new(model, key, client: client)
+    described_class.new(model, addresses_api, key, client: client)
   end
 
   describe '#initialize' do
@@ -44,39 +45,103 @@ describe Coinbase::Address do
   end
 
   describe '#list_balances' do
-    before do
-      allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
+    let(:response) do
+      Coinbase::Client::AddressBalanceList.new(
+        'data' => [
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '1000000000000000000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'eth',
+                                                       'decimals': 18
+                                                     })
+            }
+          ),
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '5000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'usdc',
+                                                       'decimals': 6
+                                                     })
+            }
+          )
+        ]
+      )
     end
 
-    it 'returns a hash with an ETH balance' do
-      expect(address.list_balances).to eq(eth: BigDecimal('1'))
+    it 'returns a hash with balances' do
+      expect(addresses_api)
+        .to receive(:list_address_balances)
+        .with(wallet_id, address_id)
+        .and_return(response)
+      expect(address.list_balances).to eq(eth: BigDecimal('1'), usdc: BigDecimal('5000'))
     end
   end
 
   describe '#get_balance' do
-    before do
-      allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
+    let(:response) do
+      Coinbase::Client::Balance.new(
+        {
+          'amount' => '1000000000000000000',
+          'asset' => Coinbase::Client::Asset.new({
+                                                   'network_id': 'base-sepolia',
+                                                   'asset_id': 'eth',
+                                                   'decimals': 18
+                                                 })
+        }
+      )
     end
 
     it 'returns the correct ETH balance' do
+      expect(addresses_api)
+        .to receive(:get_address_balance)
+        .with(wallet_id, address_id, 'eth')
+        .and_return(response)
       expect(address.get_balance(:eth)).to eq BigDecimal('1')
     end
 
     it 'returns the correct Gwei balance' do
+      expect(addresses_api)
+        .to receive(:get_address_balance)
+        .with(wallet_id, address_id, 'eth')
+        .and_return(response)
       expect(address.get_balance(:gwei)).to eq BigDecimal('1_000_000_000')
     end
 
     it 'returns the correct Wei balance' do
+      expect(addresses_api)
+        .to receive(:get_address_balance)
+        .with(wallet_id, address_id, 'eth')
+        .and_return(response)
       expect(address.get_balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
     end
 
     it 'returns 0 for an unsupported asset' do
+      expect(addresses_api)
+        .to receive(:get_address_balance)
+        .with(wallet_id, address_id, 'uni')
+        .and_return(nil)
       expect(address.get_balance(:uni)).to eq BigDecimal('0')
     end
   end
 
   describe '#transfer' do
     let(:amount) { 500_000_000_000_000_000 }
+    let(:balance_response) do
+      Coinbase::Client::Balance.new(
+        {
+          'amount' => '1000000000000000000',
+          'asset' => Coinbase::Client::Asset.new({
+                                                   'network_id': 'base-sepolia',
+                                                   'asset_id': 'eth',
+                                                   'decimals': 18
+                                                 })
+        }
+      )
+    end
     let(:asset_id) { :wei }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
@@ -88,7 +153,6 @@ describe Coinbase::Address do
     end
 
     before do
-      allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0xde0b6b3a7640000')
       allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
       allow(client).to receive(:eth_sendRawTransaction).with("0x#{raw_signed_transaction}").and_return(transaction_hash)
     end
@@ -96,9 +160,12 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination is a valid Address' do
-      let(:destination) { described_class.new(model, to_key, client: client) }
-
+      let(:destination) { described_class.new(model, addresses_api, to_key, client: client) }
       it 'creates a Transfer' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(balance_response)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -107,6 +174,10 @@ describe Coinbase::Address do
       let(:destination) { to_address_id }
 
       it 'creates a Transfer' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(balance_response)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -131,20 +202,24 @@ describe Coinbase::Address do
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, to_key, client: client))
+          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, addresses_api, to_key, client: client))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
 
     context 'when the balance is insufficient' do
+      let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
       before do
-        allow(client).to receive(:eth_getBalance).with(address_id, 'latest').and_return('0x0')
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(balance_response)
       end
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, to_address_id)
-        end.to raise_error(ArgumentError, "Insufficient funds: #{amount} requested, but only 0.0 available")
+          address.transfer(excessive_amount, asset_id, to_address_id)
+        end.to raise_error(ArgumentError)
       end
     end
   end

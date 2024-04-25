@@ -126,18 +126,57 @@ describe Coinbase::Wallet do
   end
 
   describe '#list_balances' do
+    let(:response) do
+      Coinbase::Client::AddressBalanceList.new(
+        'data' => [
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '1000000000000000000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'eth',
+                                                       'decimals': 18
+                                                     })
+            }
+          ),
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '5000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'usdc',
+                                                       'decimals': 6
+                                                     })
+            }
+          )
+        ]
+      )
+    end
     before do
-      expect(@wallet.default_address).to receive(:list_balances).and_return({ eth: BigDecimal(1) })
+      expect(wallets_api).to receive(:list_wallet_balances).and_return(response)
     end
 
     it 'returns a hash with an ETH balance' do
-      expect(@wallet.list_balances).to eq({ eth: BigDecimal(1) })
+      expect(@wallet.list_balances).to eq({ eth: BigDecimal(1), usdc: BigDecimal(5000) })
     end
   end
 
   describe '#get_balance' do
+    let(:response) do
+      Coinbase::Client::Balance.new(
+        {
+          'amount' => '5000000000000000000',
+          'asset' => Coinbase::Client::Asset.new({
+                                                   'network_id': 'base-sepolia',
+                                                   'asset_id': 'eth',
+                                                   'decimals': 18
+                                                 })
+        }
+      )
+    end
+
     before do
-      expect(@wallet.default_address).to receive(:list_balances).and_return({ eth: BigDecimal(5) })
+      expect(wallets_api).to receive(:get_wallet_balance).with(wallet_id, 'eth').and_return(response)
     end
 
     it 'returns the correct ETH balance' do
