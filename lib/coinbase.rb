@@ -10,7 +10,6 @@ require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/user'
-require_relative 'coinbase/utils'
 require_relative 'coinbase/wallet'
 
 # The Coinbase SDK.
@@ -84,7 +83,7 @@ module Coinbase
   def self.default_user
     @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
     @users_api ||= Coinbase::Client::UsersApi.new(@api_client)
-    @wallets_api || Coinbase::Client::WalletsApi.new(@api_client)
+    @wallets_api ||= Coinbase::Client::WalletsApi.new(@api_client)
     @addresses_api ||= Coinbase::Client::AddressesApi.new(@api_client)
     @user_model ||= @users_api.get_current_user
     @default_user ||= Coinbase::User.new(@user_model, @wallets_api, @addresses_api)
@@ -95,5 +94,24 @@ module Coinbase
   # @return [Symbol] the converted symbol
   def self.to_sym(value)
     value.to_s.gsub('-', '_').to_sym
+  end
+
+  # Converts a Coinbase::Client::AddressBalanceList to a BalanceMap.
+  # @param address_balance_list [Coinbase::Client::AddressBalanceList] The AddressBalanceList to convert
+  # @return [BalanceMap] The converted BalanceMap
+  def self.to_balance_map(address_balance_list)
+    balances = {}
+
+    address_balance_list.data.each do |balance|
+      asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
+      amount = if asset_id == :eth
+                 BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
+               else
+                 BigDecimal(balance.amount)
+               end
+      balances[asset_id] = amount
+    end
+
+    BalanceMap.new(balances)
   end
 end
