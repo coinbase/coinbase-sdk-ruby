@@ -64,11 +64,12 @@ describe Coinbase::User do
 
   describe '#list_wallet_ids' do
     let(:wallet_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
-    let(:wallet_list_model) do
+    let(:data) do
       wallet_ids.map { |id| Coinbase::Client::Wallet.new({ 'id': id, 'network_id': 'base-sepolia' }) }
     end
+    let(:wallet_list) { Coinbase::Client::WalletList.new({ 'data' => data }) }
     it 'lists the wallet IDs' do
-      expect(wallets_api).to receive(:list_wallets).and_return(wallet_list_model)
+      expect(wallets_api).to receive(:list_wallets).and_return(wallet_list)
       expect(user.list_wallet_ids).to eq(wallet_ids)
     end
   end

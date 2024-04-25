@@ -213,7 +213,18 @@ module Coinbase
         public_key: public_key
       }.to_json
       hashed_payload = Digest::SHA256.digest(payload)
-      key.sign(hashed_payload)
+      signature = key.sign(hashed_payload)
+
+      # The secp256k1 library serializes the signature as R, S, V.
+      # The server expects the signature as V, R, S in the format:
+      # <(byte of 27+public key solution)+4 if compressed >< padded bytes for signature R><padded bytes for signature S>
+      # Ruby gem does not add 4 to the recovery byte, so we need to add it here.
+      # Take the last byte (V) and add 4 to it to show signature is compressed.
+      signature_bytes = [signature].pack('H*').unpack('C*')
+      last_byte = signature_bytes.last
+      compressed_last_byte = last_byte + 4
+      new_signature_bytes = [compressed_last_byte] + signature_bytes[0..-2]
+      new_signature_bytes.pack('C*').unpack1('H*')
     end
   end
 end

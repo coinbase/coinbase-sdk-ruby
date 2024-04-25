@@ -52,7 +52,7 @@ module Coinbase
     # @return [Array<String>] the IDs of the Wallets belonging to the User
     def list_wallet_ids
       wallets = @wallets_api.list_wallets
-      wallets.map(&:id)
+      wallets.data.map(&:id)
     end
   end
 end
