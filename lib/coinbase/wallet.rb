@@ -100,18 +100,8 @@ module Coinbase
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
-      balance_map = BalanceMap.new
-
-      @addresses.each do |address|
-        address.list_balances.each do |asset_id, balance|
-          balance_map[asset_id] ||= BigDecimal(0)
-          current_balance = balance_map[asset_id]
-          new_balance = balance + current_balance
-          balance_map[asset_id] = new_balance
-        end
-      end
-
-      balance_map
+      response = @wallets_api.list_wallet_balances(wallet_id)
+      Coinbase.to_balance_map(response)
     end
 
     # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
@@ -124,17 +114,19 @@ module Coinbase
                               asset_id
                             end
 
-      eth_balance = list_balances[normalized_asset_id] || BigDecimal(0)
+      response = @wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
+
+      return BigDecimal('0') if response.nil?
+
+      amount = BigDecimal(response.amount)
 
       case asset_id
       when :eth
-        eth_balance
+        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
       when :gwei
-        eth_balance * Coinbase::GWEI_PER_ETHER
-      when :wei
-        eth_balance * Coinbase::WEI_PER_ETHER
+        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
       else
-        BigDecimal(0)
+        amount
       end
     end
 

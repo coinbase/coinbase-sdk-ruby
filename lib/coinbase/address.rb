@@ -47,20 +47,7 @@ module Coinbase
     #  in ETH.
     def list_balances
       response = @addresses_api.list_address_balances(wallet_id, address_id)
-
-      balances = {}
-
-      response.data.each do |balance|
-        asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
-        amount = if asset_id == :eth
-                   BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-                 else
-                   BigDecimal(balance.amount)
-                 end
-        balances[asset_id] = amount
-      end
-
-      BalanceMap.new(balances)
+      Coinbase.to_balance_map(response)
     end
 
     # Returns the balance of the provided Asset. Currently only ETH is supported.
