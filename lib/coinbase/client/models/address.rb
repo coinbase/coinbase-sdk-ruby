@@ -21,7 +21,7 @@ module Coinbase::Client
     # The ID of the blockchain network
     attr_accessor :network_id
 
-    # The public key that the address will be derived for.
+    # The public key from which the address is derived.
     attr_accessor :public_key
 
     # The onchain address derived on the server-side.

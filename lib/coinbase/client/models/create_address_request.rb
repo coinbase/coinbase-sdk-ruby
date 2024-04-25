@@ -15,10 +15,10 @@ require 'time'
 
 module Coinbase::Client
   class CreateAddressRequest
-    # The public key that the address will be derived from.
+    # The public key from which the address will be derived.
     attr_accessor :public_key
 
-    # An attestation signed by the private key that is associated with the wallet.
+    # An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
     attr_accessor :attestation
 
     # Attribute mapping from ruby-style variable name to JSON key.

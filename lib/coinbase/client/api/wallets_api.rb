@@ -281,6 +281,8 @@ module Coinbase::Client
     # List wallets
     # List wallets belonging to the user.
     # @param [Hash] opts the optional parameters
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [WalletList]
     def list_wallets(opts = {})
       data, _status_code, _headers = list_wallets_with_http_info(opts)
@@ -290,16 +292,24 @@ module Coinbase::Client
     # List wallets
     # List wallets belonging to the user.
     # @param [Hash] opts the optional parameters
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [Array<(WalletList, Integer, Hash)>] WalletList data, response status code and response headers
     def list_wallets_with_http_info(opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: WalletsApi.list_wallets ...'
       end
+      if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
+        fail ArgumentError, 'invalid value for "opts[:"page"]" when calling WalletsApi.list_wallets, the character length must be smaller than or equal to 5000.'
+      end
+
       # resource path
       local_var_path = '/v1/wallets'
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'limit'] = opts[:'limit'] if !opts[:'limit'].nil?
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
