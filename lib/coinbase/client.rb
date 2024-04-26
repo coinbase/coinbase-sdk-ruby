@@ -23,14 +23,17 @@ Coinbase::Client.autoload :AddressList, 'coinbase/client/models/address_list'
 Coinbase::Client.autoload :Asset, 'coinbase/client/models/asset'
 Coinbase::Client.autoload :Balance, 'coinbase/client/models/balance'
 Coinbase::Client.autoload :CreateAddressRequest, 'coinbase/client/models/create_address_request'
+Coinbase::Client.autoload :CreateTransferRequest, 'coinbase/client/models/create_transfer_request'
 Coinbase::Client.autoload :CreateWalletRequest, 'coinbase/client/models/create_wallet_request'
 Coinbase::Client.autoload :Error, 'coinbase/client/models/error'
+Coinbase::Client.autoload :Transfer, 'coinbase/client/models/transfer'
 Coinbase::Client.autoload :User, 'coinbase/client/models/user'
 Coinbase::Client.autoload :Wallet, 'coinbase/client/models/wallet'
 Coinbase::Client.autoload :WalletList, 'coinbase/client/models/wallet_list'
 
 # APIs
 Coinbase::Client.autoload :AddressesApi, 'coinbase/client/api/addresses_api'
+Coinbase::Client.autoload :TransfersApi, 'coinbase/client/api/transfers_api'
 Coinbase::Client.autoload :UsersApi, 'coinbase/client/api/users_api'
 Coinbase::Client.autoload :WalletsApi, 'coinbase/client/api/wallets_api'
 

@@ -44,6 +44,8 @@ module Coinbase
         address_count.times { derive_address }
       else
         create_address
+        # Update the model to reflect the new default address.
+        update_model
       end
     end
 
@@ -80,7 +82,7 @@ module Coinbase
     # Returns the default address of the Wallet.
     # @return [Address] The default address
     def default_address
-      @addresses.first
+      @addresses.find { |address| address.address_id == @model.default_address.address_id }
     end
 
     # Returns the Address with the given ID.
@@ -224,6 +226,11 @@ module Coinbase
       compressed_last_byte = last_byte + 4
       new_signature_bytes = [compressed_last_byte] + signature_bytes[0..-2]
       new_signature_bytes.pack('C*').unpack1('H*')
+    end
+
+    # Updates the Wallet model with the latest data.
+    def update_model
+      @model = @wallets_api.get_wallet(wallet_id)
     end
   end
 end
