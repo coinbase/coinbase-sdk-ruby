@@ -24,7 +24,12 @@ describe Coinbase::User do
         {
           'id': wallet_id,
           'network_id': 'base-sepolia',
-          'default_address': '0xdeadbeef'
+          'default_address': Coinbase::Client::Address.new({
+                                                             'address_id': '0xdeadbeef',
+                                                             'wallet_id': wallet_id,
+                                                             'public_key': '0x1234567890',
+                                                             'network_id': 'base-sepolia'
+                                                           })
         }
       )
     end
@@ -57,15 +62,6 @@ describe Coinbase::User do
     let(:network_id) { 'base-sepolia' }
     let(:create_wallet_request) { { wallet: { network_id: network_id } } }
     let(:opts) { { create_wallet_request: create_wallet_request } }
-    let(:wallet_model_with_default_address) do
-      Coinbase::Client::Wallet.new(
-        {
-          'id': wallet_id,
-          'network_id': 'base-sepolia',
-          'default_address': '0xdeadbeef'
-        }
-      )
-    end
     let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:address_model) do
       Coinbase::Client::Address.new({
@@ -74,6 +70,15 @@ describe Coinbase::User do
                                       'public_key': '0x1234567890',
                                       'network_id': 'base-sepolia'
                                     })
+    end
+    let(:wallet_model_with_default_address) do
+      Coinbase::Client::Wallet.new(
+        {
+          'id': wallet_id,
+          'network_id': 'base-sepolia',
+          'default_address': address_model
+        }
+      )
     end
     let(:address_list_model) do
       Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
