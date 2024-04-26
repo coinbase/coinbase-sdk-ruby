@@ -40,25 +40,47 @@ describe Coinbase::User do
   end
 
   describe '#import_wallet' do
+    let(:client) { double('Jimson::Client') }
     let(:wallet_id) { SecureRandom.uuid }
-    let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
-    let(:address_count) { 2 }
-    let(:data) { Coinbase::Wallet::Data.new(wallet_id, seed) }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': 'base-sepolia' }) }
-    let(:address_list_model) { Coinbase::Client::AddressList.new({ 'total_count': address_count }) }
-
-    before do
-      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model)
-      expect(addresses_api).to receive(:list_addresses).and_return(address_list_model)
-      expect(addresses_api).to receive(:get_address).exactly(address_count).times
+    let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
+    let(:network_id) { 'base-sepolia' }
+    let(:create_wallet_request) { { wallet: { network_id: network_id } } }
+    let(:opts) { { create_wallet_request: create_wallet_request } }
+    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+    let(:address_model) do
+      Coinbase::Client::Address.new({
+                                      'address_id': '0xdeadbeef',
+                                      'wallet_id': wallet_id,
+                                      'public_key': '0x1234567890',
+                                      'network_id': 'base-sepolia'
+                                    })
+    end
+    let(:address_list_model) do
+      Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
     end
 
-    it 'imports a wallet' do
-      wallet = user.import_wallet(data)
-      expect(wallet).to be_a(Coinbase::Wallet)
-      expect(wallet.wallet_id).to eq(wallet_id)
-      expect(wallet.network_id).to eq(:base_sepolia)
-      expect(wallet.list_addresses.length).to eq(address_count)
+    before do
+      expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
+      expect(addresses_api)
+        .to receive(:create_address)
+        .with(wallet_id, satisfy do |opts|
+          public_key_present = opts[:create_address_request][:public_key].is_a?(String)
+          attestation_present = opts[:create_address_request][:attestation].is_a?(String)
+          public_key_present && attestation_present
+        end)
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model)
+      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
+      expect(addresses_api).to receive(:get_address).and_return(address_model)
+    end
+
+    it 'imports an exported Wallet' do
+      wallet = user.create_wallet
+      data = wallet.export
+      new_wallet = user.import_wallet(data)
+
+      expect(new_wallet.wallet_id).to eq(wallet.wallet_id)
+      expect(new_wallet.list_addresses.length).to eq(wallet.list_addresses.length)
     end
   end
 
