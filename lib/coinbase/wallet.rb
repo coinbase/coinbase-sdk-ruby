@@ -82,7 +82,7 @@ module Coinbase
     # Returns the default address of the Wallet.
     # @return [Address] The default address
     def default_address
-      @addresses.find { |address| address.address_id == @model.default_address }
+      @addresses.find { |address| address.address_id == @model.default_address.address_id }
     end
 
     # Returns the Address with the given ID.

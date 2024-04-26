@@ -4,17 +4,6 @@ describe Coinbase::Wallet do
   let(:client) { double('Jimson::Client') }
   let(:wallet_id) { SecureRandom.uuid }
   let(:model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': 'base-sepolia' }) }
-  let(:model_with_default_address) do
-    Coinbase::Client::Wallet.new(
-      {
-        'id': wallet_id,
-        'network_id': 'base-sepolia',
-        'default_address': '0xdeadbeef'
-      }
-    )
-  end
-  let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
-  let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
   let(:address_model) do
     Coinbase::Client::Address.new({
                                     'address_id': '0xdeadbeef',
@@ -23,6 +12,17 @@ describe Coinbase::Wallet do
                                     'network_id': 'base-sepolia'
                                   })
   end
+  let(:model_with_default_address) do
+    Coinbase::Client::Wallet.new(
+      {
+        'id': wallet_id,
+        'network_id': 'base-sepolia',
+        'default_address': address_model
+      }
+    )
+  end
+  let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
+  let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
 
   before do
     allow(addresses_api).to receive(:create_address).and_return(address_model)
