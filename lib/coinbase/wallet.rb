@@ -30,7 +30,6 @@ module Coinbase
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
-      @wallet_id = SecureRandom.uuid
       # TODO: Make Network an argument to the constructor.
       @network_id = :base_sepolia
       @addresses = []
@@ -178,7 +177,7 @@ module Coinbase
       key = derive_key
 
       address_id = key.address.to_s
-      address_model = @addresses_api.get_address(@wallet_id, address_id)
+      address_model = @addresses_api.get_address(wallet_id, address_id)
 
       cache_address(address_model, key, @client)
     end
