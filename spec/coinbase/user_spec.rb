@@ -19,6 +19,15 @@ describe Coinbase::User do
     let(:create_wallet_request) { { wallet: { network_id: network_id } } }
     let(:opts) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
+    let(:wallet_model_with_default_address) do
+      Coinbase::Client::Wallet.new(
+        {
+          'id': wallet_id,
+          'network_id': 'base-sepolia',
+          'default_address': '0xdeadbeef'
+        }
+      )
+    end
 
     before do
       expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
@@ -29,6 +38,7 @@ describe Coinbase::User do
           attestation_present = opts[:create_address_request][:attestation].is_a?(String)
           public_key_present && attestation_present
         end)
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
     end
 
     it 'creates a new wallet' do
@@ -47,6 +57,15 @@ describe Coinbase::User do
     let(:network_id) { 'base-sepolia' }
     let(:create_wallet_request) { { wallet: { network_id: network_id } } }
     let(:opts) { { create_wallet_request: create_wallet_request } }
+    let(:wallet_model_with_default_address) do
+      Coinbase::Client::Wallet.new(
+        {
+          'id': wallet_id,
+          'network_id': 'base-sepolia',
+          'default_address': '0xdeadbeef'
+        }
+      )
+    end
     let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:address_model) do
       Coinbase::Client::Address.new({
@@ -69,6 +88,7 @@ describe Coinbase::User do
           attestation_present = opts[:create_address_request][:attestation].is_a?(String)
           public_key_present && attestation_present
         end)
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
       expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model)
       expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
       expect(addresses_api).to receive(:get_address).and_return(address_model)

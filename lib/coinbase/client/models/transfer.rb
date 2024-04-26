@@ -14,21 +14,45 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class Wallet
-    # The server-assigned ID for the wallet.
-    attr_accessor :id
+  # A transfer of an asset from one address to another
+  class Transfer
+    # The ID of the transfer
+    attr_accessor :transfer_id
 
-    # The ID of the blockchain network
-    attr_accessor :network_id
+    # The unsigned payload of the transfer. This is the payload that needs to be signed by the sender.
+    attr_accessor :unsigned_payload
 
-    attr_accessor :default_address
+    # The status of the transfer
+    attr_accessor :status
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'network_id' => :'network_id',
-        :'default_address' => :'default_address'
+        :'transfer_id' => :'transfer_id',
+        :'unsigned_payload' => :'unsigned_payload',
+        :'status' => :'status'
       }
     end
 
@@ -40,9 +64,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'id' => :'String',
-        :'network_id' => :'String',
-        :'default_address' => :'Address'
+        :'transfer_id' => :'String',
+        :'unsigned_payload' => :'String',
+        :'status' => :'String'
       }
     end
 
@@ -56,29 +80,33 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Wallet` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Transfer` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Wallet`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Transfer`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'id')
-        self.id = attributes[:'id']
-      end
-
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
+      if attributes.key?(:'transfer_id')
+        self.transfer_id = attributes[:'transfer_id']
       else
-        self.network_id = nil
+        self.transfer_id = nil
       end
 
-      if attributes.key?(:'default_address')
-        self.default_address = attributes[:'default_address']
+      if attributes.key?(:'unsigned_payload')
+        self.unsigned_payload = attributes[:'unsigned_payload']
+      else
+        self.unsigned_payload = nil
+      end
+
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
+      else
+        self.status = nil
       end
     end
 
@@ -87,8 +115,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      if @transfer_id.nil?
+        invalid_properties.push('invalid value for "transfer_id", transfer_id cannot be nil.')
+      end
+
+      if @unsigned_payload.nil?
+        invalid_properties.push('invalid value for "unsigned_payload", unsigned_payload cannot be nil.')
+      end
+
+      if @status.nil?
+        invalid_properties.push('invalid value for "status", status cannot be nil.')
       end
 
       invalid_properties
@@ -98,8 +134,22 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network_id.nil?
+      return false if @transfer_id.nil?
+      return false if @unsigned_payload.nil?
+      return false if @status.nil?
+      status_validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
+      return false unless status_validator.valid?(@status)
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] status Object to be assigned
+    def status=(status)
+      validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
+      unless validator.valid?(status)
+        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
+      end
+      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -107,9 +157,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          network_id == o.network_id &&
-          default_address == o.default_address
+          transfer_id == o.transfer_id &&
+          unsigned_payload == o.unsigned_payload &&
+          status == o.status
     end
 
     # @see the `==` method
@@ -121,7 +171,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network_id, default_address].hash
+      [transfer_id, unsigned_payload, status].hash
     end
 
     # Builds the object from hash

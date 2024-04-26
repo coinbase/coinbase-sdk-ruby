@@ -7,7 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Add API client into the SDK.
+### Added
+- Faucet
+- Trade
+- Error specifications
+
+## [0.0.2] - 2024-05-01
+
+### Added
+- API Key-based authentication
+- API clients to use server-side architecture
+- User object and default_user
+- Send and receive ERC-20s
 
 ## [0.0.1] - 2024-04-19
 
