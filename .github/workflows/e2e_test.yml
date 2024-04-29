@@ -21,6 +21,6 @@ jobs:
 
     - name: Run e2e tests
       env:
-        API_KEY_NAME: "${{ secrets.API_KEY_NAME }}"
-        API_KEY_PRIVATE_KEY: "${{ secrets.API_KEY_PRIVATE_KEY }}"
+        API_KEY_NAME: ${{ secrets.API_KEY_NAME }}
+        API_KEY_PRIVATE_KEY: ${{ secrets.API_KEY_PRIVATE_KEY }}
       run: bundle exec rspec spec/e2e/production.rb
