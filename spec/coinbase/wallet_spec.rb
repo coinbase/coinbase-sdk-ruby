@@ -41,7 +41,7 @@ describe Coinbase::Wallet do
             attestation_present = opts[:create_address_request][:attestation].is_a?(String)
             public_key_present && attestation_present
           end)
-        @wallet = described_class.new(model, wallets_api, addresses_api, client: client)
+        @wallet = described_class.new(model, wallets_api, addresses_api)
         expect(@wallet).to be_a(Coinbase::Wallet)
       end
     end
@@ -262,7 +262,8 @@ describe Coinbase::Wallet do
 
     it 'allows for re-creation of a Wallet' do
       wallet_data = seed_wallet.export
-      new_wallet = described_class.new(model, wallets_api, addresses_api, seed: wallet_data.seed, address_count: address_count)
+      new_wallet = described_class.new(model, wallets_api, addresses_api, seed: wallet_data.seed,
+                                                                          address_count: address_count)
       expect(new_wallet.list_addresses.length).to eq(address_count)
       new_wallet.list_addresses.each_with_index do |address, i|
         expect(address.address_id).to eq(seed_wallet.list_addresses[i].address_id)
