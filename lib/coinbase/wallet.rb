@@ -19,9 +19,7 @@ module Coinbase
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If not provided, a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses already registered for the Wallet.
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, wallets_api, addresses_api, seed: nil, address_count: 0,
-                   client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, wallets_api, addresses_api, seed: nil, address_count: 0)
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
       @model = model
@@ -37,8 +35,6 @@ module Coinbase
       # TODO: Adjust derivation path prefix based on network protocol.
       @address_path_prefix = "m/44'/60'/0'/0"
       @address_index = 0
-
-      @client = client
 
       if address_count.positive?
         address_count.times { derive_address }
@@ -76,7 +72,7 @@ module Coinbase
       }
       address_model = @addresses_api.create_address(wallet_id, opts)
 
-      cache_address(address_model, key, @client)
+      cache_address(address_model, key)
     end
 
     # Returns the default address of the Wallet.
@@ -181,7 +177,7 @@ module Coinbase
       address_id = key.address.to_s
       address_model = @addresses_api.get_address(wallet_id, address_id)
 
-      cache_address(address_model, key, @client)
+      cache_address(address_model, key)
     end
 
     # Derives a key for an already registered Address in the Wallet.
@@ -195,10 +191,9 @@ module Coinbase
     # Caches an Address on the client-side and increments the address index.
     # @param address_model [Coinbase::Client::Address] The Address model
     # @param key [Eth::Key] The private key of the Address
-    # @param client [Jimson::Client] The JSON RPC client to use for interacting with the Network
     # @return [Address] The new Address
-    def cache_address(address_model, key, client)
-      address = Address.new(address_model, @addresses_api, key, client: client)
+    def cache_address(address_model, key)
+      address = Address.new(address_model, @addresses_api, key)
       @addresses << address
       @address_index += 1
       address

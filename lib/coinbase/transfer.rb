@@ -38,10 +38,7 @@ module Coinbase
     #  itself (e.g. Ether).
     # @param asset_id [Symbol] The ID of the Asset being transferred. Currently only ETH is supported.
     # @param to_address_id [String] The address to which the Transfer is being sent
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(network_id, wallet_id, from_address_id, amount, asset_id, to_address_id,
-                   client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
-
+    def initialize(network_id, wallet_id, from_address_id, amount, asset_id, to_address_id)
       raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
 
       @network_id = network_id
@@ -50,7 +47,6 @@ module Coinbase
       @amount = normalize_eth_amount(amount)
       @asset_id = asset_id
       @to_address_id = to_address_id
-      @client = client
     end
 
     # Returns the underlying Transfer transaction, creating it if it has not been yet.
@@ -58,8 +54,8 @@ module Coinbase
     def transaction
       return @transaction unless @transaction.nil?
 
-      nonce = @client.eth_getTransactionCount(@from_address_id.to_s, 'latest').to_i(16)
-      gas_price = @client.eth_gasPrice.to_i(16)
+      nonce = client.eth_getTransactionCount(@from_address_id.to_s, 'latest').to_i(16)
+      gas_price = client.eth_gasPrice.to_i(16)
 
       params = {
         chain_id: BASE_SEPOLIA.chain_id, # TODO: Don't hardcode Base Sepolia.
@@ -87,7 +83,7 @@ module Coinbase
         return Status::PENDING
       end
 
-      onchain_transaction = @client.eth_getTransactionByHash(transaction_hash)
+      onchain_transaction = client.eth_getTransactionByHash(transaction_hash)
 
       if onchain_transaction.nil?
         # If the transaction has not been broadcast, it is still pending.
@@ -97,7 +93,7 @@ module Coinbase
         # broadcast.
         Status::BROADCAST
       else
-        transaction_receipt = @client.eth_getTransactionReceipt(transaction_hash)
+        transaction_receipt = client.eth_getTransactionReceipt(transaction_hash)
 
         if transaction_receipt['status'].to_i(16) == 1
           Status::COMPLETE
@@ -148,6 +144,10 @@ module Coinbase
       else
         raise ArgumentError, "Invalid amount: #{amount}"
       end
+    end
+
+    def client
+      @client ||= Coinbase.configuration.base_sepolia_client
     end
   end
 end

@@ -14,18 +14,27 @@ require_relative 'coinbase/wallet'
 
 # The Coinbase SDK.
 module Coinbase
-  @base_sepolia_rpc_url = 'https://sepolia.base.org'
-
-  # Returns the Base Sepolia RPC URL.
-  # @return [String] the Base Sepolia RPC URL
-  def self.base_sepolia_rpc_url
-    @base_sepolia_rpc_url
+  def self.configuration
+    @configuration ||= Configuration.new
   end
 
-  # Sets the Base Sepolia RPC URL.
-  # @param value [String] the Base Sepolia RPC URL
-  def self.base_sepolia_rpc_url=(value)
-    @base_sepolia_rpc_url = value
+  def self.configure
+    yield(configuration)
+  end
+
+  # Configuration object for the Coinbase SDK
+  class Configuration
+    attr_reader :base_sepolia_rpc_url, :base_sepolia_client
+
+    def initialize
+      @base_sepolia_rpc_url = 'https://sepolia.base.org'
+      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
+    end
+
+    def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)
+      @base_sepolia_rpc_url = new_base_sepolia_rpc_url
+      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
+    end
   end
 
   # Initializes the Coinbase SDK with the given API key name and private key.

@@ -16,12 +16,10 @@ module Coinbase
     # @param model [Coinbase::Client::Address] The underlying Address object
     # @param addresses_api [Coinbase::Client::AddressesApi] The Addresses API object
     # @param key [Eth::Key] The key backing the Address
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, addresses_api, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, addresses_api, key)
       @model = model
       @addresses_api = addresses_api
       @key = key
-      @client = client
     end
 
     # Returns the Network ID of the Address.
@@ -101,12 +99,11 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      transfer = Coinbase::Transfer.new(network_id, wallet_id, address_id, amount, asset_id, destination,
-                                        client: @client)
+      transfer = Coinbase::Transfer.new(network_id, wallet_id, address_id, amount, asset_id, destination)
 
       transaction = transfer.transaction
       transaction.sign(@key)
-      @client.eth_sendRawTransaction("0x#{transaction.hex}")
+      client.eth_sendRawTransaction("0x#{transaction.hex}")
 
       transfer
     end
@@ -134,6 +131,10 @@ module Coinbase
       else
         raise ArgumentError, "Unsupported asset: #{asset_id}"
       end
+    end
+
+    def client
+      @client ||= Coinbase.configuration.base_sepolia_client
     end
   end
 end

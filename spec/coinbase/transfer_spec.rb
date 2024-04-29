@@ -10,8 +10,14 @@ describe Coinbase::Transfer do
   let(:to_address_id) { to_key.address.to_s }
   let(:client) { double('Jimson::Client') }
 
+  before(:each) do
+    configuration = double(Coinbase::Configuration)
+    allow(Coinbase).to receive(:configuration).and_return(configuration)
+    allow(configuration).to receive(:base_sepolia_client).and_return(client)
+  end
+
   subject(:transfer) do
-    described_class.new(network_id, wallet_id, from_address_id, amount, :eth, to_address_id, client: client)
+    described_class.new(network_id, wallet_id, from_address_id, amount, :eth, to_address_id)
   end
 
   describe '#initialize' do
@@ -21,7 +27,7 @@ describe Coinbase::Transfer do
 
     it 'does not initialize a new transfer for an invalid asset' do
       expect do
-        Coinbase::Transfer.new(network_id, wallet_id, from_address_id, amount, :uni, to_address_id, client: client)
+        Coinbase::Transfer.new(network_id, wallet_id, from_address_id, amount, :uni, to_address_id)
       end.to raise_error(ArgumentError, 'Unsupported asset: uni')
     end
   end
@@ -52,7 +58,7 @@ describe Coinbase::Transfer do
     context 'when the amount is a Float' do
       let(:float_amount) { 0.5 }
       let(:float_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id, client: client)
+        described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id)
       end
 
       it 'normalizes the amount' do
@@ -63,7 +69,7 @@ describe Coinbase::Transfer do
     context 'when the amount is an Integer' do
       let(:integer_amount) { 5 }
       let(:integer_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, integer_amount, :eth, to_address_id, client: client)
+        described_class.new(network_id, wallet_id, from_address_id, integer_amount, :eth, to_address_id)
       end
 
       it 'normalizes the amount' do
@@ -74,8 +80,7 @@ describe Coinbase::Transfer do
     context 'when the amount is a BigDecimal' do
       let(:big_decimal_amount) { BigDecimal('0.5') }
       let(:big_decimal_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id,
-                            client: client)
+        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id)
       end
 
       it 'normalizes the amount' do
