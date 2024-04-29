@@ -23,5 +23,5 @@ jobs:
       env:
         API_KEY_NAME: ${{ secrets.API_KEY_NAME }}
         API_KEY_PRIVATE_KEY: ${{ secrets.API_KEY_PRIVATE_KEY }}
-        TEST_VAR: ${{ vars.TEST_VAR }}
+        WALLET_DATA: ${{ secrets.WALLET_DATA }}
       run: bundle exec rspec spec/e2e/production.rb
