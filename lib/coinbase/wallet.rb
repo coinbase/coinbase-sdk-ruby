@@ -169,6 +169,19 @@ module Coinbase
         @wallet_id = wallet_id
         @seed = seed
       end
+
+      # Converts the Data object to a Hash.
+      # @return [Hash] The Hash representation of the Data object
+      def to_hash
+        { wallet_id: wallet_id, seed: seed }
+      end
+
+      # Creates a Data object from the given Hash.
+      # @param data [Hash] The Hash to create the Data object from
+      # @return [Data] The new Data object
+      def self.from_hash(data)
+        new(data[:wallet_id], data[:seed])
+      end
     end
 
     private
