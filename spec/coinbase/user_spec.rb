@@ -5,7 +5,8 @@ describe Coinbase::User do
   let(:model) { Coinbase::Client::User.new({ 'id': user_id }) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
-  let(:user) { described_class.new(model, wallets_api, addresses_api) }
+  let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
+  let(:user) { described_class.new(model, wallets_api, addresses_api, transfers_api) }
 
   describe '#user_id' do
     it 'returns the user ID' do

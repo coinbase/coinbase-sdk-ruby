@@ -14,10 +14,11 @@ describe Coinbase::Address do
                                   })
   end
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+  let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
   subject(:address) do
-    described_class.new(model, addresses_api, key, client: client)
+    described_class.new(model, addresses_api, transfers_api, key, client: client)
   end
 
   describe '#initialize' do
@@ -160,24 +161,35 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination is a valid Address' do
-      let(:destination) { described_class.new(model, addresses_api, to_key, client: client) }
+      let(:destination) { described_class.new(model, addresses_api, transfers_api, to_key, client: client) }
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
+      end
       it 'creates a Transfer' do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
           .and_return(balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
     context 'when the destination is a valid Address ID' do
       let(:destination) { to_address_id }
-
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+      end
       it 'creates a Transfer' do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
           .and_return(balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id,  create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -202,7 +214,13 @@ describe Coinbase::Address do
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, addresses_api, to_key, client: client))
+          address.transfer(amount, asset_id, Coinbase::Address.new(
+                                               new_model,
+                                               addresses_api,
+                                               transfers_api,
+                                               to_key,
+                                               client: client
+                                             ))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
