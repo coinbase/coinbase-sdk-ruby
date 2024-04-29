@@ -70,11 +70,13 @@ This instance is rate-limited, but you can also provision your own on the
 [Coinbase Developer Platform](https://portal.cloud.coinbase.com/products/base).
 
 
-You can configure the SDK with your Base Sepolia RPC node by copying your node URL from the CDP portal 
+You can configure the SDK with your Base Sepolia RPC node by copying your node URL from the CDP portal
 and setting the following:
 
 ```ruby
-Coinbase.base_sepolia_rpc_url = 'https://api.developer.coinbase.com/rpc/v1/base/your-node-id'
+Coinbase.configure do |config|
+    config.base_sepolia_rpc_url = 'https://api.developer.coinbase.com/rpc/v1/base/your-node-id'
+end
 ```
 
 ### Wallets and Addresses
