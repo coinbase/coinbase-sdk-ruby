@@ -180,7 +180,7 @@ module Coinbase
       # @param data [Hash] The Hash to create the Data object from
       # @return [Data] The new Data object
       def self.from_hash(data)
-        new(data[:wallet_id], data[:seed])
+        new(data['wallet_id'], data['seed]')
       end
     end
 
