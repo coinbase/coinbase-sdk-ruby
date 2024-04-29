@@ -19,8 +19,8 @@ jobs:
         gem install bundler -v 2.4.22
         bundle install --jobs 4 --retry 3
 
-    - name: Run e2e tests
-      env:
-        API_KEY_NAME: ${{ secrets.API_KEY_NAME }}
-        API_KEY_PRIVATE_KEY: ${{ secrets.API_KEY_PRIVATE_KEY }}
-      run: bundle exec rspec spec/e2e/production.rb
+    - name: Run e2e tests    
+      run: |
+        API_KEY_NAME="${{ secrets.API_KEY_NAME }}"
+        API_KEY_PRIVATE_KEY="${{ secrets.API_KEY_PRIVATE_KEY }}"
+        bundle exec rspec spec/e2e/production.rb
