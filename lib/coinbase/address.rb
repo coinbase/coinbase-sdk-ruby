@@ -99,7 +99,7 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      normalized_amount = normalize_eth_amount(amount, asset_id)
+      normalized_amount = normalize_wei_amount(amount, asset_id)
 
       normalized_asset_id = normalize_asset_id(asset_id)
 
@@ -129,11 +129,11 @@ module Coinbase
 
     private
 
-    # Normalizes the amount of ETH to send based on the asset ID.
+    # Normalizes the amount of Wei to send based on the asset ID.
     # @param amount [Integer, Float, BigDecimal] The amount to normalize
     # @param asset_id [Symbol] The ID of the Asset being transferred
     # @return [BigDecimal] The normalized amount in units of Wei
-    def normalize_eth_amount(amount, asset_id)
+    def normalize_wei_amount(amount, asset_id)
       big_amount = BigDecimal(amount.to_s)
 
       case asset_id

@@ -62,9 +62,9 @@ module Coinbase
       @model.address_id
     end
 
-    # Returns the To Address ID of the Transfer.
-    # @return [String] The To Address ID
-    def to_address_id
+    # Returns the Destination Address ID of the Transfer.
+    # @return [String] The Destination Address ID
+    def destination_address_id
       @model.destination
     end
 
@@ -74,10 +74,10 @@ module Coinbase
       @model.asset_id.to_sym
     end
 
-    # Returns the amount of ETH for the Transfer.
+    # Returns the amount of the asset for the Transfer.
     # @return [BigDecimal] The amount in units of ETH
     def amount
-      BigDecimal(@model.amount)
+      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
     end
 
     # Returns the Unsigned Payload of the Transfer.
@@ -101,7 +101,7 @@ module Coinbase
         max_gas_fee: parsed_payload['maxFeePerGas'].to_i(16),
         gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
         from: Eth::Address.new(from_address_id),
-        to: Eth::Address.new(to_address_id),
+        to: Eth::Address.new(destination_address_id),
         value: parsed_payload['value'].to_i(16)
       }
 

@@ -79,7 +79,7 @@ describe Coinbase::Transfer do
 
   describe '#amount' do
     it 'returns the amount' do
-      expect(transfer.amount).to eq(amount)
+      expect(transfer.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
     end
   end
 
@@ -89,9 +89,9 @@ describe Coinbase::Transfer do
     end
   end
 
-  describe '#to_address_id' do
+  describe '#destination_address_id' do
     it 'returns the destination address ID' do
-      expect(transfer.to_address_id).to eq(to_address_id)
+      expect(transfer.destination_address_id).to eq(to_address_id)
     end
   end
 
