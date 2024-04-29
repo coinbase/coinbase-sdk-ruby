@@ -9,7 +9,6 @@ describe Coinbase do
       Coinbase.init(api_key_name, api_key_private_key)
 
       puts "Fetching default user..."
-      puts "TEST_VAR is: #{ENV['TEST_VAR']}"
       u = Coinbase.default_user
     end
   end
