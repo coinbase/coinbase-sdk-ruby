@@ -181,7 +181,7 @@ describe Coinbase::Address do
       let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
+        { amount: amount.to_s, asset_id: 'eth', destination: destination.address_id }
       end
 
       it 'creates a Transfer' do
@@ -201,7 +201,7 @@ describe Coinbase::Address do
       let(:amount) { 500 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'usdc', destination: destination.address_id }
+        { amount: amount.to_s, asset_id: 'usdc', destination: destination.address_id }
       end
 
       it 'creates a Transfer' do
@@ -221,7 +221,7 @@ describe Coinbase::Address do
       let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { to_address_id }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+        { amount: amount.to_s, asset_id: 'eth', destination: to_address_id }
       end
       it 'creates a Transfer' do
         expect(addresses_api)
@@ -241,7 +241,7 @@ describe Coinbase::Address do
       let(:wei_amount) { 500_000_000_000_000_000 }
       let(:destination) { to_address_id }
       let(:create_transfer_request) do
-        { amount: wei_amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+        { amount: wei_amount.to_s, asset_id: 'eth', destination: to_address_id }
       end
       it 'creates a Transfer' do
         expect(addresses_api)

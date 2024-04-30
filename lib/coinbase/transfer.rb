@@ -98,7 +98,7 @@ module Coinbase
         max_gas_fee: parsed_payload['maxFeePerGas'].to_i(16),
         gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
         from: Eth::Address.new(from_address_id),
-        to: Eth::Address.new(destination_address_id),
+        to: Eth::Address.new(parsed_payload['to']),
         value: parsed_payload['value'].to_i(16),
         data: parsed_payload['data'] || ''
       }
