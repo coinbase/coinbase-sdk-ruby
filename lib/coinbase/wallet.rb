@@ -160,8 +160,6 @@ module Coinbase
       # @param wallet_id [String] The ID of the Wallet
       # @param seed [String] The seed of the Wallet
       def initialize(wallet_id, seed)
-        puts "wallet_id in constructor is #{wallet_id}"
-        puts "seed in constructor is #{seed}"
         @wallet_id = wallet_id
         @seed = seed
       end
@@ -176,8 +174,6 @@ module Coinbase
       # @param data [Hash] The Hash to create the Data object from
       # @return [Data] The new Data object
       def self.from_hash(data)
-        puts "data.wallet_id is #{data['wallet_id']}"
-        puts "data.seed is #{data['seed']}"
         Data.new(data['wallet_id'], data['seed'])
       end
     end
@@ -190,7 +186,6 @@ module Coinbase
       key = derive_key
 
       address_id = key.address.to_s
-      puts "wallet_id, address_id: #{wallet_id}, #{address_id}"
       address_model = addresses_api.get_address(wallet_id, address_id)
 
       cache_address(address_model, key)

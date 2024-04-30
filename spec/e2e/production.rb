@@ -28,10 +28,7 @@ describe Coinbase do
       puts 'Importing wallet with balance...'
       data_string = ENV['WALLET_DATA']
       data_hash = JSON.parse(data_string)
-      puts "data_string is: #{data_string}"
-      puts "data_hash is: #{data_hash}"
       data = Coinbase::Wallet::Data.from_hash(data_hash)
-      puts "data.seed is: #{data.seed}"
       w2 = u.import_wallet(data)
       expect(w2).not_to be_nil
       puts "Imported wallet with ID: #{w2.wallet_id}, default address: #{w2.default_address}"
