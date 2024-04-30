@@ -211,6 +211,22 @@
         </dt>
         <dd><pre class="code"><span class='int'>1_000_000_000</span></pre></dd>
       
+        <dt id="ATOMIC_UNITS_PER_USDC-constant" class="">ATOMIC_UNITS_PER_USDC =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The amount of atomic units of USDC per USDC.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1_000_000</span></pre></dd>
+      
         <dt id="SUPPORTED_ASSET_IDS-constant" class="">SUPPORTED_ASSET_IDS =
           <div class="docstring">
   <div class="discussion">
@@ -571,14 +587,14 @@
       <pre class="lines">
 
 
-83
-84
 85
 86
-87</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 85</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_load_default_user'>load_default_user</span>
   <span class='id identifier rubyid_users_api'>users_api</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client/UsersApi.html" title="Coinbase::Client::UsersApi (class)">UsersApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Client/UsersApi.html#initialize-instance_method" title="Coinbase::Client::UsersApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_api_client'>api_client</span><span class='rparen'>)</span>
@@ -668,7 +684,9 @@
 78
 79
 80
-81</pre>
+81
+82
+83</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 67</span>
@@ -680,6 +698,8 @@
     <span class='id identifier rubyid_asset_id'>asset_id</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_amount'>amount</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_asset_id'>asset_id</span> <span class='op'>==</span> <span class='symbol'>:eth</span>
                <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#WEI_PER_ETHER-constant" title="Coinbase::WEI_PER_ETHER (constant)">WEI_PER_ETHER</a></span></span><span class='rparen'>)</span>
+             <span class='kw'>elsif</span> <span class='id identifier rubyid_asset_id'>asset_id</span> <span class='op'>==</span> <span class='symbol'>:usdc</span>
+               <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#ATOMIC_UNITS_PER_USDC-constant" title="Coinbase::ATOMIC_UNITS_PER_USDC (constant)">ATOMIC_UNITS_PER_USDC</a></span></span><span class='rparen'>)</span>
              <span class='kw'>else</span>
                <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span>
              <span class='kw'>end</span>
@@ -777,7 +797,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 15:12:25 2024 by
+  Generated on Tue Apr 30 17:59:08 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>

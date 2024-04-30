@@ -474,7 +474,7 @@
       <pre class="code"><span class="info file"># File 'lib/coinbase/user.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='ivar'>@wallets_api</span><span class='period'>.</span><span class='id identifier rubyid_get_wallet'>get_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='id identifier rubyid_wallets_api'>wallets_api</span><span class='period'>.</span><span class='id identifier rubyid_get_wallet'>get_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_address_count'>address_count</span> <span class='op'>=</span> <span class='id identifier rubyid_addresses_api'>addresses_api</span><span class='period'>.</span><span class='id identifier rubyid_list_addresses'>list_addresses</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_total_count'>total_count</span>
   <span class='const'><span class='object_link'><a href="Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Wallet.html#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_seed'>seed</span><span class='comma'>,</span> <span class='label'>address_count:</span> <span class='id identifier rubyid_address_count'>address_count</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
@@ -608,7 +608,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 15:12:25 2024 by
+  Generated on Tue Apr 30 17:59:09 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>

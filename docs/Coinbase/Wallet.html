@@ -766,15 +766,15 @@
       <pre class="lines">
 
 
-151
-152
-153</pre>
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 151</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_export'>export</span>
-  <span class='const'><span class='object_link'><a href="Wallet/Data.html" title="Coinbase::Wallet::Data (class)">Data</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Wallet/Data.html#initialize-instance_method" title="Coinbase::Wallet::Data#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_seed_hex'>seed_hex</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="Wallet/Data.html" title="Coinbase::Wallet::Data (class)">Data</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Wallet/Data.html#initialize-instance_method" title="Coinbase::Wallet::Data#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_seed_hex'>seed_hex</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -945,7 +945,9 @@
 123
 124
 125
-126</pre>
+126
+127
+128</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 105</span>
@@ -968,6 +970,8 @@
     <span class='id identifier rubyid_amount'>amount</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Coinbase.html#WEI_PER_ETHER-constant" title="Coinbase::WEI_PER_ETHER (constant)">WEI_PER_ETHER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
   <span class='kw'>when</span> <span class='symbol'>:gwei</span>
     <span class='id identifier rubyid_amount'>amount</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Coinbase.html#GWEI_PER_ETHER-constant" title="Coinbase::GWEI_PER_ETHER (constant)">GWEI_PER_ETHER</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='symbol'>:usdc</span>
+    <span class='id identifier rubyid_amount'>amount</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../Coinbase.html#ATOMIC_UNITS_PER_USDC-constant" title="Coinbase::ATOMIC_UNITS_PER_USDC (constant)">ATOMIC_UNITS_PER_USDC</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
     <span class='id identifier rubyid_amount'>amount</span>
   <span class='kw'>end</span>
@@ -1252,8 +1256,6 @@
       <pre class="lines">
 
 
-135
-136
 137
 138
 139
@@ -1264,10 +1266,12 @@
 144
 145
 146
-147</pre>
+147
+148
+149</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 135</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 137</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_destination'>destination</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_destination'>destination</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='rparen'>)</span>
@@ -1351,7 +1355,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 15:12:25 2024 by
+  Generated on Tue Apr 30 17:59:09 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
