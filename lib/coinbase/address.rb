@@ -152,13 +152,13 @@ module Coinbase
         asset_id
       end
     end
-  end
 
-  def addresses_api
-    @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
-  end
+    def addresses_api
+      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+    end
 
-  def transfers_api
-    @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    def transfers_api
+      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    end
   end
 end
