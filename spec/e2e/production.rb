@@ -46,7 +46,8 @@ describe Coinbase do
       puts 'Transfering 1 Gwei from default address to second address...'
       a1 = addresses[0]
       a2 = addresses[1]
-      a1.transfer(1, :gwei, a2).wait!
+      t = a1.transfer(1, :gwei, a2).wait!
+      expect(t.status).to eq(:complete)
       puts "Transferred 1 Gwei from #{a1} to #{a2}"
 
       puts 'Fetching updated balances...'
