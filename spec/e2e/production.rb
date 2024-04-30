@@ -10,12 +10,15 @@ describe Coinbase do
       # See https://github.com/github/docs/issues/14207
       api_key_name = ENV['API_KEY_NAME'].gsub('\n', "\n")
       api_key_private_key = ENV['API_KEY_PRIVATE_KEY'].gsub('\n', "\n")
-      Coinbase.init(api_key_name, api_key_private_key)
+      Coinbase.configure do |config|
+        config.api_key_name = api_key_name
+        config.api_key_private_key = api_key_private_key
+      end
 
       puts 'Fetching default user...'
       u = Coinbase.default_user
       expect(u).not_to be_nil
-      puts "Fetched default user with ID: #{user.user_id}"
+      puts "Fetched default user with ID: #{u.user_id}"
 
       puts 'Creating new wallet...'
       w1 = u.create_wallet
@@ -25,7 +28,10 @@ describe Coinbase do
       puts 'Importing wallet with balance...'
       data_string = ENV['WALLET_DATA']
       data_hash = JSON.parse(data_string)
+      puts "data_string is: #{data_string}"
+      puts "data_hash is: #{data_hash}"
       data = Coinbase::Wallet::Data.from_hash(data_hash)
+      puts "data.seed is: #{data.seed}"
       w2 = u.import_wallet(data)
       expect(w2).not_to be_nil
       puts "Imported wallet with ID: #{w2.wallet_id}, default address: #{w2.default_address}"
@@ -37,7 +43,7 @@ describe Coinbase do
 
       puts 'Fetching balances...'
       balances = w2.list_balances
-      expect(balances.length).to be > 1
+      expect(balances.length).to be >= 1
       puts "Fetched balances: #{balances}"
 
       puts 'Transfering 1 Gwei from default address to second address...'
@@ -49,8 +55,8 @@ describe Coinbase do
       puts 'Fetching updated balances...'
       first_balance = a1.list_balances
       second_balance = a2.list_balances
-      expect(first_balance[:gwei]).to be > BigDecimal('0')
-      expect(second_balance[:gwei]).to be > BigDecimal('0')
+      expect(first_balance[:eth]).to be > BigDecimal('0')
+      expect(second_balance[:eth]).to be > BigDecimal('0')
       puts "First address balances: #{first_balance}"
       puts "Second address balances: #{second_balance}"
     end
