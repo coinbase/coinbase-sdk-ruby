@@ -145,7 +145,7 @@ describe Coinbase::Address do
                                                    'asset_id': 'eth',
                                                    'decimals': 18
                                                  })
-                                                }
+        }
       )
     end
     let(:usdc_balance_response) do
@@ -153,10 +153,10 @@ describe Coinbase::Address do
         {
           'amount' => '5000',
           'asset' => Coinbase::Client::Asset.new({
-                                                    'network_id': 'base-sepolia',
-                                                    'asset_id': 'usdc',
-                                                    'decimals': 6
-                                                  })
+                                                   'network_id': 'base-sepolia',
+                                                   'asset_id': 'usdc',
+                                                   'decimals': 6
+                                                 })
         }
       )
     end
