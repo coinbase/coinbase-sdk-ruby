@@ -5,8 +5,8 @@ describe Coinbase::User do
   let(:model) { Coinbase::Client::User.new({ 'id': user_id }) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
+  let(:user) { described_class.new(model) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
-  let(:user) { described_class.new(model, wallets_api, addresses_api, transfers_api) }
 
   describe '#user_id' do
     it 'returns the user ID' do
@@ -36,6 +36,8 @@ describe Coinbase::User do
     end
 
     before do
+      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
       expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
       expect(addresses_api)
         .to receive(:create_address)
@@ -86,6 +88,8 @@ describe Coinbase::User do
     end
 
     before do
+      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
       expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
       expect(addresses_api)
         .to receive(:create_address)
@@ -117,6 +121,7 @@ describe Coinbase::User do
     end
     let(:wallet_list) { Coinbase::Client::WalletList.new({ 'data' => data }) }
     it 'lists the wallet IDs' do
+      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
       expect(wallets_api).to receive(:list_wallets).and_return(wallet_list)
       expect(user.list_wallet_ids).to eq(wallet_ids)
     end

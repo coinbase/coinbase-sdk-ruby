@@ -32,12 +32,12 @@ module Coinbase
     def build_jwt(uri)
       header = {
         typ: 'JWT',
-        kid: Coinbase.api_key_name,
+        kid: Coinbase.configuration.api_key_name,
         nonce: SecureRandom.hex(16)
       }
 
       claims = {
-        sub: Coinbase.api_key_name,
+        sub: Coinbase.configuration.api_key_name,
         iss: 'coinbase-cloud',
         aud: ['cdp_service'],
         nbf: Time.now.to_i,
@@ -45,7 +45,7 @@ module Coinbase
         uris: [uri]
       }
 
-      private_key = OpenSSL::PKey.read(Coinbase.api_key_private_key)
+      private_key = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
       JWT.encode(claims, private_key, 'ES256', header)
     end
   end

@@ -14,16 +14,10 @@ module Coinbase
   class Address
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
-    # @param addresses_api [Coinbase::Client::AddressesApi] The Addresses API object
-    # @param transfers_api [Coinbase::Client::TransfersApi] The Transfers API object
     # @param key [Eth::Key] The key backing the Address
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, addresses_api, transfers_api, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, key)
       @model = model
-      @addresses_api = addresses_api
-      @transfers_api = transfers_api
       @key = key
-      @client = client
     end
 
     # Returns the Network ID of the Address.
@@ -48,7 +42,7 @@ module Coinbase
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
-      response = @addresses_api.list_address_balances(wallet_id, address_id)
+      response = addresses_api.list_address_balances(wallet_id, address_id)
       Coinbase.to_balance_map(response)
     end
 
@@ -58,7 +52,7 @@ module Coinbase
     def get_balance(asset_id)
       normalized_asset_id = normalize_asset_id(asset_id)
 
-      response = @addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+      response = addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
 
       return BigDecimal('0') if response.nil?
 
@@ -110,13 +104,13 @@ module Coinbase
         destination: destination
       }
 
-      transfer_model = @transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+      transfer_model = transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
 
-      transfer = Coinbase::Transfer.new(transfer_model, @transfers_api, client: @client)
+      transfer = Coinbase::Transfer.new(transfer_model)
 
       transaction = transfer.transaction
       transaction.sign(@key)
-      @client.eth_sendRawTransaction("0x#{transaction.hex}")
+      Coinbase.configuration.base_sepolia_client.eth_sendRawTransaction("0x#{transaction.hex}")
 
       transfer
     end
@@ -157,6 +151,14 @@ module Coinbase
       else
         asset_id
       end
+    end
+
+    def addresses_api
+      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+    end
+
+    def transfers_api
+      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
   end
 end

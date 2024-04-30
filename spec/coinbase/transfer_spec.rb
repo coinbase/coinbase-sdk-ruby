@@ -38,8 +38,14 @@ describe Coinbase::Transfer do
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
+  before(:each) do
+    configuration = double(Coinbase::Configuration)
+    allow(Coinbase).to receive(:configuration).and_return(configuration)
+    allow(configuration).to receive(:base_sepolia_client).and_return(client)
+  end
+
   subject(:transfer) do
-    described_class.new(model, transfers_api, client: client)
+    described_class.new(model)
   end
 
   describe '#initialize' do

@@ -17,8 +17,14 @@ describe Coinbase::Address do
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
+  before(:each) do
+    allow(Coinbase.configuration).to receive(:base_sepolia_client).and_return(client)
+    allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+    allow(Coinbase::Client::TransfersApi).to receive(:new).and_return(transfers_api)
+  end
+
   subject(:address) do
-    described_class.new(model, addresses_api, transfers_api, key, client: client)
+    described_class.new(model, key)
   end
 
   describe '#initialize' do
@@ -161,10 +167,11 @@ describe Coinbase::Address do
     context 'when the destination is a valid Address' do
       let(:asset_id) { :wei }
       let(:amount) { 500_000_000_000_000_000 }
-      let(:destination) { described_class.new(model, addresses_api, transfers_api, to_key, client: client) }
+      let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
         { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
       end
+
       it 'creates a Transfer' do
         expect(addresses_api)
           .to receive(:get_address_balance)
@@ -239,13 +246,7 @@ describe Coinbase::Address do
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(
-                                               new_model,
-                                               addresses_api,
-                                               transfers_api,
-                                               to_key,
-                                               client: client
-                                             ))
+          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, to_key))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end

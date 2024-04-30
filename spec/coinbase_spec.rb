@@ -1,55 +1,69 @@
 # frozen_string_literal: true
 
 describe Coinbase do
-  after(:each) do
-    Coinbase.api_key_name = nil
-    Coinbase.api_key_private_key = nil
-    Coinbase.api_url = 'api.cdp.coinbase.com'
-  end
+  describe '#configure' do
+    let(:api_key_private_key) { 'some-key' }
+    let(:api_key_name) { 'some-key-name' }
 
-  describe '#base_sepolia_rpc_url' do
-    it 'returns the Base Sepolia RPC URL' do
-      expect(Coinbase.base_sepolia_rpc_url).to eq('https://sepolia.base.org')
+    subject do
+      Coinbase.configure do |config|
+        config.api_key_private_key = api_key_private_key
+        config.api_key_name = api_key_name
+      end
+    end
+
+    context 'when api_key_private_key is nil' do
+      let(:api_key_private_key) { nil }
+      it 'raises an exception' do
+        expect { subject }.to raise_error(Coinbase::InvalidConfiguration, /API key private key/)
+      end
+    end
+
+    context 'when api_key_name is nil' do
+      let(:api_key_name) { nil }
+      it 'raises an exception' do
+        expect { subject }.to raise_error(Coinbase::InvalidConfiguration, /API key name/)
+      end
     end
   end
 
-  describe '#base_sepolia_rpc_url=' do
-    it 'sets the Base Sepolia RPC URL' do
-      Coinbase.base_sepolia_rpc_url = 'https://not-sepolia.base.org'
-      expect(Coinbase.base_sepolia_rpc_url).to eq('https://not-sepolia.base.org')
+  describe '#default_user' do
+    let(:users_api) { double Coinbase::Client::UsersApi }
+    let(:user_model) { double 'User Model' }
+
+    before(:each) do
+      allow(Coinbase::Client::UsersApi).to receive(:new).and_return(users_api)
+      allow(users_api).to receive(:get_current_user).and_return(user_model)
+      allow(Coinbase::User).to receive(:new)
+    end
+
+    it 'creates a new users api client' do
+      Coinbase.default_user
+      expect(Coinbase::Client::UsersApi).to have_received(:new).with(Coinbase.configuration.api_client)
+    end
+
+    it 'gets the current user from the api' do
+      Coinbase.default_user
+      expect(users_api).to have_received(:get_current_user)
+    end
+
+    it 'creates a new user object from the response' do
+      Coinbase.default_user
+      expect(Coinbase::User).to have_received(:new).with(user_model)
     end
   end
 
-  describe '#init' do
-    it 'initializes the Coinbase SDK with the given API key name and private key' do
-      Coinbase.init('api_key_name', 'api_key_private_key')
-      expect(Coinbase.api_key_name).to eq('api_key_name')
-      expect(Coinbase.api_key_private_key).to eq('api_key_private_key')
+  describe Coinbase::Configuration do
+    describe '#api_url' do
+      it 'returns the default api url' do
+        expect(Coinbase.configuration.api_url).to eq 'https://api.cdp.coinbase.com'
+      end
     end
-  end
 
-  describe '#api_key_name' do
-    it 'raises an error if the API key name is not set' do
-      expect { Coinbase.api_key_name }.to raise_error('API key name is not set')
-    end
-  end
-
-  describe '#api_key_private_key' do
-    it 'raises an error if the API key private key is not set' do
-      expect { Coinbase.api_key_private_key }.to raise_error('API key private key is not set')
-    end
-  end
-
-  describe '#api_url' do
-    it 'returns the API URL' do
-      expect(Coinbase.api_url).to eq('api.cdp.coinbase.com')
-    end
-  end
-
-  describe '#api_url=' do
-    it 'sets the API URL' do
-      Coinbase.api_url = 'api.cdp.not-coinbase.com'
-      expect(Coinbase.api_url).to eq('api.cdp.not-coinbase.com')
+    describe '#base_sepolia_rpc_url' do
+      it 'returns the default base sepolia rpc url' do
+        expect(Coinbase.configuration.base_sepolia_rpc_url).to eq 'https://sepolia.base.org'
+      end
     end
   end
 end

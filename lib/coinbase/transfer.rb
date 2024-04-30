@@ -30,12 +30,8 @@ module Coinbase
 
     # Returns a new Transfer object.
     # @param model [Coinbase::Client::Transfer] The underlying Transfer object
-    # @param transfers_api [Coinbase::Client::TransfersApi] The Transfers API object
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, transfers_api, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model)
       @model = model
-      @transfers_api = transfers_api
-      @client = client
     end
 
     # Returns the Transfer ID.
@@ -120,7 +116,7 @@ module Coinbase
         return Status::PENDING
       end
 
-      onchain_transaction = @client.eth_getTransactionByHash(transaction_hash)
+      onchain_transaction = Coinbase.configuration.base_sepolia_client.eth_getTransactionByHash(transaction_hash)
 
       if onchain_transaction.nil?
         # If the transaction has not been broadcast, it is still pending.
@@ -130,7 +126,7 @@ module Coinbase
         # broadcast.
         Status::BROADCAST
       else
-        transaction_receipt = @client.eth_getTransactionReceipt(transaction_hash)
+        transaction_receipt = Coinbase.configuration.base_sepolia_client.eth_getTransactionReceipt(transaction_hash)
 
         if transaction_receipt['status'].to_i(16) == 1
           Status::COMPLETE
