@@ -7,6 +7,7 @@ describe Coinbase::Transfer do
   let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
   let(:amount) { BigDecimal(100) }
+  let(:eth_amount) { amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
   let(:to_address_id) { to_key.address.to_s }
   let(:transfer_id) { SecureRandom.uuid }
   let(:unsigned_payload) do \
@@ -79,7 +80,7 @@ describe Coinbase::Transfer do
 
   describe '#amount' do
     it 'returns the amount' do
-      expect(transfer.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+      expect(transfer.amount).to eq(eth_amount)
     end
   end
 

@@ -64,14 +64,7 @@ module Coinbase
 
       amount = BigDecimal(response.amount)
 
-      case asset_id
-      when :eth
-        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
-      else
-        amount
-      end
+      normalize_eth_amount(amount, asset_id)
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
@@ -140,7 +133,26 @@ module Coinbase
       when :eth
         big_amount * Coinbase::WEI_PER_ETHER
       when :gwei
-        big_amount * Coinbase::GWEI_PER_ETHER * Coinbase::WEI_PER_GWEI
+        big_amount * Coinbase::WEI_PER_GWEI
+      when :wei
+        big_amount
+      else
+        raise ArgumentError, "Unsupported asset: #{asset_id}"
+      end
+    end
+
+    # Normalizes the amount of ETH based on the asset ID.
+    # @param amount [Integer, Float, BigDecimal] The amount to normalize
+    # @param asset_id [Symbol] The ID of the Asset
+    # @return [BigDecimal] The normalized amount in units of ETH
+    def normalize_eth_amount(amount, asset_id)
+      big_amount = BigDecimal(amount.to_s)
+
+      case asset_id
+      when :eth
+        big_amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      when :gwei
+        big_amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
       when :wei
         big_amount
       else

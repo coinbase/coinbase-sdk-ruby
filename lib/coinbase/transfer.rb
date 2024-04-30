@@ -77,7 +77,7 @@ module Coinbase
     # Returns the amount of the asset for the Transfer.
     # @return [BigDecimal] The amount in units of ETH
     def amount
-      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
+      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
     end
 
     # Returns the Unsigned Payload of the Transfer.
