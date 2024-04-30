@@ -67,7 +67,7 @@ describe Coinbase::Address do
           ),
           Coinbase::Client::Balance.new(
             {
-              'amount' => '5000',
+              'amount' => '5000000000',
               'asset' => Coinbase::Client::Asset.new({
                                                        'network_id': 'base-sepolia',
                                                        'asset_id': 'usdc',
@@ -151,7 +151,7 @@ describe Coinbase::Address do
     let(:usdc_balance_response) do
       Coinbase::Client::Balance.new(
         {
-          'amount' => '5000',
+          'amount' => '10000000000',
           'asset' => Coinbase::Client::Asset.new({
                                                    'network_id': 'base-sepolia',
                                                    'asset_id': 'usdc',
@@ -198,10 +198,12 @@ describe Coinbase::Address do
 
     context 'when the destination is a valid Address and asset is USDC' do
       let(:asset_id) { :usdc }
-      let(:amount) { 500 }
+      let(:usdc_amount) { 5 }
+      let(:usdc_atomic_amount) { 5_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'usdc', destination: destination.address_id }
+        { amount: usdc_atomic_amount.to_s, network_id: network_id, asset_id: 'usdc',
+          destination: destination.address_id }
       end
 
       it 'creates a Transfer' do
@@ -212,7 +214,7 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
-        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+        expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
       end
     end
 

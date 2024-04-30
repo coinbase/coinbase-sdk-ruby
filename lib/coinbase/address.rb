@@ -64,6 +64,8 @@ module Coinbase
         amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
       when :gwei
         amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
+      when :usdc
+        amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
       else
         amount
       end
@@ -93,7 +95,7 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      normalized_amount = normalize_wei_amount(amount, asset_id)
+      normalized_amount = normalize_asset_amount(amount, asset_id)
 
       normalized_asset_id = normalize_asset_id(asset_id)
 
@@ -123,11 +125,11 @@ module Coinbase
 
     private
 
-    # Normalizes the amount of Wei to send based on the asset ID.
+    # Normalizes the amount of the Asset to send to the atomic unit.
     # @param amount [Integer, Float, BigDecimal] The amount to normalize
     # @param asset_id [Symbol] The ID of the Asset being transferred
-    # @return [BigDecimal] The normalized amount in units of Wei
-    def normalize_wei_amount(amount, asset_id)
+    # @return [BigDecimal] The normalized amount in atomic units
+    def normalize_asset_amount(amount, asset_id)
       big_amount = BigDecimal(amount.to_s)
 
       case asset_id
@@ -135,6 +137,8 @@ module Coinbase
         big_amount * Coinbase::WEI_PER_ETHER
       when :gwei
         big_amount * Coinbase::WEI_PER_GWEI
+      when :usdc
+        big_amount * Coinbase::ATOMIC_UNITS_PER_USDC
       else
         big_amount
       end
