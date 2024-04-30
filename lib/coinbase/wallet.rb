@@ -14,17 +14,13 @@ module Coinbase
     # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
     # User#import_wallet.
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
-    # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
-    # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If not provided, a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses already registered for the Wallet.
-    def initialize(model, wallets_api, addresses_api, seed: nil, address_count: 0)
+    def initialize(model, seed: nil, address_count: 0)
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
       @model = model
-      @wallets_api = wallets_api
-      @addresses_api = addresses_api
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
@@ -70,7 +66,7 @@ module Coinbase
           attestation: attestation
         }
       }
-      address_model = @addresses_api.create_address(wallet_id, opts)
+      address_model = addresses_api.create_address(wallet_id, opts)
 
       cache_address(address_model, key)
     end
@@ -97,7 +93,7 @@ module Coinbase
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
-      response = @wallets_api.list_wallet_balances(wallet_id)
+      response = wallets_api.list_wallet_balances(wallet_id)
       Coinbase.to_balance_map(response)
     end
 
@@ -111,7 +107,7 @@ module Coinbase
                               asset_id
                             end
 
-      response = @wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
+      response = wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
 
       return BigDecimal('0') if response.nil?
 
@@ -175,7 +171,7 @@ module Coinbase
       key = derive_key
 
       address_id = key.address.to_s
-      address_model = @addresses_api.get_address(wallet_id, address_id)
+      address_model = addresses_api.get_address(wallet_id, address_id)
 
       cache_address(address_model, key)
     end
@@ -193,7 +189,7 @@ module Coinbase
     # @param key [Eth::Key] The private key of the Address
     # @return [Address] The new Address
     def cache_address(address_model, key)
-      address = Address.new(address_model, @addresses_api, key)
+      address = Address.new(address_model, addresses_api, key)
       @addresses << address
       @address_index += 1
       address
@@ -225,7 +221,15 @@ module Coinbase
 
     # Updates the Wallet model with the latest data.
     def update_model
-      @model = @wallets_api.get_wallet(wallet_id)
+      @model = wallets_api.get_wallet(wallet_id)
+    end
+
+    def addresses_api
+      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+    end
+
+    def wallets_api
+      @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
     end
   end
 end

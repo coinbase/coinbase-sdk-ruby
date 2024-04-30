@@ -25,10 +25,12 @@ describe Coinbase::Wallet do
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
 
   before do
+    allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+    allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
     allow(addresses_api).to receive(:create_address).and_return(address_model)
     allow(addresses_api).to receive(:get_address).and_return(address_model)
     allow(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(model_with_default_address)
-    @wallet = described_class.new(model, wallets_api, addresses_api)
+    @wallet = described_class.new(model)
   end
 
   describe '#initialize' do
@@ -41,14 +43,14 @@ describe Coinbase::Wallet do
             attestation_present = opts[:create_address_request][:attestation].is_a?(String)
             public_key_present && attestation_present
           end)
-        @wallet = described_class.new(model, wallets_api, addresses_api)
+        @wallet = described_class.new(model)
         expect(@wallet).to be_a(Coinbase::Wallet)
       end
     end
 
     context 'when a seed is provided' do
       let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
-      let(:seed_wallet) { described_class.new(model, wallets_api, addresses_api, seed: seed) }
+      let(:seed_wallet) { described_class.new(model, seed: seed) }
 
       it 'initializes a new Wallet with the provided seed' do
         expect(addresses_api)
@@ -64,7 +66,7 @@ describe Coinbase::Wallet do
 
       it 'raises an error for an invalid seed' do
         expect do
-          described_class.new(model, wallets_api, addresses_api, seed: 'invalid')
+          described_class.new(model, seed: 'invalid')
         end.to raise_error(ArgumentError, 'Seed must be 32 bytes')
       end
     end
@@ -72,7 +74,7 @@ describe Coinbase::Wallet do
     context 'when the address count is provided' do
       let(:address_count) { 5 }
       let(:address_wallet) do
-        described_class.new(model, wallets_api, addresses_api, address_count: address_count)
+        described_class.new(model, address_count: address_count)
       end
 
       it 'initializes a new Wallet with the provided address count' do
@@ -208,7 +210,7 @@ describe Coinbase::Wallet do
     let(:asset_id) { :eth }
 
     context 'when the destination is a Wallet' do
-      let(:destination) { described_class.new(model, wallets_api, addresses_api) }
+      let(:destination) { described_class.new(model) }
       let(:to_address_id) { destination.default_address.address_id }
 
       before do
@@ -250,7 +252,7 @@ describe Coinbase::Wallet do
     let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
     let(:address_count) { 5 }
     let(:seed_wallet) do
-      described_class.new(model, wallets_api, addresses_api, seed: seed, address_count: address_count)
+      described_class.new(model, seed: seed, address_count: address_count)
     end
 
     it 'exports the Wallet data' do
@@ -262,8 +264,7 @@ describe Coinbase::Wallet do
 
     it 'allows for re-creation of a Wallet' do
       wallet_data = seed_wallet.export
-      new_wallet = described_class.new(model, wallets_api, addresses_api, seed: wallet_data.seed,
-                                                                          address_count: address_count)
+      new_wallet = described_class.new(model, seed: wallet_data.seed, address_count: address_count)
       expect(new_wallet.list_addresses.length).to eq(address_count)
       new_wallet.list_addresses.each_with_index do |address, i|
         expect(address.address_id).to eq(seed_wallet.list_addresses[i].address_id)

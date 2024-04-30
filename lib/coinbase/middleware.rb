@@ -13,7 +13,7 @@ module Coinbase
     def self.config
       Coinbase::Client::Configuration.default.tap do |config|
         config.debugging = true
-        config.host = Coinbase.api_url
+        config.host = Coinbase.configuration.api_url
         config.request(:authenticator)
       end
     end
