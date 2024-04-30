@@ -99,6 +99,7 @@ module Coinbase
 
       create_transfer_request = {
         amount: normalized_amount.to_i.to_s,
+        network_id: network_id,
         asset_id: normalized_asset_id.to_s,
         destination: destination
       }
