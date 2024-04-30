@@ -16,6 +16,24 @@ require 'time'
 module Coinbase::Client
   # A transfer of an asset from one address to another
   class Transfer
+    # The ID of the blockchain network
+    attr_accessor :network_id
+
+    # The ID of the wallet that owns the from address
+    attr_accessor :wallet_id
+
+    # The onchain address of the sender
+    attr_accessor :address_id
+
+    # The onchain address of the recipient
+    attr_accessor :destination
+
+    # The amount in the atomic units of the asset
+    attr_accessor :amount
+
+    # The ID of the asset being transferred
+    attr_accessor :asset_id
+
     # The ID of the transfer
     attr_accessor :transfer_id
 
@@ -50,6 +68,12 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'network_id' => :'network_id',
+        :'wallet_id' => :'wallet_id',
+        :'address_id' => :'address_id',
+        :'destination' => :'destination',
+        :'amount' => :'amount',
+        :'asset_id' => :'asset_id',
         :'transfer_id' => :'transfer_id',
         :'unsigned_payload' => :'unsigned_payload',
         :'status' => :'status'
@@ -64,6 +88,12 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'network_id' => :'String',
+        :'wallet_id' => :'String',
+        :'address_id' => :'String',
+        :'destination' => :'String',
+        :'amount' => :'String',
+        :'asset_id' => :'String',
         :'transfer_id' => :'String',
         :'unsigned_payload' => :'String',
         :'status' => :'String'
@@ -91,6 +121,42 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
+      else
+        self.network_id = nil
+      end
+
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
+      else
+        self.wallet_id = nil
+      end
+
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
+      if attributes.key?(:'destination')
+        self.destination = attributes[:'destination']
+      else
+        self.destination = nil
+      end
+
+      if attributes.key?(:'amount')
+        self.amount = attributes[:'amount']
+      else
+        self.amount = nil
+      end
+
+      if attributes.key?(:'asset_id')
+        self.asset_id = attributes[:'asset_id']
+      else
+        self.asset_id = nil
+      end
+
       if attributes.key?(:'transfer_id')
         self.transfer_id = attributes[:'transfer_id']
       else
@@ -115,6 +181,30 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      end
+
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      end
+
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
+      if @destination.nil?
+        invalid_properties.push('invalid value for "destination", destination cannot be nil.')
+      end
+
+      if @amount.nil?
+        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
+      end
+
+      if @asset_id.nil?
+        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
+      end
+
       if @transfer_id.nil?
         invalid_properties.push('invalid value for "transfer_id", transfer_id cannot be nil.')
       end
@@ -134,6 +224,12 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @network_id.nil?
+      return false if @wallet_id.nil?
+      return false if @address_id.nil?
+      return false if @destination.nil?
+      return false if @amount.nil?
+      return false if @asset_id.nil?
       return false if @transfer_id.nil?
       return false if @unsigned_payload.nil?
       return false if @status.nil?
@@ -157,6 +253,12 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          network_id == o.network_id &&
+          wallet_id == o.wallet_id &&
+          address_id == o.address_id &&
+          destination == o.destination &&
+          amount == o.amount &&
+          asset_id == o.asset_id &&
           transfer_id == o.transfer_id &&
           unsigned_payload == o.unsigned_payload &&
           status == o.status
@@ -171,7 +273,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [transfer_id, unsigned_payload, status].hash
+      [network_id, wallet_id, address_id, destination, amount, asset_id, transfer_id, unsigned_payload, status].hash
     end
 
     # Builds the object from hash

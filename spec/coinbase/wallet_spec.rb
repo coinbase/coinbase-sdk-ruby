@@ -23,6 +23,7 @@ describe Coinbase::Wallet do
   end
   let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+  let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
 
   before do
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)

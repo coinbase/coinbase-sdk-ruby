@@ -17,6 +17,7 @@ module Coinbase
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If not provided, a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses already registered for the Wallet.
+    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_count: 0)
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
@@ -189,7 +190,7 @@ module Coinbase
     # @param key [Eth::Key] The private key of the Address
     # @return [Address] The new Address
     def cache_address(address_model, key)
-      address = Address.new(address_model, addresses_api, key)
+      address = Address.new(address_model, key)
       @addresses << address
       @address_index += 1
       address
