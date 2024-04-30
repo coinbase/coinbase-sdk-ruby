@@ -154,7 +154,7 @@ describe Coinbase::Wallet do
           ),
           Coinbase::Client::Balance.new(
             {
-              'amount' => '5000',
+              'amount' => '5000000',
               'asset' => Coinbase::Client::Asset.new({
                                                        'network_id': 'base-sepolia',
                                                        'asset_id': 'usdc',
@@ -169,8 +169,8 @@ describe Coinbase::Wallet do
       expect(wallets_api).to receive(:list_wallet_balances).and_return(response)
     end
 
-    it 'returns a hash with an ETH balance' do
-      expect(@wallet.list_balances).to eq({ eth: BigDecimal(1), usdc: BigDecimal(5000) })
+    it 'returns a hash with an ETH and USDC balance' do
+      expect(@wallet.list_balances).to eq({ eth: BigDecimal(1), usdc: BigDecimal(5) })
     end
   end
 

@@ -120,6 +120,8 @@ module Coinbase
         amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
       when :gwei
         amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
+      when :usdc
+        amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
       else
         amount
       end

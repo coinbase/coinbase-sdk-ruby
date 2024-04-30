@@ -71,6 +71,8 @@ module Coinbase
       asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
       amount = if asset_id == :eth
                  BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
+               elsif asset_id == :usdc
+                 BigDecimal(balance.amount) / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC)
                else
                  BigDecimal(balance.amount)
                end
