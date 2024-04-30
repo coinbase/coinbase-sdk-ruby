@@ -8,16 +8,17 @@ one asset into another.
 The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.
 
 **NOTE: The Coinbase SDK is currently in Alpha. The SDK:**
+
 - **may make backwards-incompatible changes between releases**
 - **should not be used on Mainnet (i.e. with real funds)**
-
 
 Currently, the SDK is intended for use on testnet for quick bootstrapping of crypto wallets at
 hackathons, code academies, and other development settings.
 
-
 ## Documentation
-[Click here for full SDK documentation](https://coinbase.github.io/coinbase-sdk-ruby/)
+
+- [Platform API Documentation](https://docs.cdp.coinbase.com/platform-apis/docs/welcome)
+- [Ruby SDK Documentation](https://coinbase.github.io/coinbase-sdk-ruby/)
 
 ## Installation
 
@@ -65,63 +66,72 @@ require 'coinbase'
 
 ### Initialization
 
-The SDK requires a Base Sepolia RPC node, and uses the public instance (https://sepolia.base.org) by default.
-This instance is rate-limited, but you can also provision your own on the
-[Coinbase Developer Platform](https://portal.cloud.coinbase.com/products/base).
-
-
-You can configure the SDK with your Base Sepolia RPC node by copying your node URL from the CDP portal
-and setting the following:
+To start, [create a CDP API Key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API Key name and API Key private key via the `configure` method:
 
 ```ruby
 Coinbase.configure do |config|
-    config.base_sepolia_rpc_url = 'https://api.developer.coinbase.com/rpc/v1/base/your-node-id'
+    config.api_key_name = 'organizations/your-org-id/apiKeys/your-api-key-id'
+    config.api_key_private_key = '-----BEGIN EC PRIVATE KEY-----\nyour-api-key-private-key\n-----END EC PRIVATE KEY-----\n'
 end
 ```
 
-### Wallets and Addresses
+This will allow you to authenticate with the Platform APIs and get access to the `default_user`.
 
-A Wallet is a collection of Addresses on the Base Sepolia Network, which can be used to send and receive crypto.
+```ruby
+u = Coinbase.default_user
+```
 
-The SDK provides customer-custodied wallets, which means that you are responsible for securely storing the data required
-to re-create wallets. The following code snippet demonstrates this:
+### Wallets, Addresses, and Transfers
+
+Now, create a Wallet from the User. Wallets are created with a single default Address.
 
 ```ruby
 # Create a Wallet with one Address by default.
-w1 = Coinbase::Wallet.new
-
-# Export the data required to re-create the wallet.
-data = w1.export
-
-# At this point, you should implement your own "store" method to securely persist
-# the data required to re-create the wallet at a later time.
-store(data)
-
-# The wallet can be re-created using the exported data.
-# w2 will be equivalent to w1.
-w2 = Wallet.new(seed: data.seed, address_count: data.address_count)
+w1 = u.create_wallet
 ```
 
-### Transfers
-
-The following creates an in-memory wallet. After the wallet is funded with ETH, it transfers 0.00001 ETH to a different wallet.
+Next, view the default Address of your Wallet. You will need this default Address in order to fund the Wallet for your first Transfer.
 
 ```ruby
-# Wallets are self-custodial with in-memory key management on Base Sepolia.
-# This should NOT be used in mainnet with real funds. 
-w1 = Coinbase::Wallet.new
-
-# A wallet has a default address.
+# A Wallet has a default Address.
 a = w1.default_address
 a.to_s
+```
 
-# At this point, fund the wallet out-of-band.
-# Then, we can transfer 0.00001 ETH out of the wallet to another wallet.
-w2 = Coinbase::Wallet.new
+Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
 
-# We wait for the transfer to complete.
-# Base Sepolia is fast, so it should take only a few seconds.
+```ruby
+# Create a new Wallet to transfer funds to.
+# Then, we can transfer 0.00001 ETH out of the Wallet to another Wallet.
+w2 = u.create_wallet
 w1.transfer(0.00001, :eth, w2).wait!
+```
+
+### Re-Instantiating Wallets
+
+The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The below code walks you through how to export a Wallets and store it in a secure location.
+
+```ruby
+# Optional: Create a new Wallet if you do not already have one.
+# Export the data required to re-instantiate the Wallet.
+w3 = u.create_wallet
+data = w3.export
+```
+
+In order to persist the data for the Wallet, you will need to implement a store method to store the data export in a secure location. If you do not store the Wallet in a secure location you will lose access to the Wallet and all of the funds on it.
+
+```ruby
+# At this point, you should implement your own "store" method to securely persist
+# the data required to re-instantiate the Wallet at a later time.
+store(data)
+```
+
+The below code demonstrates how to re-instantiate a Wallet from the data export.
+
+```ruby
+# The Wallet can be re-instantiated using the exported data.
+# w2 will be equivalent to w1.
+w4 = u.import_wallet(data)
 ```
 
 ## Development
@@ -136,6 +146,7 @@ RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.7.0
 ```
 
 ### Set-up
+
 Clone the repo by running:
 
 ```bash
@@ -176,6 +187,7 @@ make lint
 ```
 
 ### Testing
+
 To run all tests, run:
 
 ```bash
