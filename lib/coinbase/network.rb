@@ -5,8 +5,8 @@ module Coinbase
   class Network
     attr_reader :chain_id
 
-    # Returns a new Network object.
-    #
+    # Returns a new Network object. Do not use this method directly. Instead, use the Network constants defined in
+    # the Coinbase module.
     # @param network_id [Symbol] The Network ID
     # @param display_name [String] The Network's display name
     # @param protocol_family [String] The protocol family to which the Network belongs

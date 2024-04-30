@@ -3,7 +3,7 @@
 require 'bigdecimal'
 
 module Coinbase
-  # A convenience class for printing out crypto asset balances in a human-readable format.
+  # A convenience class for printing out Asset balances in a human-readable format.
   class BalanceMap < Hash
     # Returns a new BalanceMap object.
     # @param hash [Map<Symbol, BigDecimal>] The hash to initialize with

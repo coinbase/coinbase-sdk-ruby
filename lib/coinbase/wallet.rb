@@ -9,7 +9,8 @@ require 'securerandom'
 module Coinbase
   # A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses,
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
-  # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet.
+  # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or
+  # User#import_wallet.
   class Wallet
     # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
     # User#import_wallet.

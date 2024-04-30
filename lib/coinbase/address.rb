@@ -12,7 +12,8 @@ module Coinbase
   # send and receive Assets, and should be created using Wallet#create_address. Addresses require an
   # Eth::Key to sign transaction data.
   class Address
-    # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
+    # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use
+    # the Wallet's default_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
     # @param key [Eth::Key] The key backing the Address
     def initialize(model, key)
@@ -38,7 +39,7 @@ module Coinbase
       @model.address_id
     end
 
-    # Returns the balances of the Address. Currently only ETH balances are supported.
+    # Returns the balances of the Address.
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
@@ -46,7 +47,7 @@ module Coinbase
       Coinbase.to_balance_map(response)
     end
 
-    # Returns the balance of the provided Asset. Currently only ETH is supported.
+    # Returns the balance of the provided Asset.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
     def get_balance(asset_id)

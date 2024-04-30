@@ -70,7 +70,7 @@
 
 <h2 id="label-Documentation">Documentation</h2>
 
-<p><a href="https://super-barnacle-n8zkznw.pages.github.io/">Click here for full SDK documentation</a></p>
+<p><a href="https://coinbase.github.io/coinbase-sdk-ruby/">Click here for full SDK documentation</a></p>
 
 <h2 id="label-Installation">Installation</h2>
 
@@ -102,7 +102,7 @@
 
 <p>After running <code>irb</code>, require the Gem:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase</span><span class='tstring_end'>&#39;</span></span>
 </code></pre>
 
 <h3 id="label-Requirements">Requirements</h3>
@@ -118,7 +118,9 @@
 
 <p>You can configure the SDK with your Base Sepolia RPC node by copying your node URL from the CDP portal and setting the following:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url'><span class='object_link'><a href="Coinbase.html#base_sepolia_rpc_url-class_method" title="Coinbase.base_sepolia_rpc_url (method)">base_sepolia_rpc_url</a></span></span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://api.developer.coinbase.com/rpc/v1/base/your-node-id</span><span class='tstring_end'>&#39;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="Coinbase.html#configure-class_method" title="Coinbase.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url'>base_sepolia_rpc_url</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://api.developer.coinbase.com/rpc/v1/base/your-node-id</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span>
 </code></pre>
 
 <h3 id="label-Wallets+and+Addresses">Wallets and Addresses</h3>
@@ -231,7 +233,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Fri Apr 19 18:33:55 2024 by
+  Generated on Tue Apr 30 11:30:08 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
