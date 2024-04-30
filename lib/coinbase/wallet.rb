@@ -149,7 +149,7 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
-      Data.new(wallet_id, @master.seed_hex)
+      Data.new(wallet_id: wallet_id, seed: @master.seed_hex)
     end
 
     # The data required to recreate a Wallet.
@@ -159,7 +159,7 @@ module Coinbase
       # Returns a new Data object.
       # @param wallet_id [String] The ID of the Wallet
       # @param seed [String] The seed of the Wallet
-      def initialize(wallet_id, seed)
+      def initialize(wallet_id:, seed:)
         @wallet_id = wallet_id
         @seed = seed
       end
@@ -174,7 +174,7 @@ module Coinbase
       # @param data [Hash] The Hash to create the Data object from
       # @return [Data] The new Data object
       def self.from_hash(data)
-        Data.new(data['wallet_id'], data['seed'])
+        Data.new(wallet_id: data['wallet_id'], seed: data['seed'])
       end
     end
 
