@@ -14,26 +14,26 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateTransferRequest
-    # The amount to transfer
-    attr_accessor :amount
+  # 
+  class TransferList
+    attr_accessor :data
 
-    # The ID of the blockchain network
-    attr_accessor :network_id
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # The ID of the asset to transfer
-    attr_accessor :asset_id
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
 
-    # The destination address
-    attr_accessor :destination
+    # The total number of transfers for the address in the wallet.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'amount' => :'amount',
-        :'network_id' => :'network_id',
-        :'asset_id' => :'asset_id',
-        :'destination' => :'destination'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -45,10 +45,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'amount' => :'String',
-        :'network_id' => :'String',
-        :'asset_id' => :'String',
-        :'destination' => :'String'
+        :'data' => :'Array<Transfer>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -62,39 +62,41 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateTransferRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::TransferList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateTransferRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::TransferList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'amount')
-        self.amount = attributes[:'amount']
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
       else
-        self.amount = nil
+        self.data = nil
       end
 
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
       else
-        self.network_id = nil
+        self.has_more = nil
       end
 
-      if attributes.key?(:'asset_id')
-        self.asset_id = attributes[:'asset_id']
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
       else
-        self.asset_id = nil
+        self.next_page = nil
       end
 
-      if attributes.key?(:'destination')
-        self.destination = attributes[:'destination']
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
       else
-        self.destination = nil
+        self.total_count = nil
       end
     end
 
@@ -103,20 +105,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @amount.nil?
-        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
       end
 
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
       end
 
-      if @asset_id.nil?
-        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
       end
 
-      if @destination.nil?
-        invalid_properties.push('invalid value for "destination", destination cannot be nil.')
+      if @total_count.nil?
+        invalid_properties.push('invalid value for "total_count", total_count cannot be nil.')
       end
 
       invalid_properties
@@ -126,10 +128,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @amount.nil?
-      return false if @network_id.nil?
-      return false if @asset_id.nil?
-      return false if @destination.nil?
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
+      return false if @total_count.nil?
       true
     end
 
@@ -138,10 +140,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          amount == o.amount &&
-          network_id == o.network_id &&
-          asset_id == o.asset_id &&
-          destination == o.destination
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -153,7 +155,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [amount, network_id, asset_id, destination].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash

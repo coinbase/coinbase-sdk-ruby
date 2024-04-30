@@ -15,11 +15,13 @@ module Coinbase
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
     # @param addresses_api [Coinbase::Client::AddressesApi] The Addresses API object
+    # @param transfers_api [Coinbase::Client::TransfersApi] The Transfers API object
     # @param key [Eth::Key] The key backing the Address
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, addresses_api, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    def initialize(model, addresses_api, transfers_api, key, client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       @model = model
       @addresses_api = addresses_api
+      @transfers_api = transfers_api
       @key = key
       @client = client
     end
@@ -54,11 +56,7 @@ module Coinbase
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
     def get_balance(asset_id)
-      normalized_asset_id = if %i[wei gwei].include?(asset_id)
-                              :eth
-                            else
-                              asset_id
-                            end
+      normalized_asset_id = normalize_asset_id(asset_id)
 
       response = @addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
 
@@ -101,8 +99,20 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      transfer = Coinbase::Transfer.new(network_id, wallet_id, address_id, amount, asset_id, destination,
-                                        client: @client)
+      normalized_amount = normalize_wei_amount(amount, asset_id)
+
+      normalized_asset_id = normalize_asset_id(asset_id)
+
+      create_transfer_request = {
+        amount: normalized_amount.to_i.to_s,
+        network_id: network_id,
+        asset_id: normalized_asset_id.to_s,
+        destination: destination
+      }
+
+      transfer_model = @transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+
+      transfer = Coinbase::Transfer.new(transfer_model, @transfers_api, client: @client)
 
       transaction = transfer.transaction
       transaction.sign(@key)
@@ -119,20 +129,33 @@ module Coinbase
 
     private
 
-    # Normalizes the amount of ETH to send based on the asset ID.
+    # Normalizes the amount of Wei to send based on the asset ID.
     # @param amount [Integer, Float, BigDecimal] The amount to normalize
     # @param asset_id [Symbol] The ID of the Asset being transferred
-    # @return [BigDecimal] The normalized amount in units of ETH
-    def normalize_eth_amount(amount, asset_id)
+    # @return [BigDecimal] The normalized amount in units of Wei
+    def normalize_wei_amount(amount, asset_id)
+      big_amount = BigDecimal(amount.to_s)
+
       case asset_id
       when :eth
-        amount.is_a?(BigDecimal) ? amount : BigDecimal(amount.to_s)
+        big_amount * Coinbase::WEI_PER_ETHER
       when :gwei
-        BigDecimal(amount / Coinbase::GWEI_PER_ETHER)
+        big_amount * Coinbase::WEI_PER_GWEI
       when :wei
-        BigDecimal(amount / Coinbase::WEI_PER_ETHER)
+        big_amount
       else
         raise ArgumentError, "Unsupported asset: #{asset_id}"
+      end
+    end
+
+    # Normalizes the asset ID to use during requests.
+    # @param asset_id [Symbol] The asset ID to normalize
+    # @return [Symbol] The normalized asset ID
+    def normalize_asset_id(asset_id)
+      if %i[wei gwei].include?(asset_id)
+        :eth
+      else
+        asset_id
       end
     end
   end

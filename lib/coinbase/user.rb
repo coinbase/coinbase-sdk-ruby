@@ -11,10 +11,12 @@ module Coinbase
     # @param model [Coinbase::Client::User] the underlying User object
     # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
-    def initialize(model, wallets_api, addresses_api)
+    # @param transfers_api [Coinbase::Client::TransfersApi] the Transfers API to use
+    def initialize(model, wallets_api, addresses_api, transfers_api)
       @model = model
       @wallets_api = wallets_api
       @addresses_api = addresses_api
+      @transfers_api = transfers_api
     end
 
     # Returns the User ID.
@@ -36,7 +38,7 @@ module Coinbase
 
       model = @wallets_api.create_wallet(opts)
 
-      Wallet.new(model, @wallets_api, @addresses_api)
+      Wallet.new(model, @wallets_api, @addresses_api, @transfers_api)
     end
 
     # Imports a Wallet belonging to the User.
@@ -45,7 +47,7 @@ module Coinbase
     def import_wallet(data)
       model = @wallets_api.get_wallet(data.wallet_id)
       address_count = @addresses_api.list_addresses(model.id).total_count
-      Wallet.new(model, @wallets_api, @addresses_api, seed: data.seed, address_count: address_count)
+      Wallet.new(model, @wallets_api, @addresses_api, @transfers_api, seed: data.seed, address_count: address_count)
     end
 
     # Lists the IDs of the Wallets belonging to the User.

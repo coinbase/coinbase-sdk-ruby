@@ -16,17 +16,19 @@ module Coinbase
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
     # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
     # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
+    # @param transfers_api [Coinbase::Client::TransferApi] the Transfers API to use
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If not provided, a new seed will be generated.
     # @param address_count [Integer] (Optional) The number of addresses already registered for the Wallet.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(model, wallets_api, addresses_api, seed: nil, address_count: 0,
+    def initialize(model, wallets_api, addresses_api, transfers_api, seed: nil, address_count: 0,
                    client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
 
       @model = model
       @wallets_api = wallets_api
       @addresses_api = addresses_api
+      @transfers_api = transfers_api
 
       @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
 
@@ -198,7 +200,7 @@ module Coinbase
     # @param client [Jimson::Client] The JSON RPC client to use for interacting with the Network
     # @return [Address] The new Address
     def cache_address(address_model, key, client)
-      address = Address.new(address_model, @addresses_api, key, client: client)
+      address = Address.new(address_model, @addresses_api, @transfers_api, key, client: client)
       @addresses << address
       @address_index += 1
       address

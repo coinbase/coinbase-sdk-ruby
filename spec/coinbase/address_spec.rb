@@ -14,10 +14,11 @@ describe Coinbase::Address do
                                   })
   end
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+  let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
   subject(:address) do
-    described_class.new(model, addresses_api, key, client: client)
+    described_class.new(model, addresses_api, transfers_api, key, client: client)
   end
 
   describe '#initialize' do
@@ -129,7 +130,6 @@ describe Coinbase::Address do
   end
 
   describe '#transfer' do
-    let(:amount) { 500_000_000_000_000_000 }
     let(:balance_response) do
       Coinbase::Client::Balance.new(
         {
@@ -142,7 +142,6 @@ describe Coinbase::Address do
         }
       )
     end
-    let(:asset_id) { :wei }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
@@ -160,29 +159,65 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination is a valid Address' do
-      let(:destination) { described_class.new(model, addresses_api, to_key, client: client) }
+      let(:asset_id) { :wei }
+      let(:amount) { 500_000_000_000_000_000 }
+      let(:destination) { described_class.new(model, addresses_api, transfers_api, to_key, client: client) }
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
+      end
       it 'creates a Transfer' do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
           .and_return(balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
     context 'when the destination is a valid Address ID' do
+      let(:asset_id) { :wei }
+      let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { to_address_id }
-
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+      end
       it 'creates a Transfer' do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
           .and_return(balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id,  create_transfer_request)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
+
+    context 'when the destination is a valid Address ID and asset is Gwei' do
+      let(:asset_id) { :gwei }
+      let(:amount) { 500_000_000 }
+      let(:wei_amount) { 500_000_000_000_000_000 }
+      let(:destination) { to_address_id }
+      let(:create_transfer_request) do
+        { amount: wei_amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+      end
+      it 'creates a Transfer' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id,  create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
     context 'when the asset is unsupported' do
+      let(:amount) { 500_000_000_000_000_000 }
       it 'raises an ArgumentError' do
         expect { address.transfer(amount, :uni, to_address_id) }.to raise_error(ArgumentError, 'Unsupported asset: uni')
       end
@@ -191,6 +226,8 @@ describe Coinbase::Address do
     # TODO: Add test case for when the destination is a Wallet.
 
     context 'when the destination Address is on a different network' do
+      let(:asset_id) { :wei }
+      let(:amount) { 500_000_000_000_000_000 }
       let(:new_model) do
         Coinbase::Client::Address.new({
                                         'network_id' => 'base-mainnet',
@@ -202,12 +239,19 @@ describe Coinbase::Address do
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, addresses_api, to_key, client: client))
+          address.transfer(amount, asset_id, Coinbase::Address.new(
+                                               new_model,
+                                               addresses_api,
+                                               transfers_api,
+                                               to_key,
+                                               client: client
+                                             ))
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
 
     context 'when the balance is insufficient' do
+      let(:asset_id) { :wei }
       let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
       before do
         expect(addresses_api)
