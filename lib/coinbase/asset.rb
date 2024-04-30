@@ -5,7 +5,8 @@ module Coinbase
   class Asset
     attr_reader :network_id, :asset_id, :display_name, :address_id
 
-    # Returns a new Asset object.
+    # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in
+    # the Coinbase module.
     # @param network_id [Symbol] The ID of the Network to which the Asset belongs
     # @param asset_id [Symbol] The Asset ID
     # @param display_name [String] The Asset's display name

@@ -290,7 +290,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns a new Asset object.</p>
+<p>Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in the Coinbase module.</p>
 
 
   </div>
@@ -374,15 +374,15 @@
       <pre class="lines">
 
 
-13
 14
 15
 16
 17
-18</pre>
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 13</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 14</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>asset_id:</span><span class='comma'>,</span> <span class='label'>display_name:</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@network_id</span> <span class='op'>=</span> <span class='id identifier rubyid_network_id'>network_id</span>
@@ -578,7 +578,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 19 18:33:55 2024 by
+  Generated on Tue Apr 30 12:26:53 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>

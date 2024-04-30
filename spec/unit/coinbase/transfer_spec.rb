@@ -107,6 +107,40 @@ describe Coinbase::Transfer do
       expect(transfer.transaction).to be_a(Eth::Tx::Eip1559)
       expect(transfer.transaction.amount).to eq(amount * Coinbase::WEI_PER_ETHER)
     end
+
+    context 'when the transaction is for an ERC-20' do
+      let(:usdc_unsigned_payload) do
+        '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e6365223a22307830222c22746f223a22' \
+        '307830333663626435333834326335343236363334653739323935343165633233313866336463663765222c22676173223a22307831' \
+        '38366130222c226761735072696365223a6e756c6c2c226d61785072696f72697479466565506572476173223a223078353936383266' \
+        '3030222c226d6178466565506572476173223a2230783539363832663030222c2276616c7565223a22307830222c22696e707574223a' \
+        '223078613930353963626230303030303030303030303030303030303030303030303034643965346633663464316138623566346637' \
+        '623166356235633762386436623262336231623062303030303030303030303030303030303030303030303030303030303030303030' \
+        '30303030303030303030303030303030303030303030303030303030303031222c226163636573734c697374223a5b5d2c2276223a22' \
+        '307830222c2272223a22307830222c2273223a22307830222c2279506172697479223a22307830222c2268617368223a223078316365' \
+        '386164393935306539323437316461666665616664653562353836373938323430663630303138336136363365393661643738383039' \
+        '66643965303666227d'
+      end
+
+      let(:usdc_model) do
+        Coinbase::Client::Transfer.new({
+                                         'address_id' => from_address_id,
+                                         'destination' => to_address_id,
+                                         'unsigned_payload' => usdc_unsigned_payload
+                                       })
+      end
+      let(:usdc_transfer) do
+        described_class.new(usdc_model)
+      end
+
+      it 'returns the Transfer transaction' do
+        expect(usdc_transfer.transaction).to be_a(Eth::Tx::Eip1559)
+        expect(usdc_transfer.transaction.amount).to eq(BigDecimal('0'))
+        expect(usdc_transfer.transaction.chain_id).to eq(84_532)
+        expect(usdc_transfer.transaction.max_fee_per_gas).to eq(1_500_000_000)
+        expect(usdc_transfer.transaction.max_priority_fee_per_gas).to eq(1_500_000_000)
+      end
+    end
   end
 
   describe '#transaction_hash' do

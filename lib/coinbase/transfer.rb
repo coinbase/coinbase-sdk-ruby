@@ -8,8 +8,8 @@ require 'json'
 module Coinbase
   # A representation of a Transfer, which moves an amount of an Asset from
   # a user-controlled Wallet to another address. The fee is assumed to be paid
-  # in the native Asset of the Network. Currently only ETH transfers are supported. Transfers
-  # should be created through {link:Wallet#transfer} or {link:Address#transfer}.
+  # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
+  # Address#transfer.
   class Transfer
     # A representation of a Transfer status.
     module Status
@@ -28,7 +28,8 @@ module Coinbase
       FAILED = :failed
     end
 
-    # Returns a new Transfer object.
+    # Returns a new Transfer object. Do not use this method directly. Instead, use Wallet#transfer or
+    # Address#transfer.
     # @param model [Coinbase::Client::Transfer] The underlying Transfer object
     def initialize(model)
       @model = model
@@ -98,7 +99,8 @@ module Coinbase
         gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
         from: Eth::Address.new(from_address_id),
         to: Eth::Address.new(destination_address_id),
-        value: parsed_payload['value'].to_i(16)
+        value: parsed_payload['value'].to_i(16),
+        data: parsed_payload['data'] || ''
       }
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))

@@ -79,7 +79,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/coinbase.rb<span class="defines">,<br />
-  lib/coinbase/asset.rb,<br /> lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb,<br /> lib/coinbase/balance_map.rb</span>
+  lib/coinbase/user.rb,<br /> lib/coinbase/asset.rb,<br /> lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb,<br /> lib/coinbase/middleware.rb,<br /> lib/coinbase/balance_map.rb,<br /> lib/coinbase/authenticator.rb</span>
 </dd>
   </dl>
   
@@ -100,9 +100,11 @@
 <p class="children">
   
     
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Coinbase/Client.html" title="Coinbase::Client (module)">Client</a></span>, <span class='object_link'><a href="Coinbase/Middleware.html" title="Coinbase::Middleware (module)">Middleware</a></span>
+    
   
     
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Coinbase/Address.html" title="Coinbase::Address (class)">Address</a></span>, <span class='object_link'><a href="Coinbase/Asset.html" title="Coinbase::Asset (class)">Asset</a></span>, <span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span>, <span class='object_link'><a href="Coinbase/Network.html" title="Coinbase::Network (class)">Network</a></span>, <span class='object_link'><a href="Coinbase/Transfer.html" title="Coinbase::Transfer (class)">Transfer</a></span>, <span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span>
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Coinbase/Address.html" title="Coinbase::Address (class)">Address</a></span>, <span class='object_link'><a href="Coinbase/Asset.html" title="Coinbase::Asset (class)">Asset</a></span>, <span class='object_link'><a href="Coinbase/Authenticator.html" title="Coinbase::Authenticator (class)">Authenticator</a></span>, <span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span>, <span class='object_link'><a href="Coinbase/Configuration.html" title="Coinbase::Configuration (class)">Configuration</a></span>, <span class='object_link'><a href="Coinbase/InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">InvalidConfiguration</a></span>, <span class='object_link'><a href="Coinbase/Network.html" title="Coinbase::Network (class)">Network</a></span>, <span class='object_link'><a href="Coinbase/Transfer.html" title="Coinbase::Transfer (class)">Transfer</a></span>, <span class='object_link'><a href="Coinbase/User.html" title="Coinbase::User (class)">User</a></span>, <span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span>
     
   
 </p>
@@ -226,7 +228,8 @@
         <dd><pre class="code"><span class='lbrace'>{</span>
   <span class='label'>eth:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='comment'># Ether, the native asset of most EVM networks.
 </span>  <span class='label'>gwei:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='comment'># A medium denomination of Ether, typically used in gas prices.
-</span>  <span class='label'>wei:</span> <span class='kw'>true</span> <span class='comment'># The smallest denomination of Ether.
+</span>  <span class='label'>wei:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='comment'># The smallest denomination of Ether.
+</span>  <span class='label'>usdc:</span> <span class='kw'>true</span> <span class='comment'># USD Coin, a stablecoin pegged to the US Dollar.
 </span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -249,7 +252,51 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#base_sepolia_rpc_url-class_method" title="base_sepolia_rpc_url (class method)">.<strong>base_sepolia_rpc_url</strong>  &#x21d2; String </a>
+      <a href="#configuration-class_method" title="configuration (class method)">.<strong>configuration</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#configure-class_method" title="configure (class method)">.<strong>configure</strong> {|configuration| ... } &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#default_user-class_method" title="default_user (class method)">.<strong>default_user</strong>  &#x21d2; Coinbase::User </a>
     
 
     
@@ -264,7 +311,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the Base Sepolia RPC URL.</p>
+<p>Returns the default user.</p>
 </div></span>
   
 </li>
@@ -273,7 +320,29 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#base_sepolia_rpc_url=-class_method" title="base_sepolia_rpc_url= (class method)">.<strong>base_sepolia_rpc_url=</strong>(value)  &#x21d2; Object </a>
+      <a href="#load_default_user-class_method" title="load_default_user (class method)">.<strong>load_default_user</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_balance_map-class_method" title="to_balance_map (class method)">.<strong>to_balance_map</strong>(address_balance_list)  &#x21d2; BalanceMap </a>
     
 
     
@@ -288,7 +357,31 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Sets the Base Sepolia RPC URL.</p>
+<p>Converts a Coinbase::Client::AddressBalanceList to a BalanceMap.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_sym-class_method" title="to_sym (class method)">.<strong>to_sym</strong>(value)  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Converts a string to a symbol, replacing hyphens with underscores.</p>
 </div></span>
   
 </li>
@@ -304,9 +397,39 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="base_sepolia_rpc_url-class_method">
+  <h3 class="signature first" id="configuration-class_method">
   
-    .<strong>base_sepolia_rpc_url</strong>  &#x21d2; <tt>String</tt> 
+    .<strong>configuration</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+19
+20
+21</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 19</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span>
+  <span class='ivar'>@configuration</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Coinbase/Configuration.html" title="Coinbase::Configuration (class)">Configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Configuration.html#initialize-instance_method" title="Coinbase::Configuration#initialize (method)">new</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="configure-class_method">
+  
+    .<strong>configure</strong> {|configuration| ... } &#x21d2; <tt>Object</tt> 
   
 
   
@@ -315,7 +438,78 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the Base Sepolia RPC URL.</p>
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Yields:</p>
+<ul class="yield">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Coinbase/InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">InvalidConfiguration</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configure'>configure</span>
+  <span class='kw'>yield</span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="Coinbase/InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">InvalidConfiguration</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>API key private key is not set</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="Coinbase/InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">InvalidConfiguration</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>API key name is not set</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="default_user-class_method">
+  
+    .<strong>default_user</strong>  &#x21d2; <tt><span class='object_link'><a href="Coinbase/User.html" title="Coinbase::User (class)">Coinbase::User</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the default user.</p>
 
 
   </div>
@@ -328,13 +522,13 @@
     <li>
       
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="Coinbase/User.html" title="Coinbase::User (class)">Coinbase::User</a></span></tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>the Base Sepolia RPC URL</p>
+<p>the default user</p>
 </div>
       
     </li>
@@ -347,15 +541,15 @@
       <pre class="lines">
 
 
-17
-18
-19</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 53</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url'>base_sepolia_rpc_url</span>
-  <span class='ivar'>@base_sepolia_rpc_url</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_user'>default_user</span>
+  <span class='ivar'>@default_user</span> <span class='op'>||=</span> <span class='id identifier rubyid_load_default_user'>load_default_user</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -363,9 +557,43 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="base_sepolia_rpc_url=-class_method">
+  <h3 class="signature " id="load_default_user-class_method">
   
-    .<strong>base_sepolia_rpc_url=</strong>(value)  &#x21d2; <tt>Object</tt> 
+    .<strong>load_default_user</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85
+86
+87</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_load_default_user'>load_default_user</span>
+  <span class='id identifier rubyid_users_api'>users_api</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client/UsersApi.html" title="Coinbase::Client::UsersApi (class)">UsersApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Client/UsersApi.html#initialize-instance_method" title="Coinbase::Client::UsersApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_api_client'>api_client</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user_model'>user_model</span> <span class='op'>=</span> <span class='id identifier rubyid_users_api'>users_api</span><span class='period'>.</span><span class='id identifier rubyid_get_current_user'>get_current_user</span>
+  <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/User.html" title="Coinbase::User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/User.html#initialize-instance_method" title="Coinbase::User#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_user_model'>user_model</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_balance_map-class_method">
+  
+    .<strong>to_balance_map</strong>(address_balance_list)  &#x21d2; <tt><span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></tt> 
   
 
   
@@ -374,7 +602,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Sets the Base Sepolia RPC URL.</p>
+<p>Converts a Coinbase::Client::AddressBalanceList to a BalanceMap.</p>
 
 
   </div>
@@ -385,7 +613,110 @@
   
     <li>
       
-        <span class='name'>value</span>
+        <span class='name'>address_balance_list</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Coinbase/Client/AddressBalanceList.html" title="Coinbase::Client::AddressBalanceList (class)">Coinbase::Client::AddressBalanceList</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The AddressBalanceList to convert</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The converted BalanceMap</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 67</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_balance_map'>to_balance_map</span><span class='lparen'>(</span><span class='id identifier rubyid_address_balance_list'>address_balance_list</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_balances'>balances</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_address_balance_list'>address_balance_list</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_balance'>balance</span><span class='op'>|</span>
+    <span class='id identifier rubyid_asset_id'>asset_id</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_amount'>amount</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='id identifier rubyid_asset_id'>asset_id</span> <span class='op'>==</span> <span class='symbol'>:eth</span>
+               <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="#WEI_PER_ETHER-constant" title="Coinbase::WEI_PER_ETHER (constant)">WEI_PER_ETHER</a></span></span><span class='rparen'>)</span>
+             <span class='kw'>else</span>
+               <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span>
+             <span class='kw'>end</span>
+    <span class='id identifier rubyid_balances'>balances</span><span class='lbracket'>[</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_amount'>amount</span>
+  <span class='kw'>end</span>
+
+  <span class='const'><span class='object_link'><a href="Coinbase/BalanceMap.html" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/BalanceMap.html#initialize-instance_method" title="Coinbase::BalanceMap#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_balances'>balances</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_sym-class_method">
+  
+    .<strong>to_sym</strong>(value)  &#x21d2; <tt>Symbol</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Converts a string to a symbol, replacing hyphens with underscores.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>string</span>
       
       
         <span class='type'>(<tt>String</tt>)</span>
@@ -394,13 +725,31 @@
       
         &mdash;
         <div class='inline'>
-<p>the Base Sepolia RPC URL</p>
+<p>the string to convert</p>
 </div>
       
     </li>
   
 </ul>
 
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the converted symbol</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -408,15 +757,15 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 60</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_rpc_url='>base_sepolia_rpc_url=</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
-  <span class='ivar'>@base_sepolia_rpc_url</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -428,7 +777,7 @@
 </div>
 
       <div id="footer">
-  Generated on Fri Apr 19 18:33:55 2024 by
+  Generated on Tue Apr 30 12:26:53 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>

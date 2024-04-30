@@ -9,7 +9,8 @@ require 'securerandom'
 module Coinbase
   # A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses,
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
-  # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet.
+  # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or
+  # User#import_wallet.
   class Wallet
     # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
     # User#import_wallet.
@@ -161,6 +162,19 @@ module Coinbase
       def initialize(wallet_id, seed)
         @wallet_id = wallet_id
         @seed = seed
+      end
+
+      # Converts the Data object to a Hash.
+      # @return [Hash] The Hash representation of the Data object
+      def to_hash
+        { wallet_id: wallet_id, seed: seed }
+      end
+
+      # Creates a Data object from the given Hash.
+      # @param data [Hash] The Hash to create the Data object from
+      # @return [Data] The new Data object
+      def self.from_hash(data)
+        Data.new(data['wallet_id'], data['seed'])
       end
     end
 

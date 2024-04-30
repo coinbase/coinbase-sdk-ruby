@@ -12,7 +12,8 @@ module Coinbase
   # send and receive Assets, and should be created using Wallet#create_address. Addresses require an
   # Eth::Key to sign transaction data.
   class Address
-    # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address.
+    # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use
+    # the Wallet's default_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
     # @param key [Eth::Key] The key backing the Address
     def initialize(model, key)
@@ -38,7 +39,7 @@ module Coinbase
       @model.address_id
     end
 
-    # Returns the balances of the Address. Currently only ETH balances are supported.
+    # Returns the balances of the Address.
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
@@ -46,7 +47,7 @@ module Coinbase
       Coinbase.to_balance_map(response)
     end
 
-    # Returns the balance of the provided Asset. Currently only ETH is supported.
+    # Returns the balance of the provided Asset.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
     def get_balance(asset_id)
@@ -75,7 +76,6 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      # TODO: Handle multiple currencies.
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
 
       if destination.is_a?(Wallet)
@@ -135,10 +135,8 @@ module Coinbase
         big_amount * Coinbase::WEI_PER_ETHER
       when :gwei
         big_amount * Coinbase::WEI_PER_GWEI
-      when :wei
-        big_amount
       else
-        raise ArgumentError, "Unsupported asset: #{asset_id}"
+        big_amount
       end
     end
 

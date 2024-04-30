@@ -136,7 +136,7 @@ describe Coinbase::Address do
   end
 
   describe '#transfer' do
-    let(:balance_response) do
+    let(:eth_balance_response) do
       Coinbase::Client::Balance.new(
         {
           'amount' => '1000000000000000000',
@@ -144,6 +144,18 @@ describe Coinbase::Address do
                                                    'network_id': 'base-sepolia',
                                                    'asset_id': 'eth',
                                                    'decimals': 18
+                                                 })
+        }
+      )
+    end
+    let(:usdc_balance_response) do
+      Coinbase::Client::Balance.new(
+        {
+          'amount' => '5000',
+          'asset' => Coinbase::Client::Asset.new({
+                                                   'network_id': 'base-sepolia',
+                                                   'asset_id': 'usdc',
+                                                   'decimals': 6
                                                  })
         }
       )
@@ -176,7 +188,27 @@ describe Coinbase::Address do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
-          .and_return(balance_response)
+          .and_return(eth_balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
+
+    context 'when the destination is a valid Address and asset is USDC' do
+      let(:asset_id) { :usdc }
+      let(:amount) { 500 }
+      let(:destination) { described_class.new(model, to_key) }
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'usdc', destination: destination.address_id }
+      end
+
+      it 'creates a Transfer' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'usdc')
+          .and_return(usdc_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
@@ -195,7 +227,7 @@ describe Coinbase::Address do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
-          .and_return(balance_response)
+          .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id,  create_transfer_request)
@@ -215,7 +247,7 @@ describe Coinbase::Address do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
-          .and_return(balance_response)
+          .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id,  create_transfer_request)
@@ -258,7 +290,7 @@ describe Coinbase::Address do
         expect(addresses_api)
           .to receive(:get_address_balance)
           .with(wallet_id, address_id, 'eth')
-          .and_return(balance_response)
+          .and_return(eth_balance_response)
       end
 
       it 'raises an ArgumentError' do
