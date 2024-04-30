@@ -1,0 +1,27 @@
+name: Run End-To-End Tests
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+
+    - name: Install dependencies
+      run: |
+        gem install bundler -v 2.4.22
+        bundle install --jobs 4 --retry 3
+
+    - name: Run e2e tests
+      env:
+        API_KEY_NAME: ${{ secrets.API_KEY_NAME }}
+        API_KEY_PRIVATE_KEY: ${{ secrets.API_KEY_PRIVATE_KEY }}
+        WALLET_DATA: ${{ secrets.WALLET_DATA }}
+      run: bundle exec rspec spec/e2e/production.rb

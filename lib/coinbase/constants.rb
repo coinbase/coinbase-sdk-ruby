@@ -29,10 +29,14 @@ module Coinbase
   # The amount of Gwei per Ether.
   GWEI_PER_ETHER = 1_000_000_000
 
+  # The amount of atomic units of USDC per USDC.
+  ATOMIC_UNITS_PER_USDC = 1_000_000
+
   # A map of supported Asset IDs.
   SUPPORTED_ASSET_IDS = {
     eth: true, # Ether, the native asset of most EVM networks.
     gwei: true, # A medium denomination of Ether, typically used in gas prices.
-    wei: true # The smallest denomination of Ether.
+    wei: true, # The smallest denomination of Ether.
+    usdc: true # USD Coin, a stablecoin pegged to the US Dollar.
   }.freeze
 end

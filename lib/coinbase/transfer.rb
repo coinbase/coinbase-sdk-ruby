@@ -3,15 +3,14 @@
 require_relative 'constants'
 require 'bigdecimal'
 require 'eth'
+require 'json'
 
 module Coinbase
   # A representation of a Transfer, which moves an amount of an Asset from
   # a user-controlled Wallet to another address. The fee is assumed to be paid
-  # in the native Asset of the Network. Currently only ETH transfers are supported. Transfers
-  # should be created through {link:Wallet#transfer} or {link:Address#transfer}.
+  # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
+  # Address#transfer.
   class Transfer
-    attr_reader :network_id, :wallet_id, :from_address_id, :amount, :asset_id, :to_address_id
-
     # A representation of a Transfer status.
     module Status
       # The Transfer is awaiting being broadcast to the Network. At this point, transaction
@@ -29,28 +28,59 @@ module Coinbase
       FAILED = :failed
     end
 
-    # Returns a new Transfer object.
-    # @param network_id [Symbol] The ID of the Network on which the Transfer originated
-    # @param wallet_id [String] The ID of the Wallet from which the Transfer originated
-    # @param from_address_id [String] The ID of the address from which the Transfer originated
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send. Integers are interpreted as
-    #  the smallest denomination of the Asset (e.g. Wei for Ether). Floats and BigDecimals are interpreted as the Asset
-    #  itself (e.g. Ether).
-    # @param asset_id [Symbol] The ID of the Asset being transferred. Currently only ETH is supported.
-    # @param to_address_id [String] The address to which the Transfer is being sent
-    # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
-    def initialize(network_id, wallet_id, from_address_id, amount, asset_id, to_address_id,
-                   client: Jimson::Client.new(Coinbase.base_sepolia_rpc_url))
+    # Returns a new Transfer object. Do not use this method directly. Instead, use Wallet#transfer or
+    # Address#transfer.
+    # @param model [Coinbase::Client::Transfer] The underlying Transfer object
+    def initialize(model)
+      @model = model
+    end
 
-      raise ArgumentError, "Unsupported asset: #{asset_id}" if asset_id != :eth
+    # Returns the Transfer ID.
+    # @return [String] The Transfer ID
+    def transfer_id
+      @model.transfer_id
+    end
 
-      @network_id = network_id
-      @wallet_id = wallet_id
-      @from_address_id = from_address_id
-      @amount = normalize_eth_amount(amount)
-      @asset_id = asset_id
-      @to_address_id = to_address_id
-      @client = client
+    # Returns the Network ID of the Transfer.
+    # @return [String] The Network ID
+    def network_id
+      @model.network_id
+    end
+
+    # Returns the Wallet ID of the Transfer.
+    # @return [String] The Wallet ID
+    def wallet_id
+      @model.wallet_id
+    end
+
+    # Returns the From Address ID of the Transfer.
+    # @return [String] The From Address ID
+    def from_address_id
+      @model.address_id
+    end
+
+    # Returns the Destination Address ID of the Transfer.
+    # @return [String] The Destination Address ID
+    def destination_address_id
+      @model.destination
+    end
+
+    # Returns the Asset ID of the Transfer.
+    # @return [Symbol] The Asset ID
+    def asset_id
+      @model.asset_id.to_sym
+    end
+
+    # Returns the amount of the asset for the Transfer.
+    # @return [BigDecimal] The amount in units of ETH
+    def amount
+      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+    end
+
+    # Returns the Unsigned Payload of the Transfer.
+    # @return [String] The Unsigned Payload
+    def unsigned_payload
+      @model.unsigned_payload
     end
 
     # Returns the underlying Transfer transaction, creating it if it has not been yet.
@@ -58,18 +88,19 @@ module Coinbase
     def transaction
       return @transaction unless @transaction.nil?
 
-      nonce = @client.eth_getTransactionCount(@from_address_id.to_s, 'latest').to_i(16)
-      gas_price = @client.eth_gasPrice.to_i(16)
+      raw_payload = [unsigned_payload].pack('H*')
+      parsed_payload = JSON.parse(raw_payload)
 
       params = {
-        chain_id: BASE_SEPOLIA.chain_id, # TODO: Don't hardcode Base Sepolia.
-        nonce: nonce,
-        priority_fee: gas_price, # TODO: Optimize this.
-        max_gas_fee: gas_price,
-        gas_limit: 21_000, # TODO: Handle multiple currencies.
-        from: Eth::Address.new(@from_address_id),
-        to: Eth::Address.new(@to_address_id),
-        value: (@amount * Coinbase::WEI_PER_ETHER).to_i
+        chain_id: parsed_payload['chainId'].to_i(16),
+        nonce: parsed_payload['nonce'].to_i(16),
+        priority_fee: parsed_payload['maxPriorityFeePerGas'].to_i(16),
+        max_gas_fee: parsed_payload['maxFeePerGas'].to_i(16),
+        gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
+        from: Eth::Address.new(from_address_id),
+        to: Eth::Address.new(parsed_payload['to']),
+        value: parsed_payload['value'].to_i(16),
+        data: parsed_payload['input'] || ''
       }
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
@@ -87,7 +118,7 @@ module Coinbase
         return Status::PENDING
       end
 
-      onchain_transaction = @client.eth_getTransactionByHash(transaction_hash)
+      onchain_transaction = Coinbase.configuration.base_sepolia_client.eth_getTransactionByHash(transaction_hash)
 
       if onchain_transaction.nil?
         # If the transaction has not been broadcast, it is still pending.
@@ -97,7 +128,7 @@ module Coinbase
         # broadcast.
         Status::BROADCAST
       else
-        transaction_receipt = @client.eth_getTransactionReceipt(transaction_hash)
+        transaction_receipt = Coinbase.configuration.base_sepolia_client.eth_getTransactionReceipt(transaction_hash)
 
         if transaction_receipt['status'].to_i(16) == 1
           Status::COMPLETE
@@ -132,22 +163,6 @@ module Coinbase
       "0x#{transaction.hash}"
     rescue Eth::Signature::SignatureError
       nil
-    end
-
-    private
-
-    # Normalizes the given Ether amount into a BigDecimal.
-    # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @return [BigDecimal] The normalized amount
-    def normalize_eth_amount(amount)
-      case amount
-      when BigDecimal
-        amount
-      when Integer, Float
-        BigDecimal(amount.to_s)
-      else
-        raise ArgumentError, "Invalid amount: #{amount}"
-      end
     end
   end
 end

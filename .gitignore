@@ -1,3 +1,5 @@
 Gemfile.lock
-coinbase_cloud_api_key.json
 .yardoc
+lib/**/.DS_Store
+.idea
+.DS_Store

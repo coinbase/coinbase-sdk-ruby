@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'coinbase-sdk'
-  spec.version       = '0.0.1'
+  spec.version       = '0.0.2'
   spec.authors       = ['Yuga Cohler']
   spec.files         = Dir['lib/**/*.rb']
   spec.summary       = 'Coinbase Ruby SDK'
@@ -15,12 +15,15 @@ Gem::Specification.new do |spec|
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
-  spec.add_runtime_dependency 'bigdecimal'
   spec.add_runtime_dependency 'eth'
+  spec.add_runtime_dependency 'faraday'
+  spec.add_runtime_dependency 'faraday-multipart'
   spec.add_runtime_dependency 'jimson'
+  spec.add_runtime_dependency 'jwt'
+  spec.add_runtime_dependency 'marcel'
   spec.add_runtime_dependency 'money-tree'
-  spec.add_runtime_dependency 'securerandom'
 
+  spec.add_development_dependency 'dotenv'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
