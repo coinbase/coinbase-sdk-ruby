@@ -238,6 +238,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet to fetch the balances for
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [AddressBalanceList]
     def list_address_balances(wallet_id, address_id, opts = {})
       data, _status_code, _headers = list_address_balances_with_http_info(wallet_id, address_id, opts)
@@ -249,6 +250,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet to fetch the balances for
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [Array<(AddressBalanceList, Integer, Hash)>] AddressBalanceList data, response status code and response headers
     def list_address_balances_with_http_info(wallet_id, address_id, opts = {})
       if @api_client.config.debugging
@@ -262,11 +264,16 @@ module Coinbase::Client
       if @api_client.config.client_side_validation && address_id.nil?
         fail ArgumentError, "Missing the required parameter 'address_id' when calling AddressesApi.list_address_balances"
       end
+      if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
+        fail ArgumentError, 'invalid value for "opts[:"page"]" when calling AddressesApi.list_address_balances, the character length must be smaller than or equal to 5000.'
+      end
+
       # resource path
       local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/balances'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
@@ -304,7 +311,7 @@ module Coinbase::Client
 
     # List addresses in a wallet.
     # List addresses in the wallet.
-    # @param wallet_id [String] The ID of the wallet whose addresess to fetch
+    # @param wallet_id [String] The ID of the wallet whose addresses to fetch
     # @param [Hash] opts the optional parameters
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
@@ -316,7 +323,7 @@ module Coinbase::Client
 
     # List addresses in a wallet.
     # List addresses in the wallet.
-    # @param wallet_id [String] The ID of the wallet whose addresess to fetch
+    # @param wallet_id [String] The ID of the wallet whose addresses to fetch
     # @param [Hash] opts the optional parameters
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.

@@ -14,79 +14,44 @@ require_relative 'coinbase/wallet'
 
 # The Coinbase SDK.
 module Coinbase
-  @base_sepolia_rpc_url = 'https://sepolia.base.org'
+  class InvalidConfiguration < StandardError; end
 
-  # Returns the Base Sepolia RPC URL.
-  # @return [String] the Base Sepolia RPC URL
-  def self.base_sepolia_rpc_url
-    @base_sepolia_rpc_url
+  def self.configuration
+    @configuration ||= Configuration.new
   end
 
-  # Sets the Base Sepolia RPC URL.
-  # @param value [String] the Base Sepolia RPC URL
-  def self.base_sepolia_rpc_url=(value)
-    @base_sepolia_rpc_url = value
+  def self.configure
+    yield(configuration)
+
+    raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
+    raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
   end
 
-  # Initializes the Coinbase SDK with the given API key name and private key.
-  # @param api_key_name [String] The API key name
-  # @param api_key_private_key [String] The API key's private key
-  # @param api_url [String] The API URL
-  def self.init(api_key_name, api_key_private_key, api_url: 'api.cdp.coinbase.com')
-    @api_key_name = api_key_name
-    @api_key_private_key = api_key_private_key
-    @api_url = api_url
-  end
+  # Configuration object for the Coinbase SDK
+  class Configuration
+    attr_reader :base_sepolia_rpc_url, :base_sepolia_client
+    attr_accessor :api_url, :api_key_name, :api_key_private_key
 
-  # Returns the API key name.
-  # @return [String] the API key name
-  def self.api_key_name
-    raise 'API key name is not set' unless @api_key_name
+    def initialize
+      @base_sepolia_rpc_url = 'https://sepolia.base.org'
+      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
+      @api_url = 'https://api.cdp.coinbase.com'
+    end
 
-    @api_key_name
-  end
+    def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)
+      @base_sepolia_rpc_url = new_base_sepolia_rpc_url
+      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
+    end
 
-  # Sets the API key name.
-  # @param value [String] the API key name
-  def self.api_key_name=(value)
-    @api_key_name = value
-  end
-
-  # Returns the API key's private key.
-  # @return [String] the API key's private key
-  def self.api_key_private_key
-    raise 'API key private key is not set' unless @api_key_private_key
-
-    @api_key_private_key
-  end
-
-  # Sets the API key's private key.
-  # @param value [String] the API key's private key
-  def self.api_key_private_key=(value)
-    @api_key_private_key = value
-  end
-
-  # Returns the API URL.
-  # @return [String] the API URL
-  def self.api_url
-    @api_url
-  end
-
-  # Sets the API URL.
-  # @param value [String] the API URL
-  def self.api_url=(value)
-    @api_url = value
+    def api_client
+      @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
+    end
   end
 
   # Returns the default user.
   # @return [Coinbase::User] the default user
   def self.default_user
-    @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
-    @users_api ||= Coinbase::Client::UsersApi.new(@api_client)
-    @wallets_api ||= Coinbase::Client::WalletsApi.new(@api_client)
-    @addresses_api ||= Coinbase::Client::AddressesApi.new(@api_client)
-    @user_model ||= @users_api.get_current_user
-    @default_user ||= Coinbase::User.new(@user_model, @wallets_api, @addresses_api)
+    @default_user ||= load_default_user
   end
 
   # Converts a string to a symbol, replacing hyphens with underscores.
@@ -113,5 +78,11 @@ module Coinbase
     end
 
     BalanceMap.new(balances)
+  end
+
+  def self.load_default_user
+    users_api = Coinbase::Client::UsersApi.new(configuration.api_client)
+    user_model = users_api.get_current_user
+    Coinbase::User.new(user_model)
   end
 end

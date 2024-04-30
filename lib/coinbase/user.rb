@@ -9,12 +9,8 @@ module Coinbase
   class User
     # Returns a new User object. Do not use this method directly. Instead, use Coinbase#default_user.
     # @param model [Coinbase::Client::User] the underlying User object
-    # @param wallets_api [Coinbase::Client::WalletsApi] the Wallets API to use
-    # @param addresses_api [Coinbase::Client::AddressesApi] the Addresses API to use
-    def initialize(model, wallets_api, addresses_api)
+    def initialize(model)
       @model = model
-      @wallets_api = wallets_api
-      @addresses_api = addresses_api
     end
 
     # Returns the User ID.
@@ -34,9 +30,9 @@ module Coinbase
       }
       opts = { create_wallet_request: create_wallet_request }
 
-      model = @wallets_api.create_wallet(opts)
+      model = wallets_api.create_wallet(opts)
 
-      Wallet.new(model, @wallets_api, @addresses_api)
+      Wallet.new(model)
     end
 
     # Imports a Wallet belonging to the User.
@@ -44,15 +40,25 @@ module Coinbase
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
       model = @wallets_api.get_wallet(data.wallet_id)
-      address_count = @addresses_api.list_addresses(model.id).total_count
-      Wallet.new(model, @wallets_api, @addresses_api, seed: data.seed, address_count: address_count)
+      address_count = addresses_api.list_addresses(model.id).total_count
+      Wallet.new(model, seed: data.seed, address_count: address_count)
     end
 
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
     def list_wallet_ids
-      wallets = @wallets_api.list_wallets
+      wallets = wallets_api.list_wallets
       wallets.data.map(&:id)
+    end
+
+    private
+
+    def addresses_api
+      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+    end
+
+    def wallets_api
+      @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
     end
   end
 end

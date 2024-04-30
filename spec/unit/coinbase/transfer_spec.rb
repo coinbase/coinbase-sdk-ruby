@@ -6,23 +6,63 @@ describe Coinbase::Transfer do
   let(:network_id) { :base_sepolia }
   let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
-  let(:amount) { 5 }
+  let(:amount) { BigDecimal(100) }
+  let(:eth_amount) { amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
   let(:to_address_id) { to_key.address.to_s }
+  let(:transfer_id) { SecureRandom.uuid }
+  let(:unsigned_payload) do \
+    '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63' \
+'65223a22307830222c22746f223a22307834643965346633663464316138623566346637623166' \
+'356235633762386436623262336231623062222c22676173223a22307835323038222c22676173' \
+'5072696365223a6e756c6c2c226d61785072696f72697479466565506572476173223a223078' \
+'3539363832663030222c226d6178466565506572476173223a2230783539363832663030222c22' \
+'76616c7565223a2230783536626337356532643633313030303030222c22696e707574223a22' \
+'3078222c226163636573734c697374223a5b5d2c2276223a22307830222c2272223a2230783022' \
+'2c2273223a22307830222c2279506172697479223a22307830222c2268617368223a2230783664' \
+'633334306534643663323633653363396561396135656438646561346332383966613861363966' \
+'3031653635393462333732386230386138323335333433227d'
+  end
+  let(:model) do
+    Coinbase::Client::Transfer.new({
+                                     'network_id' => network_id,
+                                     'wallet_id' => wallet_id,
+                                     'address_id' => from_address_id,
+                                     'destination' => to_address_id,
+                                     'asset_id' => 'eth',
+                                     'amount' => amount.to_s,
+                                     'transfer_id' => transfer_id,
+                                     'status' => 'pending',
+                                     'unsigned_payload' => unsigned_payload
+                                   })
+  end
+  let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
+  before(:each) do
+    configuration = double(Coinbase::Configuration)
+    allow(Coinbase).to receive(:configuration).and_return(configuration)
+    allow(configuration).to receive(:base_sepolia_client).and_return(client)
+  end
+
   subject(:transfer) do
-    described_class.new(network_id, wallet_id, from_address_id, amount, :eth, to_address_id, client: client)
+    described_class.new(model)
   end
 
   describe '#initialize' do
     it 'initializes a new Transfer' do
       expect(transfer).to be_a(Coinbase::Transfer)
     end
+  end
 
-    it 'does not initialize a new transfer for an invalid asset' do
-      expect do
-        Coinbase::Transfer.new(network_id, wallet_id, from_address_id, amount, :uni, to_address_id, client: client)
-      end.to raise_error(ArgumentError, 'Unsupported asset: uni')
+  describe '#transfer_id' do
+    it 'returns the transfer ID' do
+      expect(transfer.transfer_id).to eq(transfer_id)
+    end
+  end
+
+  describe '#unsigned_payload' do
+    it 'returns the unsigned payload' do
+      expect(transfer.unsigned_payload).to eq(unsigned_payload)
     end
   end
 
@@ -46,41 +86,7 @@ describe Coinbase::Transfer do
 
   describe '#amount' do
     it 'returns the amount' do
-      expect(transfer.amount).to eq(amount)
-    end
-
-    context 'when the amount is a Float' do
-      let(:float_amount) { 0.5 }
-      let(:float_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, float_amount, :eth, to_address_id, client: client)
-      end
-
-      it 'normalizes the amount' do
-        expect(float_transfer.amount).to eq(BigDecimal('0.5'))
-      end
-    end
-
-    context 'when the amount is an Integer' do
-      let(:integer_amount) { 5 }
-      let(:integer_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, integer_amount, :eth, to_address_id, client: client)
-      end
-
-      it 'normalizes the amount' do
-        expect(integer_transfer.amount).to eq(BigDecimal('5'))
-      end
-    end
-
-    context 'when the amount is a BigDecimal' do
-      let(:big_decimal_amount) { BigDecimal('0.5') }
-      let(:big_decimal_transfer) do
-        described_class.new(network_id, wallet_id, from_address_id, big_decimal_amount, :eth, to_address_id,
-                            client: client)
-      end
-
-      it 'normalizes the amount' do
-        expect(big_decimal_transfer.amount).to eq(big_decimal_amount)
-      end
+      expect(transfer.amount).to eq(eth_amount)
     end
   end
 
@@ -90,18 +96,13 @@ describe Coinbase::Transfer do
     end
   end
 
-  describe '#to_address_id' do
+  describe '#destination_address_id' do
     it 'returns the destination address ID' do
-      expect(transfer.to_address_id).to eq(to_address_id)
+      expect(transfer.destination_address_id).to eq(to_address_id)
     end
   end
 
   describe '#transaction' do
-    before do
-      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
-      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
-    end
-
     it 'returns the Transfer transaction' do
       expect(transfer.transaction).to be_a(Eth::Tx::Eip1559)
       expect(transfer.transaction.amount).to eq(amount * Coinbase::WEI_PER_ETHER)
@@ -109,11 +110,6 @@ describe Coinbase::Transfer do
   end
 
   describe '#transaction_hash' do
-    before do
-      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
-      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
-    end
-
     context 'when the transaction has been signed' do
       it 'returns the transaction hash' do
         transfer.transaction.sign(from_key)
@@ -136,11 +132,6 @@ describe Coinbase::Transfer do
   end
 
   describe '#status' do
-    before do
-      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
-      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
-    end
-
     context 'when the transaction has not been created' do
       it 'returns PENDING' do
         expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
@@ -226,8 +217,6 @@ describe Coinbase::Transfer do
 
   describe '#wait!' do
     before do
-      allow(client).to receive(:eth_getTransactionCount).with(from_address_id, 'latest').and_return('0x7')
-      allow(client).to receive(:eth_gasPrice).and_return('0x7b')
       # TODO: This isn't working for some reason.
       allow(transfer).to receive(:sleep)
     end
