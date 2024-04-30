@@ -100,7 +100,7 @@ module Coinbase
         from: Eth::Address.new(from_address_id),
         to: Eth::Address.new(parsed_payload['to']),
         value: parsed_payload['value'].to_i(16),
-        data: parsed_payload['data'] || ''
+        data: parsed_payload['input'] || ''
       }
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
