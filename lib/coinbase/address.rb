@@ -75,7 +75,6 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      # TODO: Handle multiple currencies.
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
 
       if destination.is_a?(Wallet)
@@ -135,10 +134,8 @@ module Coinbase
         big_amount * Coinbase::WEI_PER_ETHER
       when :gwei
         big_amount * Coinbase::WEI_PER_GWEI
-      when :wei
-        big_amount
       else
-        raise ArgumentError, "Unsupported asset: #{asset_id}"
+        big_amount
       end
     end
 

@@ -98,7 +98,8 @@ module Coinbase
         gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
         from: Eth::Address.new(from_address_id),
         to: Eth::Address.new(destination_address_id),
-        value: parsed_payload['value'].to_i(16)
+        value: parsed_payload['value'].to_i(16),
+        data: parsed_payload['data'] || ''
       }
 
       @transaction = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))

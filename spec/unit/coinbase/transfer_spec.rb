@@ -107,6 +107,12 @@ describe Coinbase::Transfer do
       expect(transfer.transaction).to be_a(Eth::Tx::Eip1559)
       expect(transfer.transaction.amount).to eq(amount * Coinbase::WEI_PER_ETHER)
     end
+
+    context 'when the transaction is for an ERC-20' do
+      it 'returns the Transfer transaction' do
+        # TODO: Implement this
+      end
+    end
   end
 
   describe '#transaction_hash' do
