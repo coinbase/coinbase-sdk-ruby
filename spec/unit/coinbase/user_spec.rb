@@ -86,31 +86,32 @@ describe Coinbase::User do
     let(:address_list_model) do
       Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
     end
+    let(:wallet_export_data) do
+      Coinbase::Wallet::Data.new(
+        wallet_id: wallet_id,
+        seed: MoneyTree::Master.new.seed_hex
+      )
+    end
+    subject(:imported_wallet) { user.import_wallet(wallet_export_data) }
 
     before do
       allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
       allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
-      expect(addresses_api)
-        .to receive(:create_address)
-        .with(wallet_id, satisfy do |opts|
-          public_key_present = opts[:create_address_request][:public_key].is_a?(String)
-          attestation_present = opts[:create_address_request][:attestation].is_a?(String)
-          public_key_present && attestation_present
-        end)
       expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
-      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model)
       expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
       expect(addresses_api).to receive(:get_address).and_return(address_model)
     end
 
-    it 'imports an exported Wallet' do
-      wallet = user.create_wallet
-      data = wallet.export
-      new_wallet = user.import_wallet(data)
+    it 'imports an exported wallet' do
+      expect(imported_wallet.wallet_id).to eq(wallet_id)
+    end
 
-      expect(new_wallet.wallet_id).to eq(wallet.wallet_id)
-      expect(new_wallet.list_addresses.length).to eq(wallet.list_addresses.length)
+    it 'loads the wallet addresses' do
+      expect(imported_wallet.list_addresses.length).to eq(address_list_model.total_count)
+    end
+
+    it 'contains the same seed when re-exported' do
+      expect(imported_wallet.export.seed).to eq(wallet_export_data.seed)
     end
   end
 
