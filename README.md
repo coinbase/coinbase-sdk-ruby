@@ -66,12 +66,15 @@ require 'coinbase'
 
 ### Initialization
 
-To start, [create a CDP API Key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API Key name and API Key private key via the `configure` method:
+To start, [create a CDP API Key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API Key name and API Key's private key via the `configure` method:
 
 ```ruby
+api_key_name = 'Copy your API Key name here.'
+api_key_private_key = 'Copy your API Key\'s private key here.'
+
 Coinbase.configure do |config|
-    config.api_key_name = 'organizations/your-org-id/apiKeys/your-api-key-id'
-    config.api_key_private_key = '-----BEGIN EC PRIVATE KEY-----\nyour-api-key-private-key\n-----END EC PRIVATE KEY-----\n'
+  config.api_key_name = api_key_name
+  config.api_key_private_key = api_key_private_key
 end
 ```
 

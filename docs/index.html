@@ -122,11 +122,14 @@
 
 <h3 id="label-Initialization">Initialization</h3>
 
-<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API Key</a>. Then, initialize the Platform SDK by passing your API Key name and API Key private key via the <code>configure</code> method:</p>
+<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API Key</a>. Then, initialize the Platform SDK by passing your API Key name and API Key&#39;s private key via the <code>configure</code> method:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="Coinbase.html#configure-class_method" title="Coinbase.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>organizations/your-org-id/apiKeys/your-api-key-id</span><span class='tstring_end'>&#39;</span></span>
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-----BEGIN EC PRIVATE KEY-----\nyour-api-key-private-key\n-----END EC PRIVATE KEY-----\n</span><span class='tstring_end'>&#39;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Copy your API Key name here.</span><span class='tstring_end'>&#39;</span></span>
+<span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Copy your API Key\&#39;s private key here.</span><span class='tstring_end'>&#39;</span></span>
+
+<span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="Coinbase.html#configure-class_method" title="Coinbase.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_name'>api_key_name</span>
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span>
 <span class='kw'>end</span>
 </code></pre>
 
@@ -250,7 +253,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Tue Apr 30 12:26:53 2024 by
+  Generated on Tue Apr 30 15:12:24 2024 by
   <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.36 (ruby-2.7.0).
 </div>
