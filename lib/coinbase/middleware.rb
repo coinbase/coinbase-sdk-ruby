@@ -12,7 +12,7 @@ module Coinbase
     # Returns the default middleware configuration for the Coinbase SDK.
     def self.config
       Coinbase::Client::Configuration.default.tap do |config|
-        config.debugging = true
+        config.debugging = Coinbase.configuration.debug_api
         config.host = Coinbase.configuration.api_url
         config.request(:authenticator)
       end
