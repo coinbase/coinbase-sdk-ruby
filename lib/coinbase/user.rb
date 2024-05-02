@@ -30,7 +30,9 @@ module Coinbase
       }
       opts = { create_wallet_request: create_wallet_request }
 
-      model = wallets_api.create_wallet(opts)
+      model = Coinbase.call_api do
+        wallets_api.create_wallet(opts)
+      end
 
       Wallet.new(model)
     end
@@ -39,15 +41,24 @@ module Coinbase
     # @param data [Coinbase::Wallet::Data] the Wallet data to import
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
-      model = wallets_api.get_wallet(data.wallet_id)
-      address_count = addresses_api.list_addresses(model.id).total_count
+      model = Coinbase.call_api do
+        wallets_api.get_wallet(data.wallet_id)
+      end
+
+      address_count = Coinbase.call_api do
+        addresses_api.list_addresses(model.id).total_count
+      end
+
       Wallet.new(model, seed: data.seed, address_count: address_count)
     end
 
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
     def list_wallet_ids
-      wallets = wallets_api.list_wallets
+      wallets = Coinbase.call_api do
+        wallets_api.list_wallets
+      end
+
       wallets.data.map(&:id)
     end
 

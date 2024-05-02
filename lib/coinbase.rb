@@ -117,9 +117,21 @@ module Coinbase
     BalanceMap.new(balances)
   end
 
+  # Loads the default user.
+  # @return [Coinbase::User] the default user
   def self.load_default_user
     users_api = Coinbase::Client::UsersApi.new(configuration.api_client)
     user_model = users_api.get_current_user
     Coinbase::User.new(user_model)
+  end
+
+  # Wraps a call to the Platform API to ensure that the error is caught and
+  # wrapped as an APIError.
+  def self.call_api
+    yield
+  rescue Coinbase::Client::ApiError => e
+    raise Coinbase::APIError, e
+  rescue StandardError => e
+    raise e
   end
 end

@@ -1,39 +1,30 @@
+# frozen_string_literal: true
+
 require_relative 'client/api_error'
 require 'json'
 
 module Coinbase
   # A wrapper for API errors to provide more context.
   class APIError
+    attr_reader :api_code, :api_message
 
     # Initializes a new APIError object.
     #
-    # @param e [Coinbase::Client::APIError] The underlying error object.
-    def initialize(e)
-      @e = e
+    # @param err [Coinbase::Client::APIError] The underlying error object.
+    def initialize(err)
+      @e = err
 
-      if e.response_body
-        body = JSON.parse(e.response_body)
-        @api_code = body['code']
-        @api_message = body['message']
-      end
+      return unless e.response_body
+
+      body = JSON.parse(e.response_body)
+      @api_code = body['code']
+      @api_message = body['message']
     end
 
     # Returns the HTTP status code of the error.
     # @return [Integer] The HTTP status code.
     def http_code
       @e.code
-    end
-
-    # Returns the API error code of the error.
-    # @return [String] The API error code.
-    def api_code
-      @api_code
-    end
-
-    # Returns the API error message of the error.
-    # @return [String] The API error message.
-    def api_message
-      @api_message
     end
 
     # The string representation of the error.
