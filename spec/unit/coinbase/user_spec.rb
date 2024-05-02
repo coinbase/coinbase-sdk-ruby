@@ -181,21 +181,80 @@ describe Coinbase::User do
       expect(data['seed']).to eq(seed)
     end
 
-    it 'saves the Wallet data when encryption is false' do
-      user.save(seed_wallet)
+    it 'saves the Wallet data when encryption is true' do
+      user.save(seed_wallet, true)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
       data = wallets[seed_wallet.wallet_id]
       expect(data).not_to be_empty
-      expect(data['encrypted']).to eq(false)
-      expect(data['iv']).to eq('')
-      expect(data['auth_tag']).to eq('')
-      expect(data['seed']).to eq(seed)
+      expect(data['encrypted']).to eq(true)
+      expect(data['iv']).not_to be_empty
+      expect(data['auth_tag']).not_to be_empty
+      expect(data['seed']).not_to eq(seed)
     end
   end
 
   describe '#load' do
+    let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
+    let(:address_count) { 1 }
+    let(:seed_wallet) do
+      Coinbase::Wallet.new(model, seed: seed, address_count: address_count)
+    end
+    let(:user) { described_class.new(model) }
+    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+    let(:wallet_id) { SecureRandom.uuid }
+    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+    let(:address_model) do
+      Coinbase::Client::Address.new({
+                                      'address_id': '0xdeadbeef',
+                                      'wallet_id': wallet_id,
+                                      'public_key': '0x1234567890',
+                                      'network_id': 'base-sepolia'
+                                    })
+    end
+    let(:wallet_model_with_default_address) do
+      Coinbase::Client::Wallet.new(
+        {
+          'id': wallet_id,
+          'network_id': 'base-sepolia',
+          'default_address': address_model
+        }
+      )
+    end
+    let(:address_list_model) do
+      Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
+    end
+    let(:initial_seed_data) {
+      {
+        wallet_id => {
+          seed: seed,
+          encrypted: false
+        }
+      }
+    }
 
+    before do
+      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
+      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
+      expect(addresses_api).to receive(:get_address).and_return(address_model)
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(initial_seed_data))
+      end
+    end
+    after do
+      File.delete(Coinbase.configuration.backup_file_path)
+    end
+
+    it 'loads the Wallet from backup' do
+      wallets = user.load
+      wallet = wallets[wallet_id]
+      expect(wallet).not_to be_nil
+      expect(wallet.wallet_id).to eq(wallet_id)
+      expect(wallet.default_address.address_id).to eq(address_model.address_id)
+    end
   end
 end
