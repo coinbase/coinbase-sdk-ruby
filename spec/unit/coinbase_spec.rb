@@ -67,6 +67,39 @@ describe Coinbase do
     end
   end
 
+  describe '#call_api' do
+    context 'when the API call is successful' do
+      it 'does not raise an error' do
+        expect do
+          Coinbase.call_api { 'success' }
+        end.not_to raise_error
+      end
+    end
+
+    context 'when the API call raises a standard error' do
+      it 'raises the standard error' do
+        expect do
+          Coinbase.call_api { raise StandardError, 'error' }
+        end.to raise_error('error')
+      end
+    end
+
+    context 'when the API call raises an API error' do
+      let(:err) do
+        Coinbase::Client::ApiError.new(
+          code: 501,
+          response_body: '{ "code": "unimplemented", "message": "method is not implemented"}'
+        )
+      end
+
+      it 'raises the appropriate API error' do
+        expect do
+          Coinbase.call_api { raise err }
+        end.to raise_error(Coinbase::UnimplementedError)
+      end
+    end
+  end
+
   describe Coinbase::Configuration do
     describe '#api_url' do
       it 'returns the default api url' do
