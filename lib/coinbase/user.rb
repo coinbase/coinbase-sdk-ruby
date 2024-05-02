@@ -51,12 +51,10 @@ module Coinbase
       wallets.data.map(&:id)
     end
 
-    BACKUP_FILE_PATH= 'seeds.json'
-
     # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load() function,
     # provided the backup_file is available.
     def save(wallet, encrypt_flag = false)
-      existing_seeds_in_store = existing_seeds()
+      existing_seeds_in_store = existing_seeds
       data = wallet.export
       seed_to_store = data.seed
       auth_tag = ''
@@ -81,7 +79,7 @@ module Coinbase
         iv: iv,
       }
 
-      File.open(BACKUP_FILE_PATH, 'w') do |file|
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(JSON.pretty_generate(existing_seeds_in_store))
       end
     end
@@ -89,9 +87,9 @@ module Coinbase
     # Loads all wallets belonging to the User with backup persisted to the local file system.
     # @return Map of wallet_id to Coinbase::Wallet.
     def load
-      existing_seeds = existing_seeds()
+      existing_seeds_in_store = existing_seeds
       wallets = {}
-      existing_seeds.each do |wallet_id, seed_data|
+      existing_seeds_in_store.each do |wallet_id, seed_data|
         seed = seed_data['seed']
         if seed_data['encrypted']
           shared_secret = store_encryption_key
@@ -124,7 +122,8 @@ module Coinbase
 
     def existing_seeds
       existing_seed_data = '{}'
-      existing_seed_data = File.read(BACKUP_FILE_PATH) if File.exist?(BACKUP_FILE_PATH)
+      file_path = Coinbase.configuration.backup_file_path
+      existing_seed_data = File.read(file_path) if File.exist?(file_path)
       JSON.parse(existing_seed_data)
     end
 

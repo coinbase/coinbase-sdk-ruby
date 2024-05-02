@@ -30,12 +30,12 @@ module Coinbase
   # Configuration object for the Coinbase SDK
   class Configuration
     attr_reader :base_sepolia_rpc_url, :base_sepolia_client
-    attr_accessor :api_url, :api_key_name, :api_key_private_key
-
+    attr_accessor :api_url, :api_key_name, :api_key_private_key, :backup_file_path
     def initialize
       @base_sepolia_rpc_url = 'https://sepolia.base.org'
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
       @api_url = 'https://api.cdp.coinbase.com'
+      @backup_file_path = 'seeds.json'
     end
 
     def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)

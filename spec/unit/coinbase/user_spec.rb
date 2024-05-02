@@ -127,4 +127,75 @@ describe Coinbase::User do
       expect(user.list_wallet_ids).to eq(wallet_ids)
     end
   end
+
+  describe '#save' do
+    let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
+    let(:address_count) { 1 }
+    let(:seed_wallet) do
+      Coinbase::Wallet.new(model, seed: seed, address_count: address_count)
+    end
+    let(:user) { described_class.new(model) }
+    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+    let(:wallet_id) { SecureRandom.uuid }
+    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+    let(:address_model) do
+      Coinbase::Client::Address.new({
+                                      'address_id': '0xdeadbeef',
+                                      'wallet_id': wallet_id,
+                                      'public_key': '0x1234567890',
+                                      'network_id': 'base-sepolia'
+                                    })
+    end
+    let(:initial_seed_data) { JSON.pretty_generate({}) }
+    let(:expected_seed_data) {
+      {
+        seed_wallet.wallet_id => {
+          seed: seed,
+          encrypted: false
+        }
+      }
+    }
+
+    before do
+      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+      expect(addresses_api).to receive(:get_address).and_return(address_model)
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(initial_seed_data)
+      end
+    end
+    after do
+      File.delete(Coinbase.configuration.backup_file_path)
+    end
+
+    it 'saves the Wallet data when encryption is false' do
+      user.save(seed_wallet)
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.wallet_id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(false)
+      expect(data['iv']).to eq('')
+      expect(data['auth_tag']).to eq('')
+      expect(data['seed']).to eq(seed)
+    end
+
+    it 'saves the Wallet data when encryption is false' do
+      user.save(seed_wallet)
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.wallet_id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(false)
+      expect(data['iv']).to eq('')
+      expect(data['auth_tag']).to eq('')
+      expect(data['seed']).to eq(seed)
+    end
+  end
+
+  describe '#load' do
+
+  end
 end
