@@ -26,6 +26,7 @@ Coinbase::Client.autoload :CreateAddressRequest, 'coinbase/client/models/create_
 Coinbase::Client.autoload :CreateTransferRequest, 'coinbase/client/models/create_transfer_request'
 Coinbase::Client.autoload :CreateWalletRequest, 'coinbase/client/models/create_wallet_request'
 Coinbase::Client.autoload :Error, 'coinbase/client/models/error'
+Coinbase::Client.autoload :FaucetTransaction, 'coinbase/client/models/faucet_transaction'
 Coinbase::Client.autoload :Transfer, 'coinbase/client/models/transfer'
 Coinbase::Client.autoload :TransferList, 'coinbase/client/models/transfer_list'
 Coinbase::Client.autoload :User, 'coinbase/client/models/user'
