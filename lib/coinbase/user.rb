@@ -44,28 +44,72 @@ module Coinbase
       Wallet.new(model, seed: data.seed, address_count: address_count)
     end
 
-    # Imports all wallets belonging to the User with backup persisted to the local file system.
-    # @return [[]Coinbase::Wallet] imported wallets.
-    def import_wallet_from_store
-      file_path = 'seeds.json'
-      existing_seed_data= '{}'
-      if File.exist?(file_path)
-        existing_seed_data = File.read(file_path)
-      end
-      existing_seeds = JSON.parse(existing_seed_data)
-      wallets = []
-      existing_seeds.each do |wallet_id, seed|
-        data =Coinbase::Wallet::Data.new(wallet_id: wallet_id, seed: seed)
-        wallets << import_wallet(data)
-      end
-      wallets
-    end
-
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
     def list_wallet_ids
       wallets = wallets_api.list_wallets
       wallets.data.map(&:id)
+    end
+
+    BACKUP_FILE_PATH= 'seeds.json'
+
+    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load() function,
+    # provided the backup_file is available.
+    def save(wallet, encrypt_flag = false)
+      existing_seeds_in_store = existing_seeds()
+      data = wallet.export
+      seed_to_store = data.seed
+      auth_tag = ''
+      iv = ''
+      if encrypt_flag
+        shared_secret = store_encryption_key
+        cipher = OpenSSL::Cipher::AES256.new(:GCM).encrypt
+        cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
+        iv = cipher.random_iv
+        cipher.iv = iv
+        cipher.auth_data = ''
+        encrypted_data = cipher.update(data.seed) + cipher.final
+        auth_tag = cipher.auth_tag.unpack1('H*')
+        iv = iv.unpack1('H*')
+        seed_to_store = encrypted_data.unpack1('H*')
+      end
+
+      existing_seeds_in_store[data.wallet_id] = {
+        seed: seed_to_store,
+        encrypted: encrypt_flag,
+        auth_tag: auth_tag,
+        iv: iv,
+      }
+
+      File.open(BACKUP_FILE_PATH, 'w') do |file|
+        file.write(JSON.pretty_generate(existing_seeds_in_store))
+      end
+    end
+
+    # Loads all wallets belonging to the User with backup persisted to the local file system.
+    # @return Map of wallet_id to Coinbase::Wallet.
+    def load
+      existing_seeds = existing_seeds()
+      wallets = {}
+      existing_seeds.each do |wallet_id, seed_data|
+        seed = seed_data['seed']
+        if seed_data['encrypted']
+          shared_secret = store_encryption_key
+          cipher = OpenSSL::Cipher::AES256.new(:GCM).decrypt
+          cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
+          iv = [seed_data['iv']].pack('H*')
+          cipher.iv = iv
+          auth_tag = [seed_data['auth_tag']].pack('H*')
+          cipher.auth_tag = auth_tag
+          cipher.auth_data = ''
+          hex_decoded_data = [seed_data['seed']].pack('H*')
+          seed = cipher.update(hex_decoded_data) + cipher.final
+        end
+
+        data = Coinbase::Wallet::Data.new(wallet_id: wallet_id, seed: seed)
+        wallets[wallet_id] = import_wallet(data)
+      end
+      wallets
     end
 
     private
@@ -77,5 +121,18 @@ module Coinbase
     def wallets_api
       @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
     end
+
+    def existing_seeds
+      existing_seed_data = '{}'
+      existing_seed_data = File.read(BACKUP_FILE_PATH) if File.exist?(BACKUP_FILE_PATH)
+      JSON.parse(existing_seed_data)
+    end
+
+    def store_encryption_key
+      pk = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
+      public_key = pk.public_key # use own public key as the shared secret.
+      pk.dh_compute_key(public_key)
+    end
+
   end
 end
