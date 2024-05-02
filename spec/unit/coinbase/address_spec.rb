@@ -303,6 +303,71 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#faucet' do
+    let(:request) { double('Request', transaction: transaction) }
+    let(:tx_hash) { '0xdeadbeef' }
+    let(:faucet_tx) do
+      instance_double('Coinbase::Client::FaucetTransaction', transaction_hash: tx_hash)
+    end
+
+    context 'when the request is successful' do
+      subject(:faucet_response) { address.faucet }
+
+      before do
+        expect(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, address_id)
+          .and_return(faucet_tx)
+      end
+
+      it 'requests funds from the faucet and returns the faucet transaction' do
+        expect(faucet_response).to be_a(Coinbase::FaucetTransaction)
+        expect(faucet_response.transaction_hash).to eq(tx_hash)
+      end
+    end
+
+    context 'when the request is unsuccesful' do
+      before do
+        expect(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, address_id)
+          .and_raise(api_error)
+      end
+
+      context 'when the faucet limit is reached' do
+        let(:api_error) do
+          Coinbase::Client::ApiError.new(
+            code: 429,
+            response_body: {
+              'code' => 'faucet_limit_reached',
+              'message' => 'failed to claim funds - address likely has already claimed in the past 24 hours'
+            }.to_json,
+          )
+        end
+
+        it 'raises a FaucetLimitReachedError' do
+          expect { address.faucet }.to raise_error(::Coinbase::FaucetLimitReachedError)
+        end
+      end
+
+      context 'when the request fails unexpectedly' do
+        let(:api_error) do
+          Coinbase::Client::ApiError.new(
+            code: 500,
+            response_body: {
+              'code' => 'internal',
+              'message' => 'unexpected error occurred while requesting faucet funds'
+            }.to_json,
+          )
+        end
+
+        it 'raises an internal error' do
+          expect { address.faucet }.to raise_error(::Coinbase::InternalError)
+        end
+      end
+    end
+  end
+
   describe '#to_s' do
     it 'returns the address as a string' do
       expect(address.to_s).to eq(address_id)
