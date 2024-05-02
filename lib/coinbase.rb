@@ -130,7 +130,7 @@ module Coinbase
   def self.call_api
     yield
   rescue Coinbase::Client::ApiError => e
-    raise Coinbase::APIError, e
+    raise Coinbase::APIError.from_error(e)
   rescue StandardError => e
     raise e
   end
