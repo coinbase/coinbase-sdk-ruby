@@ -60,14 +60,12 @@ module Coinbase
       # Expand paths to respect shortcuts like ~.
       file_path = File.expand_path(file_path)
 
-      if file_path.end_with?('.json')
-        file = File.read(file_path)
-        data = JSON.parse(file)
-        @api_key_name = data['name']
-        @api_key_private_key = data['privateKey']
-      else
-        raise InvalidConfiguration, 'Invalid configuration file type'
-      end
+      raise InvalidConfiguration, 'Invalid configuration file type' unless file_path.end_with?('.json')
+
+      file = File.read(file_path)
+      data = JSON.parse(file)
+      @api_key_name = data['name']
+      @api_key_private_key = data['privateKey']
     end
 
     # Sets the base Sepolia RPC URL.
