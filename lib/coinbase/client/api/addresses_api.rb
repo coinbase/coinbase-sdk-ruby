@@ -381,5 +381,74 @@ module Coinbase::Client
       end
       return data, status_code, headers
     end
+
+    # Request faucet funds for onchain address.
+    # Request faucet funds to be sent to onchain address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address that is being fetched.
+    # @param [Hash] opts the optional parameters
+    # @return [FaucetTransaction]
+    def request_faucet_funds(wallet_id, address_id, opts = {})
+      data, _status_code, _headers = request_faucet_funds_with_http_info(wallet_id, address_id, opts)
+      data
+    end
+
+    # Request faucet funds for onchain address.
+    # Request faucet funds to be sent to onchain address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address that is being fetched.
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(FaucetTransaction, Integer, Hash)>] FaucetTransaction data, response status code and response headers
+    def request_faucet_funds_with_http_info(wallet_id, address_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: AddressesApi.request_faucet_funds ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling AddressesApi.request_faucet_funds"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling AddressesApi.request_faucet_funds"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/faucet'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'FaucetTransaction'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"AddressesApi.request_faucet_funds",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: AddressesApi#request_faucet_funds\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
   end
 end

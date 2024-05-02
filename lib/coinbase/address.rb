@@ -43,7 +43,10 @@ module Coinbase
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
-      response = addresses_api.list_address_balances(wallet_id, address_id)
+      response = Coinbase.call_api do
+        addresses_api.list_address_balances(wallet_id, address_id)
+      end
+
       Coinbase.to_balance_map(response)
     end
 
@@ -53,7 +56,9 @@ module Coinbase
     def get_balance(asset_id)
       normalized_asset_id = normalize_asset_id(asset_id)
 
-      response = addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+      response = Coinbase.call_api do
+        addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+      end
 
       return BigDecimal('0') if response.nil?
 
@@ -106,7 +111,9 @@ module Coinbase
         destination: destination
       }
 
-      transfer_model = transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+      transfer_model = Coinbase.call_api do
+        transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+      end
 
       transfer = Coinbase::Transfer.new(transfer_model)
 
@@ -121,6 +128,17 @@ module Coinbase
     # @return [String] The address
     def to_s
       address_id
+    end
+
+    # Requests funds for the address from the faucet and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReached] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+    def faucet
+      Coinbase.call_api do
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, address_id))
+      end
     end
 
     private

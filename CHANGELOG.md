@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Faucet
 - Trade
 - Individual private key export
 - Allow disabling debug tracing
 - Error specifications
+
+## [0.0.3] - 2024-05-08
+
+### Added
+
+- Coinbase.configure_from_file
+- Faucet
 
 ## [0.0.2] - 2024-05-01
 
