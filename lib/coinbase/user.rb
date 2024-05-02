@@ -129,7 +129,7 @@ module Coinbase
 
     def store_encryption_key
       pk = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
-      public_key = pk.public_key # use own public key as the shared secret.
+      public_key = pk.public_key # use own public key to generate the shared secret.
       pk.dh_compute_key(public_key)
     end
 

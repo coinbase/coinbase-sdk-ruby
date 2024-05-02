@@ -129,11 +129,12 @@ In order to persist the data for the Wallet, you will need to implement a store 
 store(data)
 ```
 For convenience during testing, we provide a save method that stores the Wallet data in your local file system.
+This is an insecure method of storing your keys and should only be used for development purposes.
 ```ruby
 u.save(w3)
 ```
 
-To encrypt the saved data, set encrypt_flag to true
+To encrypt the saved data, set encrypt_flag to true.
 ```ruby
 u.save(w3, true)
 ```
@@ -146,7 +147,7 @@ The below code demonstrates how to re-instantiate a Wallet from the data export.
 w4 = u.import_wallet(data)
 ```
 
-To import wallets that were persisted to local file system, use the below code.
+To import wallets that were persisted to local file system using `save()`, use the below code.
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w5 will be equivalent to w3.
