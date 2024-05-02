@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 
+  spec.add_runtime_dependency 'dotenv'
   spec.add_runtime_dependency 'eth'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'faraday-multipart'
@@ -23,7 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'marcel'
   spec.add_runtime_dependency 'money-tree'
 
-  spec.add_development_dependency 'dotenv'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'

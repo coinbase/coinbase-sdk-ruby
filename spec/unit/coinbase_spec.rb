@@ -27,6 +27,36 @@ describe Coinbase do
     end
   end
 
+  describe '#configure_from_file' do
+    context 'when the file is a CDP API key JSON file' do
+      let(:file_path) { 'spec/fixtures/cdp_api_key.json' }
+
+      subject do
+        Coinbase.configure_from_file(file_path)
+      end
+
+      it 'correctly configures the API key' do
+        expect { subject }.not_to raise_error
+        expect(Coinbase.configuration.api_key_private_key).not_to be_nil
+        expect(Coinbase.configuration.api_key_name).not_to be_nil
+      end
+    end
+
+    context 'when the file is a .env file' do
+      let(:file_path) { 'spec/fixtures/.env.test' }
+
+      subject do
+        Coinbase.configure_from_file(file_path)
+      end
+
+      it 'correctly configures the API key' do
+        expect { subject }.not_to raise_error
+        expect(Coinbase.configuration.api_key_private_key).not_to be_nil
+        expect(Coinbase.configuration.api_key_name).not_to be_nil
+      end
+    end
+  end
+
   describe '#default_user' do
     let(:users_api) { double Coinbase::Client::UsersApi }
     let(:user_model) { double 'User Model' }

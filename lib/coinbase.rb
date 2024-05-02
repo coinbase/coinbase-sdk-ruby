@@ -11,15 +11,20 @@ require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
+require 'dotenv'
+require 'json'
 
 # The Coinbase SDK.
 module Coinbase
   class InvalidConfiguration < StandardError; end
 
+  # Returns the configuration object.
+  # @return [Configuration] the configuration object
   def self.configuration
     @configuration ||= Configuration.new
   end
 
+  # Configures the Coinbase SDK.
   def self.configure
     yield(configuration)
 
@@ -27,22 +32,63 @@ module Coinbase
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
   end
 
-  # Configuration object for the Coinbase SDK
+  # Configures the Coinbase SDK from the given file. Currently, CDP API Key JSON files and
+  # .env files are supported.
+  # @param file_path [String] (Optional) the path to the configuration file. Assumes a CDP API Key JSON
+  # file in the root directory by default.
+  def self.configure_from_file(file_path = 'coinbase_cloud_api_key.json')
+    configuration.from_file(file_path)
+
+    raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
+    raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+  end
+
+  # Configuration object for the Coinbase SDK.
   class Configuration
     attr_reader :base_sepolia_rpc_url, :base_sepolia_client
     attr_accessor :api_url, :api_key_name, :api_key_private_key
 
+    # Initializes the configuration object.
     def initialize
       @base_sepolia_rpc_url = 'https://sepolia.base.org'
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
       @api_url = 'https://api.cdp.coinbase.com'
     end
 
+    # Sets configuration values based on the provided file. Currently,
+    # CDP API Key JSON files and .env files and are supported.
+    # @param file_path [String] (Optional) the path to the configuration file. Assumes a CDP API Key JSON
+    # file in the root directory by default.
+    def from_file(file_path = 'coinbase_cloud_api_key.json')
+      # Expand paths to respect shortcuts like ~.
+      file_path = File.expand_path(file_path)
+
+      if file_path.end_with?('.json')
+        file = File.read(file_path)
+        data = JSON.parse(file)
+        @api_key_name = data['name']
+        @api_key_private_key = data['privateKey']
+      elsif File.basename(file_path).start_with?('.env')
+        Dotenv.load(file_path)
+        @api_key_name = ENV['API_KEY_NAME']
+        @api_key_private_key = ENV['API_KEY_PRIVATE_KEY']
+        @base_sepolia_rpc_url = ENV.fetch('BASE_SEPOLIA_RPC_URL', 'https://sepolia.base.org')
+        @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
+        @api_url = ENV.fetch('API_URL', 'https://api.cdp.coinbase.com')
+      else
+        raise InvalidConfiguration, 'Invalid configuration file type'
+      end
+    end
+
+    # Sets the base Sepolia RPC URL.
+    # @param new_base_sepolia_rpc_url [String] the new base Sepolia RPC URL
     def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)
       @base_sepolia_rpc_url = new_base_sepolia_rpc_url
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
     end
 
+    # Returns the API client.
+    # @return [Coinbase::Client::ApiClient] the API client
     def api_client
       @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
     end
