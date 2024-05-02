@@ -85,7 +85,7 @@ module Coinbase
     end
 
     # Loads all wallets belonging to the User with backup persisted to the local file system.
-    # @return Map of wallet_id to Coinbase::Wallet.
+    # @return [Map<String>Coinbase::Wallet] the map of wallet_ids to the wallets.
     def load
       existing_seeds_in_store = existing_seeds
       wallets = {}
