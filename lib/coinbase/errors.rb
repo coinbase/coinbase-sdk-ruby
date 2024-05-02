@@ -6,17 +6,17 @@ require 'json'
 module Coinbase
   # A wrapper for API errors to provide more context.
   class APIError < StandardError
-    attr_reader :api_code, :api_message
+    attr_reader :http_code, :api_code, :api_message
 
     # Initializes a new APIError object.
     # @param err [Coinbase::Client::APIError] The underlying error object.
     def initialize(err)
       super
-      @e = err
+      @http_code = err.code
 
-      return unless @e.response_body
+      return unless err.response_body
 
-      body = JSON.parse(@e.response_body)
+      body = JSON.parse(err.response_body)
       @api_code = body['code']
       @api_message = body['message']
     end
@@ -29,9 +29,8 @@ module Coinbase
       return APIError.new(err) unless err.response_body
 
       body = JSON.parse(err.response_body)
-      api_code = body['code']
 
-      case api_code
+      case body['code']
       when 'unimplemented'
         UnimplementedError.new(err)
       when 'unauthorized'
@@ -77,12 +76,6 @@ module Coinbase
       end
     end
 
-    # Returns the HTTP status code of the error.
-    # @return [Integer] The HTTP status code.
-    def http_code
-      @e.code
-    end
-
     # The string representation of the error.
     def to_s
       message = "API Error \n"
@@ -93,63 +86,24 @@ module Coinbase
     end
   end
 
-  class UnimplementedError < APIError
-  end
-
-  class UnauthorizedError < APIError
-  end
-
-  class InternalError < APIError
-  end
-
-  class NotFoundError < APIError
-  end
-
-  class InvalidWalletIDError < APIError
-  end
-
-  class InvalidAddressIDError < APIError
-  end
-
-  class InvalidWalletError < APIError
-  end
-
-  class InvalidAddressError < APIError
-  end
-
-  class InvalidAmountError < APIError
-  end
-
-  class InvalidTransferIDError < APIError
-  end
-
-  class InvalidPageError < APIError
-  end
-
-  class InvalidLimitError < APIError
-  end
-
-  class AlreadyExistsError < APIError
-  end
-
-  class MalformedRequestError < APIError
-  end
-
-  class UnsupportedAssetError < APIError
-  end
-
-  class InvalidAssetIDError < APIError
-  end
-
-  class InvalidDestinationError < APIError
-  end
-
-  class InvalidNetworkIDError < APIError
-  end
-
-  class ResourceExhaustedError < APIError
-  end
-
-  class FaucetLimitReachedError < APIError
-  end
+  class UnimplementedError < APIError; end
+  class UnauthorizedError < APIError; end
+  class InternalError < APIError; end
+  class NotFoundError < APIError; end
+  class InvalidWalletIDError < APIError; end
+  class InvalidAddressIDError < APIError; end
+  class InvalidWalletError < APIError; end
+  class InvalidAddressError < APIError; end
+  class InvalidAmountError < APIError; end
+  class InvalidTransferIDError < APIError; end
+  class InvalidPageError < APIError; end
+  class InvalidLimitError < APIError; end
+  class AlreadyExistsError < APIError; end
+  class MalformedRequestError < APIError; end
+  class UnsupportedAssetError < APIError; end
+  class InvalidAssetIDError < APIError; end
+  class InvalidDestinationError < APIError; end
+  class InvalidNetworkIDError < APIError; end
+  class ResourceExhaustedError < APIError; end
+  class FaucetLimitReachedError < APIError; end
 end
