@@ -130,6 +130,17 @@ module Coinbase
       address_id
     end
 
+    # Requests funds for the address from the faucet and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReached] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+    def faucet
+      Coinbase.call_api do
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, address_id))
+      end
+    end
+
     private
 
     # Normalizes the amount of the Asset to send to the atomic unit.

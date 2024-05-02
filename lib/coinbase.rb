@@ -7,6 +7,7 @@ require_relative 'coinbase/balance_map'
 require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
 require_relative 'coinbase/errors'
+require_relative 'coinbase/faucet_transaction'
 require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
@@ -17,6 +18,7 @@ require 'json'
 # The Coinbase SDK.
 module Coinbase
   class InvalidConfiguration < StandardError; end
+  class FaucetLimitReached < StandardError; end
 
   # Returns the configuration object.
   # @return [Configuration] the configuration object
