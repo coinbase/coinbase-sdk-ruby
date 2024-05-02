@@ -11,7 +11,6 @@ require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
-require 'dotenv'
 require 'json'
 
 # The Coinbase SDK.
@@ -32,12 +31,11 @@ module Coinbase
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
   end
 
-  # Configures the Coinbase SDK from the given file. Currently, CDP API Key JSON files and
-  # .env files are supported.
-  # @param file_path [String] (Optional) the path to the configuration file. Assumes a CDP API Key JSON
+  # Configures the Coinbase SDK from the given CDP API Key JSON file.
+  # @param file_path [String] (Optional) the path to the CDP API Key JSON file
   # file in the root directory by default.
-  def self.configure_from_file(file_path = 'coinbase_cloud_api_key.json')
-    configuration.from_file(file_path)
+  def self.configure_from_json(file_path = 'coinbase_cloud_api_key.json')
+    configuration.from_json(file_path)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
@@ -55,11 +53,10 @@ module Coinbase
       @api_url = 'https://api.cdp.coinbase.com'
     end
 
-    # Sets configuration values based on the provided file. Currently,
-    # CDP API Key JSON files and .env files and are supported.
-    # @param file_path [String] (Optional) the path to the configuration file. Assumes a CDP API Key JSON
+    # Sets configuration values based on the provided CDP API Key JSON file.
+    # @param file_path [String] (Optional) the path to the CDP API Key JSON file
     # file in the root directory by default.
-    def from_file(file_path = 'coinbase_cloud_api_key.json')
+    def from_json(file_path = 'coinbase_cloud_api_key.json')
       # Expand paths to respect shortcuts like ~.
       file_path = File.expand_path(file_path)
 
@@ -68,13 +65,6 @@ module Coinbase
         data = JSON.parse(file)
         @api_key_name = data['name']
         @api_key_private_key = data['privateKey']
-      elsif File.basename(file_path).start_with?('.env')
-        Dotenv.load(file_path)
-        @api_key_name = ENV['API_KEY_NAME']
-        @api_key_private_key = ENV['API_KEY_PRIVATE_KEY']
-        @base_sepolia_rpc_url = ENV.fetch('BASE_SEPOLIA_RPC_URL', 'https://sepolia.base.org')
-        @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
-        @api_url = ENV.fetch('API_URL', 'https://api.cdp.coinbase.com')
       else
         raise InvalidConfiguration, 'Invalid configuration file type'
       end
