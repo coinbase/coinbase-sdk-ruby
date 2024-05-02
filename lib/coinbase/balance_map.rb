@@ -42,7 +42,7 @@ module Coinbase
         result[asset_id] = str
       end
 
-      result
+      result.to_s
     end
   end
 end
