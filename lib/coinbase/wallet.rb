@@ -154,6 +154,18 @@ module Coinbase
       Data.new(wallet_id: wallet_id, seed: @master.seed_hex)
     end
 
+    def store
+      file_path = 'seeds.json'
+      existing_seed_data= '{}'
+      if File.exist?(file_path)
+        existing_seed_data = File.read(file_path)
+      end
+      existing_seeds = JSON.parse(existing_seed_data)
+      existing_seeds[wallet_id] = @master.seed_hex
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(existing_seeds))
+      end
+    end
     # The data required to recreate a Wallet.
     class Data
       attr_reader :wallet_id, :seed

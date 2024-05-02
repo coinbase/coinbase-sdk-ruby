@@ -44,6 +44,23 @@ module Coinbase
       Wallet.new(model, seed: data.seed, address_count: address_count)
     end
 
+    # Imports all wallets belonging to the User with backup persisted to the local file system.
+    # @return [[]Coinbase::Wallet] imported wallets.
+    def import_wallet_from_store
+      file_path = 'seeds.json'
+      existing_seed_data= '{}'
+      if File.exist?(file_path)
+        existing_seed_data = File.read(file_path)
+      end
+      existing_seeds = JSON.parse(existing_seed_data)
+      wallets = []
+      existing_seeds.each do |wallet_id, seed|
+        data =Coinbase::Wallet::Data.new(wallet_id: wallet_id, seed: seed)
+        wallets << import_wallet(data)
+      end
+      wallets
+    end
+
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
     def list_wallet_ids
