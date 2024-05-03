@@ -71,6 +71,10 @@ module Coinbase
         ResourceExhaustedError.new(err)
       when 'faucet_limit_reached'
         FaucetLimitReachedError.new(err)
+      when 'invalid_signed_payload'
+        InvalidSignedPayloadError.new(err)
+      when 'invalid_transfer_status'
+        InvalidTransferStatusError.new(err)
       else
         APIError.new(err)
       end
@@ -106,4 +110,6 @@ module Coinbase
   class InvalidNetworkIDError < APIError; end
   class ResourceExhaustedError < APIError; end
   class FaucetLimitReachedError < APIError; end
+  class InvalidSignedPayloadError < APIError; end
+  class InvalidTransferStatusError < APIError; end
 end

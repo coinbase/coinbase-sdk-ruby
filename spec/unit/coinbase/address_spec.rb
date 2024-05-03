@@ -160,18 +160,22 @@ describe Coinbase::Address do
         }
       )
     end
+    let(:transfer_id) { SecureRandom.uuid }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
     let(:raw_signed_transaction) { '0123456789abcdef' }
+    let(:signed_payload) { '0x12345' }
+    let(:broadcast_transfer_request) do
+      { signed_payload: raw_signed_transaction }
+    end
     let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
-      double('Transfer', transaction: transaction)
+      double('Transfer', transaction: transaction, transfer_id: transfer_id)
     end
 
     before do
       allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
-      allow(client).to receive(:eth_sendRawTransaction).with("0x#{raw_signed_transaction}").and_return(transaction_hash)
     end
 
     # TODO: Add test case for when the destination is a Wallet.
@@ -192,6 +196,9 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -214,6 +221,9 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -232,7 +242,10 @@ describe Coinbase::Address do
           .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
-          .with(wallet_id, address_id,  create_transfer_request)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -252,7 +265,10 @@ describe Coinbase::Address do
           .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
-          .with(wallet_id, address_id,  create_transfer_request)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -341,7 +357,7 @@ describe Coinbase::Address do
             response_body: {
               'code' => 'faucet_limit_reached',
               'message' => 'failed to claim funds - address likely has already claimed in the past 24 hours'
-            }.to_json,
+            }.to_json
           )
         end
 
@@ -357,7 +373,7 @@ describe Coinbase::Address do
             response_body: {
               'code' => 'internal',
               'message' => 'unexpected error occurred while requesting faucet funds'
-            }.to_json,
+            }.to_json
           )
         end
 
