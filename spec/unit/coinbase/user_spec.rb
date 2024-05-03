@@ -128,7 +128,7 @@ describe Coinbase::User do
     end
   end
 
-  describe '#save' do
+  describe '#save_wallet' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
     let(:address_count) { 1 }
     let(:seed_wallet) do
@@ -169,7 +169,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is false' do
-      user.save(seed_wallet)
+      user.save_wallet(seed_wallet)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -182,7 +182,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is true' do
-      user.save(seed_wallet, true)
+      user.save_wallet(seed_wallet, true)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -193,9 +193,30 @@ describe Coinbase::User do
       expect(data['auth_tag']).not_to be_empty
       expect(data['seed']).not_to eq(seed)
     end
+
+    it 'it creates a new file and saves the wallet when the file does not exist' do
+      File.delete(Coinbase.configuration.backup_file_path)
+      user.save_wallet(seed_wallet)
+      stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.wallet_id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(false)
+    end
+
+    it 'it throws an error when the existing file is malformed' do
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate({
+          malformed: 'test'
+        }.to_json))
+      end
+      expect do
+        user.save_wallet(seed_wallet)
+      end.to raise_error(ArgumentError, 'Malformed backup data')
+    end
   end
 
-  describe '#load' do
+  describe '#load_wallets' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
     let(:address_count) { 1 }
     let(:seed_wallet) do
@@ -234,27 +255,113 @@ describe Coinbase::User do
         }
       }
     }
+    let(:malformed_seed_data) {
+      {
+        wallet_id => 'test'
+      }
+    }
+    let(:seed_data_without_wallet_id) {
+      {
+        wallet_id => {
+          seed: '',
+          encrypted: false
+        }
+      }
+    }
+    let(:seed_data_without_iv) {
+      {
+        wallet_id => {
+          seed: seed,
+          encrypted: true,
+          iv: '',
+          auth_tag: '0x111'
+        }
+      }
+    }
+    let(:seed_data_without_auth_tag) {
+      {
+        wallet_id => {
+          seed: seed,
+          encrypted: true,
+          iv: '0x111',
+          auth_tag: ''
+        }
+      }
+    }
 
     before do
-      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
-      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
-      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
-      expect(addresses_api).to receive(:get_address).and_return(address_model)
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(JSON.pretty_generate(initial_seed_data))
       end
     end
     after do
-      File.delete(Coinbase.configuration.backup_file_path)
+      File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
     end
 
     it 'loads the Wallet from backup' do
-      wallets = user.load
+      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
+      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
+      expect(addresses_api).to receive(:get_address).and_return(address_model)
+
+      wallets = user.load_wallets
       wallet = wallets[wallet_id]
       expect(wallet).not_to be_nil
       expect(wallet.wallet_id).to eq(wallet_id)
       expect(wallet.default_address.address_id).to eq(address_model.address_id)
+    end
+
+    it 'throws an error when the backup file is absent' do
+      File.delete(Coinbase.configuration.backup_file_path)
+      expect do
+        user.load_wallets
+      end.to raise_error(ArgumentError, 'Backup file not found')
+    end
+
+    it 'throws an error when the backup file is corrupted' do
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(malformed_seed_data))
+      end
+      expect do
+        user.load_wallets
+      end.to raise_error(ArgumentError, 'Malformed backup data')
+    end
+
+    it 'throws an error when backup does not contain wallet_id' do
+      # Delete the existing file and write a new malformed file.
+      File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
+
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(seed_data_without_wallet_id))
+      end
+      expect do
+        user.load_wallets
+      end.to raise_error(ArgumentError, 'Malformed backup data')
+    end
+
+    it 'throws an error when backup does not contain iv' do
+      # Delete the existing file and write a new malformed file.
+      File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
+
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(seed_data_without_iv))
+      end
+      expect do
+        user.load_wallets
+      end.to raise_error(ArgumentError, 'Malformed encrypted seed data')
+    end
+
+    it 'throws an error when backup does not contain auth_tag' do
+      # Delete the existing file and write a new malformed file.
+      File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
+
+      File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(seed_data_without_auth_tag))
+      end
+      expect do
+        user.load_wallets
+      end.to raise_error(ArgumentError, 'Malformed encrypted seed data')
     end
   end
 end

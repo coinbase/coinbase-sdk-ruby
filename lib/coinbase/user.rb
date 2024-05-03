@@ -62,15 +62,23 @@ module Coinbase
       wallets.data.map(&:id)
     end
 
-    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load() function,
-    # provided the backup_file is available.
-    def save(wallet, encrypt_flag = false)
+    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with `load_wallets` function,
+    # provided the backup_file is available. This is an insecure method of storing wallet seeds and should only be used
+    # for development purposes. If you call save_wallet twice with wallets containing the same wallet_id, the backup
+    # will be overwritten during the second attempt.
+    # The default backup_file is `seeds.json` in the root folder. It can be configured by changing
+    # Coinbase.configuration.backup_file_path.
+    #
+    # @param wallet [Coinbase::Wallet] The wallet model to save.
+    # @param encrypt [bool] Boolean representing whether the backup persisted to local file system should be encrypted
+    # or not. Data is unencrypted by default.
+    def save_wallet(wallet, encrypt = false)
       existing_seeds_in_store = existing_seeds
       data = wallet.export
       seed_to_store = data.seed
       auth_tag = ''
       iv = ''
-      if encrypt_flag
+      if encrypt
         shared_secret = store_encryption_key
         cipher = OpenSSL::Cipher::AES256.new(:GCM).encrypt
         cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
@@ -85,7 +93,7 @@ module Coinbase
 
       existing_seeds_in_store[data.wallet_id] = {
         seed: seed_to_store,
-        encrypted: encrypt_flag,
+        encrypted: encrypt,
         auth_tag: auth_tag,
         iv: iv,
       }
@@ -97,13 +105,20 @@ module Coinbase
 
     # Loads all wallets belonging to the User with backup persisted to the local file system.
     # @return [Map<String>Coinbase::Wallet] the map of wallet_ids to the wallets.
-    def load
+    def load_wallets
       existing_seeds_in_store = existing_seeds
+      raise ArgumentError, 'Backup file not found' if existing_seeds_in_store == {}
+
       wallets = {}
       existing_seeds_in_store.each do |wallet_id, seed_data|
         seed = seed_data['seed']
+        raise ArgumentError, 'Malformed backup data' if seed == ''
+
         if seed_data['encrypted']
           shared_secret = store_encryption_key
+          raise ArgumentError, 'Malformed encrypted seed data' if seed_data['iv'] == '' ||
+                                                                  seed_data['auth_tag'] == ''
+
           cipher = OpenSSL::Cipher::AES256.new(:GCM).decrypt
           cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
           iv = [seed_data['iv']].pack('H*')
@@ -135,7 +150,11 @@ module Coinbase
       existing_seed_data = '{}'
       file_path = Coinbase.configuration.backup_file_path
       existing_seed_data = File.read(file_path) if File.exist?(file_path)
-      JSON.parse(existing_seed_data)
+      output = JSON.parse(existing_seed_data)
+
+      raise ArgumentError, 'Malformed backup data' unless output.is_a?(Hash)
+
+      output
     end
 
     def store_encryption_key
