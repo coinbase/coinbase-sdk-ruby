@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Option to store seeds in local file system
 - Coinbase.configure_from_file
 - Faucet
 

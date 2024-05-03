@@ -78,6 +78,13 @@ Coinbase.configure do |config|
 end
 ```
 
+Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key, 
+downloaded from CDP portal.
+
+```ruby
+Coinbase.configure_from_json('~/Downloads/coinbase_cloud_api_key.json')
+```
+
 This will allow you to authenticate with the Platform APIs and get access to the `default_user`.
 
 ```ruby
@@ -102,6 +109,14 @@ a.to_s
 ```
 
 Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
+
+For development purposes, we provide a `faucet` method to fund your address with eth on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
+
+```ruby
+# Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
+faucet_tx = a.faucet
+faucet_tx.transaction_hash
+```
 
 ```ruby
 # Create a new Wallet to transfer funds to.
@@ -128,13 +143,17 @@ In order to persist the data for the Wallet, you will need to implement a store 
 # the data required to re-instantiate the Wallet at a later time.
 store(data)
 ```
+
 For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system.
 This is an insecure method of storing wallet seeds and should only be used for development purposes.
 ```ruby
 u.save_wallet(w3)
 ```
 
-To encrypt the saved data, set encrypt to true.
+To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
+for the data persisted locally.To re-instantiate wallets with encrypted data, ensure that your SDK is configured with 
+the same API key when invoking `save_wallet` and `load_wallets`.
+
 ```ruby
 u.save_wallet(w3, true)
 ```
