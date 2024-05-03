@@ -169,7 +169,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is false' do
-      user.save_wallet(seed_wallet)
+      saved_wallet = user.save_wallet(seed_wallet)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -179,10 +179,11 @@ describe Coinbase::User do
       expect(data['iv']).to eq('')
       expect(data['auth_tag']).to eq('')
       expect(data['seed']).to eq(seed)
+      expect(saved_wallet).to eq(seed_wallet)
     end
 
     it 'saves the Wallet data when encryption is true' do
-      user.save_wallet(seed_wallet, true)
+      saved_wallet = user.save_wallet(seed_wallet, true)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -192,16 +193,18 @@ describe Coinbase::User do
       expect(data['iv']).not_to be_empty
       expect(data['auth_tag']).not_to be_empty
       expect(data['seed']).not_to eq(seed)
+      expect(saved_wallet).to eq(seed_wallet)
     end
 
     it 'it creates a new file and saves the wallet when the file does not exist' do
       File.delete(Coinbase.configuration.backup_file_path)
-      user.save_wallet(seed_wallet)
+      saved_wallet = user.save_wallet(seed_wallet)
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
       data = wallets[seed_wallet.wallet_id]
       expect(data).not_to be_empty
       expect(data['encrypted']).to eq(false)
+      expect(saved_wallet).to eq(seed_wallet)
     end
 
     it 'it throws an error when the existing file is malformed' do
