@@ -112,7 +112,7 @@ module Coinbase
       wallets = {}
       existing_seeds_in_store.each do |wallet_id, seed_data|
         seed = seed_data['seed']
-        raise ArgumentError, 'Malformed backup data' if seed == ''
+        raise ArgumentError, 'Malformed backup data' if seed.nil? || seed == ''
 
         if seed_data['encrypted']
           shared_secret = store_encryption_key

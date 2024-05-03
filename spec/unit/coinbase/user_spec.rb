@@ -260,7 +260,7 @@ describe Coinbase::User do
         wallet_id => 'test'
       }
     }
-    let(:seed_data_without_wallet_id) {
+    let(:seed_data_without_seed) {
       {
         wallet_id => {
           seed: '',
@@ -328,12 +328,12 @@ describe Coinbase::User do
       end.to raise_error(ArgumentError, 'Malformed backup data')
     end
 
-    it 'throws an error when backup does not contain wallet_id' do
+    it 'throws an error when backup does not contain seed' do
       # Delete the existing file and write a new malformed file.
       File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
 
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(seed_data_without_wallet_id))
+        file.write(JSON.pretty_generate(seed_data_without_seed))
       end
       expect do
         user.load_wallets
