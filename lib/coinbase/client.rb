@@ -22,6 +22,7 @@ Coinbase::Client.autoload :AddressBalanceList, 'coinbase/client/models/address_b
 Coinbase::Client.autoload :AddressList, 'coinbase/client/models/address_list'
 Coinbase::Client.autoload :Asset, 'coinbase/client/models/asset'
 Coinbase::Client.autoload :Balance, 'coinbase/client/models/balance'
+Coinbase::Client.autoload :BroadcastTransferRequest, 'coinbase/client/models/broadcast_transfer_request'
 Coinbase::Client.autoload :CreateAddressRequest, 'coinbase/client/models/create_address_request'
 Coinbase::Client.autoload :CreateTransferRequest, 'coinbase/client/models/create_transfer_request'
 Coinbase::Client.autoload :CreateWalletRequest, 'coinbase/client/models/create_wallet_request'
