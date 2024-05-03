@@ -119,9 +119,18 @@ module Coinbase
 
       transaction = transfer.transaction
       transaction.sign(@key)
-      Coinbase.configuration.base_sepolia_client.eth_sendRawTransaction("0x#{transaction.hex}")
 
-      transfer
+      signed_payload = transaction.hex
+
+      broadcast_transfer_request = {
+        signed_payload: signed_payload
+      }
+
+      transfer_model = Coinbase.call_api do
+        transfers_api.broadcast_transfer(wallet_id, address_id, transfer.transfer_id, broadcast_transfer_request)
+      end
+
+      Coinbase::Transfer.new(transfer_model)
     end
 
     # Returns the address as a string.

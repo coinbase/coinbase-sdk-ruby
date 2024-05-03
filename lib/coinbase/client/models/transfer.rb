@@ -40,6 +40,12 @@ module Coinbase::Client
     # The unsigned payload of the transfer. This is the payload that needs to be signed by the sender.
     attr_accessor :unsigned_payload
 
+    # The signed payload of the transfer. This is the payload that has been signed by the sender.
+    attr_accessor :signed_payload
+
+    # The hash of the transfer transaction
+    attr_accessor :transaction_hash
+
     # The status of the transfer
     attr_accessor :status
 
@@ -76,6 +82,8 @@ module Coinbase::Client
         :'asset_id' => :'asset_id',
         :'transfer_id' => :'transfer_id',
         :'unsigned_payload' => :'unsigned_payload',
+        :'signed_payload' => :'signed_payload',
+        :'transaction_hash' => :'transaction_hash',
         :'status' => :'status'
       }
     end
@@ -96,6 +104,8 @@ module Coinbase::Client
         :'asset_id' => :'String',
         :'transfer_id' => :'String',
         :'unsigned_payload' => :'String',
+        :'signed_payload' => :'String',
+        :'transaction_hash' => :'String',
         :'status' => :'String'
       }
     end
@@ -167,6 +177,14 @@ module Coinbase::Client
         self.unsigned_payload = attributes[:'unsigned_payload']
       else
         self.unsigned_payload = nil
+      end
+
+      if attributes.key?(:'signed_payload')
+        self.signed_payload = attributes[:'signed_payload']
+      end
+
+      if attributes.key?(:'transaction_hash')
+        self.transaction_hash = attributes[:'transaction_hash']
       end
 
       if attributes.key?(:'status')
@@ -261,6 +279,8 @@ module Coinbase::Client
           asset_id == o.asset_id &&
           transfer_id == o.transfer_id &&
           unsigned_payload == o.unsigned_payload &&
+          signed_payload == o.signed_payload &&
+          transaction_hash == o.transaction_hash &&
           status == o.status
     end
 
@@ -273,7 +293,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, wallet_id, address_id, destination, amount, asset_id, transfer_id, unsigned_payload, status].hash
+      [network_id, wallet_id, address_id, destination, amount, asset_id, transfer_id, unsigned_payload, signed_payload, transaction_hash, status].hash
     end
 
     # Builds the object from hash
