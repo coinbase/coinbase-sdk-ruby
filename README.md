@@ -151,7 +151,7 @@ u.save_wallet(w3)
 ```
 
 To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
-for the data persisted locally.To re-instantiate wallets with encrypted data, ensure that your SDK is configured with 
+for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with 
 the same API key when invoking `save_wallet` and `load_wallets`.
 
 ```ruby
