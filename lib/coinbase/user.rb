@@ -72,6 +72,7 @@ module Coinbase
     # @param wallet [Coinbase::Wallet] The wallet model to save.
     # @param encrypt [bool] Boolean representing whether the backup persisted to local file system should be encrypted
     # or not. Data is unencrypted by default.
+    # @return [Coinbase::Wallet] the saved wallet.
     def save_wallet(wallet, encrypt = false)
       existing_seeds_in_store = existing_seeds
       data = wallet.export
@@ -101,6 +102,7 @@ module Coinbase
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(JSON.pretty_generate(existing_seeds_in_store))
       end
+      wallet
     end
 
     # Loads all wallets belonging to the User with backup persisted to the local file system.
