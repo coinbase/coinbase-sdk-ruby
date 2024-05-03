@@ -108,10 +108,13 @@ module Coinbase
 
     address_balance_list.data.each do |balance|
       asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
-      amount = if asset_id == :eth
+      amount = case asset_id
+               when :eth
                  BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-               elsif asset_id == :usdc
+               when :usdc
                  BigDecimal(balance.amount) / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC)
+               when :weth
+                 BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
                else
                  BigDecimal(balance.amount)
                end
