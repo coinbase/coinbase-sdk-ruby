@@ -110,7 +110,7 @@ a.to_s
 
 Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
 
-For development purposes, we provide a `faucet` method to fund your address with eth on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
+For development purposes, we provide a `faucet` method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
 
 ```ruby
 # Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
