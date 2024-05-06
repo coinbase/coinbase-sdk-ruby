@@ -39,6 +39,6 @@ module Coinbase
     gwei: true, # A medium denomination of Ether, typically used in gas prices.
     wei: true, # The smallest denomination of Ether.
     usdc: true, # USD Coin, a stablecoin pegged to the US Dollar.
-    weth: true, # Wrapped Ether, ERC-20 compatible version of Ether.
+    weth: true, # Wrapped Ether, the ERC-20 compatible version of Ether.
   }.freeze
 end
