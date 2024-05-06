@@ -257,6 +257,30 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#transaction_link-instance_method" title="#transaction_link (instance method)">#<strong>transaction_link</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the link to the transaction on the blockchain explorer.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -423,12 +447,12 @@
       <pre class="lines">
 
 
-31
-32
-33</pre>
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 38</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -482,15 +506,15 @@
       <pre class="lines">
 
 
-25
-26
-27</pre>
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
-  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::FaucetTransaction{transaction_hash: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::FaucetTransaction{transaction_hash: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, transaction_link: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_link'>transaction_link</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -550,6 +574,67 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
   <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="transaction_link-instance_method">
+  
+    #<strong>transaction_link</strong>  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the link to the transaction on the blockchain explorer.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The link to the transaction on the blockchain explorer</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_transaction_link'>transaction_link</span>
+  <span class='comment'># TODO: Parameterize this by Network.
+</span>  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://sepolia.basescan.org/tx/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
