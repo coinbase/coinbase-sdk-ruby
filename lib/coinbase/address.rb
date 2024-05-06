@@ -166,6 +166,8 @@ module Coinbase
         big_amount * Coinbase::WEI_PER_GWEI
       when :usdc
         big_amount * Coinbase::ATOMIC_UNITS_PER_USDC
+      when :weth
+        big_amount * Coinbase::WEI_PER_ETHER
       else
         big_amount
       end
