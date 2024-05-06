@@ -41,6 +41,19 @@ describe Coinbase::Transfer do
                                      'unsigned_payload' => unsigned_payload
                                    })
   end
+  let(:usdc_model) do
+    Coinbase::Client::Transfer.new({
+                                     'network_id' => network_id,
+                                     'wallet_id' => wallet_id,
+                                     'address_id' => from_address_id,
+                                     'destination' => to_address_id,
+                                     'asset_id' => 'usdc',
+                                     'amount' => amount.to_s,
+                                     'transfer_id' => transfer_id,
+                                     'status' => 'pending',
+                                     'unsigned_payload' => unsigned_payload
+                                   })
+  end
   let(:broadcast_model) do
     Coinbase::Client::Transfer.new({
                                      'network_id' => network_id,
@@ -60,9 +73,8 @@ describe Coinbase::Transfer do
   let(:client) { double('Jimson::Client') }
 
   before(:each) do
-    configuration = double(Coinbase::Configuration)
-    allow(Coinbase).to receive(:configuration).and_return(configuration)
-    allow(configuration).to receive(:base_sepolia_client).and_return(client)
+    allow(Coinbase.configuration).to receive(:base_sepolia_client).and_return(client)
+    allow(Coinbase::Client::TransfersApi).to receive(:new).and_return(transfers_api)
   end
 
   subject(:transfer) do
@@ -106,8 +118,20 @@ describe Coinbase::Transfer do
   end
 
   describe '#amount' do
-    it 'returns the amount' do
-      expect(transfer.amount).to eq(eth_amount)
+    context 'when the asset ID is :eth' do
+      it 'returns the amount' do
+        expect(transfer.amount).to eq(eth_amount)
+      end
+    end
+
+    context 'when the asset ID is :usdc' do
+      subject(:transfer) do
+        described_class.new(usdc_model)
+      end
+
+      it 'returns the amount' do
+        expect(transfer.amount).to eq(amount)
+      end
     end
   end
 
@@ -129,6 +153,7 @@ describe Coinbase::Transfer do
         expect(transfer.signed_payload).to be_nil
       end
     end
+
     context 'when the transfer has been broadcast on chain' do
       subject(:transfer) do
         described_class.new(broadcast_model)

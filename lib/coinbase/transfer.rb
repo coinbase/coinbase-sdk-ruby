@@ -72,9 +72,14 @@ module Coinbase
     end
 
     # Returns the amount of the asset for the Transfer.
-    # @return [BigDecimal] The amount in units of ETH
+    # @return [BigDecimal] The amount of the asset
     def amount
-      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      case asset_id
+      when :eth
+        BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      else
+        BigDecimal(@model.amount)
+      end
     end
 
     # Returns the link to the transaction on the blockchain explorer.
