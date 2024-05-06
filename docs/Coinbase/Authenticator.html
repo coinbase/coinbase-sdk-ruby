@@ -290,7 +290,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Builds the JWT for the given API endpoint URI. The JWT is signed with the API key&#39;s private key.</p>
+<p>Builds the JWT for the given API endpoint URI. The JWT is signed with the API key’s private key.</p>
 
 
   </div>
@@ -368,12 +368,12 @@
 <span class='kw'>def</span> <span class='id identifier rubyid_build_jwt'>build_jwt</span><span class='lparen'>(</span><span class='id identifier rubyid_uri'>uri</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_header'>header</span> <span class='op'>=</span> <span class='lbrace'>{</span>
     <span class='label'>typ:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>JWT</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-    <span class='label'>kid:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span><span class='comma'>,</span>
+    <span class='label'>kid:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'><span class='object_link'><a href="Configuration.html#api_key_name-instance_method" title="Coinbase::Configuration#api_key_name (method)">api_key_name</a></span></span><span class='comma'>,</span>
     <span class='label'>nonce:</span> <span class='const'>SecureRandom</span><span class='period'>.</span><span class='id identifier rubyid_hex'>hex</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span>
   <span class='rbrace'>}</span>
 
   <span class='id identifier rubyid_claims'>claims</span> <span class='op'>=</span> <span class='lbrace'>{</span>
-    <span class='label'>sub:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span><span class='comma'>,</span>
+    <span class='label'>sub:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'><span class='object_link'><a href="Configuration.html#api_key_name-instance_method" title="Coinbase::Configuration#api_key_name (method)">api_key_name</a></span></span><span class='comma'>,</span>
     <span class='label'>iss:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-cloud</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
     <span class='label'>aud:</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cdp_service</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
     <span class='label'>nbf:</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span>
@@ -381,7 +381,7 @@
 </span>    <span class='label'>uris:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_uri'>uri</span><span class='rbracket'>]</span>
   <span class='rbrace'>}</span>
 
-  <span class='id identifier rubyid_private_key'>private_key</span> <span class='op'>=</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>PKey</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_private_key'>private_key</span> <span class='op'>=</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>PKey</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'><span class='object_link'><a href="Configuration.html#api_key_private_key-instance_method" title="Coinbase::Configuration#api_key_private_key (method)">api_key_private_key</a></span></span><span class='rparen'>)</span>
   <span class='const'>JWT</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='id identifier rubyid_claims'>claims</span><span class='comma'>,</span> <span class='id identifier rubyid_private_key'>private_key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ES256</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_header'>header</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -465,9 +465,7 @@
 </div>
 
       <div id="footer">
-  Generated on Tue Apr 30 17:59:09 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.36 (ruby-2.7.0).
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
 </div>
 
     </div>
