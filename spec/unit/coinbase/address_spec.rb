@@ -383,10 +383,4 @@ describe Coinbase::Address do
       end
     end
   end
-
-  describe '#to_s' do
-    it 'returns the address as a string' do
-      expect(address.to_s).to eq(address_id)
-    end
-  end
 end

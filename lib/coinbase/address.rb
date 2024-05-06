@@ -133,10 +133,16 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
-    # Returns the address as a string.
-    # @return [String] The address
+    # Returns a String representation of the Address.
+    # @return [String] a String representation of the Address
     def to_s
-      address_id
+      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Address
+    def inspect
+      to_s
     end
 
     # Requests funds for the address from the faucet and returns the faucet transaction.

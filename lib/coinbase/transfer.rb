@@ -77,6 +77,13 @@ module Coinbase
       BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
     end
 
+    # Returns the link to the transaction on the blockchain explorer.
+    # @return [String] The link to the transaction on the blockchain explorer
+    def transaction_link
+      # TODO: Parameterize this by Network.
+      "https://sepolia.basescan.org/tx/#{transaction_hash}"
+    end
+
     # Returns the Unsigned Payload of the Transfer.
     # @return [String] The Unsigned Payload
     def unsigned_payload
@@ -162,6 +169,21 @@ module Coinbase
       end
 
       self
+    end
+
+    # Returns a String representation of the Transfer.
+    # @return [String] a String representation of the Transfer
+    def to_s
+      "Coinbase::Transfer{transfer_id: '#{transfer_id}', network_id: '#{network_id}', " +
+        "from_address_id: '#{from_address_id}', destination_address_id: '#{destination_address_id}', " +
+        "asset_id: '#{asset_id}', amount: '#{amount}', transaction_hash: '#{transaction_hash}', " +
+        "transaction_link: '#{transaction_link}', status: '#{status}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Transfer
+    def inspect
+      to_s
     end
   end
 end

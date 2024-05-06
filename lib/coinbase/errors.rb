@@ -80,13 +80,16 @@ module Coinbase
       end
     end
 
-    # The string representation of the error.
+    # Returns a String representation of the APIError.
+    # @return [String] a String representation of the APIError
     def to_s
-      message = "API Error \n"
-      message += "HTTP status code: #{http_code}\n" if http_code
-      message += "API error code: #{api_code}\n" if api_code
-      message += "API error message: #{api_message}\n" if api_message
-      message
+      "APIError{http_code: #{@http_code}, api_code: #{@api_code}, api_message: #{@api_message}}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the APIError
+    def inspect
+      to_s
     end
   end
 

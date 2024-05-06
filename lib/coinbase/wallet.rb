@@ -161,6 +161,19 @@ module Coinbase
       Data.new(wallet_id: wallet_id, seed: @master.seed_hex)
     end
 
+    # Returns a String representation of the Wallet.
+    # @return [String] a String representation of the Wallet
+    def to_s
+      "Coinbase::Wallet{wallet_id: '#{wallet_id}', network_id: '#{network_id}', " +
+      "default_address: '#{default_address.address_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Wallet
+    def inspect
+      to_s
+    end
+
     # The data required to recreate a Wallet.
     class Data
       attr_reader :wallet_id, :seed

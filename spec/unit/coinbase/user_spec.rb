@@ -183,7 +183,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is true' do
-      saved_wallet = user.save_wallet(seed_wallet, true)
+      saved_wallet = user.save_wallet(seed_wallet, encrypt: true)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
