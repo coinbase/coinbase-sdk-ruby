@@ -24,6 +24,7 @@ module Coinbase
     # Creates a specific APIError based on the API error code.
     # @param err [Coinbase::Client::APIError] The underlying error object.
     # @return [APIError] The specific APIError object.
+    # rubocop:disable Metrics/MethodLength
     def self.from_error(err)
       raise ArgumentError, 'Argument must be a Coinbase::Client::APIError' unless err.is_a? Coinbase::Client::ApiError
       return APIError.new(err) unless err.response_body
@@ -79,6 +80,7 @@ module Coinbase
         APIError.new(err)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Returns a String representation of the APIError.
     # @return [String] a String representation of the APIError

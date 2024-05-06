@@ -8,8 +8,8 @@ module Coinbase
   ETH = Asset.new(network_id: :base_sepolia, asset_id: :eth, display_name: 'Ether')
   USDC = Asset.new(network_id: :base_sepolia, asset_id: :usdc, display_name: 'USD Coin',
                    address_id: '0x036CbD53842c5426634e7929541eC2318f3dCF7e')
-  WETH =  Asset.new(network_id: :base_sepolia, asset_id: :weth, display_name: 'Wrapped Ether',
-                    address_id: '0x4200000000000000000000000000000000000006')
+  WETH = Asset.new(network_id: :base_sepolia, asset_id: :weth, display_name: 'Wrapped Ether',
+                   address_id: '0x4200000000000000000000000000000000000006')
   # The Base Sepolia Network.
   BASE_SEPOLIA = Network.new(
     network_id: :base_sepolia,
@@ -39,6 +39,6 @@ module Coinbase
     gwei: true, # A medium denomination of Ether, typically used in gas prices.
     wei: true, # The smallest denomination of Ether.
     usdc: true, # USD Coin, a stablecoin pegged to the US Dollar.
-    weth: true, # Wrapped Ether, the ERC-20 compatible version of Ether.
+    weth: true # Wrapped Ether, the ERC-20 compatible version of Ether.
   }.freeze
 end

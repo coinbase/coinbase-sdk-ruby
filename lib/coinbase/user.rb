@@ -81,7 +81,7 @@ module Coinbase
       iv = ''
       if encrypt
         shared_secret = store_encryption_key
-        cipher = OpenSSL::Cipher::AES256.new(:GCM).encrypt
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
         cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
         iv = cipher.random_iv
         cipher.iv = iv
@@ -96,7 +96,7 @@ module Coinbase
         seed: seed_to_store,
         encrypted: encrypt,
         auth_tag: auth_tag,
-        iv: iv,
+        iv: iv
       }
 
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
@@ -121,7 +121,7 @@ module Coinbase
           raise ArgumentError, 'Malformed encrypted seed data' if seed_data['iv'] == '' ||
                                                                   seed_data['auth_tag'] == ''
 
-          cipher = OpenSSL::Cipher::AES256.new(:GCM).decrypt
+          cipher = OpenSSL::Cipher.new('aes-256-gcm').decrypt
           cipher.key = OpenSSL::Digest.digest('SHA256', shared_secret)
           iv = [seed_data['iv']].pack('H*')
           cipher.iv = iv
@@ -176,6 +176,5 @@ module Coinbase
       public_key = pk.public_key # use own public key to generate the shared secret.
       pk.dh_compute_key(public_key)
     end
-
   end
 end
