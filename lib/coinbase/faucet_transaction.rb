@@ -20,10 +20,17 @@ module Coinbase
       model.transaction_hash
     end
 
+    # Returns the link to the transaction on the blockchain explorer.
+    # @return [String] The link to the transaction on the blockchain explorer
+    def transaction_link
+      # TODO: Parameterize this by Network.
+      "https://sepolia.basescan.org/tx/#{transaction_hash}"
+    end
+
     # Returns a String representation of the FaucetTransaction.
     # @return [String] a String representation of the FaucetTransaction
     def to_s
-      "Coinbase::FaucetTransaction{transaction_hash: '#{transaction_hash}'}"
+      "Coinbase::FaucetTransaction{transaction_hash: '#{transaction_hash}', transaction_link: '#{transaction_link}'}"
     end
 
     # Same as to_s.

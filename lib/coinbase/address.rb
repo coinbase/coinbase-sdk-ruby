@@ -136,7 +136,7 @@ module Coinbase
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s
-      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'"
+      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
     end
 
     # Same as to_s.
