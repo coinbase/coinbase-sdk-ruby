@@ -1024,9 +1024,7 @@
 181
 182
 183
-184
-185
-186</pre>
+184</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/address.rb', line 167</span>
@@ -1036,10 +1034,8 @@
   <span class='id identifier rubyid_page'>page</span> <span class='op'>=</span> <span class='kw'>nil</span>
 
   <span class='id identifier rubyid_loop'>loop</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='int'>100</span><span class='comma'>,</span> <span class='label'>page:</span> <span class='id identifier rubyid_page'>page</span> <span class='rbrace'>}</span>
-
     <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
-      <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_list_transfers'>list_transfers</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_list_transfers'>list_transfers</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='int'>100</span><span class='comma'>,</span> <span class='label'>page:</span> <span class='id identifier rubyid_page'>page</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
     <span class='kw'>end</span>
 
     <span class='id identifier rubyid_transfer_ids'>transfer_ids</span><span class='period'>.</span><span class='id identifier rubyid_concat'>concat</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:transfer_id</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span>

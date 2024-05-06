@@ -190,18 +190,5 @@ module Coinbase
     def inspect
       to_s
     end
-
-    private
-
-    # Updates the Transfer model with the latest data.
-    def update_model
-      @model = Coinbase.call_api do
-        transfers_api.get_transfer(transfer_id)
-      end
-    end
-
-    def transfers_api
-      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
-    end
   end
 end
