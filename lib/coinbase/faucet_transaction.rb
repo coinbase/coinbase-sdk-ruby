@@ -6,6 +6,8 @@ module Coinbase
   # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
   # Address#transfer.
   class FaucetTransaction
+    # Returns a new FaucetTransaction object. Do not use this method directly - instead, use Address#faucet.
+    # @param model [Coinbase::Client::FaucetTransaction] The underlying FaucetTransaction object
     def initialize(model)
       @model = model
     end
@@ -16,6 +18,18 @@ module Coinbase
     # @return [String] The onchain transaction hash
     def transaction_hash
       model.transaction_hash
+    end
+
+    # Returns a String representation of the FaucetTransaction.
+    # @return [String] a String representation of the FaucetTransaction
+    def to_s
+      "Coinbase::FaucetTransaction{transaction_hash: '#{transaction_hash}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the FaucetTransaction
+    def inspect
+      to_s
     end
   end
 end

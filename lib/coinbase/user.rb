@@ -138,6 +138,18 @@ module Coinbase
       wallets
     end
 
+    # Returns a string representation of the User.
+    # @return [String] a string representation of the User
+    def to_s
+      "Coinbase::User{user_id: '#{user_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a string representation of the User
+    def inspect
+      to_s
+    end
+
     private
 
     def addresses_api
