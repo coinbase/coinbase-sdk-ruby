@@ -31,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '1.63.1'
   # Pin to a specific version of YARD to ensure consistent documentation generation.
   spec.add_development_dependency 'yard', '0.9.36'
+  spec.add_development_dependency 'yard-markdown'
 end

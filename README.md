@@ -155,7 +155,7 @@ for the data persisted locally. To re-instantiate wallets with encrypted data, e
 the same API key when invoking `save_wallet` and `load_wallets`.
 
 ```ruby
-u.save_wallet(w3, true)
+u.save_wallet(w3, encrypt: true)
 ```
 
 The below code demonstrates how to re-instantiate a Wallet from the data export.
