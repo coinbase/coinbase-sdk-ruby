@@ -123,6 +123,7 @@ describe Coinbase::Transfer do
         expect(transfer.amount).to eq(eth_amount)
       end
     end
+
     context 'when the asset ID is :usdc' do
       subject(:transfer) do
         described_class.new(usdc_model)
@@ -152,6 +153,7 @@ describe Coinbase::Transfer do
         expect(transfer.signed_payload).to be_nil
       end
     end
+
     context 'when the transfer has been broadcast on chain' do
       subject(:transfer) do
         described_class.new(broadcast_model)

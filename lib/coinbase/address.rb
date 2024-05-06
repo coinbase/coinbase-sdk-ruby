@@ -169,10 +169,8 @@ module Coinbase
       page = nil
 
       loop do
-        opts = { limit: 100, page: page }
-
         response = Coinbase.call_api do
-          transfers_api.list_transfers(wallet_id, address_id, opts)
+          transfers_api.list_transfers(wallet_id, address_id, { limit: 100, page: page })
         end
 
         transfer_ids.concat(response.data.map(&:transfer_id)) if response.data
