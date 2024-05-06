@@ -2,6 +2,7 @@
 
 describe Coinbase::Address do
   let(:key) { Eth::Key.new }
+  let(:private_key) { key.private_hex }
   let(:network_id) { :base_sepolia }
   let(:address_id) { key.address.to_s }
   let(:wallet_id) { SecureRandom.uuid }
@@ -381,6 +382,12 @@ describe Coinbase::Address do
           expect { address.faucet }.to raise_error(::Coinbase::InternalError)
         end
       end
+    end
+  end
+
+  describe '#export' do
+    it 'export private key from address' do
+      expect(address.export).to eq(private_key)
     end
   end
 end

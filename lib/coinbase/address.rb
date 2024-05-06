@@ -156,6 +156,12 @@ module Coinbase
       end
     end
 
+    # Exports the Address's private key to a hex string.
+    # @return [String] The Address's private key as a hex String
+    def export
+      @key.private_hex
+    end
+
     private
 
     # Normalizes the amount of the Asset to send to the atomic unit.
