@@ -72,9 +72,14 @@ module Coinbase
     end
 
     # Returns the amount of the asset for the Transfer.
-    # @return [BigDecimal] The amount in units of ETH
+    # @return [BigDecimal] The amount of the asset
     def amount
-      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      case asset_id
+      when :eth
+        BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      else
+        BigDecimal(@model.amount)
+      end
     end
 
     # Returns the link to the transaction on the blockchain explorer.
@@ -184,6 +189,19 @@ module Coinbase
     # @return [String] a String representation of the Transfer
     def inspect
       to_s
+    end
+
+    private
+
+    # Updates the Transfer model with the latest data.
+    def update_model
+      @model = Coinbase.call_api do
+        transfers_api.get_transfer(transfer_id)
+      end
+    end
+
+    def transfers_api
+      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
   end
 end

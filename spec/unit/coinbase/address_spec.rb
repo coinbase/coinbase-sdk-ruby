@@ -390,4 +390,17 @@ describe Coinbase::Address do
       expect(address.export).to eq(private_key)
     end
   end
+
+  describe '#list_transfer_ids' do
+    let(:transfer_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:data) do
+      transfer_ids.map { |id| Coinbase::Client::Transfer.new({ 'transfer_id': id, 'network_id': 'base-sepolia' }) }
+    end
+    let(:transfers_list) { Coinbase::Client::TransferList.new({ 'data' => data }) }
+    let(:opts) { { limit: 100, page: nil } }
+    it 'lists the transfer IDs' do
+      allow(transfers_api).to receive(:list_transfers).with(wallet_id, address_id, opts).and_return(transfers_list)
+      expect(address.list_transfer_ids).to eq(transfer_ids)
+    end
+  end
 end
