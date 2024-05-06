@@ -148,14 +148,14 @@ describe Coinbase::User do
                                     })
     end
     let(:initial_seed_data) { JSON.pretty_generate({}) }
-    let(:expected_seed_data) {
+    let(:expected_seed_data) do
       {
         seed_wallet.wallet_id => {
           seed: seed,
           encrypted: false
         }
       }
-    }
+    end
 
     before do
       allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
@@ -250,28 +250,28 @@ describe Coinbase::User do
     let(:address_list_model) do
       Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
     end
-    let(:initial_seed_data) {
+    let(:initial_seed_data) do
       {
         wallet_id => {
           seed: seed,
           encrypted: false
         }
       }
-    }
-    let(:malformed_seed_data) {
+    end
+    let(:malformed_seed_data) do
       {
         wallet_id => 'test'
       }
-    }
-    let(:seed_data_without_seed) {
+    end
+    let(:seed_data_without_seed) do
       {
         wallet_id => {
           seed: '',
           encrypted: false
         }
       }
-    }
-    let(:seed_data_without_iv) {
+    end
+    let(:seed_data_without_iv) do
       {
         wallet_id => {
           seed: seed,
@@ -280,8 +280,8 @@ describe Coinbase::User do
           auth_tag: '0x111'
         }
       }
-    }
-    let(:seed_data_without_auth_tag) {
+    end
+    let(:seed_data_without_auth_tag) do
       {
         wallet_id => {
           seed: seed,
@@ -290,7 +290,7 @@ describe Coinbase::User do
           auth_tag: ''
         }
       }
-    }
+    end
 
     before do
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|

@@ -164,8 +164,8 @@ module Coinbase
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
-      "Coinbase::Wallet{wallet_id: '#{wallet_id}', network_id: '#{network_id}', " +
-      "default_address: '#{default_address.address_id}'}"
+      "Coinbase::Wallet{wallet_id: '#{wallet_id}', network_id: '#{network_id}', " \
+        "default_address: '#{default_address.address_id}'}"
     end
 
     # Same as to_s.
