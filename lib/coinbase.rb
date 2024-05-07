@@ -73,8 +73,8 @@ module Coinbase
       @api_key_private_key = data['privateKey']
     end
 
-    # Sets the base Sepolia RPC URL.
-    # @param new_base_sepolia_rpc_url [String] the new base Sepolia RPC URL
+    # Sets the Base Sepolia RPC URL.
+    # @param new_base_sepolia_rpc_url [String] the new Base Sepolia RPC URL
     def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)
       @base_sepolia_rpc_url = new_base_sepolia_rpc_url
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
