@@ -133,6 +133,11 @@
 <span class='kw'>end</span>
 </code></pre>
 
+<p>Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key, downloaded from CDP portal.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_from_json'><span class='object_link'><a href="Coinbase.html#configure_from_json-class_method" title="Coinbase.configure_from_json (method)">configure_from_json</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~/Downloads/coinbase_cloud_api_key.json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+</code></pre>
+
 <p>This will allow you to authenticate with the Platform APIs and get access to the <code>default_user</code>.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_user'><span class='object_link'><a href="Coinbase.html#default_user-class_method" title="Coinbase.default_user (method)">default_user</a></span></span>
@@ -155,6 +160,13 @@
 
 <p>Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don&#39;t have testnet funds, get funds from a <a href="https://docs.base.org/docs/tools/network-faucets/">faucet</a>.</p>
 
+<p>For development purposes, we provide a <code>faucet</code> method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
+</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
+<span class='id identifier rubyid_faucet_tx'>faucet_tx</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
+</code></pre>
+
 <pre class="code ruby"><code class="ruby"><span class='comment'># Create a new Wallet to transfer funds to.
 </span><span class='comment'># Then, we can transfer 0.00001 ETH out of the Wallet to another Wallet.
 </span><span class='id identifier rubyid_w2'>w2</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
@@ -163,7 +175,7 @@
 
 <h3 id="label-Re-Instantiating+Wallets">Re-Instantiating Wallets</h3>
 
-<p>The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The below code walks you through how to export a Wallets and store it in a secure location.</p>
+<p>The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The code walks you through how to export a Wallet and store it in a secure location.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Optional: Create a new Wallet if you do not already have one.
 </span><span class='comment'># Export the data required to re-instantiate the Wallet.
@@ -178,12 +190,21 @@
 </span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
 
+<p>For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes. <code>ruby u.save_wallet(w3) </code></p>
+
+<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet</code> and <code>load_wallets</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet'>save_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+</code></pre>
+
 <p>The below code demonstrates how to re-instantiate a Wallet from the data export.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
-</span><span class='comment'># w2 will be equivalent to w1.
+</span><span class='comment'># w4 will be equivalent to w3.
 </span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
+
+<p>To import wallets that were persisted to your local file system using <code>save_wallet</code>, use the below code. <code>ruby # The Wallet can be re-instantiated using the exported data. # w5 will be equivalent to w3. wallets = u.load_wallets w5 = wallets[w3.wallet_id] </code></p>
 
 <h2 id="label-Development">Development</h2>
 
@@ -253,9 +274,7 @@
 </div></div>
 
       <div id="footer">
-  Generated on Tue Apr 30 17:59:08 2024 by
-  <a href="https://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
-  0.9.36 (ruby-2.7.0).
+     Generated by <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>.
 </div>
 
     </div>

@@ -3,3 +3,4 @@ Gemfile.lock
 lib/**/.DS_Store
 .idea
 .DS_Store
+seeds.json

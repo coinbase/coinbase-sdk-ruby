@@ -68,7 +68,9 @@ module Coinbase
           attestation: attestation
         }
       }
-      address_model = addresses_api.create_address(wallet_id, opts)
+      address_model = Coinbase.call_api do
+        addresses_api.create_address(wallet_id, opts)
+      end
 
       cache_address(address_model, key)
     end
@@ -95,7 +97,10 @@ module Coinbase
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
     def list_balances
-      response = wallets_api.list_wallet_balances(wallet_id)
+      response = Coinbase.call_api do
+        wallets_api.list_wallet_balances(wallet_id)
+      end
+
       Coinbase.to_balance_map(response)
     end
 
@@ -109,7 +114,9 @@ module Coinbase
                               asset_id
                             end
 
-      response = wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
+      response = Coinbase.call_api do
+        wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
+      end
 
       return BigDecimal('0') if response.nil?
 
@@ -154,6 +161,19 @@ module Coinbase
       Data.new(wallet_id: wallet_id, seed: @master.seed_hex)
     end
 
+    # Returns a String representation of the Wallet.
+    # @return [String] a String representation of the Wallet
+    def to_s
+      "Coinbase::Wallet{wallet_id: '#{wallet_id}', network_id: '#{network_id}', " \
+        "default_address: '#{default_address.address_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Wallet
+    def inspect
+      to_s
+    end
+
     # The data required to recreate a Wallet.
     class Data
       attr_reader :wallet_id, :seed
@@ -188,7 +208,9 @@ module Coinbase
       key = derive_key
 
       address_id = key.address.to_s
-      address_model = addresses_api.get_address(wallet_id, address_id)
+      address_model = Coinbase.call_api do
+        addresses_api.get_address(wallet_id, address_id)
+      end
 
       cache_address(address_model, key)
     end
@@ -238,7 +260,9 @@ module Coinbase
 
     # Updates the Wallet model with the latest data.
     def update_model
-      @model = wallets_api.get_wallet(wallet_id)
+      @model = Coinbase.call_api do
+        wallets_api.get_wallet(wallet_id)
+      end
     end
 
     def addresses_api

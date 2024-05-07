@@ -43,7 +43,10 @@ module Coinbase
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
     def list_balances
-      response = addresses_api.list_address_balances(wallet_id, address_id)
+      response = Coinbase.call_api do
+        addresses_api.list_address_balances(wallet_id, address_id)
+      end
+
       Coinbase.to_balance_map(response)
     end
 
@@ -53,7 +56,9 @@ module Coinbase
     def get_balance(asset_id)
       normalized_asset_id = normalize_asset_id(asset_id)
 
-      response = addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+      response = Coinbase.call_api do
+        addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+      end
 
       return BigDecimal('0') if response.nil?
 
@@ -106,21 +111,76 @@ module Coinbase
         destination: destination
       }
 
-      transfer_model = transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+      transfer_model = Coinbase.call_api do
+        transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+      end
 
       transfer = Coinbase::Transfer.new(transfer_model)
 
       transaction = transfer.transaction
       transaction.sign(@key)
-      Coinbase.configuration.base_sepolia_client.eth_sendRawTransaction("0x#{transaction.hex}")
 
-      transfer
+      signed_payload = transaction.hex
+
+      broadcast_transfer_request = {
+        signed_payload: signed_payload
+      }
+
+      transfer_model = Coinbase.call_api do
+        transfers_api.broadcast_transfer(wallet_id, address_id, transfer.transfer_id, broadcast_transfer_request)
+      end
+
+      Coinbase::Transfer.new(transfer_model)
     end
 
-    # Returns the address as a string.
-    # @return [String] The address
+    # Returns a String representation of the Address.
+    # @return [String] a String representation of the Address
     def to_s
-      address_id
+      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Address
+    def inspect
+      to_s
+    end
+
+    # Requests funds for the address from the faucet and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReached] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+    def faucet
+      Coinbase.call_api do
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, address_id))
+      end
+    end
+
+    # Exports the Address's private key to a hex string.
+    # @return [String] The Address's private key as a hex String
+    def export
+      @key.private_hex
+    end
+
+    # Lists the IDs of all Transfers associated with the given Wallet and Address.
+    # @return [Array<String>] The IDs of all Transfers belonging to the Wallet and Address
+    def list_transfer_ids
+      transfer_ids = []
+      page = nil
+
+      loop do
+        response = Coinbase.call_api do
+          transfers_api.list_transfers(wallet_id, address_id, { limit: 100, page: page })
+        end
+
+        transfer_ids.concat(response.data.map(&:transfer_id)) if response.data
+
+        break unless response.has_more
+
+        page = response.next_page
+      end
+
+      transfer_ids
     end
 
     private
@@ -139,6 +199,8 @@ module Coinbase
         big_amount * Coinbase::WEI_PER_GWEI
       when :usdc
         big_amount * Coinbase::ATOMIC_UNITS_PER_USDC
+      when :weth
+        big_amount * Coinbase::WEI_PER_ETHER
       else
         big_amount
       end

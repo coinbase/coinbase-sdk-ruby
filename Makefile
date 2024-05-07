@@ -16,4 +16,4 @@ repl:
 
 .PHONY: docs
 docs:
-	bundle exec yardoc --output-dir ./docs
+	bundle exec yardoc --output-dir ./docs --quiet --template-path ./docs/templates

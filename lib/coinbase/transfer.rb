@@ -72,15 +72,39 @@ module Coinbase
     end
 
     # Returns the amount of the asset for the Transfer.
-    # @return [BigDecimal] The amount in units of ETH
+    # @return [BigDecimal] The amount of the asset
     def amount
-      BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      case asset_id
+      when :eth
+        BigDecimal(@model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
+      else
+        BigDecimal(@model.amount)
+      end
+    end
+
+    # Returns the link to the transaction on the blockchain explorer.
+    # @return [String] The link to the transaction on the blockchain explorer
+    def transaction_link
+      # TODO: Parameterize this by Network.
+      "https://sepolia.basescan.org/tx/#{transaction_hash}"
     end
 
     # Returns the Unsigned Payload of the Transfer.
     # @return [String] The Unsigned Payload
     def unsigned_payload
       @model.unsigned_payload
+    end
+
+    # Returns the Signed Payload of the Transfer.
+    # @return [String] The Signed Payload
+    def signed_payload
+      @model.signed_payload
+    end
+
+    # Returns the Transaction Hash of the Transfer.
+    # @return [String] The Transaction Hash
+    def transaction_hash
+      @model.transaction_hash
     end
 
     # Returns the underlying Transfer transaction, creating it if it has not been yet.
@@ -110,13 +134,8 @@ module Coinbase
     # Returns the status of the Transfer.
     # @return [Symbol] The status
     def status
-      begin
-        # Create the transaction, and attempt to get the hash to see if it has been signed.
-        transaction.hash
-      rescue Eth::Signature::SignatureError
-        # If the transaction has not been signed, it is still pending.
-        return Status::PENDING
-      end
+      # Check if the transfer has been signed yet.
+      return Status::PENDING if transaction_hash.nil?
 
       onchain_transaction = Coinbase.configuration.base_sepolia_client.eth_getTransactionByHash(transaction_hash)
 
@@ -157,12 +176,19 @@ module Coinbase
       self
     end
 
-    # Returns the transaction hash of the Transfer, or nil if not yet available.
-    # @return [String] The transaction hash
-    def transaction_hash
-      "0x#{transaction.hash}"
-    rescue Eth::Signature::SignatureError
-      nil
+    # Returns a String representation of the Transfer.
+    # @return [String] a String representation of the Transfer
+    def to_s
+      "Coinbase::Transfer{transfer_id: '#{transfer_id}', network_id: '#{network_id}', " \
+        "from_address_id: '#{from_address_id}', destination_address_id: '#{destination_address_id}', " \
+        "asset_id: '#{asset_id}', amount: '#{amount}', transaction_hash: '#{transaction_hash}', " \
+        "transaction_link: '#{transaction_link}', status: '#{status}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Transfer
+    def inspect
+      to_s
     end
   end
 end

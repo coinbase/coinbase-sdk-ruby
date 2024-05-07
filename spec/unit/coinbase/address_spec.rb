@@ -2,6 +2,7 @@
 
 describe Coinbase::Address do
   let(:key) { Eth::Key.new }
+  let(:private_key) { key.private_hex }
   let(:network_id) { :base_sepolia }
   let(:address_id) { key.address.to_s }
   let(:wallet_id) { SecureRandom.uuid }
@@ -160,18 +161,22 @@ describe Coinbase::Address do
         }
       )
     end
+    let(:transfer_id) { SecureRandom.uuid }
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
     let(:raw_signed_transaction) { '0123456789abcdef' }
+    let(:signed_payload) { '0x12345' }
+    let(:broadcast_transfer_request) do
+      { signed_payload: raw_signed_transaction }
+    end
     let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
-      double('Transfer', transaction: transaction)
+      double('Transfer', transaction: transaction, transfer_id: transfer_id)
     end
 
     before do
       allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
-      allow(client).to receive(:eth_sendRawTransaction).with("0x#{raw_signed_transaction}").and_return(transaction_hash)
     end
 
     # TODO: Add test case for when the destination is a Wallet.
@@ -192,6 +197,9 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -214,6 +222,9 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -232,7 +243,10 @@ describe Coinbase::Address do
           .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
-          .with(wallet_id, address_id,  create_transfer_request)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -252,7 +266,10 @@ describe Coinbase::Address do
           .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
-          .with(wallet_id, address_id,  create_transfer_request)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -303,9 +320,87 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#to_s' do
-    it 'returns the address as a string' do
-      expect(address.to_s).to eq(address_id)
+  describe '#faucet' do
+    let(:request) { double('Request', transaction: transaction) }
+    let(:tx_hash) { '0xdeadbeef' }
+    let(:faucet_tx) do
+      instance_double('Coinbase::Client::FaucetTransaction', transaction_hash: tx_hash)
+    end
+
+    context 'when the request is successful' do
+      subject(:faucet_response) { address.faucet }
+
+      before do
+        expect(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, address_id)
+          .and_return(faucet_tx)
+      end
+
+      it 'requests funds from the faucet and returns the faucet transaction' do
+        expect(faucet_response).to be_a(Coinbase::FaucetTransaction)
+        expect(faucet_response.transaction_hash).to eq(tx_hash)
+      end
+    end
+
+    context 'when the request is unsuccesful' do
+      before do
+        expect(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, address_id)
+          .and_raise(api_error)
+      end
+
+      context 'when the faucet limit is reached' do
+        let(:api_error) do
+          Coinbase::Client::ApiError.new(
+            code: 429,
+            response_body: {
+              'code' => 'faucet_limit_reached',
+              'message' => 'failed to claim funds - address likely has already claimed in the past 24 hours'
+            }.to_json
+          )
+        end
+
+        it 'raises a FaucetLimitReachedError' do
+          expect { address.faucet }.to raise_error(::Coinbase::FaucetLimitReachedError)
+        end
+      end
+
+      context 'when the request fails unexpectedly' do
+        let(:api_error) do
+          Coinbase::Client::ApiError.new(
+            code: 500,
+            response_body: {
+              'code' => 'internal',
+              'message' => 'unexpected error occurred while requesting faucet funds'
+            }.to_json
+          )
+        end
+
+        it 'raises an internal error' do
+          expect { address.faucet }.to raise_error(::Coinbase::InternalError)
+        end
+      end
+    end
+  end
+
+  describe '#export' do
+    it 'export private key from address' do
+      expect(address.export).to eq(private_key)
+    end
+  end
+
+  describe '#list_transfer_ids' do
+    let(:transfer_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
+    let(:data) do
+      transfer_ids.map { |id| Coinbase::Client::Transfer.new({ 'transfer_id': id, 'network_id': 'base-sepolia' }) }
+    end
+    let(:transfers_list) { Coinbase::Client::TransferList.new({ 'data' => data }) }
+    let(:opts) { { limit: 100, page: nil } }
+    it 'lists the transfer IDs' do
+      allow(transfers_api).to receive(:list_transfers).with(wallet_id, address_id, opts).and_return(transfers_list)
+      expect(address.list_transfer_ids).to eq(transfer_ids)
     end
   end
 end
