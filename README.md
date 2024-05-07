@@ -127,7 +127,7 @@ w1.transfer(0.00001, :eth, w2).wait!
 
 ### Re-Instantiating Wallets
 
-The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The below code walks you through how to export a Wallets and store it in a secure location.
+The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The code walks you through how to export a Wallet and store it in a secure location.
 
 ```ruby
 # Optional: Create a new Wallet if you do not already have one.
