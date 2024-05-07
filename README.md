@@ -69,8 +69,8 @@ require 'coinbase'
 To start, [create a CDP API Key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API Key name and API Key's private key via the `configure` method:
 
 ```ruby
-api_key_name = 'Copy your API Key name here.'
-api_key_private_key = 'Copy your API Key\'s private key here.'
+api_key_name = "Copy your API Key name here."
+api_key_private_key = "Copy your API Key's private key here."
 
 Coinbase.configure do |config|
   config.api_key_name = api_key_name
