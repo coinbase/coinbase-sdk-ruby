@@ -24,4 +24,4 @@ jobs:
         API_KEY_NAME: ${{ secrets.API_KEY_NAME }}
         API_KEY_PRIVATE_KEY: ${{ secrets.API_KEY_PRIVATE_KEY }}
         WALLET_DATA: ${{ secrets.WALLET_DATA }}
-      run: bundle exec rspec spec/e2e/production.rb
+      run: bundle exec rspec spec/e2e/end_to_end.rb
