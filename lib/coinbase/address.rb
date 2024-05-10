@@ -145,25 +145,26 @@ module Coinbase
       @key.private_hex
     end
 
-    # Lists the IDs of all Transfers associated with the given Wallet and Address.
-    # @return [Array<String>] The IDs of all Transfers belonging to the Wallet and Address
-    def list_transfer_ids
-      transfer_ids = []
+    # Returns all of the transfers associated with the address.
+    # @return [Array<Coinbase::Transfer>] The transfers associated with the address
+    def transfers
+      transfers = []
       page = nil
 
       loop do
+        puts "fetch transfers page: #{page}"
         response = Coinbase.call_api do
           transfers_api.list_transfers(wallet_id, id, { limit: 100, page: page })
         end
 
-        transfer_ids.concat(response.data.map(&:transfer_id)) if response.data
+        transfers.concat(response.data.map { |transfer| Coinbase::Transfer.new(transfer) }) if response.data
 
         break unless response.has_more
 
         page = response.next_page
       end
 
-      transfer_ids
+      transfers
     end
 
     private

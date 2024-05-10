@@ -411,16 +411,57 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#list_transfer_ids' do
-    let(:transfer_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
+  describe '#transfers' do
+    let(:page_size) { 6 }
+    let(:transfer_ids) do
+      Array.new(page_size) { SecureRandom.uuid }
+    end
     let(:data) do
       transfer_ids.map { |id| Coinbase::Client::Transfer.new({ 'transfer_id': id, 'network_id': 'base-sepolia' }) }
     end
     let(:transfers_list) { Coinbase::Client::TransferList.new({ 'data' => data }) }
-    let(:opts) { { limit: 100, page: nil } }
-    it 'lists the transfer IDs' do
-      allow(transfers_api).to receive(:list_transfers).with(wallet_id, address_id, opts).and_return(transfers_list)
-      expect(address.list_transfer_ids).to eq(transfer_ids)
+    let(:expected_transfers) do
+      data.map { |transfer_model| Coinbase::Transfer.new(transfer_model) }
+    end
+
+    before do
+      data.each_with_index do |transfer_model, i|
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(expected_transfers[i])
+      end
+    end
+
+    it 'lists the transfers' do
+      expect(transfers_api)
+        .to receive(:list_transfers)
+        .with(wallet_id, address_id, { limit: 100, page: nil })
+        .and_return(transfers_list)
+
+      expect(address.transfers).to eq(expected_transfers)
+    end
+
+    context 'with multiple pages' do
+      let(:page_size) { 150 }
+      let(:next_page) { 'page_token_2' }
+      let(:transfers_list_page1) do
+        Coinbase::Client::TransferList.new({ 'data' => data.take(100), 'has_more' => true, 'next_page' => next_page })
+      end
+      let(:transfers_list_page2) do
+        Coinbase::Client::TransferList.new({ 'data' => data.drop(100), 'has_more' => false, 'next_page' => nil })
+      end
+
+      it 'lists all of the transfers' do
+        expect(transfers_api)
+          .to receive(:list_transfers)
+          .with(wallet_id, address_id, { limit: 100, page: nil })
+          .and_return(transfers_list_page1)
+
+        expect(transfers_api)
+          .to receive(:list_transfers)
+          .with(wallet_id, address_id, { limit: 100, page: next_page })
+          .and_return(transfers_list_page2)
+
+        expect(address.transfers).to eq(expected_transfers)
+      end
     end
   end
 end
