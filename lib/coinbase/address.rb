@@ -54,26 +54,13 @@ module Coinbase
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
     def balance(asset_id)
-      normalized_asset_id = normalize_asset_id(asset_id)
-
       response = Coinbase.call_api do
-        addresses_api.get_address_balance(wallet_id, id, normalized_asset_id.to_s)
+        addresses_api.get_address_balance(wallet_id, id, Coinbase::Asset.primary_denomination(asset_id).to_s)
       end
 
       return BigDecimal('0') if response.nil?
 
-      amount = BigDecimal(response.amount)
-
-      case asset_id
-      when :eth
-        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
-      when :usdc
-        amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      else
-        amount
-      end
+      Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
@@ -83,7 +70,7 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
+      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
       if destination.is_a?(Wallet)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
@@ -100,14 +87,10 @@ module Coinbase
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      normalized_amount = normalize_asset_amount(amount, asset_id)
-
-      normalized_asset_id = normalize_asset_id(asset_id)
-
       create_transfer_request = {
-        amount: normalized_amount.to_i.to_s,
+        amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
         network_id: network_id,
-        asset_id: normalized_asset_id.to_s,
+        asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
         destination: destination
       }
 
@@ -184,38 +167,6 @@ module Coinbase
     end
 
     private
-
-    # Normalizes the amount of the Asset to send to the atomic unit.
-    # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @param asset_id [Symbol] The ID of the Asset being transferred
-    # @return [BigDecimal] The normalized amount in atomic units
-    def normalize_asset_amount(amount, asset_id)
-      big_amount = BigDecimal(amount.to_s)
-
-      case asset_id
-      when :eth
-        big_amount * Coinbase::WEI_PER_ETHER
-      when :gwei
-        big_amount * Coinbase::WEI_PER_GWEI
-      when :usdc
-        big_amount * Coinbase::ATOMIC_UNITS_PER_USDC
-      when :weth
-        big_amount * Coinbase::WEI_PER_ETHER
-      else
-        big_amount
-      end
-    end
-
-    # Normalizes the asset ID to use during requests.
-    # @param asset_id [Symbol] The asset ID to normalize
-    # @return [Symbol] The normalized asset ID
-    def normalize_asset_id(asset_id)
-      if %i[wei gwei].include?(asset_id)
-        :eth
-      else
-        asset_id
-      end
-    end
 
     def addresses_api
       @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)

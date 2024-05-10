@@ -75,6 +75,16 @@ describe Coinbase::Address do
                                                        'decimals': 6
                                                      })
             }
+          ),
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '3000000000000000000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'weth',
+                                                       'decimals': 6
+                                                     })
+            }
           )
         ]
       )
@@ -86,7 +96,11 @@ describe Coinbase::Address do
         .with(wallet_id, address_id)
         .and_return(response)
 
-      expect(address.balances).to eq(eth: BigDecimal('1'), usdc: BigDecimal('5000'))
+      expect(address.balances).to eq(
+        eth: BigDecimal('1'),
+        usdc: BigDecimal('5000'),
+        weth: BigDecimal('3')
+      )
     end
   end
 

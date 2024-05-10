@@ -9,19 +9,20 @@ module Coinbase
     def self.from_model(balance_model)
       asset_id = Coinbase.to_sym(balance_model.asset.asset_id.downcase)
 
-      # TODO: Migrate asset ID handling to the backend.
-      amount = case asset_id
-               when :eth
-                 BigDecimal(balance_model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-               when :usdc
-                 BigDecimal(balance_model.amount) / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC)
-               when :weth
-                 BigDecimal(balance_model.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-               else
-                 BigDecimal(balance_model.amount)
-               end
+      from_model_and_asset_id(balance_model, asset_id)
+    end
 
-      new(amount: amount, asset_id: asset_id)
+    # Converts a Coinbase::Client::Balance model and asset ID to a Coinbase::Balance
+    # This can be used to specify a non-primary denomination that we want the balance
+    # to be converted to.
+    # @param balance_model [Coinbase::Client::Balance] The balance fetched from the API.
+    # @param asset_id [Symbol] The Asset ID of the denomination we want returned.
+    # @return [Balance] The converted Balance object.
+    def self.from_model_and_asset_id(balance_model, asset_id)
+      new(
+        amount: Coinbase::Asset.from_atomic_amount(BigDecimal(balance_model.amount), asset_id),
+        asset_id: asset_id
+      )
     end
 
     # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in

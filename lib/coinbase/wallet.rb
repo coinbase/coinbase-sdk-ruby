@@ -135,30 +135,13 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
     def balance(asset_id)
-      normalized_asset_id = if %i[wei gwei].include?(asset_id)
-                              :eth
-                            else
-                              asset_id
-                            end
-
       response = Coinbase.call_api do
-        wallets_api.get_wallet_balance(wallet_id, normalized_asset_id.to_s)
+        wallets_api.get_wallet_balance(id, Coinbase::Asset.primary_denomination(asset_id).to_s)
       end
 
       return BigDecimal('0') if response.nil?
 
-      amount = BigDecimal(response.amount)
-
-      case asset_id
-      when :eth
-        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
-      when :usdc
-        amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      else
-        amount
-      end
+      Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
