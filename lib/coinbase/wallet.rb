@@ -96,7 +96,7 @@ module Coinbase
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
-    def list_balances
+    def balances
       response = Coinbase.call_api do
         wallets_api.list_wallet_balances(wallet_id)
       end
@@ -107,7 +107,7 @@ module Coinbase
     # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
     # @param asset_id [Symbol] The ID of the Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
-    def get_balance(asset_id)
+    def balance(asset_id)
       normalized_asset_id = if %i[wei gwei].include?(asset_id)
                               :eth
                             else

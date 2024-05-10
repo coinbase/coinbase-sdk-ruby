@@ -42,7 +42,7 @@ module Coinbase
     # Returns the balances of the Address.
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
-    def list_balances
+    def balances
       response = Coinbase.call_api do
         addresses_api.list_address_balances(wallet_id, address_id)
       end
@@ -53,7 +53,7 @@ module Coinbase
     # Returns the balance of the provided Asset.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
-    def get_balance(asset_id)
+    def balance(asset_id)
       normalized_asset_id = normalize_asset_id(asset_id)
 
       response = Coinbase.call_api do
@@ -95,7 +95,7 @@ module Coinbase
         destination = destination.address_id
       end
 
-      current_balance = get_balance(asset_id)
+      current_balance = balance(asset_id)
       if current_balance < amount
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end

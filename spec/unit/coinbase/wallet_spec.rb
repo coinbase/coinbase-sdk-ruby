@@ -138,7 +138,7 @@ describe Coinbase::Wallet do
     end
   end
 
-  describe '#list_balances' do
+  describe '#balances' do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         'data' => [
@@ -170,11 +170,11 @@ describe Coinbase::Wallet do
     end
 
     it 'returns a hash with an ETH and USDC balance' do
-      expect(@wallet.list_balances).to eq({ eth: BigDecimal(1), usdc: BigDecimal(5) })
+      expect(@wallet.balances).to eq({ eth: BigDecimal(1), usdc: BigDecimal(5) })
     end
   end
 
-  describe '#get_balance' do
+  describe '#balance' do
     let(:response) do
       Coinbase::Client::Balance.new(
         {
@@ -193,15 +193,15 @@ describe Coinbase::Wallet do
     end
 
     it 'returns the correct ETH balance' do
-      expect(@wallet.get_balance(:eth)).to eq(BigDecimal(5))
+      expect(@wallet.balance(:eth)).to eq(BigDecimal(5))
     end
 
     it 'returns the correct Gwei balance' do
-      expect(@wallet.get_balance(:gwei)).to eq(BigDecimal(5 * Coinbase::GWEI_PER_ETHER))
+      expect(@wallet.balance(:gwei)).to eq(BigDecimal(5 * Coinbase::GWEI_PER_ETHER))
     end
 
     it 'returns the correct Wei balance' do
-      expect(@wallet.get_balance(:wei)).to eq(BigDecimal(5 * Coinbase::WEI_PER_ETHER))
+      expect(@wallet.balance(:wei)).to eq(BigDecimal(5 * Coinbase::WEI_PER_ETHER))
     end
   end
 

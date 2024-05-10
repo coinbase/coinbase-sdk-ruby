@@ -38,8 +38,8 @@ describe Coinbase do
       expect(addresses.length).to be > 1
       puts "Listed addresses: #{addresses.map(&:to_s).join(', ')}"
 
-      puts 'Fetching balances...'
-      balances = w2.list_balances
+      puts 'Fetching wallet balances...'
+      balances = w2.balances
       expect(balances.length).to be >= 1
       puts "Fetched balances: #{balances}"
 
@@ -51,8 +51,8 @@ describe Coinbase do
       puts "Transferred 1 Gwei from #{a1} to #{a2}"
 
       puts 'Fetching updated balances...'
-      first_balance = a1.list_balances
-      second_balance = a2.list_balances
+      first_balance = a1.balances
+      second_balance = a2.balances
       expect(first_balance[:eth]).to be > BigDecimal('0')
       expect(second_balance[:eth]).to be > BigDecimal('0')
       puts "First address balances: #{first_balance}"

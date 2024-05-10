@@ -52,7 +52,7 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#list_balances' do
+  describe '#balances' do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         'data' => [
@@ -85,11 +85,12 @@ describe Coinbase::Address do
         .to receive(:list_address_balances)
         .with(wallet_id, address_id)
         .and_return(response)
-      expect(address.list_balances).to eq(eth: BigDecimal('1'), usdc: BigDecimal('5000'))
+
+      expect(address.balances).to eq(eth: BigDecimal('1'), usdc: BigDecimal('5000'))
     end
   end
 
-  describe '#get_balance' do
+  describe '#balance' do
     let(:response) do
       Coinbase::Client::Balance.new(
         {
@@ -108,7 +109,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:eth)).to eq BigDecimal('1')
+      expect(address.balance(:eth)).to eq BigDecimal('1')
     end
 
     it 'returns the correct Gwei balance' do
@@ -116,7 +117,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:gwei)).to eq BigDecimal('1_000_000_000')
+      expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
     end
 
     it 'returns the correct Wei balance' do
@@ -124,7 +125,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+      expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
     end
 
     it 'returns 0 for an unsupported asset' do
@@ -132,7 +133,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'uni')
         .and_return(nil)
-      expect(address.get_balance(:uni)).to eq BigDecimal('0')
+      expect(address.balance(:uni)).to eq BigDecimal('0')
     end
   end
 
