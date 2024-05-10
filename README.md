@@ -78,7 +78,7 @@ Coinbase.configure do |config|
 end
 ```
 
-Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key, 
+Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key,
 downloaded from CDP portal.
 
 ```ruby
@@ -151,7 +151,7 @@ u.save_wallet(w3)
 ```
 
 To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
-for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with 
+for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with
 the same API key when invoking `save_wallet` and `load_wallets`.
 
 ```ruby
@@ -163,7 +163,7 @@ The below code demonstrates how to re-instantiate a Wallet from the data export.
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w4 will be equivalent to w3.
-w4 = u.import_wallet(data)
+w4 = Coinbase::Wallet.import(data)
 ```
 
 To import wallets that were persisted to your local file system using `save_wallet`, use the below code.

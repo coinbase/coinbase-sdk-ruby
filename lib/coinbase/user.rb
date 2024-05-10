@@ -41,15 +41,7 @@ module Coinbase
     # @param data [Coinbase::Wallet::Data] the Wallet data to import
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
-      model = Coinbase.call_api do
-        wallets_api.get_wallet(data.wallet_id)
-      end
-
-      address_count = Coinbase.call_api do
-        addresses_api.list_addresses(model.id).total_count
-      end
-
-      Wallet.new(model, seed: data.seed, address_count: address_count)
+      Wallet.import(data)
     end
 
     # Lists the IDs of the Wallets belonging to the User.

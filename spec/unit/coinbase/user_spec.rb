@@ -58,60 +58,19 @@ describe Coinbase::User do
   end
 
   describe '#import_wallet' do
-    let(:client) { double('Jimson::Client') }
-    let(:wallet_id) { SecureRandom.uuid }
-    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': 'base-sepolia' }) }
-    let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
-    let(:network_id) { 'base-sepolia' }
-    let(:create_wallet_request) { { wallet: { network_id: network_id } } }
-    let(:opts) { { create_wallet_request: create_wallet_request } }
-    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
-    let(:address_model) do
-      Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef',
-                                      'wallet_id': wallet_id,
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
-                                    })
-    end
-    let(:wallet_model_with_default_address) do
-      Coinbase::Client::Wallet.new(
-        {
-          'id': wallet_id,
-          'network_id': 'base-sepolia',
-          'default_address': address_model
-        }
-      )
-    end
-    let(:address_list_model) do
-      Coinbase::Client::AddressList.new({ 'data' => [address_model], 'total_count' => 1 })
-    end
     let(:wallet_export_data) do
       Coinbase::Wallet::Data.new(
-        wallet_id: wallet_id,
+        wallet_id: SecureRandom.uuid,
         seed: MoneyTree::Master.new.seed_hex
       )
     end
+    let(:wallet) { instance_double(Coinbase::Wallet) }
     subject(:imported_wallet) { user.import_wallet(wallet_export_data) }
 
-    before do
-      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
-      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
-      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
-      expect(addresses_api).to receive(:get_address).and_return(address_model)
-    end
-
     it 'imports an exported wallet' do
-      expect(imported_wallet.wallet_id).to eq(wallet_id)
-    end
+      allow(Coinbase::Wallet).to receive(:import).with(wallet_export_data).and_return(wallet)
 
-    it 'loads the wallet addresses' do
-      expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
-    end
-
-    it 'contains the same seed when re-exported' do
-      expect(imported_wallet.export.seed).to eq(wallet_export_data.seed)
+      expect(user.import_wallet(wallet_export_data)).to eq(wallet)
     end
   end
 

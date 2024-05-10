@@ -12,6 +12,37 @@ module Coinbase
   # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or
   # User#import_wallet.
   class Wallet
+    class << self
+      # Imports a Wallet from previously exported wallet data.
+      # @param data [Coinbase::Wallet::Data] the Wallet data to import
+      # @return [Coinbase::Wallet] the imported Wallet
+      def import(data)
+        raise ArgumentError, 'data must be a Coinbase::Wallet::Data object' unless data.is_a?(Data)
+
+        model = Coinbase.call_api do
+          wallets_api.get_wallet(data.wallet_id)
+        end
+
+        # TODO: Pass these addresses in directly
+        address_count = Coinbase.call_api do
+          addresses_api.list_addresses(model.id).total_count
+        end
+
+        new(model, seed: data.seed, address_count: address_count)
+      end
+
+      private
+
+      # TODO: Memoize these objects in a thread-safe way at the top-level.
+      def addresses_api
+        Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+      end
+
+      def wallets_api
+        Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+      end
+    end
+
     # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
     # User#import_wallet.
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
