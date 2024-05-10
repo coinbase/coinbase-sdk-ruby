@@ -18,7 +18,6 @@ require 'json'
 # The Coinbase SDK.
 module Coinbase
   class InvalidConfiguration < StandardError; end
-  class FaucetLimitReached < StandardError; end
 
   # Returns the configuration object.
   # @return [Configuration] the configuration object

@@ -148,7 +148,7 @@ module Coinbase
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
-    # @raise [Coinbase::FaucetLimitReached] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
     # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
       Coinbase.call_api do
