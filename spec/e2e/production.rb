@@ -18,12 +18,12 @@ describe Coinbase do
       puts 'Fetching default user...'
       u = Coinbase.default_user
       expect(u).not_to be_nil
-      puts "Fetched default user with ID: #{u.user_id}"
+      puts "Fetched default user with ID: #{u.id}"
 
       puts 'Creating new wallet...'
       w1 = u.create_wallet
       expect(w1).not_to be_nil
-      puts "Created new wallet with ID: #{w1.wallet_id}, default address: #{w1.default_address}"
+      puts "Created new wallet with ID: #{w1.id}, default address: #{w1.default_address}"
 
       puts 'Importing wallet with balance...'
       data_string = ENV['WALLET_DATA']
@@ -31,7 +31,7 @@ describe Coinbase do
       data = Coinbase::Wallet::Data.from_hash(data_hash)
       w2 = u.import_wallet(data)
       expect(w2).not_to be_nil
-      puts "Imported wallet with ID: #{w2.wallet_id}, default address: #{w2.default_address}"
+      puts "Imported wallet with ID: #{w2.id}, default address: #{w2.default_address}"
 
       puts 'Listing wallet addresses...'
       addresses = w2.addresses

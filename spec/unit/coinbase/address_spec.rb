@@ -40,9 +40,9 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#address_id' do
+  describe '#id' do
     it 'returns the address ID' do
-      expect(address.address_id).to eq(address_id)
+      expect(address.id).to eq(address_id)
     end
   end
 
@@ -187,7 +187,7 @@ describe Coinbase::Address do
       let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.id }
       end
 
       it 'creates a Transfer' do
@@ -211,8 +211,12 @@ describe Coinbase::Address do
       let(:usdc_atomic_amount) { 5_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: usdc_atomic_amount.to_s, network_id: network_id, asset_id: 'usdc',
-          destination: destination.address_id }
+        {
+          amount: usdc_atomic_amount.to_s,
+          network_id: network_id,
+          asset_id: 'usdc',
+          destination: destination.id
+        }
       end
 
       it 'creates a Transfer' do
@@ -226,6 +230,7 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:broadcast_transfer)
           .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
+
         expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
       end
     end

@@ -15,7 +15,7 @@ module Coinbase
 
     # Returns the User ID.
     # @return [String] the User ID
-    def user_id
+    def id
       @model.id
     end
 

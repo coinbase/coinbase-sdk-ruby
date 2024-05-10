@@ -35,7 +35,7 @@ module Coinbase
 
     # Returns the Address ID.
     # @return [String] The Address ID
-    def address_id
+    def id
       @model.address_id
     end
 
@@ -44,7 +44,7 @@ module Coinbase
     #  in ETH.
     def balances
       response = Coinbase.call_api do
-        addresses_api.list_address_balances(wallet_id, address_id)
+        addresses_api.list_address_balances(wallet_id, id)
       end
 
       Coinbase::BalanceMap.from_balances(response.data)
@@ -57,7 +57,7 @@ module Coinbase
       normalized_asset_id = normalize_asset_id(asset_id)
 
       response = Coinbase.call_api do
-        addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+        addresses_api.get_address_balance(wallet_id, id, normalized_asset_id.to_s)
       end
 
       return BigDecimal('0') if response.nil?
@@ -88,11 +88,11 @@ module Coinbase
       if destination.is_a?(Wallet)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
-        destination = destination.default_address.address_id
+        destination = destination.default_address.id
       elsif destination.is_a?(Address)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
-        destination = destination.address_id
+        destination = destination.id
       end
 
       current_balance = balance(asset_id)
@@ -112,7 +112,7 @@ module Coinbase
       }
 
       transfer_model = Coinbase.call_api do
-        transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+        transfers_api.create_transfer(wallet_id, id, create_transfer_request)
       end
 
       transfer = Coinbase::Transfer.new(transfer_model)
@@ -127,7 +127,7 @@ module Coinbase
       }
 
       transfer_model = Coinbase.call_api do
-        transfers_api.broadcast_transfer(wallet_id, address_id, transfer.transfer_id, broadcast_transfer_request)
+        transfers_api.broadcast_transfer(wallet_id, id, transfer.transfer_id, broadcast_transfer_request)
       end
 
       Coinbase::Transfer.new(transfer_model)
@@ -136,7 +136,7 @@ module Coinbase
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s
-      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
     end
 
     # Same as to_s.
@@ -152,7 +152,7 @@ module Coinbase
     # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
       Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, address_id))
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, id))
       end
     end
 
@@ -170,7 +170,7 @@ module Coinbase
 
       loop do
         response = Coinbase.call_api do
-          transfers_api.list_transfers(wallet_id, address_id, { limit: 100, page: page })
+          transfers_api.list_transfers(wallet_id, id, { limit: 100, page: page })
         end
 
         transfer_ids.concat(response.data.map(&:transfer_id)) if response.data

@@ -5,12 +5,12 @@ describe Coinbase::User do
   let(:model) { Coinbase::Client::User.new({ 'id': user_id }) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
-  let(:user) { described_class.new(model) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
+  let(:user) { described_class.new(model) }
 
-  describe '#user_id' do
+  describe '#id' do
     it 'returns the user ID' do
-      expect(user.user_id).to eq(user_id)
+      expect(user.id).to eq(user_id)
     end
   end
 
@@ -52,7 +52,7 @@ describe Coinbase::User do
     it 'creates a new wallet' do
       wallet = user.create_wallet
       expect(wallet).to be_a(Coinbase::Wallet)
-      expect(wallet.wallet_id).to eq(wallet_id)
+      expect(wallet.id).to eq(wallet_id)
       expect(wallet.network_id).to eq(:base_sepolia)
     end
   end
@@ -109,7 +109,7 @@ describe Coinbase::User do
     let(:initial_seed_data) { JSON.pretty_generate({}) }
     let(:expected_seed_data) do
       {
-        seed_wallet.wallet_id => {
+        seed_wallet.id => {
           seed: seed,
           encrypted: false
         }
@@ -132,7 +132,7 @@ describe Coinbase::User do
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
-      data = wallets[seed_wallet.wallet_id]
+      data = wallets[seed_wallet.id]
       expect(data).not_to be_empty
       expect(data['encrypted']).to eq(false)
       expect(data['iv']).to eq('')
@@ -146,7 +146,7 @@ describe Coinbase::User do
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
-      data = wallets[seed_wallet.wallet_id]
+      data = wallets[seed_wallet.id]
       expect(data).not_to be_empty
       expect(data['encrypted']).to eq(true)
       expect(data['iv']).not_to be_empty
@@ -160,7 +160,7 @@ describe Coinbase::User do
       saved_wallet = user.save_wallet(seed_wallet)
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
-      data = wallets[seed_wallet.wallet_id]
+      data = wallets[seed_wallet.id]
       expect(data).not_to be_empty
       expect(data['encrypted']).to eq(false)
       expect(saved_wallet).to eq(seed_wallet)
@@ -270,7 +270,7 @@ describe Coinbase::User do
       wallets = user.load_wallets
       wallet = wallets[wallet_id]
       expect(wallet).not_to be_nil
-      expect(wallet.wallet_id).to eq(wallet_id)
+      expect(wallet.id).to eq(wallet_id)
       expect(wallet.default_address.address_id).to eq(address_model.address_id)
     end
 

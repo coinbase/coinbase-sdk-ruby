@@ -78,7 +78,7 @@ module Coinbase
 
     # Returns the Wallet ID.
     # @return [String] The Wallet ID
-    def wallet_id
+    def id
       @model.id
     end
 
@@ -102,7 +102,7 @@ module Coinbase
         }
       }
       address_model = Coinbase.call_api do
-        addresses_api.create_address(wallet_id, opts)
+        addresses_api.create_address(id, opts)
       end
 
       cache_address(address_model, key)
@@ -111,21 +111,21 @@ module Coinbase
     # Returns the default address of the Wallet.
     # @return [Address] The default address
     def default_address
-      @addresses.find { |address| address.address_id == @model.default_address.address_id }
+      address(@model.default_address.address_id)
     end
 
     # Returns the Address with the given ID.
     # @param address_id [String] The ID of the Address to retrieve
     # @return [Address] The Address
     def address(address_id)
-      @addresses.find { |address| address.address_id == address_id }
+      @addresses.find { |address| address.id == address_id }
     end
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.
     # @return [BalanceMap] The list of balances. The key is the Asset ID, and the value is the balance.
     def balances
       response = Coinbase.call_api do
-        wallets_api.list_wallet_balances(wallet_id)
+        wallets_api.list_wallet_balances(id)
       end
 
       Coinbase::BalanceMap.from_balances(response.data)
@@ -172,11 +172,11 @@ module Coinbase
       if destination.is_a?(Wallet)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
 
-        destination = destination.default_address.address_id
+        destination = destination.default_address.id
       elsif destination.is_a?(Address)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
 
-        destination = destination.address_id
+        destination = destination.id
       end
 
       default_address.transfer(amount, asset_id, destination)
@@ -185,13 +185,13 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
-      Data.new(wallet_id: wallet_id, seed: @master.seed_hex)
+      Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
-      "Coinbase::Wallet{wallet_id: '#{wallet_id}', network_id: '#{network_id}', " \
+      "Coinbase::Wallet{wallet_id: '#{id}', network_id: '#{network_id}', " \
         "default_address: '#{default_address.address_id}'}"
     end
 
@@ -236,7 +236,7 @@ module Coinbase
 
       address_id = key.address.to_s
       address_model = Coinbase.call_api do
-        addresses_api.get_address(wallet_id, address_id)
+        addresses_api.get_address(id, address_id)
       end
 
       cache_address(address_model, key)
@@ -267,7 +267,7 @@ module Coinbase
     def create_attestation(key)
       public_key = key.public_key.compressed.unpack1('H*')
       payload = {
-        wallet_id: wallet_id,
+        wallet_id: id,
         public_key: public_key
       }.to_json
       hashed_payload = Digest::SHA256.digest(payload)
@@ -288,7 +288,7 @@ module Coinbase
     # Updates the Wallet model with the latest data.
     def update_model
       @model = Coinbase.call_api do
-        wallets_api.get_wallet(wallet_id)
+        wallets_api.get_wallet(id)
       end
     end
 
