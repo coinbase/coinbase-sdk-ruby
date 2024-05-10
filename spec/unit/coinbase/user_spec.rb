@@ -107,7 +107,7 @@ describe Coinbase::User do
     end
 
     it 'loads the wallet addresses' do
-      expect(imported_wallet.list_addresses.length).to eq(address_list_model.total_count)
+      expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
     end
 
     it 'contains the same seed when re-exported' do

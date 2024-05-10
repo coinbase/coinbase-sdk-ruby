@@ -33,8 +33,8 @@ describe Coinbase do
       expect(w2).not_to be_nil
       puts "Imported wallet with ID: #{w2.wallet_id}, default address: #{w2.default_address}"
 
-      puts 'Listing addresses...'
-      addresses = w2.list_addresses
+      puts 'Listing wallet addresses...'
+      addresses = w2.addresses
       expect(addresses.length).to be > 1
       puts "Listed addresses: #{addresses.map(&:to_s).join(', ')}"
 

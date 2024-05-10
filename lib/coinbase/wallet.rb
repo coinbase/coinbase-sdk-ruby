@@ -43,6 +43,8 @@ module Coinbase
       end
     end
 
+    attr_reader :addresses
+
     # Returns the Wallet ID.
     # @return [String] The Wallet ID
     def wallet_id
@@ -84,14 +86,8 @@ module Coinbase
     # Returns the Address with the given ID.
     # @param address_id [String] The ID of the Address to retrieve
     # @return [Address] The Address
-    def get_address(address_id)
+    def address(address_id)
       @addresses.find { |address| address.address_id == address_id }
-    end
-
-    # Returns the list of Addresses in the Wallet.
-    # @return [Array<Address>] The list of Addresses
-    def list_addresses
-      @addresses
     end
 
     # Returns the list of balances of this Wallet. Balances are aggregated across all Addresses in the Wallet.

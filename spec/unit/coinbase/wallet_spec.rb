@@ -80,7 +80,7 @@ describe Coinbase::Wallet do
 
       it 'initializes a new Wallet with the provided address count' do
         expect(addresses_api).to receive(:get_address).exactly(address_count).times
-        expect(address_wallet.list_addresses.length).to eq(address_count)
+        expect(address_wallet.addresses.length).to eq(address_count)
       end
     end
   end
@@ -110,31 +110,31 @@ describe Coinbase::Wallet do
         .exactly(1).times
       address = @wallet.create_address
       expect(address).to be_a(Coinbase::Address)
-      expect(@wallet.list_addresses.length).to eq(2)
+      expect(@wallet.addresses.length).to eq(2)
       expect(address).not_to eq(@wallet.default_address)
     end
   end
 
   describe '#default_address' do
     it 'returns the first address' do
-      expect(@wallet.default_address).to eq(@wallet.list_addresses.first)
+      expect(@wallet.default_address).to eq(@wallet.addresses.first)
     end
   end
 
-  describe '#get_address' do
+  describe '#address' do
     before do
       allow(addresses_api).to receive(:create_address).and_return(address_model)
     end
 
     it 'returns the correct address' do
       default_address = @wallet.default_address
-      expect(@wallet.get_address(default_address.address_id)).to eq(default_address)
+      expect(@wallet.address(default_address.address_id)).to eq(default_address)
     end
   end
 
-  describe '#list_addresses' do
+  describe '#addresses' do
     it 'contains one address' do
-      expect(@wallet.list_addresses.length).to eq(1)
+      expect(@wallet.addresses.length).to eq(1)
     end
   end
 
@@ -266,9 +266,9 @@ describe Coinbase::Wallet do
     it 'allows for re-creation of a Wallet' do
       wallet_data = seed_wallet.export
       new_wallet = described_class.new(model, seed: wallet_data.seed, address_count: address_count)
-      expect(new_wallet.list_addresses.length).to eq(address_count)
-      new_wallet.list_addresses.each_with_index do |address, i|
-        expect(address.address_id).to eq(seed_wallet.list_addresses[i].address_id)
+      expect(new_wallet.addresses.length).to eq(address_count)
+      new_wallet.addresses.each_with_index do |address, i|
+        expect(address.address_id).to eq(seed_wallet.addresses[i].address_id)
       end
     end
   end
