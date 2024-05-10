@@ -47,7 +47,7 @@ module Coinbase
         addresses_api.list_address_balances(wallet_id, address_id)
       end
 
-      Coinbase.to_balance_map(response)
+      Coinbase::BalanceMap.from_balances(response.data)
     end
 
     # Returns the balance of the provided Asset.

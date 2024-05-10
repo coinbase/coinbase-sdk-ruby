@@ -128,7 +128,7 @@ module Coinbase
         wallets_api.list_wallet_balances(wallet_id)
       end
 
-      Coinbase.to_balance_map(response)
+      Coinbase::BalanceMap.from_balances(response.data)
     end
 
     # Returns the balance of the provided Asset. Balances are aggregated across all Addresses in the Wallet.
