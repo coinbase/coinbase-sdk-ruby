@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Trade
 
+## [0.0.4] - Pending
+
+* Refactor methods to be more idiomatic for Ruby.
+
 ## [0.0.3] - 2024-05-08
 
 ### Added
