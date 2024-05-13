@@ -100,21 +100,13 @@ Now, create a Wallet from the User. Wallets are created with a single default Ad
 w1 = u.create_wallet
 ```
 
-Next, view the default Address of your Wallet. You will need this default Address in order to fund the Wallet for your first Transfer.
-
-```ruby
-# A Wallet has a default Address.
-a = w1.default_address
-a.to_s
-```
-
 Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
 
 For development purposes, we provide a `faucet` method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
 
 ```ruby
 # Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
-faucet_tx = a.faucet
+faucet_tx = w1.faucet
 faucet_tx.transaction_hash
 ```
 

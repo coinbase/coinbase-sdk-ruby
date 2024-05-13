@@ -151,19 +151,12 @@
 </span><span class='id identifier rubyid_w1'>w1</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
 </code></pre>
 
-<p>Next, view the default Address of your Wallet. You will need this default Address in order to fund the Wallet for your first Transfer.</p>
-
-<pre class="code ruby"><code class="ruby"><span class='comment'># A Wallet has a default Address.
-</span><span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span>
-<span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
-</code></pre>
-
 <p>Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don&#39;t have testnet funds, get funds from a <a href="https://docs.base.org/docs/tools/network-faucets/">faucet</a>.</p>
 
 <p>For development purposes, we provide a <code>faucet</code> method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
-</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
+</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
 <span class='id identifier rubyid_faucet_tx'>faucet_tx</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
 </code></pre>
 
