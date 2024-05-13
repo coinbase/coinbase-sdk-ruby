@@ -144,18 +144,19 @@ In order to persist the data for the Wallet, you will need to implement a store 
 store(data)
 ```
 
-For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system.
+For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system.
 This is an insecure method of storing wallet seeds and should only be used for development purposes.
+
 ```ruby
-u.save_wallet(w3)
+u.save_wallet_locally!(w3)
 ```
 
 To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
 for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with
-the same API key when invoking `save_wallet` and `load_wallets`.
+the same API key when invoking `save_wallet_locally!` and `load_wallets`.
 
 ```ruby
-u.save_wallet(w3, encrypt: true)
+u.save_wallet_locally!(w3, encrypt: true)
 ```
 
 The below code demonstrates how to re-instantiate a Wallet from the data export.
@@ -166,7 +167,8 @@ The below code demonstrates how to re-instantiate a Wallet from the data export.
 w4 = Coinbase::Wallet.import(data)
 ```
 
-To import wallets that were persisted to your local file system using `save_wallet`, use the below code.
+To import wallets that were persisted to your local file system using `save_wallet_locally!`, use the below code.
+
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w5 will be equivalent to w3.

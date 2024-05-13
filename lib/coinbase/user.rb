@@ -65,7 +65,7 @@ module Coinbase
     # @param encrypt [bool] (Optional) Boolean representing whether the backup persisted to local file system should be
     # encrypted or not. Data is unencrypted by default.
     # @return [Coinbase::Wallet] the saved wallet.
-    def save_wallet(wallet, encrypt: false)
+    def save_wallet_locally!(wallet, encrypt: false)
       existing_seeds_in_store = existing_seeds
       data = wallet.export
       seed_to_store = data.seed

@@ -87,7 +87,7 @@ describe Coinbase::User do
     end
   end
 
-  describe '#save_wallet' do
+  describe '#save_wallet_locally!' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
     let(:address_count) { 1 }
     let(:seed_wallet) do
@@ -128,7 +128,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is false' do
-      saved_wallet = user.save_wallet(seed_wallet)
+      saved_wallet = user.save_wallet_locally!(seed_wallet)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -142,7 +142,7 @@ describe Coinbase::User do
     end
 
     it 'saves the Wallet data when encryption is true' do
-      saved_wallet = user.save_wallet(seed_wallet, encrypt: true)
+      saved_wallet = user.save_wallet_locally!(seed_wallet, encrypt: true)
       # Verify that the file has new wallet.
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
@@ -157,7 +157,7 @@ describe Coinbase::User do
 
     it 'it creates a new file and saves the wallet when the file does not exist' do
       File.delete(Coinbase.configuration.backup_file_path)
-      saved_wallet = user.save_wallet(seed_wallet)
+      saved_wallet = user.save_wallet_locally!(seed_wallet)
       stored_seed_data = File.read(Coinbase.configuration.backup_file_path)
       wallets = JSON.parse(stored_seed_data)
       data = wallets[seed_wallet.id]
@@ -173,7 +173,7 @@ describe Coinbase::User do
         }.to_json))
       end
       expect do
-        user.save_wallet(seed_wallet)
+        user.save_wallet_locally!(seed_wallet)
       end.to raise_error(ArgumentError, 'Malformed backup data')
     end
   end
