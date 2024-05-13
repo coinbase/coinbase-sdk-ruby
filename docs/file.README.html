@@ -151,19 +151,12 @@
 </span><span class='id identifier rubyid_w1'>w1</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
 </code></pre>
 
-<p>Next, view the default Address of your Wallet. You will need this default Address in order to fund the Wallet for your first Transfer.</p>
-
-<pre class="code ruby"><code class="ruby"><span class='comment'># A Wallet has a default Address.
-</span><span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span>
-<span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
-</code></pre>
-
 <p>Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don&#39;t have testnet funds, get funds from a <a href="https://docs.base.org/docs/tools/network-faucets/">faucet</a>.</p>
 
 <p>For development purposes, we provide a <code>faucet</code> method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
-</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
+</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
 <span class='id identifier rubyid_faucet_tx'>faucet_tx</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
 </code></pre>
 
@@ -190,21 +183,30 @@
 </span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes. <code>ruby u.save_wallet(w3) </code></p>
+<p>For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes.</p>
 
-<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet</code> and <code>load_wallets</code>.</p>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='rparen'>)</span>
+</code></pre>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet'>save_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet_locally!</code> and <code>load_wallets_from_local</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
 </code></pre>
 
 <p>The below code demonstrates how to re-instantiate a Wallet from the data export.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
 </span><span class='comment'># w4 will be equivalent to w3.
-</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_import'><span class='object_link'><a href="Coinbase/Wallet.html#import-class_method" title="Coinbase::Wallet.import (method)">import</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>To import wallets that were persisted to your local file system using <code>save_wallet</code>, use the below code. <code>ruby # The Wallet can be re-instantiated using the exported data. # w5 will be equivalent to w3. wallets = u.load_wallets w5 = wallets[w3.wallet_id] </code></p>
+<p>To import wallets that were persisted to your local file system using <code>save_wallet_locally!</code>, use the below code.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
+</span><span class='comment'># w5 will be equivalent to w3.
+</span><span class='id identifier rubyid_wallets'>wallets</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_load_wallets_from_local'>load_wallets_from_local</span>
+<span class='id identifier rubyid_w5'>w5</span> <span class='op'>=</span> <span class='id identifier rubyid_wallets'>wallets</span><span class='lbracket'>[</span><span class='id identifier rubyid_w3'>w3</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
+</code></pre>
 
 <h2 id="label-Development">Development</h2>
 
