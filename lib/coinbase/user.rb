@@ -15,7 +15,7 @@ module Coinbase
 
     # Returns the User ID.
     # @return [String] the User ID
-    def user_id
+    def id
       @model.id
     end
 
@@ -41,15 +41,7 @@ module Coinbase
     # @param data [Coinbase::Wallet::Data] the Wallet data to import
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
-      model = Coinbase.call_api do
-        wallets_api.get_wallet(data.wallet_id)
-      end
-
-      address_count = Coinbase.call_api do
-        addresses_api.list_addresses(model.id).total_count
-      end
-
-      Wallet.new(model, seed: data.seed, address_count: address_count)
+      Wallet.import(data)
     end
 
     # Lists the IDs of the Wallets belonging to the User.
@@ -141,7 +133,7 @@ module Coinbase
     # Returns a string representation of the User.
     # @return [String] a string representation of the User
     def to_s
-      "Coinbase::User{user_id: '#{user_id}'}"
+      "Coinbase::User{user_id: '#{id}'}"
     end
 
     # Same as to_s.

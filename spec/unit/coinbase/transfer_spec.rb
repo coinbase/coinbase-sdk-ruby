@@ -89,7 +89,7 @@ describe Coinbase::Transfer do
 
   describe '#transfer_id' do
     it 'returns the transfer ID' do
-      expect(transfer.transfer_id).to eq(transfer_id)
+      expect(transfer.id).to eq(transfer_id)
     end
   end
 
@@ -382,6 +382,44 @@ describe Coinbase::Transfer do
 
       it 'raises a Timeout::Error' do
         expect { transfer.wait!(0.2, 0.00001) }.to raise_error(Timeout::Error, 'Transfer timed out')
+      end
+    end
+  end
+
+  describe '#inspect' do
+    it 'includes transfer details' do
+      expect(transfer.inspect).to include(
+        transfer_id,
+        Coinbase.to_sym(network_id).to_s,
+        from_address_id,
+        to_address_id,
+        eth_amount.to_s,
+        transfer.asset_id.to_s,
+        transfer.status.to_s
+      )
+    end
+
+    it 'returns the same value as to_s' do
+      expect(transfer.inspect).to eq(transfer.to_s)
+    end
+
+    context 'when the transfer has been broadcast on chain' do
+      let(:onchain_transaction) { { 'blockHash' => nil } }
+
+      subject(:transfer) do
+        described_class.new(broadcast_model)
+      end
+
+      before do
+        transfer.transaction.sign(from_key)
+        allow(client)
+          .to receive(:eth_getTransactionByHash)
+          .with(transfer.transaction_hash)
+          .and_return(onchain_transaction)
+      end
+
+      it 'includes the transaction hash' do
+        expect(transfer.inspect).to include(transfer.transaction_hash)
       end
     end
   end

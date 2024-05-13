@@ -35,45 +35,32 @@ module Coinbase
 
     # Returns the Address ID.
     # @return [String] The Address ID
-    def address_id
+    def id
       @model.address_id
     end
 
     # Returns the balances of the Address.
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
-    def list_balances
+    def balances
       response = Coinbase.call_api do
-        addresses_api.list_address_balances(wallet_id, address_id)
+        addresses_api.list_address_balances(wallet_id, id)
       end
 
-      Coinbase.to_balance_map(response)
+      Coinbase::BalanceMap.from_balances(response.data)
     end
 
     # Returns the balance of the provided Asset.
     # @param asset_id [Symbol] The Asset to retrieve the balance for
     # @return [BigDecimal] The balance of the Asset
-    def get_balance(asset_id)
-      normalized_asset_id = normalize_asset_id(asset_id)
-
+    def balance(asset_id)
       response = Coinbase.call_api do
-        addresses_api.get_address_balance(wallet_id, address_id, normalized_asset_id.to_s)
+        addresses_api.get_address_balance(wallet_id, id, Coinbase::Asset.primary_denomination(asset_id).to_s)
       end
 
       return BigDecimal('0') if response.nil?
 
-      amount = BigDecimal(response.amount)
-
-      case asset_id
-      when :eth
-        amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        amount / BigDecimal(Coinbase::GWEI_PER_ETHER.to_s)
-      when :usdc
-        amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      else
-        amount
-      end
+      Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
     # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
@@ -83,36 +70,32 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::SUPPORTED_ASSET_IDS[asset_id]
+      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
       if destination.is_a?(Wallet)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
-        destination = destination.default_address.address_id
+        destination = destination.default_address.id
       elsif destination.is_a?(Address)
         raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
-        destination = destination.address_id
+        destination = destination.id
       end
 
-      current_balance = get_balance(asset_id)
+      current_balance = balance(asset_id)
       if current_balance < amount
         raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
       end
 
-      normalized_amount = normalize_asset_amount(amount, asset_id)
-
-      normalized_asset_id = normalize_asset_id(asset_id)
-
       create_transfer_request = {
-        amount: normalized_amount.to_i.to_s,
+        amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
         network_id: network_id,
-        asset_id: normalized_asset_id.to_s,
+        asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
         destination: destination
       }
 
       transfer_model = Coinbase.call_api do
-        transfers_api.create_transfer(wallet_id, address_id, create_transfer_request)
+        transfers_api.create_transfer(wallet_id, id, create_transfer_request)
       end
 
       transfer = Coinbase::Transfer.new(transfer_model)
@@ -127,7 +110,7 @@ module Coinbase
       }
 
       transfer_model = Coinbase.call_api do
-        transfers_api.broadcast_transfer(wallet_id, address_id, transfer.transfer_id, broadcast_transfer_request)
+        transfers_api.broadcast_transfer(wallet_id, id, transfer.id, broadcast_transfer_request)
       end
 
       Coinbase::Transfer.new(transfer_model)
@@ -136,7 +119,7 @@ module Coinbase
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s
-      "Coinbase::Address{address_id: '#{address_id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
     end
 
     # Same as to_s.
@@ -148,11 +131,11 @@ module Coinbase
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
-    # @raise [Coinbase::FaucetLimitReached] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
     # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
       Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, address_id))
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, id))
       end
     end
 
@@ -162,60 +145,29 @@ module Coinbase
       @key.private_hex
     end
 
-    # Lists the IDs of all Transfers associated with the given Wallet and Address.
-    # @return [Array<String>] The IDs of all Transfers belonging to the Wallet and Address
-    def list_transfer_ids
-      transfer_ids = []
+    # Returns all of the transfers associated with the address.
+    # @return [Array<Coinbase::Transfer>] The transfers associated with the address
+    def transfers
+      transfers = []
       page = nil
 
       loop do
+        puts "fetch transfers page: #{page}"
         response = Coinbase.call_api do
-          transfers_api.list_transfers(wallet_id, address_id, { limit: 100, page: page })
+          transfers_api.list_transfers(wallet_id, id, { limit: 100, page: page })
         end
 
-        transfer_ids.concat(response.data.map(&:transfer_id)) if response.data
+        transfers.concat(response.data.map { |transfer| Coinbase::Transfer.new(transfer) }) if response.data
 
         break unless response.has_more
 
         page = response.next_page
       end
 
-      transfer_ids
+      transfers
     end
 
     private
-
-    # Normalizes the amount of the Asset to send to the atomic unit.
-    # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @param asset_id [Symbol] The ID of the Asset being transferred
-    # @return [BigDecimal] The normalized amount in atomic units
-    def normalize_asset_amount(amount, asset_id)
-      big_amount = BigDecimal(amount.to_s)
-
-      case asset_id
-      when :eth
-        big_amount * Coinbase::WEI_PER_ETHER
-      when :gwei
-        big_amount * Coinbase::WEI_PER_GWEI
-      when :usdc
-        big_amount * Coinbase::ATOMIC_UNITS_PER_USDC
-      when :weth
-        big_amount * Coinbase::WEI_PER_ETHER
-      else
-        big_amount
-      end
-    end
-
-    # Normalizes the asset ID to use during requests.
-    # @param asset_id [Symbol] The asset ID to normalize
-    # @return [Symbol] The normalized asset ID
-    def normalize_asset_id(asset_id)
-      if %i[wei gwei].include?(asset_id)
-        :eth
-      else
-        asset_id
-      end
-    end
 
     def addresses_api
       @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)

@@ -18,12 +18,12 @@ describe Coinbase do
       puts 'Fetching default user...'
       u = Coinbase.default_user
       expect(u).not_to be_nil
-      puts "Fetched default user with ID: #{u.user_id}"
+      puts "Fetched default user with ID: #{u.id}"
 
       puts 'Creating new wallet...'
       w1 = u.create_wallet
       expect(w1).not_to be_nil
-      puts "Created new wallet with ID: #{w1.wallet_id}, default address: #{w1.default_address}"
+      puts "Created new wallet with ID: #{w1.id}, default address: #{w1.default_address}"
 
       puts 'Importing wallet with balance...'
       data_string = ENV['WALLET_DATA']
@@ -31,15 +31,15 @@ describe Coinbase do
       data = Coinbase::Wallet::Data.from_hash(data_hash)
       w2 = u.import_wallet(data)
       expect(w2).not_to be_nil
-      puts "Imported wallet with ID: #{w2.wallet_id}, default address: #{w2.default_address}"
+      puts "Imported wallet with ID: #{w2.id}, default address: #{w2.default_address}"
 
-      puts 'Listing addresses...'
-      addresses = w2.list_addresses
+      puts 'Listing wallet addresses...'
+      addresses = w2.addresses
       expect(addresses.length).to be > 1
       puts "Listed addresses: #{addresses.map(&:to_s).join(', ')}"
 
-      puts 'Fetching balances...'
-      balances = w2.list_balances
+      puts 'Fetching wallet balances...'
+      balances = w2.balances
       expect(balances.length).to be >= 1
       puts "Fetched balances: #{balances}"
 
@@ -51,8 +51,8 @@ describe Coinbase do
       puts "Transferred 1 Gwei from #{a1} to #{a2}"
 
       puts 'Fetching updated balances...'
-      first_balance = a1.list_balances
-      second_balance = a2.list_balances
+      first_balance = a1.balances
+      second_balance = a2.balances
       expect(first_balance[:eth]).to be > BigDecimal('0')
       expect(second_balance[:eth]).to be > BigDecimal('0')
       puts "First address balances: #{first_balance}"

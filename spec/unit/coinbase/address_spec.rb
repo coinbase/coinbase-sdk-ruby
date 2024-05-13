@@ -40,9 +40,9 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#address_id' do
+  describe '#id' do
     it 'returns the address ID' do
-      expect(address.address_id).to eq(address_id)
+      expect(address.id).to eq(address_id)
     end
   end
 
@@ -52,7 +52,7 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#list_balances' do
+  describe '#balances' do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         'data' => [
@@ -75,6 +75,16 @@ describe Coinbase::Address do
                                                        'decimals': 6
                                                      })
             }
+          ),
+          Coinbase::Client::Balance.new(
+            {
+              'amount' => '3000000000000000000',
+              'asset' => Coinbase::Client::Asset.new({
+                                                       'network_id': 'base-sepolia',
+                                                       'asset_id': 'weth',
+                                                       'decimals': 6
+                                                     })
+            }
           )
         ]
       )
@@ -85,11 +95,16 @@ describe Coinbase::Address do
         .to receive(:list_address_balances)
         .with(wallet_id, address_id)
         .and_return(response)
-      expect(address.list_balances).to eq(eth: BigDecimal('1'), usdc: BigDecimal('5000'))
+
+      expect(address.balances).to eq(
+        eth: BigDecimal('1'),
+        usdc: BigDecimal('5000'),
+        weth: BigDecimal('3')
+      )
     end
   end
 
-  describe '#get_balance' do
+  describe '#balance' do
     let(:response) do
       Coinbase::Client::Balance.new(
         {
@@ -108,7 +123,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:eth)).to eq BigDecimal('1')
+      expect(address.balance(:eth)).to eq BigDecimal('1')
     end
 
     it 'returns the correct Gwei balance' do
@@ -116,7 +131,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:gwei)).to eq BigDecimal('1_000_000_000')
+      expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
     end
 
     it 'returns the correct Wei balance' do
@@ -124,7 +139,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'eth')
         .and_return(response)
-      expect(address.get_balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+      expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
     end
 
     it 'returns 0 for an unsupported asset' do
@@ -132,7 +147,7 @@ describe Coinbase::Address do
         .to receive(:get_address_balance)
         .with(wallet_id, address_id, 'uni')
         .and_return(nil)
-      expect(address.get_balance(:uni)).to eq BigDecimal('0')
+      expect(address.balance(:uni)).to eq BigDecimal('0')
     end
   end
 
@@ -172,7 +187,7 @@ describe Coinbase::Address do
     end
     let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
-      double('Transfer', transaction: transaction, transfer_id: transfer_id)
+      double('Transfer', transaction: transaction, id: transfer_id)
     end
 
     before do
@@ -186,7 +201,7 @@ describe Coinbase::Address do
       let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.address_id }
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.id }
       end
 
       it 'creates a Transfer' do
@@ -210,8 +225,12 @@ describe Coinbase::Address do
       let(:usdc_atomic_amount) { 5_000_000 }
       let(:destination) { described_class.new(model, to_key) }
       let(:create_transfer_request) do
-        { amount: usdc_atomic_amount.to_s, network_id: network_id, asset_id: 'usdc',
-          destination: destination.address_id }
+        {
+          amount: usdc_atomic_amount.to_s,
+          network_id: network_id,
+          asset_id: 'usdc',
+          destination: destination.id
+        }
       end
 
       it 'creates a Transfer' do
@@ -225,6 +244,7 @@ describe Coinbase::Address do
         expect(transfers_api)
           .to receive(:broadcast_transfer)
           .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
+
         expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -391,16 +411,67 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#list_transfer_ids' do
-    let(:transfer_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
+  describe '#transfers' do
+    let(:page_size) { 6 }
+    let(:transfer_ids) do
+      Array.new(page_size) { SecureRandom.uuid }
+    end
     let(:data) do
       transfer_ids.map { |id| Coinbase::Client::Transfer.new({ 'transfer_id': id, 'network_id': 'base-sepolia' }) }
     end
     let(:transfers_list) { Coinbase::Client::TransferList.new({ 'data' => data }) }
-    let(:opts) { { limit: 100, page: nil } }
-    it 'lists the transfer IDs' do
-      allow(transfers_api).to receive(:list_transfers).with(wallet_id, address_id, opts).and_return(transfers_list)
-      expect(address.list_transfer_ids).to eq(transfer_ids)
+    let(:expected_transfers) do
+      data.map { |transfer_model| Coinbase::Transfer.new(transfer_model) }
+    end
+
+    before do
+      data.each_with_index do |transfer_model, i|
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(expected_transfers[i])
+      end
+    end
+
+    it 'lists the transfers' do
+      expect(transfers_api)
+        .to receive(:list_transfers)
+        .with(wallet_id, address_id, { limit: 100, page: nil })
+        .and_return(transfers_list)
+
+      expect(address.transfers).to eq(expected_transfers)
+    end
+
+    context 'with multiple pages' do
+      let(:page_size) { 150 }
+      let(:next_page) { 'page_token_2' }
+      let(:transfers_list_page1) do
+        Coinbase::Client::TransferList.new({ 'data' => data.take(100), 'has_more' => true, 'next_page' => next_page })
+      end
+      let(:transfers_list_page2) do
+        Coinbase::Client::TransferList.new({ 'data' => data.drop(100), 'has_more' => false, 'next_page' => nil })
+      end
+
+      it 'lists all of the transfers' do
+        expect(transfers_api)
+          .to receive(:list_transfers)
+          .with(wallet_id, address_id, { limit: 100, page: nil })
+          .and_return(transfers_list_page1)
+
+        expect(transfers_api)
+          .to receive(:list_transfers)
+          .with(wallet_id, address_id, { limit: 100, page: next_page })
+          .and_return(transfers_list_page2)
+
+        expect(address.transfers).to eq(expected_transfers)
+      end
+    end
+  end
+
+  describe '#inspect' do
+    it 'includes address details' do
+      expect(address.inspect).to include(address_id, Coinbase.to_sym(network_id).to_s, wallet_id)
+    end
+
+    it 'returns the same value as to_s' do
+      expect(address.inspect).to eq(address.to_s)
     end
   end
 end

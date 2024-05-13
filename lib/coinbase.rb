@@ -3,6 +3,7 @@
 require_relative 'coinbase/address'
 require_relative 'coinbase/asset'
 require_relative 'coinbase/authenticator'
+require_relative 'coinbase/balance'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
@@ -18,7 +19,6 @@ require 'json'
 # The Coinbase SDK.
 module Coinbase
   class InvalidConfiguration < StandardError; end
-  class FaucetLimitReached < StandardError; end
 
   # Returns the configuration object.
   # @return [Configuration] the configuration object
@@ -98,30 +98,6 @@ module Coinbase
   # @return [Symbol] the converted symbol
   def self.to_sym(value)
     value.to_s.gsub('-', '_').to_sym
-  end
-
-  # Converts a Coinbase::Client::AddressBalanceList to a BalanceMap.
-  # @param address_balance_list [Coinbase::Client::AddressBalanceList] The AddressBalanceList to convert
-  # @return [BalanceMap] The converted BalanceMap
-  def self.to_balance_map(address_balance_list)
-    balances = {}
-
-    address_balance_list.data.each do |balance|
-      asset_id = Coinbase.to_sym(balance.asset.asset_id.downcase)
-      amount = case asset_id
-               when :eth
-                 BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-               when :usdc
-                 BigDecimal(balance.amount) / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC)
-               when :weth
-                 BigDecimal(balance.amount) / BigDecimal(Coinbase::WEI_PER_ETHER)
-               else
-                 BigDecimal(balance.amount)
-               end
-      balances[asset_id] = amount
-    end
-
-    BalanceMap.new(balances)
   end
 
   # Loads the default user.
