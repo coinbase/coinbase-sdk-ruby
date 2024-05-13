@@ -15,7 +15,7 @@ module Coinbase
 
     # Returns the User ID.
     # @return [String] the User ID
-    def user_id
+    def id
       @model.id
     end
 
@@ -41,20 +41,12 @@ module Coinbase
     # @param data [Coinbase::Wallet::Data] the Wallet data to import
     # @return [Coinbase::Wallet] the imported Wallet
     def import_wallet(data)
-      model = Coinbase.call_api do
-        wallets_api.get_wallet(data.wallet_id)
-      end
-
-      address_count = Coinbase.call_api do
-        addresses_api.list_addresses(model.id).total_count
-      end
-
-      Wallet.new(model, seed: data.seed, address_count: address_count)
+      Wallet.import(data)
     end
 
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
-    def list_wallet_ids
+    def wallet_ids
       wallets = Coinbase.call_api do
         wallets_api.list_wallets
       end
@@ -62,10 +54,10 @@ module Coinbase
       wallets.data.map(&:id)
     end
 
-    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with `load_wallets` function,
-    # provided the backup_file is available. This is an insecure method of storing wallet seeds and should only be used
-    # for development purposes. If you call save_wallet twice with wallets containing the same wallet_id, the backup
-    # will be overwritten during the second attempt.
+    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load_wallets_from_local
+    # function, provided the backup_file is available. This is an insecure method of storing wallet seeds and should
+    # only be used for development purposes. If you call save_wallet_locally! twice with wallets containing the same
+    # wallet_id, the backup will be overwritten during the second attempt.
     # The default backup_file is `seeds.json` in the root folder. It can be configured by changing
     # Coinbase.configuration.backup_file_path.
     #
@@ -73,7 +65,7 @@ module Coinbase
     # @param encrypt [bool] (Optional) Boolean representing whether the backup persisted to local file system should be
     # encrypted or not. Data is unencrypted by default.
     # @return [Coinbase::Wallet] the saved wallet.
-    def save_wallet(wallet, encrypt: false)
+    def save_wallet_locally!(wallet, encrypt: false)
       existing_seeds_in_store = existing_seeds
       data = wallet.export
       seed_to_store = data.seed
@@ -107,7 +99,7 @@ module Coinbase
 
     # Loads all wallets belonging to the User with backup persisted to the local file system.
     # @return [Map<String>Coinbase::Wallet] the map of wallet_ids to the wallets.
-    def load_wallets
+    def load_wallets_from_local
       existing_seeds_in_store = existing_seeds
       raise ArgumentError, 'Backup file not found' if existing_seeds_in_store == {}
 
@@ -141,7 +133,7 @@ module Coinbase
     # Returns a string representation of the User.
     # @return [String] a string representation of the User
     def to_s
-      "Coinbase::User{user_id: '#{user_id}'}"
+      "Coinbase::User{user_id: '#{id}'}"
     end
 
     # Same as to_s.

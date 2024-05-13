@@ -121,7 +121,7 @@
 
   
     <h2>
-      Instance Method Summary
+      Class Method Summary
       <small><a href="#" class="summary_toggle">collapse</a></small>
     </h2>
 
@@ -130,14 +130,12 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(hash = {})  &#x21d2; BalanceMap </a>
+      <a href="#from_balances-class_method" title="from_balances (class method)">.<strong>from_balances</strong>(balances)  &#x21d2; BalanceMap </a>
     
 
     
   </span>
   
-  
-    <span class="note title constructor">constructor</span>
   
   
   
@@ -147,7 +145,40 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns a new BalanceMap object.</p>
+<p>Converts a list of Coinbase::Client::Balance models to a Coinbase::BalanceMap.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#add-instance_method" title="#add (instance method)">#<strong>add</strong>(balance)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Adds a balance to the map.</p>
 </div></span>
   
 </li>
@@ -205,13 +236,16 @@
   
 
 
-  <div id="constructor_details" class="method_details_list">
-  <h2>Constructor Details</h2>
   
-    <div class="method_details first">
-  <h3 class="signature first" id="initialize-instance_method">
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="from_balances-class_method">
   
-    #<strong>initialize</strong>(hash = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></tt> 
+    .<strong>from_balances</strong>(balances)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></tt> 
   
 
   
@@ -220,7 +254,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns a new BalanceMap object.</p>
+<p>Converts a list of Coinbase::Client::Balance models to a Coinbase::BalanceMap.</p>
 
 
   </div>
@@ -231,24 +265,40 @@
   
     <li>
       
-        <span class='name'>hash</span>
+        <span class='name'>balances</span>
       
       
-        <span class='type'>(<tt>Map&lt;Symbol, BigDecimal&gt;</tt>)</span>
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Client/Balance.html" title="Coinbase::Client::Balance (class)">Coinbase::Client::Balance</a></span>&gt;</tt>)</span>
       
-      
-        <em class="default">(defaults to: <tt>{}</tt>)</em>
       
       
         &mdash;
         <div class='inline'>
-<p>The hash to initialize with</p>
+<p>The list of balances fetched from the API.</p>
 </div>
       
     </li>
   
 </ul>
 
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The converted BalanceMap object.</p>
+</div>
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -256,36 +306,119 @@
       <pre class="lines">
 
 
-10
 11
 12
 13
 14
-15</pre>
+15
+16
+17
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 10</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 11</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='kw'>super</span><span class='lparen'>(</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_hash'>hash</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
-    <span class='kw'>self</span><span class='lbracket'>[</span><span class='id identifier rubyid_key'>key</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_balances'>from_balances</span><span class='lparen'>(</span><span class='id identifier rubyid_balances'>balances</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="" title="Coinbase::BalanceMap (class)">BalanceMap</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_balance_map'>balance_map</span><span class='op'>|</span>
+    <span class='id identifier rubyid_balances'>balances</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_balance_model'>balance_model</span><span class='op'>|</span>
+      <span class='id identifier rubyid_balance'>balance</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Balance.html" title="Coinbase::Balance (class)">Balance</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_model'><span class='object_link'><a href="Balance.html#from_model-class_method" title="Coinbase::Balance.from_model (method)">from_model</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_balance_model'>balance_model</span><span class='rparen'>)</span>
+
+      <span class='id identifier rubyid_balance_map'>balance_map</span><span class='period'>.</span><span class='id identifier rubyid_add'>add</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
 </div>
-  
-</div>
-
+    
+  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="inspect-instance_method">
+  <h3 class="signature first" id="add-instance_method">
+  
+    #<strong>add</strong>(balance)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Adds a balance to the map.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>balance</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Balance.html" title="Coinbase::Balance (class)">Coinbase::Balance</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The balance to add to the map.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_add'>add</span><span class='lparen'>(</span><span class='id identifier rubyid_balance'>balance</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>balance must be a Coinbase::Balance</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Balance.html" title="Coinbase::Balance (class)">Balance</a></span></span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span><span class='lbracket'>[</span><span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_balance'>balance</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inspect-instance_method">
   
     #<strong>inspect</strong>  &#x21d2; <tt>String</tt> 
   
@@ -328,12 +461,12 @@
       <pre class="lines">
 
 
-25
-26
-27</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_string'>to_string</span>
@@ -387,12 +520,12 @@
       <pre class="lines">
 
 
-19
-20
-21</pre>
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance_map.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_string'>to_string</span>

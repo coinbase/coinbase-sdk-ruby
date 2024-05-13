@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name          = 'coinbase-sdk'
-  spec.version       = '0.0.3'
+  spec.version       = '0.0.4'
   spec.authors       = ['Yuga Cohler']
   spec.files         = Dir['lib/**/*.rb']
   spec.summary       = 'Coinbase Ruby SDK'

@@ -37,7 +37,7 @@ module Coinbase
 
     # Returns the Transfer ID.
     # @return [String] The Transfer ID
-    def transfer_id
+    def id
       @model.transfer_id
     end
 
@@ -179,7 +179,7 @@ module Coinbase
     # Returns a String representation of the Transfer.
     # @return [String] a String representation of the Transfer
     def to_s
-      "Coinbase::Transfer{transfer_id: '#{transfer_id}', network_id: '#{network_id}', " \
+      "Coinbase::Transfer{transfer_id: '#{id}', network_id: '#{network_id}', " \
         "from_address_id: '#{from_address_id}', destination_address_id: '#{destination_address_id}', " \
         "asset_id: '#{asset_id}', amount: '#{amount}', transaction_hash: '#{transaction_hash}', " \
         "transaction_link: '#{transaction_link}', status: '#{status}'}"

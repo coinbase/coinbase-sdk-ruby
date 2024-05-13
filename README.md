@@ -78,7 +78,7 @@ Coinbase.configure do |config|
 end
 ```
 
-Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key, 
+Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key,
 downloaded from CDP portal.
 
 ```ruby
@@ -100,21 +100,13 @@ Now, create a Wallet from the User. Wallets are created with a single default Ad
 w1 = u.create_wallet
 ```
 
-Next, view the default Address of your Wallet. You will need this default Address in order to fund the Wallet for your first Transfer.
-
-```ruby
-# A Wallet has a default Address.
-a = w1.default_address
-a.to_s
-```
-
 Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
 
 For development purposes, we provide a `faucet` method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
 
 ```ruby
 # Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
-faucet_tx = a.faucet
+faucet_tx = w1.faucet
 faucet_tx.transaction_hash
 ```
 
@@ -144,18 +136,19 @@ In order to persist the data for the Wallet, you will need to implement a store 
 store(data)
 ```
 
-For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system.
+For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system.
 This is an insecure method of storing wallet seeds and should only be used for development purposes.
+
 ```ruby
-u.save_wallet(w3)
+u.save_wallet_locally!(w3)
 ```
 
 To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
-for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with 
-the same API key when invoking `save_wallet` and `load_wallets`.
+for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with
+the same API key when invoking `save_wallet_locally!` and `load_wallets_from_local`.
 
 ```ruby
-u.save_wallet(w3, encrypt: true)
+u.save_wallet_locally!(w3, encrypt: true)
 ```
 
 The below code demonstrates how to re-instantiate a Wallet from the data export.
@@ -163,15 +156,16 @@ The below code demonstrates how to re-instantiate a Wallet from the data export.
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w4 will be equivalent to w3.
-w4 = u.import_wallet(data)
+w4 = Coinbase::Wallet.import(data)
 ```
 
-To import wallets that were persisted to your local file system using `save_wallet`, use the below code.
+To import wallets that were persisted to your local file system using `save_wallet_locally!`, use the below code.
+
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w5 will be equivalent to w3.
-wallets = u.load_wallets
-w5 = wallets[w3.wallet_id]
+wallets = u.load_wallets_from_local
+w5 = wallets[w3.id]
 ```
 
 ## Development
