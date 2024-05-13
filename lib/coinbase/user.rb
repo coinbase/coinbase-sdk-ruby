@@ -46,7 +46,7 @@ module Coinbase
 
     # Lists the IDs of the Wallets belonging to the User.
     # @return [Array<String>] the IDs of the Wallets belonging to the User
-    def list_wallet_ids
+    def wallet_ids
       wallets = Coinbase.call_api do
         wallets_api.list_wallets
       end
