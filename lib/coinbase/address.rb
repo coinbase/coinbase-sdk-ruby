@@ -110,7 +110,7 @@ module Coinbase
       }
 
       transfer_model = Coinbase.call_api do
-        transfers_api.broadcast_transfer(wallet_id, id, transfer.transfer_id, broadcast_transfer_request)
+        transfers_api.broadcast_transfer(wallet_id, id, transfer.id, broadcast_transfer_request)
       end
 
       Coinbase::Transfer.new(transfer_model)
