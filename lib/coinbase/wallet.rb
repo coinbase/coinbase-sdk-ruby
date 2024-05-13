@@ -171,6 +171,17 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
+    # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+    def faucet
+      Coinbase.call_api do
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id))
+      end
+    end
+
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s

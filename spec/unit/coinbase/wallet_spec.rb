@@ -313,6 +313,27 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#faucet' do
+    let(:faucet_transaction_model) {
+      Coinbase::Client::FaucetTransaction.new({
+        'transaction_hash': '0x123456789'
+      })
+    }
+
+    before do
+      expect(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, address_model.address_id)
+          .and_return(faucet_transaction_model)
+    end
+
+    it 'returns the faucet transaction' do
+      faucet_transaction = wallet.faucet
+      expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+    end
+  end
+
   describe '#inspect' do
     it 'includes wallet details' do
       expect(wallet.inspect).to include(wallet_id, Coinbase.to_sym(network_id).to_s, address_model.address_id)
