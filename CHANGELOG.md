@@ -9,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Trade
 
-## [0.0.4] - Pending
+## [0.0.4] - 2024-05-13
 
-* Refactor methods to be more idiomatic for Ruby.
+### Changed
+
+- Refactor methods to be more idiomatic for Ruby.
 
 ## [0.0.3] - 2024-05-08
 
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow disabling debug tracing
 - Error specifications
 - WETH ERC-20
+
 ## [0.0.2] - 2024-05-01
 
 ### Added
