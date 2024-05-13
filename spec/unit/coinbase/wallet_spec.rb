@@ -314,17 +314,17 @@ describe Coinbase::Wallet do
   end
 
   describe '#faucet' do
-    let(:faucet_transaction_model) {
+    let(:faucet_transaction_model) do
       Coinbase::Client::FaucetTransaction.new({
-        'transaction_hash': '0x123456789'
-      })
-    }
+                                                'transaction_hash': '0x123456789'
+                                              })
+    end
 
     before do
       expect(addresses_api)
-          .to receive(:request_faucet_funds)
-          .with(wallet_id, address_model.address_id)
-          .and_return(faucet_transaction_model)
+        .to receive(:request_faucet_funds)
+        .with(wallet_id, address_model.address_id)
+        .and_return(faucet_transaction_model)
     end
 
     it 'returns the faucet transaction' do

@@ -54,10 +54,10 @@ module Coinbase
       wallets.data.map(&:id)
     end
 
-    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with `load_wallets` function,
-    # provided the backup_file is available. This is an insecure method of storing wallet seeds and should only be used
-    # for development purposes. If you call save_wallet twice with wallets containing the same wallet_id, the backup
-    # will be overwritten during the second attempt.
+    # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load_wallets_from_local
+    # function, provided the backup_file is available. This is an insecure method of storing wallet seeds and should
+    # only be used for development purposes. If you call save_wallet_locally! twice with wallets containing the same
+    # wallet_id, the backup will be overwritten during the second attempt.
     # The default backup_file is `seeds.json` in the root folder. It can be configured by changing
     # Coinbase.configuration.backup_file_path.
     #
@@ -99,7 +99,7 @@ module Coinbase
 
     # Loads all wallets belonging to the User with backup persisted to the local file system.
     # @return [Map<String>Coinbase::Wallet] the map of wallet_ids to the wallets.
-    def load_wallets
+    def load_wallets_from_local
       existing_seeds_in_store = existing_seeds
       raise ArgumentError, 'Backup file not found' if existing_seeds_in_store == {}
 

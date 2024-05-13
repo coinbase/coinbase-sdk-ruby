@@ -190,21 +190,30 @@
 </span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>For convenience during testing, we provide a save_wallet method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes. <code>ruby u.save_wallet(w3) </code></p>
+<p>For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes.</p>
 
-<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet</code> and <code>load_wallets</code>.</p>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='rparen'>)</span>
+</code></pre>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet'>save_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet_locally!</code> and <code>load_wallets_from_local</code>.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
 </code></pre>
 
 <p>The below code demonstrates how to re-instantiate a Wallet from the data export.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
 </span><span class='comment'># w4 will be equivalent to w3.
-</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_import'><span class='object_link'><a href="Coinbase/Wallet.html#import-class_method" title="Coinbase::Wallet.import (method)">import</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>To import wallets that were persisted to your local file system using <code>save_wallet</code>, use the below code. <code>ruby # The Wallet can be re-instantiated using the exported data. # w5 will be equivalent to w3. wallets = u.load_wallets w5 = wallets[w3.wallet_id] </code></p>
+<p>To import wallets that were persisted to your local file system using <code>save_wallet_locally!</code>, use the below code.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
+</span><span class='comment'># w5 will be equivalent to w3.
+</span><span class='id identifier rubyid_wallets'>wallets</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_load_wallets_from_local'>load_wallets_from_local</span>
+<span class='id identifier rubyid_w5'>w5</span> <span class='op'>=</span> <span class='id identifier rubyid_wallets'>wallets</span><span class='lbracket'>[</span><span class='id identifier rubyid_w3'>w3</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
+</code></pre>
 
 <h2 id="label-Development">Development</h2>
 

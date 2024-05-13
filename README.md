@@ -153,7 +153,7 @@ u.save_wallet_locally!(w3)
 
 To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
 for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with
-the same API key when invoking `save_wallet_locally!` and `load_wallets`.
+the same API key when invoking `save_wallet_locally!` and `load_wallets_from_local`.
 
 ```ruby
 u.save_wallet_locally!(w3, encrypt: true)
@@ -172,7 +172,7 @@ To import wallets that were persisted to your local file system using `save_wall
 ```ruby
 # The Wallet can be re-instantiated using the exported data.
 # w5 will be equivalent to w3.
-wallets = u.load_wallets
+wallets = u.load_wallets_from_local
 w5 = wallets[w3.id]
 ```
 

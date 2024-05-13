@@ -178,7 +178,7 @@ describe Coinbase::User do
     end
   end
 
-  describe '#load_wallets' do
+  describe '#load_wallets_from_local' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
     let(:address_count) { 1 }
     let(:seed_wallet) do
@@ -267,7 +267,7 @@ describe Coinbase::User do
       expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
       expect(addresses_api).to receive(:get_address).and_return(address_model)
 
-      wallets = user.load_wallets
+      wallets = user.load_wallets_from_local
       wallet = wallets[wallet_id]
       expect(wallet).not_to be_nil
       expect(wallet.id).to eq(wallet_id)
@@ -277,7 +277,7 @@ describe Coinbase::User do
     it 'throws an error when the backup file is absent' do
       File.delete(Coinbase.configuration.backup_file_path)
       expect do
-        user.load_wallets
+        user.load_wallets_from_local
       end.to raise_error(ArgumentError, 'Backup file not found')
     end
 
@@ -286,7 +286,7 @@ describe Coinbase::User do
         file.write(JSON.pretty_generate(malformed_seed_data))
       end
       expect do
-        user.load_wallets
+        user.load_wallets_from_local
       end.to raise_error(ArgumentError, 'Malformed backup data')
     end
 
@@ -298,7 +298,7 @@ describe Coinbase::User do
         file.write(JSON.pretty_generate(seed_data_without_seed))
       end
       expect do
-        user.load_wallets
+        user.load_wallets_from_local
       end.to raise_error(ArgumentError, 'Malformed backup data')
     end
 
@@ -310,7 +310,7 @@ describe Coinbase::User do
         file.write(JSON.pretty_generate(seed_data_without_iv))
       end
       expect do
-        user.load_wallets
+        user.load_wallets_from_local
       end.to raise_error(ArgumentError, 'Malformed encrypted seed data')
     end
 
@@ -322,7 +322,7 @@ describe Coinbase::User do
         file.write(JSON.pretty_generate(seed_data_without_auth_tag))
       end
       expect do
-        user.load_wallets
+        user.load_wallets_from_local
       end.to raise_error(ArgumentError, 'Malformed encrypted seed data')
     end
   end
