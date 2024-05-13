@@ -187,7 +187,7 @@ describe Coinbase::Address do
     end
     let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
     let(:transfer) do
-      double('Transfer', transaction: transaction, transfer_id: transfer_id)
+      double('Transfer', transaction: transaction, id: transfer_id)
     end
 
     before do
