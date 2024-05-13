@@ -133,7 +133,7 @@ module Coinbase
     # Returns a string representation of the User.
     # @return [String] a string representation of the User
     def to_s
-      "Coinbase::User{user_id: '#{user_id}'}"
+      "Coinbase::User{user_id: '#{id}'}"
     end
 
     # Same as to_s.

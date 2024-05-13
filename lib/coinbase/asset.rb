@@ -75,5 +75,18 @@ module Coinbase
     end
 
     attr_reader :network_id, :asset_id, :display_name, :address_id
+
+    # Returns a string representation of the Asset.
+    # @return [String] a string representation of the Asset
+    def to_s
+      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', display_name: '#{display_name}'" +
+        (address_id.nil? ? '}' : ", address_id: '#{address_id}'}")
+    end
+
+    # Same as to_s.
+    # @return [String] a string representation of the Balance
+    def inspect
+      to_s
+    end
   end
 end

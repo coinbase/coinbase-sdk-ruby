@@ -312,4 +312,14 @@ describe Coinbase::Wallet do
       end
     end
   end
+
+  describe '#inspect' do
+    it 'includes wallet details' do
+      expect(wallet.inspect).to include(wallet_id, Coinbase.to_sym(network_id).to_s, address_model.address_id)
+    end
+
+    it 'returns the same value as to_s' do
+      expect(wallet.inspect).to eq(wallet.to_s)
+    end
+  end
 end

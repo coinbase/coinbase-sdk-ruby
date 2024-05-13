@@ -464,4 +464,14 @@ describe Coinbase::Address do
       end
     end
   end
+
+  describe '#inspect' do
+    it 'includes address details' do
+      expect(address.inspect).to include(address_id, Coinbase.to_sym(network_id).to_s, wallet_id)
+    end
+
+    it 'returns the same value as to_s' do
+      expect(address.inspect).to eq(address.to_s)
+    end
+  end
 end

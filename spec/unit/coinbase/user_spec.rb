@@ -6,7 +6,7 @@ describe Coinbase::User do
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
-  let(:user) { described_class.new(model) }
+  subject(:user) { described_class.new(model) }
 
   describe '#id' do
     it 'returns the user ID' do
@@ -271,7 +271,7 @@ describe Coinbase::User do
       wallet = wallets[wallet_id]
       expect(wallet).not_to be_nil
       expect(wallet.id).to eq(wallet_id)
-      expect(wallet.default_address.address_id).to eq(address_model.address_id)
+      expect(wallet.default_address.id).to eq(address_model.address_id)
     end
 
     it 'throws an error when the backup file is absent' do
@@ -324,6 +324,16 @@ describe Coinbase::User do
       expect do
         user.load_wallets
       end.to raise_error(ArgumentError, 'Malformed encrypted seed data')
+    end
+  end
+
+  describe '#inspect' do
+    it 'includes user details' do
+      expect(user.inspect).to include(user_id)
+    end
+
+    it 'returns the same value as to_s' do
+      expect(user.inspect).to eq(user.to_s)
     end
   end
 end

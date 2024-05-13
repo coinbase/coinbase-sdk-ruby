@@ -171,7 +171,7 @@ To import wallets that were persisted to your local file system using `save_wall
 # The Wallet can be re-instantiated using the exported data.
 # w5 will be equivalent to w3.
 wallets = u.load_wallets
-w5 = wallets[w3.wallet_id]
+w5 = wallets[w3.id]
 ```
 
 ## Development

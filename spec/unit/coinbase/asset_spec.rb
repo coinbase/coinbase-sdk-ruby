@@ -113,25 +113,72 @@ describe Coinbase::Asset do
     let(:display_name) { 'Ether' }
     let(:address_id) { '0x036CbD53842' }
 
-    subject do
-      described_class.new(network_id: network_id, asset_id: asset_id, display_name: display_name,
-                          address_id: address_id)
+    subject(:asset) do
+      described_class.new(
+        network_id: network_id,
+        asset_id: asset_id,
+        display_name: display_name,
+        address_id: address_id
+      )
     end
 
     it 'sets the network_id' do
-      expect(subject.network_id).to eq(network_id)
+      expect(asset.network_id).to eq(network_id)
     end
 
     it 'sets the asset_id' do
-      expect(subject.asset_id).to eq(asset_id)
+      expect(asset.asset_id).to eq(asset_id)
     end
 
     it 'sets the display_name' do
-      expect(subject.display_name).to eq(display_name)
+      expect(asset.display_name).to eq(display_name)
     end
 
     it 'sets the address_id' do
-      expect(subject.address_id).to eq(address_id)
+      expect(asset.address_id).to eq(address_id)
+    end
+  end
+
+  describe '#inspect' do
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
+    let(:display_name) { 'Ether' }
+
+    subject(:asset) do
+      described_class.new(
+        network_id: network_id,
+        asset_id: asset_id,
+        display_name: display_name
+      )
+    end
+
+    it 'includes asset details' do
+      expect(asset.inspect).to include(
+        Coinbase.to_sym(network_id).to_s,
+        asset_id.to_s,
+        display_name
+      )
+    end
+
+    it 'returns the same value as to_s' do
+      expect(asset.inspect).to eq(asset.to_s)
+    end
+
+    context 'when the asset contains an address_id' do
+      let(:address_id) { '0x036CbD53842' }
+
+      subject(:asset) do
+        described_class.new(
+          network_id: network_id,
+          asset_id: asset_id,
+          display_name: display_name,
+          address_id: address_id
+        )
+      end
+
+      it 'includes the transaction hash' do
+        expect(asset.inspect).to include(address_id)
+      end
     end
   end
 end

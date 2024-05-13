@@ -5,17 +5,17 @@ describe Coinbase::Balance do
     let(:amount) { BigDecimal('123.0') }
     let(:balance_model) { instance_double('Coinbase::Client::Balance', asset: asset, amount: amount) }
 
-    subject { described_class.from_model(balance_model) }
+    subject(:balance) { described_class.from_model(balance_model) }
 
     context 'when the asset is :eth' do
       let(:asset) { instance_double('Coinbase::Client::Asset', asset_id: 'ETH') }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+        expect(balance.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(:eth)
+        expect(balance.asset_id).to eq(:eth)
       end
     end
 
@@ -23,11 +23,11 @@ describe Coinbase::Balance do
       let(:asset) { instance_double('Coinbase::Client::Asset', asset_id: 'USDC') }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC))
+        expect(balance.amount).to eq(amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC))
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(:usdc)
+        expect(balance.asset_id).to eq(:usdc)
       end
     end
 
@@ -35,11 +35,11 @@ describe Coinbase::Balance do
       let(:asset) { instance_double('Coinbase::Client::Asset', asset_id: 'WETH') }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+        expect(balance.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(:weth)
+        expect(balance.asset_id).to eq(:weth)
       end
     end
 
@@ -47,11 +47,11 @@ describe Coinbase::Balance do
       let(:asset) { instance_double('Coinbase::Client::Asset', asset_id: 'OTHER') }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount)
+        expect(balance.amount).to eq(amount)
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(:other)
+        expect(balance.asset_id).to eq(:other)
       end
     end
   end
@@ -60,7 +60,7 @@ describe Coinbase::Balance do
     let(:amount) { BigDecimal('123.0') }
     let(:balance_model) { instance_double('Coinbase::Client::Balance', asset: asset, amount: amount) }
 
-    subject { described_class.from_model_and_asset_id(balance_model, asset_id) }
+    subject(:balance) { described_class.from_model_and_asset_id(balance_model, asset_id) }
 
     context 'when the balance model asset is :eth' do
       let(:asset) { instance_double('Coinbase::Client::Asset', asset_id: 'ETH') }
@@ -69,11 +69,11 @@ describe Coinbase::Balance do
         let(:asset_id) { :eth }
 
         it 'returns a new Balance object with the correct amount' do
-          expect(subject.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+          expect(balance.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
         end
 
         it 'returns a new Balance object with the correct asset_id' do
-          expect(subject.asset_id).to eq(asset_id)
+          expect(balance.asset_id).to eq(asset_id)
         end
       end
 
@@ -81,11 +81,11 @@ describe Coinbase::Balance do
         let(:asset_id) { :gwei }
 
         it 'returns a new Balance object with the correct amount' do
-          expect(subject.amount).to eq(amount / BigDecimal(Coinbase::GWEI_PER_ETHER))
+          expect(balance.amount).to eq(amount / BigDecimal(Coinbase::GWEI_PER_ETHER))
         end
 
         it 'returns a new Balance object with the correct asset_id' do
-          expect(subject.asset_id).to eq(asset_id)
+          expect(balance.asset_id).to eq(asset_id)
         end
       end
 
@@ -93,11 +93,11 @@ describe Coinbase::Balance do
         let(:asset_id) { :wei }
 
         it 'returns a new Balance object with the correct amount' do
-          expect(subject.amount).to eq(amount)
+          expect(balance.amount).to eq(amount)
         end
 
         it 'returns a new Balance object with the correct asset_id' do
-          expect(subject.asset_id).to eq(asset_id)
+          expect(balance.asset_id).to eq(asset_id)
         end
       end
     end
@@ -107,11 +107,11 @@ describe Coinbase::Balance do
       let(:asset_id) { :usdc }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC))
+        expect(balance.amount).to eq(amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC))
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(asset_id)
+        expect(balance.asset_id).to eq(asset_id)
       end
     end
 
@@ -120,11 +120,11 @@ describe Coinbase::Balance do
       let(:asset_id) { :weth }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+        expect(balance.amount).to eq(amount / BigDecimal(Coinbase::WEI_PER_ETHER))
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(asset_id)
+        expect(balance.asset_id).to eq(asset_id)
       end
     end
 
@@ -133,11 +133,11 @@ describe Coinbase::Balance do
       let(:asset_id) { :other }
 
       it 'returns a new Balance object with the correct amount' do
-        expect(subject.amount).to eq(amount)
+        expect(balance.amount).to eq(amount)
       end
 
       it 'returns a new Balance object with the correct asset_id' do
-        expect(subject.asset_id).to eq(asset_id)
+        expect(balance.asset_id).to eq(asset_id)
       end
     end
   end
@@ -146,14 +146,29 @@ describe Coinbase::Balance do
     let(:amount) { BigDecimal('123.0') }
     let(:asset_id) { :eth }
 
-    subject { described_class.new(amount: amount, asset_id: asset_id) }
+    subject(:balance) { described_class.new(amount: amount, asset_id: asset_id) }
 
     it 'sets the amount' do
-      expect(subject.amount).to eq(amount)
+      expect(balance.amount).to eq(amount)
     end
 
     it 'sets the asset_id' do
-      expect(subject.asset_id).to eq(asset_id)
+      expect(balance.asset_id).to eq(asset_id)
+    end
+  end
+
+  describe '#inspect' do
+    let(:amount) { BigDecimal('123.0') }
+    let(:asset_id) { :eth }
+
+    subject(:balance) { described_class.new(amount: amount, asset_id: asset_id) }
+
+    it 'includes balance details' do
+      expect(balance.inspect).to include('123', 'eth')
+    end
+
+    it 'returns the same value as to_s' do
+      expect(balance.inspect).to eq(balance.to_s)
     end
   end
 end
