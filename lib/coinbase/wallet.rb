@@ -12,6 +12,8 @@ module Coinbase
   # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or
   # User#import_wallet.
   class Wallet
+    attr_reader :addresses
+
     class << self
       # Imports a Wallet from previously exported wallet data.
       # @param data [Coinbase::Wallet::Data] the Wallet data to import
@@ -73,8 +75,6 @@ module Coinbase
         update_model
       end
     end
-
-    attr_reader :addresses
 
     # Returns the Wallet ID.
     # @return [String] The Wallet ID
