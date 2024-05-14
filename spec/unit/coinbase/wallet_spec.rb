@@ -129,6 +129,14 @@ describe Coinbase::Wallet do
         end.to raise_error(ArgumentError)
       end
     end
+
+    context 'when the seed is empty but the address models are provided' do
+      it 'creates an unhydrated wallet' do
+        wallet = described_class.new(model, seed: '', address_models: [address_model1])
+        expect(wallet).to be_a(Coinbase::Wallet)
+        expect(wallet.addresses.length).to eq(1)
+      end
+    end
   end
 
   describe '#wallet_id' do

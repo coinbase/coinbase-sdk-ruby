@@ -255,9 +255,11 @@ module Coinbase
     # @param address_model [Coinbase::Client::Address] The Address model
     # @return [Address] The new Address
     def derive_address(address_map, address_model)
-      key = derive_key
-      address_id = key.address.to_s
-      raise "Unexpected address ID: #{address_id}" unless address_map[address_id]
+      key = if @master.nil?
+              nil
+            else
+              derive_key
+            end
 
       cache_address(address_model, key)
     end
