@@ -74,38 +74,25 @@ describe Coinbase::User do
     end
   end
 
-  describe '#wallet_ids' do
-    let(:wallet_ids) { [SecureRandom.uuid, SecureRandom.uuid] }
-    let(:data) do
-      wallet_ids.map { |id| Coinbase::Client::Wallet.new({ 'id': id, 'network_id': 'base-sepolia' }) }
-    end
-    let(:wallet_list) { Coinbase::Client::WalletList.new({ 'data' => data }) }
-    it 'lists the wallet IDs' do
-      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api).to receive(:list_wallets).and_return(wallet_list)
-      expect(user.wallet_ids).to eq(wallet_ids)
-    end
-  end
-
   describe '#save_wallet_locally!' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
-    let(:address_count) { 1 }
-    let(:seed_wallet) do
-      Coinbase::Wallet.new(model, seed: seed, address_count: address_count)
-    end
-    let(:user) { described_class.new(model) }
-    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
-    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
-    let(:wallet_id) { SecureRandom.uuid }
-    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:address_model) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef',
+                                      'address_id': '0xfbd9D61057eC1debCeEE12C62812Fb3E1d025201',
                                       'wallet_id': wallet_id,
                                       'public_key': '0x1234567890',
                                       'network_id': 'base-sepolia'
                                     })
     end
+    let(:wallet_id) { SecureRandom.uuid }
+    let(:seed_wallet) do
+      Coinbase::Wallet.new(model, seed: seed, address_models: [address_model])
+    end
+    let(:user) { described_class.new(model) }
+    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+
     let(:initial_seed_data) { JSON.pretty_generate({}) }
     let(:expected_seed_data) do
       {
@@ -118,7 +105,6 @@ describe Coinbase::User do
 
     before do
       allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
-      expect(addresses_api).to receive(:get_address).and_return(address_model)
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(initial_seed_data)
       end
@@ -181,22 +167,23 @@ describe Coinbase::User do
   describe '#load_wallets_from_local' do
     let(:seed) { '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe' }
     let(:address_count) { 1 }
-    let(:seed_wallet) do
-      Coinbase::Wallet.new(model, seed: seed, address_count: address_count)
-    end
-    let(:user) { described_class.new(model) }
-    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
-    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
     let(:wallet_id) { SecureRandom.uuid }
-    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:address_model) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef',
+                                      'address_id': '0xfbd9D61057eC1debCeEE12C62812Fb3E1d025201',
                                       'wallet_id': wallet_id,
                                       'public_key': '0x1234567890',
                                       'network_id': 'base-sepolia'
                                     })
     end
+    let(:seed_wallet) do
+      Coinbase::Wallet.new(model, seed: seed, address_models: [address_model])
+    end
+    let(:user) { described_class.new(model) }
+    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+
+    let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:wallet_model_with_default_address) do
       Coinbase::Client::Wallet.new(
         {
@@ -264,8 +251,10 @@ describe Coinbase::User do
       allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
       allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
       expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
-      expect(addresses_api).to receive(:list_addresses).with(wallet_id).and_return(address_list_model)
-      expect(addresses_api).to receive(:get_address).and_return(address_model)
+      expect(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: Coinbase::Wallet::MAX_ADDRESSES })
+        .and_return(address_list_model)
 
       wallets = user.load_wallets_from_local
       wallet = wallets[wallet_id]

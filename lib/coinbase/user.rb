@@ -55,11 +55,9 @@ module Coinbase
 
       opts[:page] = next_page_token unless next_page_token.nil?
 
-      wallets = Coinbase.call_api do
+      Coinbase.call_api do
         wallets_api.list_wallets(opts)
       end
-
-      return wallets
     end
 
     # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load_wallets_from_local
