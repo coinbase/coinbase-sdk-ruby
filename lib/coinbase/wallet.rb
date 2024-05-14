@@ -59,6 +59,9 @@ module Coinbase
     def initialize(model, seed: nil, address_models: [])
       raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && !seed.empty? && seed.length != 64
       raise ArgumentError, 'Seed must be present if address_models are provided' if seed.nil? && address_models.any?
+      raise ArgumentError, 'Seed must be empty if address_models are not provided' if !seed.nil? &&
+                                                                                      seed.empty? &&
+                                                                                      address_models.empty?
 
       @model = model
 

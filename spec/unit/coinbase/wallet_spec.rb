@@ -137,6 +137,14 @@ describe Coinbase::Wallet do
         expect(wallet.addresses.length).to eq(1)
       end
     end
+
+    context 'when the seed is empty and no address models are provided' do
+      it 'throws an error' do
+        expect do
+          described_class.new(model, seed: '')
+        end.to raise_error(ArgumentError, 'Seed must be empty if address_models are not provided')
+      end
+    end
   end
 
   describe '#wallet_id' do
