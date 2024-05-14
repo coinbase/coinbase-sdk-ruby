@@ -47,7 +47,7 @@ module Coinbase
     # Lists the Wallets belonging to the User.
     # @param page_size [Integer] (Optional) the number of Wallets to return per page. Defaults to 10
     # @param next_page_token [String] (Optional) the token for the next page of Wallets
-    # @return [Array<Coinbase::Client::Model::Wallet>] the Wallets belonging to the User
+    # @return [Coinbase::Wallet] the Wallets belonging to the User
     def wallets(page_size: 10, next_page_token: nil)
       opts = {
         limit: page_size
@@ -55,8 +55,23 @@ module Coinbase
 
       opts[:page] = next_page_token unless next_page_token.nil?
 
-      Coinbase.call_api do
+      wallet_models = Coinbase.call_api do
         wallets_api.list_wallets(opts)
+      end
+
+      # A map from wallet_id to address models.
+      address_model_map = {}
+
+      wallet_models.each do |wallet_model|
+        addresses_models = Coinbase.call_api do
+          addresses_api.list_addresses(wallet_model.wallet_id, { limit: Coinbase::Wallet::MAX_ADDRESSES })
+        end
+
+        address_model_map[wallet_model.wallet_id] = addresses_models
+      end
+
+      wallet_models.map do |wallet_model|
+        Wallet.new(wallet_model, seed: '', address_models: address_model_map[wallet_model.wallet_id])
       end
     end
 
