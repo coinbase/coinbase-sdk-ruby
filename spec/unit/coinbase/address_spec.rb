@@ -350,6 +350,17 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#can_sign?' do
+    it 'returns true if the address has a key' do
+      expect(address.can_sign?).to be true
+    end
+
+    it 'returns false if the address does not have a key' do
+      unhydrated_address = described_class.new(model, nil)
+      expect(unhydrated_address.can_sign?).to be false
+    end
+  end
+
   describe '#faucet' do
     let(:request) { double('Request', transaction: transaction) }
     let(:tx_hash) { '0xdeadbeef' }

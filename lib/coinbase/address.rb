@@ -118,6 +118,12 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
+    # Returns whether the Address is hydrated, i.e. has a backing key to sign transactions.
+    # @return [Boolean] Whether the Address is hydrated
+    def can_sign?
+      !@key.nil?
+    end
+
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s

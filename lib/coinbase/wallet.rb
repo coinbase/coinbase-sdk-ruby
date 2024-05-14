@@ -196,6 +196,12 @@ module Coinbase
       end
     end
 
+    # Returns whether the Wallet is hydrated, meaning it has a seed, can derive keys, and sign transactions.
+    # @return [Boolean] Whether the Wallet is hydrated
+    def can_sign?
+      !@master.nil?
+    end
+
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
