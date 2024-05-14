@@ -51,17 +51,24 @@ module Coinbase
     # User#import_wallet.
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
-    #   If not provided, a new seed will be generated.
+    #   If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be
+    #   unhydrated.
     # @param address_models [Array<Coinbase::Client::Address>] (Optional) The models of the addresses already registered
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && seed.length != 64
+      raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && !seed.empty? && seed.length != 64
       raise ArgumentError, 'Seed must be present if address_models are provided' if seed.nil? && address_models.any?
 
       @model = model
 
-      @master = seed.nil? ? MoneyTree::Master.new : MoneyTree::Master.new(seed_hex: seed)
+      @master = if seed.nil?
+                  MoneyTree::Master.new
+                elsif seed.empty?
+                  nil
+                else
+                  MoneyTree::Master.new(seed_hex: seed)
+                end
 
       # TODO: Make Network an argument to the constructor.
       @network_id = :base_sepolia
@@ -173,6 +180,8 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
+      raise 'Cannot export unhydrated Wallet' if @master.nil?
+
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
@@ -256,6 +265,8 @@ module Coinbase
     # Derives a key for an already registered Address in the Wallet.
     # @return [Eth::Key] The new key
     def derive_key
+      raise 'Cannot derive key for unhydrated Wallet' if @master.nil?
+
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
       Eth::Key.new(priv: private_key)
