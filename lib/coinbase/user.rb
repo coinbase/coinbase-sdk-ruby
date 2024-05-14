@@ -55,23 +55,23 @@ module Coinbase
 
       opts[:page] = next_page_token unless next_page_token.nil?
 
-      wallet_models = Coinbase.call_api do
+      wallet_list = Coinbase.call_api do
         wallets_api.list_wallets(opts)
       end
 
       # A map from wallet_id to address models.
       address_model_map = {}
 
-      wallet_models.each do |wallet_model|
-        addresses_models = Coinbase.call_api do
-          addresses_api.list_addresses(wallet_model.wallet_id, { limit: Coinbase::Wallet::MAX_ADDRESSES })
+      wallet_list.data.each do |wallet_model|
+        addresses_list = Coinbase.call_api do
+          addresses_api.list_addresses(wallet_model.id, { limit: Coinbase::Wallet::MAX_ADDRESSES })
         end
 
-        address_model_map[wallet_model.wallet_id] = addresses_models
+        address_model_map[wallet_model.id] = addresses_list.data
       end
 
-      wallet_models.map do |wallet_model|
-        Wallet.new(wallet_model, seed: '', address_models: address_model_map[wallet_model.wallet_id])
+      wallet_list.data.map do |wallet_model|
+        Wallet.new(wallet_model, seed: '', address_models: address_model_map[wallet_model.id])
       end
     end
 

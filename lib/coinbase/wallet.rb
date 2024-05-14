@@ -263,7 +263,7 @@ module Coinbase
     # @param address_map [Hash<String, Boolean>] The map of registered Address IDs
     # @param address_model [Coinbase::Client::Address] The Address model
     # @return [Address] The new Address
-    def derive_address(address_map, address_model)
+    def derive_address(_address_map, address_model)
       key = if @master.nil?
               nil
             else
