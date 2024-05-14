@@ -4,15 +4,20 @@ require 'dotenv'
 Dotenv.load
 
 describe Coinbase do
-  describe 'v0.0.2 SDK' do
+  describe 'v0.0.4 SDK' do
     it 'behaves as expected' do
       # GitHub secrets truncate newlines as whitespace, so we need to replace them.
       # See https://github.com/github/docs/issues/14207
       api_key_name = ENV['API_KEY_NAME'].gsub('\n', "\n")
       api_key_private_key = ENV['API_KEY_PRIVATE_KEY'].gsub('\n', "\n")
+
+      # Use default API URL if not provided
+      api_url = ENV['API_URL']
+
       Coinbase.configure do |config|
         config.api_key_name = api_key_name
         config.api_key_private_key = api_key_private_key
+        config.api_url = api_url if api_url
       end
 
       puts 'Fetching default user...'
