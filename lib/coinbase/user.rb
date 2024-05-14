@@ -44,14 +44,22 @@ module Coinbase
       Wallet.import(data)
     end
 
-    # Lists the IDs of the Wallets belonging to the User.
-    # @return [Array<String>] the IDs of the Wallets belonging to the User
-    def wallet_ids
+    # Lists the Wallets belonging to the User.
+    # @param page_size [Integer] (Optional) the number of Wallets to return per page. Defaults to 10
+    # @param next_page_token [String] (Optional) the token for the next page of Wallets
+    # @return [Array<Coinbase::Client::Model::Wallet>] the Wallets belonging to the User
+    def wallets(page_size: 10, next_page_token: nil)
+      opts = {
+        limit: page_size
+      }
+
+      opts[:page] = next_page_token unless next_page_token.nil?
+
       wallets = Coinbase.call_api do
-        wallets_api.list_wallets
+        wallets_api.list_wallets(opts)
       end
 
-      wallets.data.map(&:id)
+      return wallets
     end
 
     # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load_wallets_from_local
