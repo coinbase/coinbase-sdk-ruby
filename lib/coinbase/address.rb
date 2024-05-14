@@ -15,7 +15,7 @@ module Coinbase
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use
     # the Wallet's default_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
-    # @param key [Eth::Key] The key backing the Address
+    # @param key [Eth::Key] The key backing the Address. Can be nil.
     def initialize(model, key)
       @model = model
       @key = key
@@ -70,6 +70,8 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
+      raise 'Cannot transfer from unhydrated address' if @key.nil?
+
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
       if destination.is_a?(Wallet)
@@ -142,6 +144,8 @@ module Coinbase
     # Exports the Address's private key to a hex string.
     # @return [String] The Address's private key as a hex String
     def export
+      raise 'Cannot export key for unhydrated address' if @key.nil?
+
       @key.private_hex
     end
 
