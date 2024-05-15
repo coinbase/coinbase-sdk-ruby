@@ -111,7 +111,7 @@ module Coinbase
       @addresses.each do
         key = derive_key
         address = address(key.address.to_s)
-        raise "Seed does not match wallet; cannot find address #{key.address.to_s}" if address.nil?
+        raise "Seed does not match wallet; cannot find address #{key.address}" if address.nil?
 
         address.key = key
       end
@@ -141,12 +141,6 @@ module Coinbase
     # @return [Address] The default address
     def default_address
       address(@model.default_address&.address_id)
-    end
-
-    # Returns the list of Addresses in the Wallet.
-    # @return [Array<Address>] The list of Addresses
-    def addresses
-      @addresses
     end
 
     # Returns the Address with the given ID.

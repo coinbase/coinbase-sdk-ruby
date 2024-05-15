@@ -13,13 +13,6 @@ describe Coinbase::Wallet do
                                     'network_id': network_id
                                   })
   end
-  let(:model) { Coinbase::Client::Wallet.new(
-    {
-      'id': wallet_id,
-      'network_id': network_id,
-      'default_address': address_model1
-    })
-  }
   let(:model_with_default_address) do
     Coinbase::Client::Wallet.new(
       {
@@ -167,7 +160,9 @@ describe Coinbase::Wallet do
   end
 
   describe '#seed=' do
-    let(:seedless_wallet) { described_class.new(model, seed: '', address_models: [address_model1]) }
+    let(:seedless_wallet) do
+      described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
+    end
 
     it 'sets the seed' do
       seedless_wallet.seed = '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe'
