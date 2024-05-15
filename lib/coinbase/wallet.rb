@@ -57,11 +57,7 @@ module Coinbase
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && !seed.empty? && seed.length != 64
-      raise ArgumentError, 'Seed must be present if address_models are provided' if seed.nil? && address_models.any?
-      raise ArgumentError, 'Seed must be empty if address_models are not provided' if !seed.nil? &&
-                                                                                      seed.empty? &&
-                                                                                      address_models.empty?
+      validate_seed_and_address_models(seed, address_models)
 
       @model = model
 
@@ -341,6 +337,20 @@ module Coinbase
       @model = Coinbase.call_api do
         wallets_api.get_wallet(id)
       end
+    end
+
+    # Validates the seed and address models passed to the constructor.
+    # @param seed [String] The seed to use for the Wallet
+    # @param address_models [Array<Coinbase::Client::Address>] The models of the addresses already registered with the
+    #   Wallet
+    def validate_seed_and_address_models(seed, address_models)
+      raise ArgumentError, 'Seed must be 32 bytes' if !seed.nil? && !seed.empty? && seed.length != 64
+
+      raise ArgumentError, 'Seed must be present if address_models are provided' if seed.nil? && address_models.any?
+
+      return unless !seed.nil? && seed.empty? && address_models.empty?
+
+      raise ArgumentError, 'Seed must be empty if address_models are not provided'
     end
 
     def addresses_api
