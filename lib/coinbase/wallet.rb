@@ -52,7 +52,7 @@ module Coinbase
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be
-    #   unhydrated.
+    #   instantiated without a seed and its corresponding private keys.
     # @param address_models [Array<Coinbase::Client::Address>] (Optional) The models of the addresses already registered
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
@@ -179,7 +179,7 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
-      raise 'Cannot export unhydrated Wallet' if @master.nil?
+      raise 'Cannot export Wallet without loaded seed' if @master.nil?
 
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
@@ -195,9 +195,9 @@ module Coinbase
       end
     end
 
-    # Returns whether the Wallet is hydrated, meaning it has a seed, can derive keys, and sign transactions.
-    # @return [Boolean] Whether the Wallet is hydrated
-    def can_sign?
+    # Returns whether the Wallet has a seed with which to derive keys and sign transactions.
+    # @return [Boolean] Whether the Wallet has a seed with which to derive keys and sign transactions.
+    def seed?
       !@master.nil?
     end
 
@@ -273,7 +273,7 @@ module Coinbase
     # Derives a key for an already registered Address in the Wallet.
     # @return [Eth::Key] The new key
     def derive_key
-      raise 'Cannot derive key for unhydrated Wallet' if @master.nil?
+      raise 'Cannot derive key for Wallet without seed loaded' if @master.nil?
 
       path = "#{@address_path_prefix}/#{@address_index}"
       private_key = @master.node_for_path(path).private_key.to_hex

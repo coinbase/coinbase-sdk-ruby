@@ -70,7 +70,7 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      raise 'Cannot transfer from unhydrated address' if @key.nil?
+      raise 'Cannot transfer from address without private key loaded' if @key.nil?
 
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
@@ -118,9 +118,9 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
-    # Returns whether the Address is hydrated, i.e. has a backing key to sign transactions.
-    # @return [Boolean] Whether the Address is hydrated
-    def can_sign?
+    # Returns whether the Address has a private key backing it to sign transactions.
+    # @return [Boolean] Whether the Address has a private key backing it to sign transactions.
+    def private_key?
       !@key.nil?
     end
 
@@ -150,7 +150,7 @@ module Coinbase
     # Exports the Address's private key to a hex string.
     # @return [String] The Address's private key as a hex String
     def export
-      raise 'Cannot export key for unhydrated address' if @key.nil?
+      raise 'Cannot export key without private key loaded' if @key.nil?
 
       @key.private_hex
     end

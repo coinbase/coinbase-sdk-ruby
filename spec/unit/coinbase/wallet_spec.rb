@@ -375,14 +375,14 @@ describe Coinbase::Wallet do
     end
   end
 
-  describe '#can_sign?' do
+  describe '#seed?' do
     it 'returns true if the wallet is hydrated' do
-      expect(wallet.can_sign?).to be true
+      expect(wallet.seed?).to be true
     end
 
     it 'returns false if the wallet is not hydrated' do
       wallet = described_class.new(model, seed: '', address_models: [address_model1])
-      expect(wallet.can_sign?).to be false
+      expect(wallet.seed?).to be false
     end
   end
 

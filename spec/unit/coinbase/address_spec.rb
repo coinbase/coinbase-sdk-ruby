@@ -345,19 +345,19 @@ describe Coinbase::Address do
       it 'raises an error' do
         expect do
           unhydrated_address.transfer(1, :wei, to_address_id)
-        end.to raise_error('Cannot transfer from unhydrated address')
+        end.to raise_error('Cannot transfer from address without private key loaded')
       end
     end
   end
 
-  describe '#can_sign?' do
+  describe '#private_key?' do
     it 'returns true if the address has a key' do
-      expect(address.can_sign?).to be true
+      expect(address.private_key?).to be true
     end
 
     it 'returns false if the address does not have a key' do
       unhydrated_address = described_class.new(model, nil)
-      expect(unhydrated_address.can_sign?).to be false
+      expect(unhydrated_address.private_key?).to be false
     end
   end
 
@@ -437,7 +437,7 @@ describe Coinbase::Address do
       it 'raises an error' do
         expect do
           unhydrated_address.export
-        end.to raise_error('Cannot export key for unhydrated address')
+        end.to raise_error('Cannot export key without private key loaded')
       end
     end
   end
