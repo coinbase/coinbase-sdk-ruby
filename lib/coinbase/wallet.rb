@@ -99,6 +99,24 @@ module Coinbase
       Coinbase.to_sym(@model.network_id)
     end
 
+    # Sets the seed of the Wallet. This seed is used to derive keys and sign transactions.
+    # @param seed [String] The seed to set. Expects a 32-byte hexadecimal with no 0x prefix.
+    def seed=(seed)
+      raise ArgumentError, 'Seed must be 32 bytes' if seed.length != 64
+      raise 'Seed is already set' unless @master.nil?
+      raise 'Cannot set seed for Wallet with non-zero Address index' if @address_index.positive?
+
+      @master = MoneyTree::Master.new(seed_hex: seed)
+
+      @addresses.each do
+        key = derive_key
+        address = address(key.address.to_s)
+        raise "Seed does not match wallet; cannot find address #{key.address.to_s}" if address.nil?
+
+        address.key = key
+      end
+    end
+
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
@@ -123,6 +141,12 @@ module Coinbase
     # @return [Address] The default address
     def default_address
       address(@model.default_address.address_id)
+    end
+
+    # Returns the list of Addresses in the Wallet.
+    # @return [Array<Address>] The list of Addresses
+    def addresses
+      @addresses
     end
 
     # Returns the Address with the given ID.
