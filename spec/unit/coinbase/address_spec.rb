@@ -350,14 +350,14 @@ describe Coinbase::Address do
     end
   end
 
-  describe '#private_key?' do
+  describe '#can_sign?' do
     it 'returns true if the address has a key' do
-      expect(address.private_key?).to be true
+      expect(address.can_sign?).to be true
     end
 
     it 'returns false if the address does not have a key' do
       unhydrated_address = described_class.new(model, nil)
-      expect(unhydrated_address.private_key?).to be false
+      expect(unhydrated_address.can_sign?).to be false
     end
   end
 

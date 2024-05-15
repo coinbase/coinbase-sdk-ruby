@@ -197,7 +197,7 @@ module Coinbase
 
     # Returns whether the Wallet has a seed with which to derive keys and sign transactions.
     # @return [Boolean] Whether the Wallet has a seed with which to derive keys and sign transactions.
-    def seed?
+    def can_sign?
       !@master.nil?
     end
 

@@ -120,7 +120,7 @@ module Coinbase
 
     # Returns whether the Address has a private key backing it to sign transactions.
     # @return [Boolean] Whether the Address has a private key backing it to sign transactions.
-    def private_key?
+    def can_sign?
       !@key.nil?
     end
 
