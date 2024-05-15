@@ -77,9 +77,9 @@ describe Coinbase::User do
   describe '#wallets' do
     let(:page_size) { 20 }
     let(:next_page_token) { SecureRandom.uuid }
-    let(:wallet_model_1) { Coinbase::Client::Wallet.new({ 'id': 'wallet1', 'network_id': 'base-sepolia' }) }
-    let(:wallet_model_2) { Coinbase::Client::Wallet.new({ 'id': 'wallet2', 'network_id': 'base-sepolia' }) }
-    let(:address_model_1) do
+    let(:wallet_model1) { Coinbase::Client::Wallet.new({ 'id': 'wallet1', 'network_id': 'base-sepolia' }) }
+    let(:wallet_model2) { Coinbase::Client::Wallet.new({ 'id': 'wallet2', 'network_id': 'base-sepolia' }) }
+    let(:address_model1) do
       Coinbase::Client::Address.new({
                                       'address_id': '0xdeadbeef1',
                                       'wallet_id': 'wallet1',
@@ -87,7 +87,7 @@ describe Coinbase::User do
                                       'network_id': 'base-sepolia'
                                     })
     end
-    let(:address_model_2) do
+    let(:address_model2) do
       Coinbase::Client::Address.new({
                                       'address_id': '0xdeadbeef2',
                                       'wallet_id': 'wallet1',
@@ -95,7 +95,7 @@ describe Coinbase::User do
                                       'network_id': 'base-sepolia'
                                     })
     end
-    let(:address_model_3) do
+    let(:address_model3) do
       Coinbase::Client::Address.new({
                                       'address_id': '0xdeadbeef3',
                                       'wallet_id': 'wallet2',
@@ -103,7 +103,7 @@ describe Coinbase::User do
                                       'network_id': 'base-sepolia'
                                     })
     end
-    let(:address_model_4) do
+    let(:address_model4) do
       Coinbase::Client::Address.new({
                                       'address_id': '0xdeadbeef4',
                                       'wallet_id': 'wallet2',
@@ -118,27 +118,27 @@ describe Coinbase::User do
       expect(wallets_api)
         .to receive(:list_wallets)
         .and_return(
-          Coinbase::Client::WalletList.new({ 'data' => [wallet_model_1, wallet_model_2], 'total_count' => 2 })
+          Coinbase::Client::WalletList.new({ 'data' => [wallet_model1, wallet_model2], 'total_count' => 2 })
         )
       expect(addresses_api)
         .to receive(:list_addresses)
         .with('wallet1', { limit: Coinbase::Wallet::MAX_ADDRESSES })
         .and_return(
-          Coinbase::Client::AddressList.new({ 'data' => [address_model_1, address_model_2], 'total_count' => 2 })
+          Coinbase::Client::AddressList.new({ 'data' => [address_model1, address_model2], 'total_count' => 2 })
         )
       expect(addresses_api)
         .to receive(:list_addresses)
         .with('wallet2', { limit: Coinbase::Wallet::MAX_ADDRESSES })
         .and_return(
-          Coinbase::Client::AddressList.new({ 'data' => [address_model_3, address_model_4], 'total_count' => 2 })
+          Coinbase::Client::AddressList.new({ 'data' => [address_model3, address_model4], 'total_count' => 2 })
         )
     end
 
     it 'returns all wallets' do
       wallets = user.wallets
       expect(wallets.size).to eq(2)
-      expect(wallets[0].id).to eq(wallet_model_1.id)
-      expect(wallets[1].id).to eq(wallet_model_2.id)
+      expect(wallets[0].id).to eq(wallet_model1.id)
+      expect(wallets[1].id).to eq(wallet_model2.id)
     end
   end
 

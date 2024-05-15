@@ -12,7 +12,7 @@ module Coinbase
   # list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or
   # User#import_wallet.
   class Wallet
-    attr_reader :addresses
+    attr_reader :addresses, :model
 
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
@@ -263,12 +263,17 @@ module Coinbase
     # @param address_map [Hash<String, Boolean>] The map of registered Address IDs
     # @param address_model [Coinbase::Client::Address] The Address model
     # @return [Address] The new Address
-    def derive_address(_address_map, address_model)
+    def derive_address(address_map, address_model)
       key = if @master.nil?
               nil
             else
               derive_key
             end
+
+      unless key.nil?
+        address_from_key = key.address.to_s
+        raise 'Invalid address' if address_map[address_from_key].nil?
+      end
 
       cache_address(address_model, key)
     end
