@@ -169,6 +169,24 @@ describe Coinbase::Wallet do
       expect(seedless_wallet.can_sign?).to be true
       expect(seedless_wallet.default_address.can_sign?).to be true
     end
+
+    it 'raises an error for an invalid seed' do
+      expect do
+        seedless_wallet.seed = 'invalid seed'
+      end.to raise_error(ArgumentError, 'Seed must be 32 bytes')
+    end
+
+    it 'raises an error if the wallet is already hydrated' do
+      expect do
+        wallet.seed = '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe'
+      end.to raise_error('Seed is already set')
+    end
+
+    it 'raises an error if it is the wrong seed' do
+      expect do
+        seedless_wallet.seed = '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbf'
+      end.to raise_error(/Seed does not match wallet/)
+    end
   end
 
   describe '#create_address' do
