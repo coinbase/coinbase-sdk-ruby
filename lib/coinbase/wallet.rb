@@ -76,7 +76,7 @@ module Coinbase
 
       # TODO: Adjust derivation path prefix based on network protocol.
       @address_path_prefix = "m/44'/60'/0'/0"
-      @address_index = 0
+      @private_key_index = 0
 
       if address_models.any?
         derive_addresses(address_models)
@@ -97,6 +97,24 @@ module Coinbase
     # @return [Symbol] The Network ID
     def network_id
       Coinbase.to_sym(@model.network_id)
+    end
+
+    # Sets the seed of the Wallet. This seed is used to derive keys and sign transactions.
+    # @param seed [String] The seed to set. Expects a 32-byte hexadecimal with no 0x prefix.
+    def seed=(seed)
+      raise ArgumentError, 'Seed must be 32 bytes' if seed.length != 64
+      raise 'Seed is already set' unless @master.nil?
+      raise 'Cannot set seed for Wallet with non-zero private key index' if @private_key_index.positive?
+
+      @master = MoneyTree::Master.new(seed_hex: seed)
+
+      @addresses.each do
+        key = derive_key
+        a = address(key.address.to_s)
+        raise "Seed does not match wallet; cannot find address #{key.address}" if a.nil?
+
+        a.key = key
+      end
     end
 
     # Creates a new Address in the Wallet.
@@ -122,7 +140,7 @@ module Coinbase
     # Returns the default address of the Wallet.
     # @return [Address] The default address
     def default_address
-      address(@model.default_address.address_id)
+      address(@model.default_address&.address_id)
     end
 
     # Returns the Address with the given ID.
@@ -275,8 +293,9 @@ module Coinbase
     def derive_key
       raise 'Cannot derive key for Wallet without seed loaded' if @master.nil?
 
-      path = "#{@address_path_prefix}/#{@address_index}"
+      path = "#{@address_path_prefix}/#{@private_key_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
+      @private_key_index += 1
       Eth::Key.new(priv: private_key)
     end
 
@@ -287,7 +306,6 @@ module Coinbase
     def cache_address(address_model, key)
       address = Address.new(address_model, key)
       @addresses << address
-      @address_index += 1
       address
     end
 

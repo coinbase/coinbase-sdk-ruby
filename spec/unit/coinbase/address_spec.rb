@@ -104,6 +104,18 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#key=' do
+    let(:unhydrated_address) { described_class.new(model, nil) }
+
+    it 'sets the key' do
+      expect { unhydrated_address.key = key }.not_to raise_error
+    end
+
+    it 'raises an error if the key is already set' do
+      expect { address.key = key }.to raise_error('Private key is already set')
+    end
+  end
+
   describe '#balance' do
     let(:response) do
       Coinbase::Client::Balance.new(
