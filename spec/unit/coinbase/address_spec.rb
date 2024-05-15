@@ -104,6 +104,14 @@ describe Coinbase::Address do
     end
   end
 
+  describe '#key=' do
+    let(:unhydrated_address) { described_class.new(model, nil) }
+
+    it 'sets the key' do
+      expect { unhydrated_address.key = key }.not_to raise_error
+    end
+  end
+
   describe '#balance' do
     let(:response) do
       Coinbase::Client::Balance.new(

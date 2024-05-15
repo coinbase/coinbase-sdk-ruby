@@ -39,6 +39,14 @@ module Coinbase
       @model.address_id
     end
 
+    # Sets the private key backing the Address. This key is used to sign transactions.
+    # @param key [Eth::Key] The key backing the Address
+    def key=(key)
+      raise 'Private key is already set' unless @key.nil?
+
+      @key = key
+    end
+
     # Returns the balances of the Address.
     # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
     #  in ETH.
