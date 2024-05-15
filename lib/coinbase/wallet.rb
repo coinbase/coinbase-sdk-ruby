@@ -260,11 +260,7 @@ module Coinbase
     # @param address_model [Coinbase::Client::Address] The Address model
     # @return [Address] The new Address
     def derive_address(address_map, address_model)
-      key = if @master.nil?
-              nil
-            else
-              derive_key
-            end
+      key = @master.nil? ? nil : derive_key
 
       unless key.nil?
         address_from_key = key.address.to_s
