@@ -338,6 +338,27 @@ describe Coinbase::Address do
         end.to raise_error(ArgumentError)
       end
     end
+
+    context 'when the Address is unhydrated' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an error' do
+        expect do
+          unhydrated_address.transfer(1, :wei, to_address_id)
+        end.to raise_error('Cannot transfer from address without private key loaded')
+      end
+    end
+  end
+
+  describe '#can_sign?' do
+    it 'returns true if the address has a key' do
+      expect(address.can_sign?).to be true
+    end
+
+    it 'returns false if the address does not have a key' do
+      unhydrated_address = described_class.new(model, nil)
+      expect(unhydrated_address.can_sign?).to be false
+    end
   end
 
   describe '#faucet' do
@@ -408,6 +429,16 @@ describe Coinbase::Address do
   describe '#export' do
     it 'export private key from address' do
       expect(address.export).to eq(private_key)
+    end
+
+    context 'when the address is unhydrated' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an error' do
+        expect do
+          unhydrated_address.export
+        end.to raise_error('Cannot export key without private key loaded')
+      end
     end
   end
 
