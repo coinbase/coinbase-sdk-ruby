@@ -157,8 +157,6 @@ describe Coinbase::User do
       Coinbase::Wallet.new(model, seed: seed, address_models: [address_model])
     end
     let(:user) { described_class.new(model) }
-    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
-    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
     let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
 
     let(:initial_seed_data) { JSON.pretty_generate({}) }
@@ -172,13 +170,20 @@ describe Coinbase::User do
     end
 
     before do
+      @backup_file_path = Coinbase.configuration.backup_file_path
+      @api_key_private_key = Coinbase.configuration.api_key_private_key
+      Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+      Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
       allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(initial_seed_data)
       end
     end
+
     after do
       File.delete(Coinbase.configuration.backup_file_path)
+      Coinbase.configuration.backup_file_path = @backup_file_path
+      Coinbase.configuration.api_key_private_key = @api_key_private_key
     end
 
     it 'saves the Wallet data when encryption is false' do
@@ -248,9 +253,6 @@ describe Coinbase::User do
       Coinbase::Wallet.new(model, seed: seed, address_models: [address_model])
     end
     let(:user) { described_class.new(model) }
-    Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
-    Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
-
     let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
     let(:wallet_model_with_default_address) do
       Coinbase::Client::Wallet.new(
@@ -307,12 +309,18 @@ describe Coinbase::User do
     end
 
     before do
+      @backup_file_path = Coinbase.configuration.backup_file_path
+      @api_key_private_key = Coinbase.configuration.api_key_private_key
+      Coinbase.configuration.backup_file_path = "#{SecureRandom.uuid}.json"
+      Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
       File.open(Coinbase.configuration.backup_file_path, 'w') do |file|
         file.write(JSON.pretty_generate(initial_seed_data))
       end
     end
     after do
       File.delete(Coinbase.configuration.backup_file_path) if File.exist?(Coinbase.configuration.backup_file_path)
+      Coinbase.configuration.backup_file_path = @backup_file_path
+      Coinbase.configuration.api_key_private_key = @api_key_private_key
     end
 
     it 'loads the Wallet from backup' do
