@@ -110,10 +110,10 @@ module Coinbase
 
       @addresses.each do
         key = derive_key
-        address = address(key.address.to_s)
-        raise "Seed does not match wallet; cannot find address #{key.address}" if address.nil?
+        a = address(key.address.to_s)
+        raise "Seed does not match wallet; cannot find address #{key.address}" if a.nil?
 
-        address.key = key
+        a.key = key
       end
     end
 
