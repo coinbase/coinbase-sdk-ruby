@@ -13,6 +13,13 @@ describe Coinbase::Wallet do
                                     'network_id': network_id
                                   })
   end
+  let(:model) { Coinbase::Client::Wallet.new(
+    {
+      'id': wallet_id,
+      'network_id': network_id,
+      'default_address': address_model1
+    })
+  }
   let(:model_with_default_address) do
     Coinbase::Client::Wallet.new(
       {
@@ -156,6 +163,16 @@ describe Coinbase::Wallet do
   describe '#network_id' do
     it 'returns the Network ID' do
       expect(wallet.network_id).to eq(:base_sepolia)
+    end
+  end
+
+  describe '#seed=' do
+    let(:seedless_wallet) { described_class.new(model, seed: '', address_models: [address_model1]) }
+
+    it 'sets the seed' do
+      seedless_wallet.seed = '86fc9fba421dcc6ad42747f14132c3cd975bd9fb1454df84ce5ea554f2542fbe'
+      expect(seedless_wallet.can_sign?).to be true
+      expect(seedless_wallet.default_address.can_sign?).to be true
     end
   end
 
