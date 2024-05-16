@@ -20,17 +20,102 @@ hackathons, code academies, and other development settings.
 - [Platform API Documentation](https://docs.cdp.coinbase.com/platform-apis/docs/welcome)
 - [Ruby SDK Documentation](https://coinbase.github.io/coinbase-sdk-ruby/)
 
-## Installation
+## Requirements
 
-### In Your Ruby Project
+Make sure that your developer environment satisfies all of the requirements before proceeding through the quickstart.
 
-Add the following to your Gemfile:
+### Ruby 2.7+
+
+The Coinbase server-side SDK requires Ruby 2.7 or higher. To view your currently installed version of Ruby, run
+the following from the command-line:
+
+```bash
+ruby -v
+```
+
+We recommend installing and managing Ruby versions with `rbenv`.
+See [Using Package Managers](https://github.com/rbenv/rbenv?tab=readme-ov-file#homebrew) in the rbenv README for instructions on how to install `rbenv`.
+
+Once `rbenv` has been installed, you can install and use Ruby 2.7 by running the following commands:
+
+```bash
+rbenv install 2.7.0
+rbenv global 2.7.0
+```
+
+### Rbsecp256k1 Gem
+
+The Coinbase Platform SDK depends on the `rbsecp256k1` gem, which requires certain dependencies to be installed on your system. Follow the instructions provided [here](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to meet these requirements:
+
+#### MacOS
+
+On MacOS, run the following command:
+
+```bash
+brew install automake openssl libtool pkg-config gmp libffi
+```
+
+#### Linux
+
+On Linux, run the following command:
 
 ```
+sudo apt-get install build-essential automake pkg-config libtool \
+  libffi-dev libssl-dev libgmp-dev python3-dev
+```
+
+:::info
+If you installed `libsecp256k1` but the gem cannot find it, run `ldconfig` to update your library load paths.
+:::
+
+### OpenSSL Gem
+
+The Coinbase Platform SDK relies on the `openssl` gem for certain cryptographic operations. If you encounter issues installing
+the Platform SDK, ensure that OpenSSL 3+ is installed, and that the version used by Ruby matches the version required by the gem.
+
+If you encounter an error like this:
+
+```bash
+error: incomplete definition of type 'struct evp_md_ctx_st'
+    pkey = EVP_PKEY_CTX_get0_pkey(EVP_MD_CTX_get_pkey_ctx(ctx));
+```
+
+re-install the openssl gem with the following command:
+
+```bash
+gem install openssl -- --with-openssl-dir=$(brew --prefix openssl@3)
+```
+
+## Installation
+
+There are two ways of installing the Coinbase Platform SDK: for use with the Interactive Ruby Shell, or for use
+in a Ruby project (e.g. Ruby on Rails).
+
+### For `irb`
+
+Use the Interactive Ruby Shell (`irb`) to leverage Ruby’s built-in REPL and quickly explore the functionality of our SDK.
+
+Run the following from the command line:
+
+```bash
+gem install coinbase-sdk
+```
+
+After running `irb`, require the Gem:
+
+```ruby
+require 'coinbase'
+```
+
+### For Ruby on Rails
+
+Alternatively, if you want to install your Coinbase SDK gem to your Ruby on Rails project, add the following line to your Gemfile:
+
+```ruby
 gem 'coinbase-sdk'
 ```
 
-Or if you are specifying dependencies in your Gemspec:
+Or if you are using a Gemspec:
 
 ```ruby
 Gem::Specification.new do |spec|
@@ -41,131 +126,141 @@ end
 Then run:
 
 ```bash
-bundler install
+bundle install
 ```
 
-### In the Interactive Ruby Shell (`irb`)
+## Creating a Wallet
 
-On the command-line, run:
-
-```bash
-gem install coinbase-sdk
-```
-
-After running `irb`, require the Gem:
-
-```irb
-require 'coinbase'
-```
-
-### Requirements
-
-- Ruby 2.7+.
-
-## Usage
-
-### Initialization
-
-To start, [create a CDP API Key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API Key name and API Key's private key via the `configure` method:
+To start, [create a CDP API key](https://portal.cdp.coinbase.com/access/api). Then, initialize the Platform SDK by passing your API key name and API key's private key via the `configure` method:
 
 ```ruby
-api_key_name = "Copy your API Key name here."
-api_key_private_key = "Copy your API Key's private key here."
+api_key_name = "Copy your API key name here."
+# Ensure that you are using double-quotes here.
+api_key_private_key = "Copy your API key's private key here."
 
 Coinbase.configure do |config|
   config.api_key_name = api_key_name
   config.api_key_private_key = api_key_private_key
 end
+
+puts "Coinbase SDK has been successfully configured with CDP API key."
 ```
 
-Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key,
-downloaded from CDP portal.
+Another way to initialize the SDK is by sourcing the API key from the JSON file that contains your API key,
+downloaded from the CDP portal.
 
 ```ruby
-Coinbase.configure_from_json('~/Downloads/coinbase_cloud_api_key.json')
+Coinbase.configure_from_json('~/Downloads/cdp_api_key.json')
+
+puts "Coinbase SDK has been successfully configured from JSON file."
 ```
 
-This will allow you to authenticate with the Platform APIs and get access to the `default_user`.
+This will allow you to [authenticate](./authentication.md) with the Platform APIs and get access to the
+[`default_user`](./users.md):
 
 ```ruby
 u = Coinbase.default_user
 ```
 
-### Wallets, Addresses, and Transfers
-
-Now, create a Wallet from the User. Wallets are created with a single default Address.
+Now, create a wallet from the User. Wallets are created with a single default address.
 
 ```ruby
-# Create a Wallet with one Address by default.
+# Create a wallet with one address by default.
 w1 = u.create_wallet
 ```
 
-Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don't have testnet funds, get funds from a [faucet](https://docs.base.org/docs/tools/network-faucets/).
-
-For development purposes, we provide a `faucet` method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.
+Wallets come with a single default address, accessible via `default_address`:
 
 ```ruby
-# Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
+# A wallet has a default address.
+a = w1.default_address
+```
+
+## Funding a Wallet
+
+Wallets do not have funds on them to start. For Base Sepolia testnet, we provide a `faucet` method to fund your wallet with
+testnet ETH. You are allowed one faucet claim per 24-hour window.
+
+```ruby
+# Fund the wallet with a faucet transaction.
 faucet_tx = w1.faucet
-faucet_tx.transaction_hash
+
+puts "Faucet transaction successfully completed: #{faucet_tx}"
 ```
 
+## Transferring Funds
+
+Now that your faucet transaction has successfully completed, you can send the funds in your wallet to another wallet.
+The code below creates another wallet, and uses the `transfer` function to send testnet ETH from the first wallet to
+the second:
+
 ```ruby
-# Create a new Wallet to transfer funds to.
-# Then, we can transfer 0.00001 ETH out of the Wallet to another Wallet.
+# Create a new wallet w2 to transfer funds to.
 w2 = u.create_wallet
-w1.transfer(0.00001, :eth, w2).wait!
+
+puts "Wallet successfully created: #{w2}"
+
+t = w1.transfer(0.00001, :eth, w2).wait!
+
+puts "Transfer successfully completed: #{t}"
 ```
 
-### Re-Instantiating Wallets
+See [Transers](./transfers.md) for more information.
 
-The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The code walks you through how to export a Wallet and store it in a secure location.
+## Persisting a Wallet
+
+The SDK creates wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate wallets. The following code explains how to export a wallet and store it in a secure location.
 
 ```ruby
-# Optional: Create a new Wallet if you do not already have one.
-# Export the data required to re-instantiate the Wallet.
-w3 = u.create_wallet
-data = w3.export
+# Export the data required to re-instantiate the wallet.
+data = w1.export
 ```
 
-In order to persist the data for the Wallet, you will need to implement a store method to store the data export in a secure location. If you do not store the Wallet in a secure location you will lose access to the Wallet and all of the funds on it.
+In order to persist the data for a wallet, you will need to implement a `store` method to store the exported data in a secure location. If you do not store the wallet in a secure location, you will lose access to the wallet, as well as the funds on it.
 
 ```ruby
-# At this point, you should implement your own "store" method to securely persist
-# the data required to re-instantiate the Wallet at a later time.
-store(data)
+# You should implement the "store" method to securely persist the data object,
+# which is required to re-instantiate the wallet at a later time. For ease of use,
+# the data object is converted to a Hash first.
+store(data.to_hash)
 ```
 
-For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system.
-This is an insecure method of storing wallet seeds and should only be used for development purposes.
+For more information on wallet persistence, see [the documentation on wallets](./wallets.md#persisting-a-wallet).
+
+Alternatively, you can use the `save_wallet_locally!` function to persist wallets on your local file system. This is a
+convenience function purely for testing purposes, and should not be considered a secure method of persisting wallets.
 
 ```ruby
-u.save_wallet_locally!(w3)
+# Set encrypt: true to encrypt the wallet export data with your CDP API key.
+u.save_wallet_locally!(w1, encrypt: true)
+
+puts "Wallet #{w1.id} successfully saved to local file storage."
 ```
 
-To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key
-for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with
-the same API key when invoking `save_wallet_locally!` and `load_wallets_from_local`.
+## Re-instantiating a Wallet
+
+To re-instantiate a wallet, fetch your export data from your secure storage, and pass it to the `import` method:
 
 ```ruby
-u.save_wallet_locally!(w3, encrypt: true)
+# You should implement the "fetch" method to retrieve the securely persisted data object,
+# keyed by the wallet ID.
+fetched_data = fetch(w1.id)
+
+# w3 will be equivalent to w1.
+w3 = u.import_wallet(fetched_data)
 ```
 
-The below code demonstrates how to re-instantiate a Wallet from the data export.
+If you used the `save_wallet_locally!` function to persist wallets on your local file system, then you can use the
+`load_wallets_from_local` function re-instantiate the wallets.
 
 ```ruby
-# The Wallet can be re-instantiated using the exported data.
-# w4 will be equivalent to w3.
-w4 = Coinbase::Wallet.import(data)
-```
-
-To import wallets that were persisted to your local file system using `save_wallet_locally!`, use the below code.
-
-```ruby
-# The Wallet can be re-instantiated using the exported data.
-# w5 will be equivalent to w3.
+# wallets will contain a Hash from wallet ID to wallet.
 wallets = u.load_wallets_from_local
-w5 = wallets[w3.id]
+
+puts "Wallets successfully loaded from local file storage."
+
+# w4 will be equivalent to w1 and w3.
+w4 = wallets[w1.id]
 ```
 
 ## Development
