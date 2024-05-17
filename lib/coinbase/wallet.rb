@@ -35,6 +35,27 @@ module Coinbase
         new(model, seed: data.seed, address_models: address_list.data)
       end
 
+      # Creates a new Wallet on the specified Network and generate a default address for it.
+      # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+      # @return [Coinbase::Wallet] the new Wallet
+      def create(network_id: 'base-sepolia')
+        model = Coinbase.call_api do
+          wallets_api.create_wallet(
+            create_wallet_request: {
+              wallet: {
+                network_id: network_id
+              }
+            }
+          )
+        end
+
+        wallet = new(model)
+
+        wallet.create_address
+
+        wallet
+      end
+
       private
 
       # TODO: Memoize these objects in a thread-safe way at the top-level.
@@ -60,31 +81,11 @@ module Coinbase
       validate_seed_and_address_models(seed, address_models)
 
       @model = model
-
-      @master = if seed.nil?
-                  MoneyTree::Master.new
-                elsif seed.empty?
-                  nil
-                else
-                  MoneyTree::Master.new(seed_hex: seed)
-                end
-
-      # TODO: Make Network an argument to the constructor.
-      @network_id = :base_sepolia
-
+      @master = master_node(seed)
       @addresses = []
-
-      # TODO: Adjust derivation path prefix based on network protocol.
-      @address_path_prefix = "m/44'/60'/0'/0"
       @private_key_index = 0
 
-      if address_models.any?
-        derive_addresses(address_models)
-      else
-        create_address
-        # Update the model to reflect the new default address.
-        update_model
-      end
+      derive_addresses(address_models)
     end
 
     # Returns the Wallet ID.
@@ -134,6 +135,9 @@ module Coinbase
         addresses_api.create_address(id, opts)
       end
 
+      # Auto-reload wallet to set default address on first address creation.
+      reload if addresses.empty?
+
       cache_address(address_model, key)
     end
 
@@ -182,11 +186,11 @@ module Coinbase
     # @return [Transfer] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
       if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
         destination = destination.default_address.id
       elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != @network_id
+        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
 
         destination = destination.id
       end
@@ -260,10 +264,36 @@ module Coinbase
 
     private
 
+    # Reloads the Wallet with the latest data.
+    def reload
+      @model = Coinbase.call_api do
+        wallets_api.get_wallet(id)
+      end
+    end
+
+    def master_node(seed)
+      return MoneyTree::Master.new if seed.nil?
+      return nil if seed.empty?
+
+      MoneyTree::Master.new(seed_hex: seed)
+    end
+
+    def address_path_prefix
+      # TODO: Add support for other networks.
+      @address_path_prefix ||= case network_id.to_s.split('_').first
+                               when 'base'
+                                 "m/44'/60'/0'/0"
+                               else
+                                 raise ArgumentError, "Unsupported network ID: #{network_id}"
+                               end
+    end
+
     # Derives the registered Addresses in the Wallet.
     # @param address_models [Array<Coinbase::Client::Address>] The models of the addresses already registered with the
     #   Wallet
     def derive_addresses(address_models)
+      return unless address_models.any?
+
       # Create a map tracking which addresses are already registered with the Wallet.
       address_map = build_address_map(address_models)
 
@@ -293,7 +323,7 @@ module Coinbase
     def derive_key
       raise 'Cannot derive key for Wallet without seed loaded' if @master.nil?
 
-      path = "#{@address_path_prefix}/#{@private_key_index}"
+      path = "#{address_path_prefix}/#{@private_key_index}"
       private_key = @master.node_for_path(path).private_key.to_hex
       @private_key_index += 1
       Eth::Key.new(priv: private_key)
@@ -344,13 +374,6 @@ module Coinbase
       compressed_last_byte = last_byte + 4
       new_signature_bytes = [compressed_last_byte] + signature_bytes[0..-2]
       new_signature_bytes.pack('C*').unpack1('H*')
-    end
-
-    # Updates the Wallet model with the latest data.
-    def update_model
-      @model = Coinbase.call_api do
-        wallets_api.get_wallet(id)
-      end
     end
 
     # Validates the seed and address models passed to the constructor.

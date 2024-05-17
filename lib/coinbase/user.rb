@@ -20,21 +20,10 @@ module Coinbase
     end
 
     # Creates a new Wallet belonging to the User.
+    # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
     # @return [Coinbase::Wallet] the new Wallet
-    def create_wallet
-      create_wallet_request = {
-        wallet: {
-          # TODO: Don't hardcode this.
-          network_id: 'base-sepolia'
-        }
-      }
-      opts = { create_wallet_request: create_wallet_request }
-
-      model = Coinbase.call_api do
-        wallets_api.create_wallet(opts)
-      end
-
-      Wallet.new(model)
+    def create_wallet(**create_wallet_options)
+      Wallet.create(create_wallet_options)
     end
 
     # Imports a Wallet belonging to the User.
