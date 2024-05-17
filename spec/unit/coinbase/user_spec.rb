@@ -15,45 +15,27 @@ describe Coinbase::User do
   end
 
   describe '#create_wallet' do
-    let(:wallet_id) { SecureRandom.uuid }
     let(:network_id) { 'base-sepolia' }
-    let(:create_wallet_request) { { wallet: { network_id: network_id } } }
-    let(:opts) { { create_wallet_request: create_wallet_request } }
-    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
-    let(:wallet_model_with_default_address) do
-      Coinbase::Client::Wallet.new(
-        {
-          'id': wallet_id,
-          'network_id': 'base-sepolia',
-          'default_address': Coinbase::Client::Address.new({
-                                                             'address_id': '0xdeadbeef',
-                                                             'wallet_id': wallet_id,
-                                                             'public_key': '0x1234567890',
-                                                             'network_id': 'base-sepolia'
-                                                           })
-        }
-      )
+    let(:wallet) { instance_double('Coinbase::Wallet', network_id: Coinbase.to_sym(network_id)) }
+
+    context 'when called with no arguments' do
+      before do
+        allow(Coinbase::Wallet).to receive(:create).with({}).and_return(wallet)
+      end
+
+      it 'creates a new wallet' do
+        expect(user.create_wallet).to eq(wallet)
+      end
     end
 
-    before do
-      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
-      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api).to receive(:create_wallet).with(opts).and_return(wallet_model)
-      expect(addresses_api)
-        .to receive(:create_address)
-        .with(wallet_id, satisfy do |opts|
-          public_key_present = opts[:create_address_request][:public_key].is_a?(String)
-          attestation_present = opts[:create_address_request][:attestation].is_a?(String)
-          public_key_present && attestation_present
-        end)
-      expect(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(wallet_model_with_default_address)
-    end
+    context 'when called with a specified network ID' do
+      before do
+        allow(Coinbase::Wallet).to receive(:create).with(network_id: network_id).and_return(wallet)
+      end
 
-    it 'creates a new wallet' do
-      wallet = user.create_wallet
-      expect(wallet).to be_a(Coinbase::Wallet)
-      expect(wallet.id).to eq(wallet_id)
-      expect(wallet.network_id).to eq(:base_sepolia)
+      it 'creates a new wallet for the specified network ID' do
+        expect(user.create_wallet(network_id: network_id)).to eq(wallet)
+      end
     end
   end
 
@@ -153,8 +135,10 @@ describe Coinbase::User do
                                     })
     end
     let(:wallet_id) { SecureRandom.uuid }
+    let(:network_id) { 'base-sepolia' }
+    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
     let(:seed_wallet) do
-      Coinbase::Wallet.new(model, seed: seed, address_models: [address_model])
+      Coinbase::Wallet.new(wallet_model, seed: seed, address_models: [address_model])
     end
     let(:user) { described_class.new(model) }
     let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
