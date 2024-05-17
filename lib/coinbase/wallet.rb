@@ -37,13 +37,15 @@ module Coinbase
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+      # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia')
+      def create(network_id: 'base-sepolia', server_signer: false)
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
-                network_id: network_id
+                network_id: network_id,
+                use_server_signer: server_signer
               }
             }
           )
@@ -51,7 +53,10 @@ module Coinbase
 
         wallet = new(model)
 
-        wallet.create_address
+        # Create a default address if the Wallet is not using the server signer.
+        # When used with a server signer, the server signer must first register
+        # with the wallet before addreses can be created.
+        wallet.create_address unless server_signer
 
         wallet
       end

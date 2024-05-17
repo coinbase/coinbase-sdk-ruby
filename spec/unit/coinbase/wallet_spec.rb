@@ -89,7 +89,7 @@ describe Coinbase::Wallet do
     context 'when there are no addresses' do
       let(:address_list_model) { Coinbase::Client::AddressList.new({ 'data' => [], 'total_count' => 0 }) }
 
-      it 'loads the wallet addresses' do
+      it 'does not set any addresses' do
         expect(imported_wallet.addresses.length).to eq(0)
       end
     end
@@ -98,57 +98,55 @@ describe Coinbase::Wallet do
   describe '.create' do
     let(:wallet_id) { SecureRandom.uuid }
     let(:create_wallet_request) do
-      { wallet: { network_id: network_id } }
+      { wallet: { network_id: network_id, use_server_signer: use_server_signer } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
-    let(:default_address_model) do
-      Coinbase::Client::Address.new(
-        {
-          'address_id': '0xdeadbeef',
-          'wallet_id': wallet_id,
-          'public_key': '0x1234567890',
-          'network_id': network_id
-        }
-      )
-    end
 
     subject(:created_wallet) { described_class.create }
 
     before do
       allow(wallets_api).to receive(:create_wallet).with(request).and_return(wallet_model)
-
-      allow(addresses_api)
-        .to receive(:create_address)
-        .with(
-          wallet_id,
-          satisfy do |opts|
-            public_key_present = opts[:create_address_request][:public_key].is_a?(String)
-            attestation_present = opts[:create_address_request][:attestation].is_a?(String)
-            public_key_present && attestation_present
-          end
-        ).and_return(address_model1)
-
-      allow(wallets_api)
-        .to receive(:get_wallet)
-        .with(wallet_id)
-        .and_return(model_with_default_address)
     end
 
-    it 'creates a new wallet' do
-      expect(created_wallet).to be_a(Coinbase::Wallet)
-    end
+    context 'when not using a server signer' do
+      let(:use_server_signer) { false }
 
-    it 'creates a default address' do
-      expect(created_wallet.default_address).to be_a(Coinbase::Address)
-      expect(created_wallet.addresses.length).to eq(1)
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(
+            wallet_id,
+            satisfy do |req|
+              public_key = req[:create_address_request][:public_key]
+              attestation = req[:create_address_request][:attestation]
+
+              public_key.is_a?(String) && attestation.is_a?(String)
+            end
+          ).and_return(address_model1)
+
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
+
+      it 'creates a new wallet' do
+        expect(created_wallet).to be_a(Coinbase::Wallet)
+      end
+
+      it 'creates a default address' do
+        expect(created_wallet.default_address).to be_a(Coinbase::Address)
+        expect(created_wallet.addresses.length).to eq(1)
+      end
     end
 
     context 'when setting the network ID explicitly' do
       let(:network_id) { 'base-mainnet' }
+      let(:use_server_signer) { true }
 
       subject(:created_wallet) do
-        described_class.create(network_id: network_id)
+        described_class.create(network_id: network_id, server_signer: true)
       end
 
       it 'creates a new wallet' do
@@ -157,6 +155,28 @@ describe Coinbase::Wallet do
 
       it 'sets the specified network ID' do
         expect(created_wallet.network_id).to eq(:base_mainnet)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+
+      subject(:created_wallet) { described_class.create(server_signer: true) }
+
+      it 'creates a new wallet' do
+        expect(created_wallet).to be_a(Coinbase::Wallet)
+      end
+
+      it 'does not create a default address' do
+        expect(created_wallet.default_address).to be_nil
+      end
+
+      it 'does not set any addresses' do
+        expect(created_wallet.addresses).to be_empty
+      end
+
+      it 'sets the default network ID' do
+        expect(created_wallet.network_id).to eq(:base_sepolia)
       end
     end
   end
