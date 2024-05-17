@@ -27,21 +27,21 @@ module Coinbase
     end
 
     # Returns a string representation of the balance map.
-    # @return [String] The string representation of the balance
+    # @return [String] The string representation of the balance map
     def to_s
       to_string
     end
 
     # Returns a string representation of the balance map.
-    # @return [String] The string representation of the balance
+    # @return [String] The string representation of the balance map
     def inspect
       to_string
     end
 
     private
 
-    # Returns a string representation of the balance.
-    # @return [String] The string representation of the balance
+    # Returns a string representation of the balance map.
+    # @return [String] The string representation of the balance map
     def to_string
       result = {}
 
