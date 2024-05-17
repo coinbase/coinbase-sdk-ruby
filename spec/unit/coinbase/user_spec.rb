@@ -20,7 +20,7 @@ describe Coinbase::User do
 
     context 'when called with no arguments' do
       before do
-        allow(Coinbase::Wallet).to receive(:create).with({}).and_return(wallet)
+        allow(Coinbase::Wallet).to receive(:create).with(no_args).and_return(wallet)
       end
 
       it 'creates a new wallet' do
