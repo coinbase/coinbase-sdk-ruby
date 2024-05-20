@@ -25,12 +25,10 @@ module Coinbase
       )
     end
 
-    # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in
-    # the Coinbase module.
-    # @param network_id [Symbol] The ID of the Network to which the Asset belongs
+    # Returns a new Balance object. Do not use this method. Instead, use Balance.from_model or
+    # Balance.from_model_and_asset_id.
+    # @param amount [BigDecimal] The amount of the Asset
     # @param asset_id [Symbol] The Asset ID
-    # @param display_name [String] The Asset's display name
-    # @param address_id [String] (Optional) The Asset's address ID, if one exists
     def initialize(amount:, asset_id:)
       @amount = amount
       @asset_id = asset_id

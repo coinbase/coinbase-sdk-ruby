@@ -15,6 +15,9 @@ Metrics/ClassLength:
 # Cyclomatic complexity is not a good measure of code quality.
 Metrics/CyclomaticComplexity:
   Max: 50
+# Perceived complexity is not a good measure of code quality.
+Metrics/PerceivedComplexity:
+  Max: 25
 Metrics/MethodLength:
   Max: 50
 # Methods can have many parameters.

@@ -80,30 +80,70 @@
 <p><a href="https://coinbase.github.io/coinbase-sdk-ruby/">Ruby SDK Documentation</a></p>
 </li></ul>
 
+<h2 id="label-Requirements">Requirements</h2>
+
+<p>Make sure that your developer environment satisfies all of the requirements before proceeding through the quickstart.</p>
+
+<h3 id="label-Ruby+2.7-2B">Ruby 2.7+</h3>
+
+<p>The Coinbase server-side SDK requires Ruby 2.7 or higher. To view your currently installed version of Ruby, run the following from the command-line:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_ruby'>ruby</span> <span class='op'>-</span><span class='id identifier rubyid_v'>v</span>
+</code></pre>
+
+<p>We recommend installing and managing Ruby versions with <code>rbenv</code>. See <a href="https://github.com/rbenv/rbenv?tab=readme-ov-file#homebrew">Using Package Managers</a> in the rbenv README for instructions on how to install <code>rbenv</code>.</p>
+
+<p>Once <code>rbenv</code> has been installed, you can install and use Ruby 2.7 by running the following commands:</p>
+
+<pre class="code ruby"><code class="ruby">rbenv install 2.7.0
+rbenv global 2.7.0
+</code></pre>
+
+<h3 id="label-Rbsecp256k1+Gem">Rbsecp256k1 Gem</h3>
+
+<p>The Coinbase Platform SDK depends on the <code>rbsecp256k1</code> gem, which requires certain dependencies to be installed on your system. Follow the instructions provided <a href="https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements">here</a> to meet these requirements:</p>
+
+<h4 id="label-MacOS">MacOS</h4>
+
+<p>On MacOS, run the following command:</p>
+
+<pre class="code ruby"><code class="ruby">brew install automake openssl libtool pkg-config gmp libffi
+</code></pre>
+
+<h4 id="label-Linux">Linux</h4>
+
+<p>On Linux, run the following command:</p>
+
+<pre class="code ruby"><code class="ruby">sudo apt-get install build-essential automake pkg-config libtool \
+  libffi-dev libssl-dev libgmp-dev python3-dev
+</code></pre>
+
+<p>:::info If you installed <code>libsecp256k1</code> but the gem cannot find it, run <code>ldconfig</code> to update your library load paths. :::</p>
+
+<h3 id="label-OpenSSL+Gem">OpenSSL Gem</h3>
+
+<p>The Coinbase Platform SDK relies on the <code>openssl</code> gem for certain cryptographic operations. If you encounter issues installing the Platform SDK, ensure that OpenSSL 3+ is installed, and that the version used by Ruby matches the version required by the gem.</p>
+
+<p>If you encounter an error like this:</p>
+
+<pre class="code ruby"><code class="ruby">error: incomplete definition of type &#39;struct evp_md_ctx_st&#39;
+    pkey = EVP_PKEY_CTX_get0_pkey(EVP_MD_CTX_get_pkey_ctx(ctx));
+</code></pre>
+
+<p>re-install the openssl gem with the following command:</p>
+
+<pre class="code ruby"><code class="ruby">gem install openssl -- --with-openssl-dir=$(brew --prefix openssl@3)
+</code></pre>
+
 <h2 id="label-Installation">Installation</h2>
 
-<h3 id="label-In+Your+Ruby+Project">In Your Ruby Project</h3>
+<p>There are two ways of installing the Coinbase Platform SDK: for use with the Interactive Ruby Shell, or for use in a Ruby project (e.g. Ruby on Rails).</p>
 
-<p>Add the following to your Gemfile:</p>
+<h3 id="label-For+irb">For <code>irb</code></h3>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
-</code></pre>
+<p>Use the Interactive Ruby Shell (<code>irb</code>) to leverage Ruby’s built-in REPL and quickly explore the functionality of our SDK.</p>
 
-<p>Or if you are specifying dependencies in your Gemspec:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Specification</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_spec'>spec</span><span class='op'>|</span>
-  <span class='id identifier rubyid_spec'>spec</span><span class='period'>.</span><span class='id identifier rubyid_add_runtime_dependency'>add_runtime_dependency</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
-<span class='kw'>end</span>
-</code></pre>
-
-<p>Then run:</p>
-
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundler'>bundler</span> <span class='id identifier rubyid_install'>install</span>
-</code></pre>
-
-<h3 id="label-In+the+Interactive+Ruby+Shell+-28irb-29">In the Interactive Ruby Shell (<code>irb</code>)</h3>
-
-<p>On the command-line, run:</p>
+<p>Run the following from the command line:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_coinbase'>coinbase</span><span class='op'>-</span><span class='id identifier rubyid_sdk'>sdk</span>
 </code></pre>
@@ -113,99 +153,138 @@
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_require'>require</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase</span><span class='tstring_end'>&#39;</span></span>
 </code></pre>
 
-<h3 id="label-Requirements">Requirements</h3>
-<ul><li>
-<p>Ruby 2.7+.</p>
-</li></ul>
+<h3 id="label-For+Ruby+on+Rails">For Ruby on Rails</h3>
 
-<h2 id="label-Usage">Usage</h2>
+<p>Alternatively, if you want to install your Coinbase SDK gem to your Ruby on Rails project, add the following line to your Gemfile:</p>
 
-<h3 id="label-Initialization">Initialization</h3>
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_gem'>gem</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
+</code></pre>
 
-<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API Key</a>. Then, initialize the Platform SDK by passing your API Key name and API Key&#39;s private key via the <code>configure</code> method:</p>
+<p>Or if you are using a Gemspec:</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Copy your API Key name here.</span><span class='tstring_end'>&quot;</span></span>
-<span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Copy your API Key&#39;s private key here.</span><span class='tstring_end'>&quot;</span></span>
+<pre class="code ruby"><code class="ruby"><span class='const'>Gem</span><span class='op'>::</span><span class='const'>Specification</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_spec'>spec</span><span class='op'>|</span>
+  <span class='id identifier rubyid_spec'>spec</span><span class='period'>.</span><span class='id identifier rubyid_add_runtime_dependency'>add_runtime_dependency</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>coinbase-sdk</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span>
+</code></pre>
+
+<p>Then run:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_bundle'>bundle</span> <span class='id identifier rubyid_install'>install</span>
+</code></pre>
+
+<h2 id="label-Creating+a+Wallet">Creating a Wallet</h2>
+
+<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API key</a>. Then, initialize the Platform SDK by passing your API key name and API key&#39;s private key via the <code>configure</code> method:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Copy your API key name here.</span><span class='tstring_end'>&quot;</span></span>
+<span class='comment'># Ensure that you are using double-quotes here.
+</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Copy your API key&#39;s private key here.</span><span class='tstring_end'>&quot;</span></span>
 
 <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure'><span class='object_link'><a href="Coinbase.html#configure-class_method" title="Coinbase.configure (method)">configure</a></span></span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_name'>api_key_name</span>
   <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span> <span class='op'>=</span> <span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span>
 <span class='kw'>end</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase SDK has been successfully configured with CDP API key.</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<p>Another way to initialize the SDK is by sourcing the API key from the json file that contains your API key, downloaded from CDP portal.</p>
+<p>Another way to initialize the SDK is by sourcing the API key from the JSON file that contains your API key, downloaded from the CDP portal.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_from_json'><span class='object_link'><a href="Coinbase.html#configure_from_json-class_method" title="Coinbase.configure_from_json (method)">configure_from_json</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~/Downloads/coinbase_cloud_api_key.json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configure_from_json'><span class='object_link'><a href="Coinbase.html#configure_from_json-class_method" title="Coinbase.configure_from_json (method)">configure_from_json</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>~/Downloads/cdp_api_key.json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase SDK has been successfully configured from JSON file.</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<p>This will allow you to authenticate with the Platform APIs and get access to the <code>default_user</code>.</p>
+<p>This will allow you to <a href="./authentication.md">authenticate</a> with the Platform APIs and get access to the <a href="./users.md">default_user</a>:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_user'><span class='object_link'><a href="Coinbase.html#default_user-class_method" title="Coinbase.default_user (method)">default_user</a></span></span>
 </code></pre>
 
-<h3 id="label-Wallets-2C+Addresses-2C+and+Transfers">Wallets, Addresses, and Transfers</h3>
+<p>Now, create a wallet from the User. Wallets are created with a single default address.</p>
 
-<p>Now, create a Wallet from the User. Wallets are created with a single default Address.</p>
-
-<pre class="code ruby"><code class="ruby"><span class='comment'># Create a Wallet with one Address by default.
+<pre class="code ruby"><code class="ruby"><span class='comment'># Create a wallet with one address by default.
 </span><span class='id identifier rubyid_w1'>w1</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
 </code></pre>
 
-<p>Wallets do not have funds on them to start. In order to fund the Address, you will need to send funds to the Wallet you generated above. If you don&#39;t have testnet funds, get funds from a <a href="https://docs.base.org/docs/tools/network-faucets/">faucet</a>.</p>
+<p>Wallets come with a single default address, accessible via <code>default_address</code>:</p>
 
-<p>For development purposes, we provide a <code>faucet</code> method to fund your address with ETH on Base Sepolia testnet. We allow one faucet claim per address in a 24 hour window.</p>
+<pre class="code ruby"><code class="ruby"><span class='comment'># A wallet has a default address.
+</span><span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span>
+</code></pre>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># Create a faucet request that returns you a Faucet transaction that can be used to track the tx hash.
+<h2 id="label-Funding+a+Wallet">Funding a Wallet</h2>
+
+<p>Wallets do not have funds on them to start. For Base Sepolia testnet, we provide a <code>faucet</code> method to fund your wallet with testnet ETH. You are allowed one faucet claim per 24-hour window.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Fund the wallet with a faucet transaction.
 </span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span>
-<span class='id identifier rubyid_faucet_tx'>faucet_tx</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Faucet transaction successfully completed: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_faucet_tx'>faucet_tx</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># Create a new Wallet to transfer funds to.
-</span><span class='comment'># Then, we can transfer 0.00001 ETH out of the Wallet to another Wallet.
+<h2 id="label-Transferring+Funds">Transferring Funds</h2>
+
+<p>Now that your faucet transaction has successfully completed, you can send the funds in your wallet to another wallet. The code below creates another wallet, and uses the <code>transfer</code> function to send testnet ETH from the first wallet to the second:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Create a new wallet w2 to transfer funds to.
 </span><span class='id identifier rubyid_w2'>w2</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
-<span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='float'>0.00001</span><span class='comma'>,</span> <span class='symbol'>:eth</span><span class='comma'>,</span> <span class='id identifier rubyid_w2'>w2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_wait!'>wait!</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Wallet successfully created: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_w2'>w2</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+
+<span class='id identifier rubyid_t'>t</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='float'>0.00001</span><span class='comma'>,</span> <span class='symbol'>:eth</span><span class='comma'>,</span> <span class='id identifier rubyid_w2'>w2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_wait!'>wait!</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Transfer successfully completed: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_t'>t</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<h3 id="label-Re-Instantiating+Wallets">Re-Instantiating Wallets</h3>
+<p>See <a href="./transfers.md">Transers</a> for more information.</p>
 
-<p>The SDK creates Wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate Wallets. The code walks you through how to export a Wallet and store it in a secure location.</p>
+<h2 id="label-Persisting+a+Wallet">Persisting a Wallet</h2>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># Optional: Create a new Wallet if you do not already have one.
-</span><span class='comment'># Export the data required to re-instantiate the Wallet.
-</span><span class='id identifier rubyid_w3'>w3</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span>
-<span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_w3'>w3</span><span class='period'>.</span><span class='id identifier rubyid_export'>export</span>
+<p>The SDK creates wallets with developer managed keys, which means you are responsible for securely storing the keys required to re-instantiate wallets. The following code explains how to export a wallet and store it in a secure location.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Export the data required to re-instantiate the wallet.
+</span><span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_export'>export</span>
 </code></pre>
 
-<p>In order to persist the data for the Wallet, you will need to implement a store method to store the data export in a secure location. If you do not store the Wallet in a secure location you will lose access to the Wallet and all of the funds on it.</p>
+<p>In order to persist the data for a wallet, you will need to implement a <code>store</code> method to store the exported data in a secure location. If you do not store the wallet in a secure location, you will lose access to the wallet, as well as the funds on it.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># At this point, you should implement your own &quot;store&quot; method to securely persist
-</span><span class='comment'># the data required to re-instantiate the Wallet at a later time.
-</span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+<pre class="code ruby"><code class="ruby"><span class='comment'># You should implement the &quot;store&quot; method to securely persist the data object,
+</span><span class='comment'># which is required to re-instantiate the wallet at a later time. For ease of use,
+</span><span class='comment'># the data object is converted to a Hash first.
+</span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>For convenience during testing, we provide a save_wallet_locally! method that stores the Wallet data in your local file system. This is an insecure method of storing wallet seeds and should only be used for development purposes.</p>
+<p>For more information on wallet persistence, see <a href="./wallets.md#persisting-a-wallet">the documentation on wallets</a>.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='rparen'>)</span>
+<p>Alternatively, you can use the <code>save_wallet_locally!</code> function to persist wallets on your local file system. This is a convenience function purely for testing purposes, and should not be considered a secure method of persisting wallets.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># Set encrypt: true to encrypt the wallet export data with your CDP API key.
+</span><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w1'>w1</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Wallet </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'> successfully saved to local file storage.</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<p>To encrypt the saved data, set encrypt to true. Note that your CDP API key also serves as the encryption key for the data persisted locally. To re-instantiate wallets with encrypted data, ensure that your SDK is configured with the same API key when invoking <code>save_wallet_locally!</code> and <code>load_wallets_from_local</code>.</p>
+<h2 id="label-Re-instantiating+a+Wallet">Re-instantiating a Wallet</h2>
 
-<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_save_wallet_locally!'>save_wallet_locally!</span><span class='lparen'>(</span><span class='id identifier rubyid_w3'>w3</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+<p>To re-instantiate a wallet, fetch your export data from your secure storage, and pass it to the <code>import</code> method:</p>
+
+<pre class="code ruby"><code class="ruby"><span class='comment'># You should implement the &quot;fetch&quot; method to retrieve the securely persisted data object,
+</span><span class='comment'># keyed by the wallet ID.
+</span><span class='id identifier rubyid_fetched_data'>fetched_data</span> <span class='op'>=</span> <span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+
+<span class='comment'># w3 will be equivalent to w1.
+</span><span class='id identifier rubyid_w3'>w3</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_fetched_data'>fetched_data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>The below code demonstrates how to re-instantiate a Wallet from the data export.</p>
+<p>If you used the <code>save_wallet_locally!</code> function to persist wallets on your local file system, then you can use the <code>load_wallets_from_local</code> function re-instantiate the wallets.</p>
 
-<pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
-</span><span class='comment'># w4 will be equivalent to w3.
-</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Wallet.html" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_import'><span class='object_link'><a href="Coinbase/Wallet.html#import-class_method" title="Coinbase::Wallet.import (method)">import</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
-</code></pre>
-
-<p>To import wallets that were persisted to your local file system using <code>save_wallet_locally!</code>, use the below code.</p>
-
-<pre class="code ruby"><code class="ruby"><span class='comment'># The Wallet can be re-instantiated using the exported data.
-</span><span class='comment'># w5 will be equivalent to w3.
+<pre class="code ruby"><code class="ruby"><span class='comment'># wallets will contain a Hash from wallet ID to wallet.
 </span><span class='id identifier rubyid_wallets'>wallets</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_load_wallets_from_local'>load_wallets_from_local</span>
-<span class='id identifier rubyid_w5'>w5</span> <span class='op'>=</span> <span class='id identifier rubyid_wallets'>wallets</span><span class='lbracket'>[</span><span class='id identifier rubyid_w3'>w3</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
+
+<span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Wallets successfully loaded from local file storage.</span><span class='tstring_end'>&quot;</span></span>
+
+<span class='comment'># w4 will be equivalent to w1 and w3.
+</span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='id identifier rubyid_wallets'>wallets</span><span class='lbracket'>[</span><span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rbracket'>]</span>
 </code></pre>
 
 <h2 id="label-Development">Development</h2>

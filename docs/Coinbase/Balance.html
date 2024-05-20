@@ -265,7 +265,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns a new Asset object.</p>
+<p>Returns a new Balance object.</p>
 </div></span>
   
 </li>
@@ -337,7 +337,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in the Coinbase module.</p>
+<p>Returns a new Balance object. Do not use this method. Instead, use Balance.from_model or Balance.from_model_and_asset_id.</p>
 
 
   </div>
@@ -348,16 +348,16 @@
   
     <li>
       
-        <span class='name'>network_id</span>
+        <span class='name'>amount</span>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt>BigDecimal</tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>The ID of the Network to which the Asset belongs</p>
+<p>The amount of the Asset</p>
 </div>
       
     </li>
@@ -378,38 +378,6 @@
       
     </li>
   
-    <li>
-      
-        <span class='name'>display_name</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>The Asset&#39;s display name</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>address_id</span>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>(Optional) The Asset&#39;s address ID, if one exists</p>
-</div>
-      
-    </li>
-  
 </ul>
 
 
@@ -419,13 +387,13 @@
       <pre class="lines">
 
 
+32
+33
 34
-35
-36
-37</pre>
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>amount:</span><span class='comma'>,</span> <span class='label'>asset_id:</span><span class='rparen'>)</span>
   <span class='ivar'>@amount</span> <span class='op'>=</span> <span class='id identifier rubyid_amount'>amount</span>
@@ -469,12 +437,12 @@
       <pre class="lines">
 
 
-39
-40
-41</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_amount'>amount</span>
   <span class='ivar'>@amount</span>
@@ -512,12 +480,12 @@
       <pre class="lines">
 
 
-39
-40
-41</pre>
+37
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 39</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_asset_id'>asset_id</span>
   <span class='ivar'>@asset_id</span>
@@ -768,12 +736,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -827,12 +795,12 @@
       <pre class="lines">
 
 
-43
-44
-45</pre>
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/balance.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Balance{amount: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_amount'>amount</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, asset_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
