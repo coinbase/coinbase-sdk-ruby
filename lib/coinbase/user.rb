@@ -21,6 +21,7 @@ module Coinbase
 
     # Creates a new Wallet belonging to the User.
     # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+    # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
     # @return [Coinbase::Wallet] the new Wallet
     def create_wallet(create_wallet_options = {})
       # For ruby 2.7 compatibility we cannot pass in keyword args when the create wallet

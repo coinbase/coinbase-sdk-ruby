@@ -69,6 +69,8 @@ module Coinbase::Client
 
       if attributes.key?(:'id')
         self.id = attributes[:'id']
+      else
+        self.id = nil
       end
 
       if attributes.key?(:'network_id')
@@ -87,6 +89,10 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @id.nil?
+        invalid_properties.push('invalid value for "id", id cannot be nil.')
+      end
+
       if @network_id.nil?
         invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
@@ -98,6 +104,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @id.nil?
       return false if @network_id.nil?
       true
     end

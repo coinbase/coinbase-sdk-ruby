@@ -14,13 +14,57 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateWalletRequest
-    attr_accessor :wallet
+  # An event representing a signature creation.
+  class SignatureCreationEvent
+    # The ID of the seed that the server-signer should create the signature for
+    attr_accessor :seed_id
+
+    # The ID of the wallet the signature is for
+    attr_accessor :wallet_id
+
+    # The index of the address that the server-signer should sign with
+    attr_accessor :address_index
+
+    # The payload that the server-signer should sign
+    attr_accessor :signing_payload
+
+    # The type of transaction that the server-signer should sign
+    attr_accessor :transaction_type
+
+    # The ID of the transaction that the server-signer should sign
+    attr_accessor :transaction_id
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'wallet' => :'wallet'
+        :'seed_id' => :'seed_id',
+        :'wallet_id' => :'wallet_id',
+        :'address_index' => :'address_index',
+        :'signing_payload' => :'signing_payload',
+        :'transaction_type' => :'transaction_type',
+        :'transaction_id' => :'transaction_id'
       }
     end
 
@@ -32,7 +76,12 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'wallet' => :'CreateWalletRequestWallet'
+        :'seed_id' => :'String',
+        :'wallet_id' => :'String',
+        :'address_index' => :'Integer',
+        :'signing_payload' => :'String',
+        :'transaction_type' => :'String',
+        :'transaction_id' => :'String'
       }
     end
 
@@ -46,21 +95,39 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateWalletRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SignatureCreationEvent` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateWalletRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SignatureCreationEvent`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'wallet')
-        self.wallet = attributes[:'wallet']
-      else
-        self.wallet = nil
+      if attributes.key?(:'seed_id')
+        self.seed_id = attributes[:'seed_id']
+      end
+
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
+      end
+
+      if attributes.key?(:'address_index')
+        self.address_index = attributes[:'address_index']
+      end
+
+      if attributes.key?(:'signing_payload')
+        self.signing_payload = attributes[:'signing_payload']
+      end
+
+      if attributes.key?(:'transaction_type')
+        self.transaction_type = attributes[:'transaction_type']
+      end
+
+      if attributes.key?(:'transaction_id')
+        self.transaction_id = attributes[:'transaction_id']
       end
     end
 
@@ -69,10 +136,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @wallet.nil?
-        invalid_properties.push('invalid value for "wallet", wallet cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -80,8 +143,19 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @wallet.nil?
+      transaction_type_validator = EnumAttributeValidator.new('String', ["transfer"])
+      return false unless transaction_type_validator.valid?(@transaction_type)
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] transaction_type Object to be assigned
+    def transaction_type=(transaction_type)
+      validator = EnumAttributeValidator.new('String', ["transfer"])
+      unless validator.valid?(transaction_type)
+        fail ArgumentError, "invalid value for \"transaction_type\", must be one of #{validator.allowable_values}."
+      end
+      @transaction_type = transaction_type
     end
 
     # Checks equality by comparing each attribute.
@@ -89,7 +163,12 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          wallet == o.wallet
+          seed_id == o.seed_id &&
+          wallet_id == o.wallet_id &&
+          address_index == o.address_index &&
+          signing_payload == o.signing_payload &&
+          transaction_type == o.transaction_type &&
+          transaction_id == o.transaction_id
     end
 
     # @see the `==` method
@@ -101,7 +180,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet].hash
+      [seed_id, wallet_id, address_index, signing_payload, transaction_type, transaction_id].hash
     end
 
     # Builds the object from hash

@@ -14,13 +14,18 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateWalletRequest
-    attr_accessor :wallet
+  class CreateServerSignerRequest
+    # The ID of the server signer
+    attr_accessor :server_signer_id
+
+    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id.
+    attr_accessor :enrollment_data
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'wallet' => :'wallet'
+        :'server_signer_id' => :'server_signer_id',
+        :'enrollment_data' => :'enrollment_data'
       }
     end
 
@@ -32,7 +37,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'wallet' => :'CreateWalletRequestWallet'
+        :'server_signer_id' => :'String',
+        :'enrollment_data' => :'String'
       }
     end
 
@@ -46,21 +52,27 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateWalletRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateWalletRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'wallet')
-        self.wallet = attributes[:'wallet']
+      if attributes.key?(:'server_signer_id')
+        self.server_signer_id = attributes[:'server_signer_id']
       else
-        self.wallet = nil
+        self.server_signer_id = nil
+      end
+
+      if attributes.key?(:'enrollment_data')
+        self.enrollment_data = attributes[:'enrollment_data']
+      else
+        self.enrollment_data = nil
       end
     end
 
@@ -69,8 +81,12 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @wallet.nil?
-        invalid_properties.push('invalid value for "wallet", wallet cannot be nil.')
+      if @server_signer_id.nil?
+        invalid_properties.push('invalid value for "server_signer_id", server_signer_id cannot be nil.')
+      end
+
+      if @enrollment_data.nil?
+        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
       end
 
       invalid_properties
@@ -80,7 +96,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @wallet.nil?
+      return false if @server_signer_id.nil?
+      return false if @enrollment_data.nil?
       true
     end
 
@@ -89,7 +106,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          wallet == o.wallet
+          server_signer_id == o.server_signer_id &&
+          enrollment_data == o.enrollment_data
     end
 
     # @see the `==` method
@@ -101,7 +119,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet].hash
+      [server_signer_id, enrollment_data].hash
     end
 
     # Builds the object from hash
