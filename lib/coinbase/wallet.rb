@@ -127,7 +127,7 @@ module Coinbase
     # @return [Address] The new Address
     def create_address
       if Coinbase.configuration.use_server_signer
-        opts = {create_address_request:{}}
+        opts = { create_address_request: {} }
       else
         key = derive_key
         attestation = create_attestation(key)
