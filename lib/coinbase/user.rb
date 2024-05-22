@@ -25,8 +25,6 @@ module Coinbase
     def create_wallet(create_wallet_options = {})
       # For ruby 2.7 compatibility we cannot pass in keyword args when the create wallet
       # options is empty
-      return Wallet.create(server_signer: true) if Coinbase.configuration.use_server_signer
-
       return Wallet.create if create_wallet_options.empty?
 
       Wallet.create(**create_wallet_options)
