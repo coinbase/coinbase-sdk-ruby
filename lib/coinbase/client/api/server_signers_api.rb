@@ -150,7 +150,9 @@ module Coinbase::Client
     # List events for a server signer
     # @param server_signer_id [String] The ID of the server signer to fetch events for
     # @param [Hash] opts the optional parameters
-    # @return [ServerSignerEvent]
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [ServerSignerEventList]
     def list_server_signer_events(server_signer_id, opts = {})
       data, _status_code, _headers = list_server_signer_events_with_http_info(server_signer_id, opts)
       data
@@ -160,7 +162,9 @@ module Coinbase::Client
     # List events for a server signer
     # @param server_signer_id [String] The ID of the server signer to fetch events for
     # @param [Hash] opts the optional parameters
-    # @return [Array<(ServerSignerEvent, Integer, Hash)>] ServerSignerEvent data, response status code and response headers
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [Array<(ServerSignerEventList, Integer, Hash)>] ServerSignerEventList data, response status code and response headers
     def list_server_signer_events_with_http_info(server_signer_id, opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: ServerSignersApi.list_server_signer_events ...'
@@ -169,11 +173,17 @@ module Coinbase::Client
       if @api_client.config.client_side_validation && server_signer_id.nil?
         fail ArgumentError, "Missing the required parameter 'server_signer_id' when calling ServerSignersApi.list_server_signer_events"
       end
+      if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
+        fail ArgumentError, 'invalid value for "opts[:"page"]" when calling ServerSignersApi.list_server_signer_events, the character length must be smaller than or equal to 5000.'
+      end
+
       # resource path
       local_var_path = '/v1/server_signers/{server_signer_id}/events'.sub('{' + 'server_signer_id' + '}', CGI.escape(server_signer_id.to_s))
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'limit'] = opts[:'limit'] if !opts[:'limit'].nil?
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
@@ -187,7 +197,7 @@ module Coinbase::Client
       post_body = opts[:debug_body]
 
       # return_type
-      return_type = opts[:debug_return_type] || 'ServerSignerEvent'
+      return_type = opts[:debug_return_type] || 'ServerSignerEventList'
 
       # auth_names
       auth_names = opts[:debug_auth_names] || []
@@ -262,6 +272,146 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: ServerSignersApi#list_server_signers\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Submit the result of a server signer event
+    # Submit the result of a server signer event
+    # @param server_signer_id [String] The ID of the server signer to submit the event result for
+    # @param [Hash] opts the optional parameters
+    # @option opts [SeedCreationEventResult] :seed_creation_event_result 
+    # @return [SeedCreationEventResult]
+    def submit_server_signer_seed_event_result(server_signer_id, opts = {})
+      data, _status_code, _headers = submit_server_signer_seed_event_result_with_http_info(server_signer_id, opts)
+      data
+    end
+
+    # Submit the result of a server signer event
+    # Submit the result of a server signer event
+    # @param server_signer_id [String] The ID of the server signer to submit the event result for
+    # @param [Hash] opts the optional parameters
+    # @option opts [SeedCreationEventResult] :seed_creation_event_result 
+    # @return [Array<(SeedCreationEventResult, Integer, Hash)>] SeedCreationEventResult data, response status code and response headers
+    def submit_server_signer_seed_event_result_with_http_info(server_signer_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: ServerSignersApi.submit_server_signer_seed_event_result ...'
+      end
+      # verify the required parameter 'server_signer_id' is set
+      if @api_client.config.client_side_validation && server_signer_id.nil?
+        fail ArgumentError, "Missing the required parameter 'server_signer_id' when calling ServerSignersApi.submit_server_signer_seed_event_result"
+      end
+      # resource path
+      local_var_path = '/v1/server_signers/{server_signer_id}/seed_event_result'.sub('{' + 'server_signer_id' + '}', CGI.escape(server_signer_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'seed_creation_event_result'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'SeedCreationEventResult'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"ServerSignersApi.submit_server_signer_seed_event_result",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: ServerSignersApi#submit_server_signer_seed_event_result\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Submit the result of a server signer event
+    # Submit the result of a server signer event
+    # @param server_signer_id [String] The ID of the server signer to submit the event result for
+    # @param [Hash] opts the optional parameters
+    # @option opts [SignatureCreationEventResult] :signature_creation_event_result 
+    # @return [SignatureCreationEventResult]
+    def submit_server_signer_signature_event_result(server_signer_id, opts = {})
+      data, _status_code, _headers = submit_server_signer_signature_event_result_with_http_info(server_signer_id, opts)
+      data
+    end
+
+    # Submit the result of a server signer event
+    # Submit the result of a server signer event
+    # @param server_signer_id [String] The ID of the server signer to submit the event result for
+    # @param [Hash] opts the optional parameters
+    # @option opts [SignatureCreationEventResult] :signature_creation_event_result 
+    # @return [Array<(SignatureCreationEventResult, Integer, Hash)>] SignatureCreationEventResult data, response status code and response headers
+    def submit_server_signer_signature_event_result_with_http_info(server_signer_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: ServerSignersApi.submit_server_signer_signature_event_result ...'
+      end
+      # verify the required parameter 'server_signer_id' is set
+      if @api_client.config.client_side_validation && server_signer_id.nil?
+        fail ArgumentError, "Missing the required parameter 'server_signer_id' when calling ServerSignersApi.submit_server_signer_signature_event_result"
+      end
+      # resource path
+      local_var_path = '/v1/server_signers/{server_signer_id}/signature_event_result'.sub('{' + 'server_signer_id' + '}', CGI.escape(server_signer_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'signature_creation_event_result'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'SignatureCreationEventResult'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"ServerSignersApi.submit_server_signer_signature_event_result",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: ServerSignersApi#submit_server_signer_signature_event_result\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end

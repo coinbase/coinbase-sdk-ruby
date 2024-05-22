@@ -126,16 +126,21 @@ module Coinbase
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
-      key = derive_key
-      attestation = create_attestation(key)
-      public_key = key.public_key.compressed.unpack1('H*')
+      if Coinbase.configuration.use_server_signer
+        opts = {create_address_request:{}}
+      else
+        key = derive_key
+        attestation = create_attestation(key)
+        public_key = key.public_key.compressed.unpack1('H*')
 
-      opts = {
-        create_address_request: {
-          public_key: public_key,
-          attestation: attestation
+        opts = {
+          create_address_request: {
+            public_key: public_key,
+            attestation: attestation
+          }
         }
-      }
+      end
+
       address_model = Coinbase.call_api do
         addresses_api.create_address(id, opts)
       end
