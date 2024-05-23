@@ -27,21 +27,26 @@ module Coinbase
   end
 
   # Configures the Coinbase SDK.
+  # @return [String] A string indicating successful configuration
   def self.configure
     yield(configuration)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+
+    return 'Successfully configured Coinbase SDK'
   end
 
   # Configures the Coinbase SDK from the given CDP API Key JSON file.
   # @param file_path [String] (Optional) the path to the CDP API Key JSON file
   # file in the root directory by default.
+  # @return [String] A string indicating successful configuration
   def self.configure_from_json(file_path = 'coinbase_cloud_api_key.json')
     configuration.from_json(file_path)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+    return 'Successfully configured Coinbase SDK'
   end
 
   # Configuration object for the Coinbase SDK.
