@@ -293,6 +293,8 @@ describe Coinbase::Wallet do
       described_class.new(model, seed: seed)
     end
 
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
+
     subject(:created_address) { wallet.create_address }
 
     before do
@@ -347,6 +349,29 @@ describe Coinbase::Wallet do
 
       it 'is not sets as the default address' do
         expect(created_address).not_to eq(wallet.default_address)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+      let(:created_address_model) { address_model1 }
+
+      subject(:created_address) { wallet.create_address }
+
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(
+            wallet_id
+          ).and_return(created_address_model)
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
+
+      it 'creates a new address' do
+        expect(created_address).to be_a(Coinbase::Address)
       end
     end
   end
