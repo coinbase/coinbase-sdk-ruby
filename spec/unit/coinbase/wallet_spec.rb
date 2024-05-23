@@ -102,6 +102,7 @@ describe Coinbase::Wallet do
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
 
     subject(:created_wallet) { described_class.create }
 
@@ -111,9 +112,8 @@ describe Coinbase::Wallet do
 
     context 'when not using a server signer' do
       let(:use_server_signer) { false }
-
       before do
-        Coinbase.configuration.use_server_signer = false
+        allow(Coinbase).to receive(:configuration).and_return(configuration)
         allow(addresses_api)
           .to receive(:create_address)
           .with(
@@ -147,7 +147,7 @@ describe Coinbase::Wallet do
       let(:use_server_signer) { true }
 
       before do
-        Coinbase.configuration.use_server_signer = true
+        allow(Coinbase).to receive(:configuration).and_return(configuration)
       end
 
       subject(:created_wallet) do
@@ -165,7 +165,7 @@ describe Coinbase::Wallet do
 
     context 'when using a server signer' do
       before do
-        Coinbase.configuration.use_server_signer = true
+        allow(Coinbase).to receive(:configuration).and_return(configuration)
       end
 
       let(:use_server_signer) { true }

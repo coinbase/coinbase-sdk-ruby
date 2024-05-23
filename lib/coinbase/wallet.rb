@@ -130,13 +130,11 @@ module Coinbase
 
       unless Coinbase.configuration.use_server_signer
         key = derive_key
-        attestation = create_attestation(key)
-        public_key = key.public_key.compressed.unpack1('H*')
 
         opts = {
           create_address_request: {
-            public_key: public_key,
-            attestation: attestation
+            public_key: key.public_key.compressed.unpack1('H*'),
+            attestation: create_attestation(key)
           }
         }
       end
