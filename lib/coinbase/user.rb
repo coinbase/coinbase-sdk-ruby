@@ -68,6 +68,21 @@ module Coinbase
       end
     end
 
+    # Returns the Wallet with the given ID.
+    # @param wallet_id [String] the ID of the Wallet
+    # @return [Coinbase::Wallet] the unhydrated Wallet
+    def wallet(wallet_id)
+      wallet_model = Coinbase.call_api do
+        wallets_api.get_wallet(wallet_id)
+      end
+
+      addresses_list = Coinbase.call_api do
+        addresses_api.list_addresses(wallet_model.id, { limit: Coinbase::Wallet::MAX_ADDRESSES })
+      end
+
+      Wallet.new(wallet_model, seed: '', address_models: addresses_list.data)
+    end
+
     # Saves a wallet to local file system. Wallet saved this way can be re-instantiated with load_wallets_from_local
     # function, provided the backup_file is available. This is an insecure method of storing wallet seeds and should
     # only be used for development purposes. If you call save_wallet_locally! twice with wallets containing the same

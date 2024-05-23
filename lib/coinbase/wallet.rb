@@ -280,9 +280,9 @@ module Coinbase
       end
 
       seed_data = existing_seeds_in_store[id]
-      seed = seed_data['seed']
+      local_seed = seed_data['seed']
 
-      raise ArgumentError, 'Seed data is malformed' if seed.nil? || seed == ''
+      raise ArgumentError, 'Seed data is malformed' if local_seed.nil? || local_seed == ''
 
       if seed_data['encrypted']
         raise ArgumentError, 'Encrypted seed data is malformed' if seed_data['iv'] == '' ||
@@ -296,10 +296,10 @@ module Coinbase
         cipher.auth_tag = auth_tag
         cipher.auth_data = ''
         hex_decoded_data = [seed_data['seed']].pack('H*')
-        seed = cipher.update(hex_decoded_data) + cipher.final
+        local_seed = cipher.update(hex_decoded_data) + cipher.final
       end
 
-      @master = MoneyTree::Master.new(seed_hex: seed)
+      self.seed = local_seed
 
       "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
