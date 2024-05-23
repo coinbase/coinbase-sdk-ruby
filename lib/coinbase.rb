@@ -41,7 +41,7 @@ module Coinbase
   # @param file_path [String] (Optional) the path to the CDP API Key JSON file
   # file in the root directory by default.
   # @return [String] A string indicating successful configuration
-  def self.configure_from_json(file_path = 'coinbase_cloud_api_key.json')
+  def self.configure_from_json(file_path = 'cdp_api_key.json')
     configuration.from_json(file_path)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
@@ -65,7 +65,7 @@ module Coinbase
     # Sets configuration values based on the provided CDP API Key JSON file.
     # @param file_path [String] (Optional) the path to the CDP API Key JSON file
     # file in the root directory by default.
-    def from_json(file_path = 'coinbase_cloud_api_key.json')
+    def from_json(file_path = 'cdp_api_key.json')
       # Expand paths to respect shortcuts like ~.
       file_path = File.expand_path(file_path)
 
