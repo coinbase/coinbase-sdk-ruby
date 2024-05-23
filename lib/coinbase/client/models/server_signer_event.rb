@@ -65,10 +65,14 @@ module Coinbase::Client
 
       if attributes.key?(:'server_signer_id')
         self.server_signer_id = attributes[:'server_signer_id']
+      else
+        self.server_signer_id = nil
       end
 
       if attributes.key?(:'event')
         self.event = attributes[:'event']
+      else
+        self.event = nil
       end
     end
 
@@ -77,6 +81,14 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @server_signer_id.nil?
+        invalid_properties.push('invalid value for "server_signer_id", server_signer_id cannot be nil.')
+      end
+
+      if @event.nil?
+        invalid_properties.push('invalid value for "event", event cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +96,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @server_signer_id.nil?
+      return false if @event.nil?
       true
     end
 

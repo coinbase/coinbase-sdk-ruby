@@ -47,7 +47,7 @@ module Coinbase
   # Configuration object for the Coinbase SDK.
   class Configuration
     attr_reader :base_sepolia_rpc_url, :base_sepolia_client
-    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :backup_file_path
+    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :backup_file_path, :use_server_signer
 
     # Initializes the configuration object.
     def initialize
@@ -56,6 +56,7 @@ module Coinbase
       @api_url = 'https://api.cdp.coinbase.com'
       @debug_api = false
       @backup_file_path = 'seeds.json'
+      @use_server_signer = false
     end
 
     # Sets configuration values based on the provided CDP API Key JSON file.
@@ -116,5 +117,11 @@ module Coinbase
     raise Coinbase::APIError.from_error(e)
   rescue StandardError => e
     raise e
+  end
+
+  # Returns the configuration use_server_signer.
+  # @return [bool] whether to use server signer or not.
+  def self.use_server_signer?
+    Coinbase.configuration.use_server_signer
   end
 end

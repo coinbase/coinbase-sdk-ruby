@@ -19,10 +19,14 @@ module Coinbase::Client
     # The ID of the wallet that the server-signer should create the seed for
     attr_accessor :wallet_id
 
+    # The ID of the user that the wallet belongs to
+    attr_accessor :wallet_user_id
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'wallet_id' => :'wallet_id'
+        :'wallet_id' => :'wallet_id',
+        :'wallet_user_id' => :'wallet_user_id'
       }
     end
 
@@ -34,7 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'wallet_id' => :'String'
+        :'wallet_id' => :'String',
+        :'wallet_user_id' => :'String'
       }
     end
 
@@ -61,6 +66,14 @@ module Coinbase::Client
 
       if attributes.key?(:'wallet_id')
         self.wallet_id = attributes[:'wallet_id']
+      else
+        self.wallet_id = nil
+      end
+
+      if attributes.key?(:'wallet_user_id')
+        self.wallet_user_id = attributes[:'wallet_user_id']
+      else
+        self.wallet_user_id = nil
       end
     end
 
@@ -69,6 +82,14 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      end
+
+      if @wallet_user_id.nil?
+        invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -76,6 +97,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @wallet_id.nil?
+      return false if @wallet_user_id.nil?
       true
     end
 
@@ -84,7 +107,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          wallet_id == o.wallet_id
+          wallet_id == o.wallet_id &&
+          wallet_user_id == o.wallet_user_id
     end
 
     # @see the `==` method
@@ -96,7 +120,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet_id].hash
+      [wallet_id, wallet_user_id].hash
     end
 
     # Builds the object from hash

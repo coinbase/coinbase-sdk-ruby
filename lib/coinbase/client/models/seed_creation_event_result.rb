@@ -14,18 +14,27 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateAddressRequest
-    # The public key from which the address will be derived.
-    attr_accessor :public_key
+  # The result to a SeedCreationEvent.
+  class SeedCreationEventResult
+    # The ID of the wallet that the seed was created for
+    attr_accessor :wallet_id
 
-    # An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
-    attr_accessor :attestation
+    # The ID of the user that the wallet belongs to
+    attr_accessor :wallet_user_id
+
+    # The extended public key for the first master key derived from seed.
+    attr_accessor :extended_public_key
+
+    # The ID of the seed in Server-Signer used to generate the extended public key.
+    attr_accessor :seed_id
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'public_key' => :'public_key',
-        :'attestation' => :'attestation'
+        :'wallet_id' => :'wallet_id',
+        :'wallet_user_id' => :'wallet_user_id',
+        :'extended_public_key' => :'extended_public_key',
+        :'seed_id' => :'seed_id'
       }
     end
 
@@ -37,8 +46,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'public_key' => :'String',
-        :'attestation' => :'String'
+        :'wallet_id' => :'String',
+        :'wallet_user_id' => :'String',
+        :'extended_public_key' => :'String',
+        :'seed_id' => :'String'
       }
     end
 
@@ -52,23 +63,39 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateAddressRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SeedCreationEventResult` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateAddressRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SeedCreationEventResult`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'public_key')
-        self.public_key = attributes[:'public_key']
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
+      else
+        self.wallet_id = nil
       end
 
-      if attributes.key?(:'attestation')
-        self.attestation = attributes[:'attestation']
+      if attributes.key?(:'wallet_user_id')
+        self.wallet_user_id = attributes[:'wallet_user_id']
+      else
+        self.wallet_user_id = nil
+      end
+
+      if attributes.key?(:'extended_public_key')
+        self.extended_public_key = attributes[:'extended_public_key']
+      else
+        self.extended_public_key = nil
+      end
+
+      if attributes.key?(:'seed_id')
+        self.seed_id = attributes[:'seed_id']
+      else
+        self.seed_id = nil
       end
     end
 
@@ -77,6 +104,22 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      end
+
+      if @wallet_user_id.nil?
+        invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
+      end
+
+      if @extended_public_key.nil?
+        invalid_properties.push('invalid value for "extended_public_key", extended_public_key cannot be nil.')
+      end
+
+      if @seed_id.nil?
+        invalid_properties.push('invalid value for "seed_id", seed_id cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +127,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @wallet_id.nil?
+      return false if @wallet_user_id.nil?
+      return false if @extended_public_key.nil?
+      return false if @seed_id.nil?
       true
     end
 
@@ -92,8 +139,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          public_key == o.public_key &&
-          attestation == o.attestation
+          wallet_id == o.wallet_id &&
+          wallet_user_id == o.wallet_user_id &&
+          extended_public_key == o.extended_public_key &&
+          seed_id == o.seed_id
     end
 
     # @see the `==` method
@@ -105,7 +154,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [public_key, attestation].hash
+      [wallet_id, wallet_user_id, extended_public_key, seed_id].hash
     end
 
     # Builds the object from hash

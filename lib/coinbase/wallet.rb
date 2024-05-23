@@ -39,13 +39,13 @@ module Coinbase
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia', server_signer: false)
+      def create(network_id: 'base-sepolia')
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
                 network_id: network_id,
-                use_server_signer: server_signer
+                use_server_signer: Coinbase.use_server_signer?
               }
             }
           )
@@ -56,7 +56,7 @@ module Coinbase
         # Create a default address if the Wallet is not using the server signer.
         # When used with a server signer, the server signer must first register
         # with the wallet before addreses can be created.
-        wallet.create_address unless server_signer
+        wallet.create_address unless Coinbase.use_server_signer?
 
         wallet
       end
@@ -126,16 +126,19 @@ module Coinbase
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
-      key = derive_key
-      attestation = create_attestation(key)
-      public_key = key.public_key.compressed.unpack1('H*')
+      opts = { create_address_request: {} }
 
-      opts = {
-        create_address_request: {
-          public_key: public_key,
-          attestation: attestation
+      unless Coinbase.use_server_signer?
+        key = derive_key
+
+        opts = {
+          create_address_request: {
+            public_key: key.public_key.compressed.unpack1('H*'),
+            attestation: create_attestation(key)
+          }
         }
-      }
+      end
+
       address_model = Coinbase.call_api do
         addresses_api.create_address(id, opts)
       end
