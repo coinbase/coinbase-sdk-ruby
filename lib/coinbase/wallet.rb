@@ -45,7 +45,7 @@ module Coinbase
             create_wallet_request: {
               wallet: {
                 network_id: network_id,
-                use_server_signer: Coinbase.configuration.use_server_signer
+                use_server_signer: Coinbase.use_server_signer?
               }
             }
           )
@@ -56,7 +56,7 @@ module Coinbase
         # Create a default address if the Wallet is not using the server signer.
         # When used with a server signer, the server signer must first register
         # with the wallet before addreses can be created.
-        wallet.create_address unless Coinbase.configuration.use_server_signer
+        wallet.create_address unless Coinbase.use_server_signer?
 
         wallet
       end
@@ -128,7 +128,7 @@ module Coinbase
     def create_address
       opts = { create_address_request: {} }
 
-      unless Coinbase.configuration.use_server_signer
+      unless Coinbase.use_server_signer?
         key = derive_key
 
         opts = {

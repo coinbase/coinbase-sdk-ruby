@@ -118,4 +118,10 @@ module Coinbase
   rescue StandardError => e
     raise e
   end
+
+  # Returns the configuration use_server_signer.
+  # @return [bool] whether to use server signer or not.
+  def self.use_server_signer?
+    Coinbase.configuration.use_server_signer
+  end
 end
