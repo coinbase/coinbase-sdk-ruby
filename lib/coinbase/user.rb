@@ -40,7 +40,8 @@ module Coinbase
     # Lists the Wallets belonging to the User.
     # @param page_size [Integer] (Optional) the number of Wallets to return per page. Defaults to 10
     # @param next_page_token [String] (Optional) the token for the next page of Wallets
-    # @return [Coinbase::Wallet] the Wallets belonging to the User
+    # @return [Array<Coinbase::Wallet, String>] the Wallets belonging to the User and the pagination token, if
+    #   any.
     def wallets(page_size: 10, next_page_token: nil)
       opts = {
         limit: page_size
@@ -63,9 +64,11 @@ module Coinbase
         address_model_map[wallet_model.id] = addresses_list.data
       end
 
-      wallet_list.data.map do |wallet_model|
+      wallets = wallet_list.data.map do |wallet_model|
         Wallet.new(wallet_model, seed: '', address_models: address_model_map[wallet_model.id])
       end
+
+      return [wallets, wallet_list.next_page]
     end
 
     # Returns the Wallet with the given ID.
