@@ -23,12 +23,38 @@ module Coinbase::Client
 
     attr_accessor :default_address
 
+    # The status of the Server-Signer for the wallet if present.
+    attr_accessor :server_signer_status
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'id' => :'id',
         :'network_id' => :'network_id',
-        :'default_address' => :'default_address'
+        :'default_address' => :'default_address',
+        :'server_signer_status' => :'server_signer_status'
       }
     end
 
@@ -42,7 +68,8 @@ module Coinbase::Client
       {
         :'id' => :'String',
         :'network_id' => :'String',
-        :'default_address' => :'Address'
+        :'default_address' => :'Address',
+        :'server_signer_status' => :'String'
       }
     end
 
@@ -82,6 +109,10 @@ module Coinbase::Client
       if attributes.key?(:'default_address')
         self.default_address = attributes[:'default_address']
       end
+
+      if attributes.key?(:'server_signer_status')
+        self.server_signer_status = attributes[:'server_signer_status']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -106,7 +137,19 @@ module Coinbase::Client
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @id.nil?
       return false if @network_id.nil?
+      server_signer_status_validator = EnumAttributeValidator.new('String', ["pending_seed_creation", "active_seed"])
+      return false unless server_signer_status_validator.valid?(@server_signer_status)
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] server_signer_status Object to be assigned
+    def server_signer_status=(server_signer_status)
+      validator = EnumAttributeValidator.new('String', ["pending_seed_creation", "active_seed"])
+      unless validator.valid?(server_signer_status)
+        fail ArgumentError, "invalid value for \"server_signer_status\", must be one of #{validator.allowable_values}."
+      end
+      @server_signer_status = server_signer_status
     end
 
     # Checks equality by comparing each attribute.
@@ -116,7 +159,8 @@ module Coinbase::Client
       self.class == o.class &&
           id == o.id &&
           network_id == o.network_id &&
-          default_address == o.default_address
+          default_address == o.default_address &&
+          server_signer_status == o.server_signer_status
     end
 
     # @see the `==` method
@@ -128,7 +172,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network_id, default_address].hash
+      [id, network_id, default_address, server_signer_status].hash
     end
 
     # Builds the object from hash
