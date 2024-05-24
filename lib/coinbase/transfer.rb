@@ -11,8 +11,6 @@ module Coinbase
   # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
   # Address#transfer.
   class Transfer
-    attr_accessor :transaction_hash, :status
-
     # A representation of a Transfer status.
     module Status
       # The Transfer is awaiting being broadcast to the Network. At this point, transaction
@@ -136,26 +134,12 @@ module Coinbase
     # Returns the status of the Transfer.
     # @return [Symbol] The status
     def status
-      # Check if the transfer has been signed yet.
-      return Status::PENDING if transaction_hash.nil?
+      @model.status
+    end
 
-      onchain_transaction = Coinbase.configuration.base_sepolia_client.eth_getTransactionByHash(transaction_hash)
-
-      if onchain_transaction.nil?
-        # If the transaction has not been broadcast, it is still pending.
-        Status::PENDING
-      elsif onchain_transaction['blockHash'].nil?
-        # If the transaction has been broadcast but hasn't been included in a block, it is
-        # broadcast.
-        Status::BROADCAST
-      else
-        transaction_receipt = Coinbase.configuration.base_sepolia_client.eth_getTransactionReceipt(transaction_hash)
-
-        if transaction_receipt['status'].to_i(16) == 1
-          Status::COMPLETE
-        else
-          Status::FAILED
-        end
+    def reload
+      @model = Coinbase.call_api do
+        transfers_api.get_transfer(wallet_id, from_address_id, id)
       end
     end
 
@@ -168,15 +152,9 @@ module Coinbase
       start_time = Time.now
 
       loop do
-        update = Coinbase.call_api do
-          transfers_api.get_transfer(wallet_id, from_address_id, id)
-        end
+        reload
 
-        if update.status.to_s == Status::COMPLETE.to_s || update.status == Status::FAILED.to_s
-          self.transaction_hash = update.transaction_hash
-          self.status = update.status
-          return self
-        end
+        return @model if status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 

@@ -130,7 +130,7 @@ module Coinbase
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      # validate_seed_and_address_models(seed, address_models)
+      validate_seed_and_address_models(seed, address_models)
 
       @model = model
       @master = master_node(seed)

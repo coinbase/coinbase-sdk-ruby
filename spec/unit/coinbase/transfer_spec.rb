@@ -251,70 +251,40 @@ describe Coinbase::Transfer do
     end
   end
 
-  describe '#status' do
+  describe '#reload' do
     context 'when the transaction has not been created' do
-      it 'returns PENDING' do
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
-      end
-    end
-
-    context 'when the transaction has been created but not signed' do
-      it 'returns PENDING' do
-        transfer.transaction
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
-      end
-    end
-
-    context 'when the transaction has been signed but not broadcast' do
       before do
-        transfer.transaction.sign(from_key)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(broadcast_model)
       end
 
       it 'returns PENDING' do
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING)
+        status = transfer.reload.status
+        expect(status).to eq(Coinbase::Transfer::Status::PENDING.to_s)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING.to_s)
       end
     end
 
-    context 'when the transaction has been broadcast but not included in a block' do
+    context 'when the transaction is complete' do
       let(:onchain_transaction) { { 'blockHash' => nil } }
       subject(:transfer) do
-        described_class.new(broadcast_model)
+        described_class.new(complete_broadcast_model)
       end
 
       before do
         transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
-      end
-
-      it 'returns BROADCAST' do
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::BROADCAST)
-      end
-    end
-
-    context 'when the transaction has confirmed' do
-      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
-      let(:transaction_receipt) { { 'status' => '0x1' } }
-      subject(:transfer) do
-        described_class.new(broadcast_model)
-      end
-
-      before do
-        transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
-        allow(client)
-          .to receive(:eth_getTransactionReceipt)
-          .with(transfer.transaction_hash)
-          .and_return(transaction_receipt)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(complete_broadcast_model)
       end
 
       it 'returns COMPLETE' do
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE)
+        status = transfer.reload.status
+        expect(status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
       end
     end
 
@@ -327,18 +297,16 @@ describe Coinbase::Transfer do
 
       before do
         transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
-        allow(client)
-          .to receive(:eth_getTransactionReceipt)
-          .with(transfer.transaction_hash)
-          .and_return(transaction_receipt)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(failed_broadcast_model)
       end
 
       it 'returns FAILED' do
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED)
+        status = transfer.reload.status
+        expect(status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
       end
     end
   end
@@ -359,23 +327,15 @@ describe Coinbase::Transfer do
 
       before do
         transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
-        allow(client)
-          .to receive(:eth_getTransactionReceipt)
-          .with(transfer.transaction_hash)
-          .and_return(transaction_receipt)
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
-          .and_return(transfer)
+          .and_return(complete_broadcast_model)
       end
 
       it 'returns the completed Transfer' do
-        expect(transfer.wait!).to eq(transfer)
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE)
+        expect(transfer.wait!(0.001, 0.1)).to eq(complete_broadcast_model)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
       end
     end
 
@@ -385,14 +345,6 @@ describe Coinbase::Transfer do
 
       before do
         transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
-        allow(client)
-          .to receive(:eth_getTransactionReceipt)
-          .with(transfer.transaction_hash)
-          .and_return(transaction_receipt)
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
@@ -400,8 +352,8 @@ describe Coinbase::Transfer do
       end
 
       it 'returns the failed Transfer' do
-        expect(transfer.wait!).to eq(transfer)
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED)
+        expect(transfer.wait!).to eq(failed_broadcast_model)
+        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
       end
     end
 
@@ -410,18 +362,14 @@ describe Coinbase::Transfer do
 
       before do
         transfer.transaction.sign(from_key)
-        allow(client)
-          .to receive(:eth_getTransactionByHash)
-          .with(transfer.transaction_hash)
-          .and_return(onchain_transaction)
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
-          .and_return(transfer)
+          .and_return(broadcast_model)
       end
 
       it 'raises a Timeout::Error' do
-        expect { transfer.wait!(0.2, 0.00001) }.to raise_error(Timeout::Error, 'Transfer timed out')
+        expect { transfer.wait!(0.0001, 0.0005) }.to raise_error(Timeout::Error, 'Transfer timed out')
       end
     end
   end
