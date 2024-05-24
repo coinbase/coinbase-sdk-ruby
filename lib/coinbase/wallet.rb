@@ -17,9 +17,14 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
+    # A representation of ServerSigner status in a wallet.
     module ServerSignerStatus
+      # The Wallet is awaiting seed creation by the ServerSigner. At this point,
+      # the wallet cannot create addresses.
       PENDING_SEED_CREATION = :pending_seed_creation
 
+      # The Wallet has an associated seed created by the ServerSigner. It is ready
+      # to create addresses and sign transactions.
       ACTIVE = :active_seed
     end
 
