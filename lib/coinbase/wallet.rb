@@ -47,6 +47,10 @@ module Coinbase
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
+      # @param interval_seconds [Integer] The interval at which to poll the CDPService if using a ServerSigner,
+      # in seconds
+      # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
+      # create a seed for the wallet, in seconds
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
@@ -80,6 +84,11 @@ module Coinbase
 
       private
 
+      # Wait_for_signer waits until the ServerSigner has created the seed in the Wallet.
+      # Timeout::Error if the ServerSigner takes longer than the given timeout to create the seed.
+      # @param interval_seconds [Integer] The interval at which to poll the CDPService, in seconds
+      # @param timeout_seconds [Integer] The maximum amount of time to wait for the Signer to create a seed, in seconds
+      # @return [Wallet] The completed Wallet object that is ready to create addresses.
       def wait_for_signer(wallet_id, interval_seconds, timeout_seconds)
         start_time = Time.now
 
@@ -142,6 +151,8 @@ module Coinbase
       Coinbase.to_sym(@model.network_id)
     end
 
+    # Returns the ServerSigner Status of the Wallet.
+    # @return [Symbol] The ServerSigner Status
     def server_signer_status
       Coinbase.to_sym(@model.server_signer_status)
     end
