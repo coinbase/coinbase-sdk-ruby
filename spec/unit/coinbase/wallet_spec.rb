@@ -562,6 +562,73 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#save_seed!' do
+    let(:file_path) { "#{SecureRandom.uuid}.json"}
+    let(:initial_seed_data) { JSON.pretty_generate({}) }
+    let(:seed_wallet) do
+      described_class.new(model_with_default_address, seed: seed, address_models: [address_model1])
+    end
+
+    before do
+      @api_key_private_key = Coinbase.configuration.api_key_private_key
+      Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+      File.open(file_path, 'w') do |file|
+        file.write(initial_seed_data)
+      end
+    end
+
+    after do
+      File.delete(file_path)
+      Coinbase.configuration.api_key_private_key = @api_key_private_key
+    end
+
+    it 'saves the Wallet data when encrypt is false' do
+      seed_wallet.save_seed!(file_path, encrypt: false)
+
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(false)
+      expect(data['iv']).to eq('')
+      expect(data['auth_tag']).to eq('')
+      expect(data['seed']).to eq(seed)
+    end
+
+    it 'saves the Wallet data when encryption is true' do
+      seed_wallet.save_seed!(file_path, encrypt: true)
+
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(true)
+      expect(data['iv']).not_to be_empty
+      expect(data['auth_tag']).not_to be_empty
+      expect(data['seed']).not_to eq(seed)
+    end
+
+    it 'throws an error when the wallet is seedless' do
+      seedless_wallet = described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
+      expect do
+        seedless_wallet.save_seed!(file_path)
+      end.to raise_error "Wallet does not have seed loaded"
+    end
+
+    it 'throws an error when the file is malformed' do
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate({
+          malformed: 'test'
+        }.to_json))
+      end
+      expect do
+        seed_wallet.save_seed!(file_path)
+      end.to raise_error(ArgumentError)
+    end
+  end
+
   describe '#inspect' do
     it 'includes wallet details' do
       expect(wallet.inspect).to include(wallet_id, Coinbase.to_sym(network_id).to_s)
