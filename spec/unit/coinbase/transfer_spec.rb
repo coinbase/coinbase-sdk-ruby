@@ -69,6 +69,34 @@ describe Coinbase::Transfer do
                                      'transaction_hash' => transaction_hash
                                    })
   end
+  let(:complete_broadcast_model) do
+    Coinbase::Client::Transfer.new({
+                                     'network_id' => network_id,
+                                     'wallet_id' => wallet_id,
+                                     'address_id' => from_address_id,
+                                     'destination' => to_address_id,
+                                     'asset_id' => 'eth',
+                                     'amount' => amount.to_s,
+                                     'transfer_id' => transfer_id,
+                                     'status' => 'complete',
+                                     'unsigned_payload' => unsigned_payload,
+                                     'signed_payload' => signed_payload,
+                                     'transaction_hash' => transaction_hash
+                                   })
+  end
+  let(:failed_broadcast_model) do
+    Coinbase::Client::Transfer.new({
+                                     'network_id' => network_id,
+                                     'wallet_id' => wallet_id,
+                                     'address_id' => from_address_id,
+                                     'destination' => to_address_id,
+                                     'asset_id' => 'eth',
+                                     'amount' => amount.to_s,
+                                     'transfer_id' => transfer_id,
+                                     'status' => 'failed',
+                                     'unsigned_payload' => unsigned_payload
+                                   })
+  end
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
 
@@ -317,7 +345,7 @@ describe Coinbase::Transfer do
 
   describe '#wait!' do
     subject(:transfer) do
-      described_class.new(broadcast_model)
+      described_class.new(complete_broadcast_model)
     end
 
     before do
@@ -339,6 +367,10 @@ describe Coinbase::Transfer do
           .to receive(:eth_getTransactionReceipt)
           .with(transfer.transaction_hash)
           .and_return(transaction_receipt)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(transfer)
       end
 
       it 'returns the completed Transfer' do
@@ -361,6 +393,10 @@ describe Coinbase::Transfer do
           .to receive(:eth_getTransactionReceipt)
           .with(transfer.transaction_hash)
           .and_return(transaction_receipt)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(failed_broadcast_model)
       end
 
       it 'returns the failed Transfer' do
@@ -378,6 +414,10 @@ describe Coinbase::Transfer do
           .to receive(:eth_getTransactionByHash)
           .with(transfer.transaction_hash)
           .and_return(onchain_transaction)
+        allow(transfers_api)
+          .to receive(:get_transfer)
+          .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
+          .and_return(transfer)
       end
 
       it 'raises a Timeout::Error' do

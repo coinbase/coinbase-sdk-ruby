@@ -166,7 +166,11 @@ module Coinbase
       start_time = Time.now
 
       loop do
-        return self if status == Status::COMPLETE || status == Status::FAILED
+        model = Coinbase.call_api do
+          transfers_api.get_transfer(wallet_id, from_address_id, id)
+        end
+
+        return self if model.status.to_s == Status::COMPLETE.to_s || model.status == Status::FAILED.to_s
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
@@ -189,6 +193,10 @@ module Coinbase
     # @return [String] a String representation of the Transfer
     def inspect
       to_s
+    end
+
+    def transfers_api
+      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
   end
 end
