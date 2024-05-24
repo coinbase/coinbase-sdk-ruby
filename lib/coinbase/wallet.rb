@@ -17,10 +17,10 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
-    # A representation of ServerSigner status in a wallet.
+    # A representation of ServerSigner status in a Wallet.
     module ServerSignerStatus
       # The Wallet is awaiting seed creation by the ServerSigner. At this point,
-      # the wallet cannot create addresses.
+      # the Wallet cannot create addresses or sign transactions.
       PENDING_SEED_CREATION = :pending_seed_creation
 
       # The Wallet has an associated seed created by the ServerSigner. It is ready
@@ -47,10 +47,10 @@ module Coinbase
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
-      # @param interval_seconds [Integer] The interval at which to poll the CDPService if using a ServerSigner,
-      # in seconds
+      # @param interval_seconds [Integer] The interval at which to poll the CDPService for the Wallet to
+      # have an active seed, if using a ServerSigner, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
-      # create a seed for the wallet, in seconds
+      # create a seed for the Wallet, in seconds
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
@@ -68,15 +68,15 @@ module Coinbase
 
         wallet = new(model)
 
-        # Create a default address if the Wallet is not using the server signer.
-        # When used with a server signer, the server signer must first register
-        # with the wallet before addreses can be created.
+        # Create a default address if the Wallet is not using the ServerSigner.
+        # When used with a ServerSigner, the Signer must first register
+        # with the Wallet before addresses can be created.
         unless Coinbase.use_server_signer?
           wallet.create_address
           return wallet
         end
 
-        # Wait until signer is active and create the default_address.
+        # Wait until ServerSigner is active and create the default_address.
         wait_for_signer(wallet.id, interval_seconds, timeout_seconds)
         wallet.create_address
         wallet
@@ -84,7 +84,7 @@ module Coinbase
 
       private
 
-      # Wait_for_signer waits until the ServerSigner has created the seed in the Wallet.
+      # Wait_for_signer waits until the ServerSigner has created a seed for the Wallet.
       # Timeout::Error if the ServerSigner takes longer than the given timeout to create the seed.
       # @param interval_seconds [Integer] The interval at which to poll the CDPService, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the Signer to create a seed, in seconds
