@@ -78,7 +78,7 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      raise 'Cannot transfer from address without private key loaded' if @key.nil?
+      raise 'Cannot transfer from address without private key loaded' if !Coinbase.use_server_signer? && @key.nil?
 
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
@@ -107,6 +107,9 @@ module Coinbase
       transfer_model = Coinbase.call_api do
         transfers_api.create_transfer(wallet_id, id, create_transfer_request)
       end
+
+      # Return here if ServerSigner is expected to sign the transfer.
+      return Coinbase::Transfer.new(transfer_model) if Coinbase.use_server_signer?
 
       transfer = Coinbase::Transfer.new(transfer_model)
 
