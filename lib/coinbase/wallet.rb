@@ -21,7 +21,7 @@ module Coinbase
     module ServerSignerStatus
       # The Wallet is awaiting seed creation by the ServerSigner. At this point,
       # the Wallet cannot create addresses or sign transactions.
-      PENDING_SEED_CREATION = :pending_seed_creation
+      PENDING = :pending_seed_creation
 
       # The Wallet has an associated seed created by the ServerSigner. It is ready
       # to create addresses and sign transactions.
@@ -54,7 +54,7 @@ module Coinbase
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
-      def create(interval_seconds = 0.2, timeout_seconds = 20, network_id: 'base-sepolia')
+      def create(network_id: 'base-sepolia', interval_seconds: 0.2, timeout_seconds: 20)
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {

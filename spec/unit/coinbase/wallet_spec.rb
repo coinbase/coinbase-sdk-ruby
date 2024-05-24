@@ -239,7 +239,7 @@ describe Coinbase::Wallet do
       end
 
       subject(:created_wallet) do
-        described_class.create(0.2, 0.00001)
+        described_class.create(interval_seconds: 0.2, timeout_seconds: 0.00001)
       end
 
       it 'raises a Timeout::Error' do
