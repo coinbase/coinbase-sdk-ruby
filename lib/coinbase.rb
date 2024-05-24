@@ -34,7 +34,7 @@ module Coinbase
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
 
-    return 'Successfully configured Coinbase SDK'
+    'Successfully configured Coinbase SDK'
   end
 
   # Configures the Coinbase SDK from the given CDP API Key JSON file.
@@ -46,7 +46,8 @@ module Coinbase
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
-    return 'Successfully configured Coinbase SDK'
+
+    'Successfully configured Coinbase SDK'
   end
 
   # Configuration object for the Coinbase SDK.

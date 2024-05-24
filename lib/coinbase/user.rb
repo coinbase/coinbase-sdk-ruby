@@ -68,7 +68,7 @@ module Coinbase
         Wallet.new(wallet_model, seed: '', address_models: address_model_map[wallet_model.id])
       end
 
-      return [wallets, wallet_list.next_page]
+      [wallets, wallet_list.next_page]
     end
 
     # Returns the Wallet with the given ID.

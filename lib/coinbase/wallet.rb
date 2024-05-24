@@ -232,7 +232,7 @@ module Coinbase
     # encrypted or not. Data is unencrypted by default.
     # @return [String] A string indicating the success of the operation
     def save_seed!(file_path, encrypt: false)
-      raise "Wallet does not have seed loaded" if @master.nil?
+      raise 'Wallet does not have seed loaded' if @master.nil?
 
       existing_seeds_in_store = existing_seeds(file_path)
 
@@ -269,7 +269,7 @@ module Coinbase
     # @param file_path [String] The path of the file to load the seed from
     # @return [String] A string indicating the success of the operation
     def load_seed(file_path)
-      raise "Wallet aleady has seed loaded" if !@master.nil?
+      raise 'Wallet already has seed loaded' unless @master.nil?
 
       existing_seeds_in_store = existing_seeds(file_path)
 
@@ -286,7 +286,7 @@ module Coinbase
 
       if seed_data['encrypted']
         raise ArgumentError, 'Encrypted seed data is malformed' if seed_data['iv'] == '' ||
-                                                                    seed_data['auth_tag'] == ''
+                                                                   seed_data['auth_tag'] == ''
 
         cipher = OpenSSL::Cipher.new('aes-256-gcm').decrypt
         cipher.key = OpenSSL::Digest.digest('SHA256', encryption_key)
