@@ -17,6 +17,12 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
+    module ServerSignerStatus
+      PENDING_SEED_CREATION = :pending_seed_creation
+
+      ACTIVE = :active_seed
+    end
+
     class << self
       # Imports a Wallet from previously exported wallet data.
       # @param data [Coinbase::Wallet::Data] the Wallet data to import
@@ -39,7 +45,7 @@ module Coinbase
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia')
+      def create(interval_seconds = 0.2, timeout_seconds = 20, network_id: 'base-sepolia')
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
@@ -56,12 +62,38 @@ module Coinbase
         # Create a default address if the Wallet is not using the server signer.
         # When used with a server signer, the server signer must first register
         # with the wallet before addreses can be created.
-        wallet.create_address unless Coinbase.use_server_signer?
+        unless Coinbase.use_server_signer?
+          wallet.create_address
+          return wallet
+        end
 
+        # Wait until signer is active and create the default_address.
+        wait_for_signer(wallet.id, interval_seconds, timeout_seconds)
+        wallet.create_address
         wallet
       end
 
       private
+
+      def wait_for_signer(wallet_id, interval_seconds, timeout_seconds)
+        start_time = Time.now
+
+        loop do
+          model = Coinbase.call_api do
+            wallets_api.get_wallet(wallet_id)
+          end
+
+          return self if model.server_signer_status == ServerSignerStatus::ACTIVE.to_s
+
+          if Time.now - start_time > timeout_seconds
+            raise Timeout::Error, 'Wallet creation timed out. Check status of your Server-Signer'
+          end
+
+          self.sleep interval_seconds
+        end
+
+        self
+      end
 
       # TODO: Memoize these objects in a thread-safe way at the top-level.
       def addresses_api
@@ -103,6 +135,10 @@ module Coinbase
     # @return [Symbol] The Network ID
     def network_id
       Coinbase.to_sym(@model.network_id)
+    end
+
+    def server_signer_status
+      Coinbase.to_sym(@model.server_signer_status)
     end
 
     # Sets the seed of the Wallet. This seed is used to derive keys and sign transactions.

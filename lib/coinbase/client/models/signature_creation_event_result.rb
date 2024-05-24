@@ -22,6 +22,9 @@ module Coinbase::Client
     # The ID of the user that the wallet belongs to
     attr_accessor :wallet_user_id
 
+    # The ID of the address the transfer belongs to
+    attr_accessor :address_id
+
     attr_accessor :transaction_type
 
     # The ID of the transaction that the Server-Signer has signed for
@@ -57,6 +60,7 @@ module Coinbase::Client
       {
         :'wallet_id' => :'wallet_id',
         :'wallet_user_id' => :'wallet_user_id',
+        :'address_id' => :'address_id',
         :'transaction_type' => :'transaction_type',
         :'transaction_id' => :'transaction_id',
         :'signature' => :'signature'
@@ -73,6 +77,7 @@ module Coinbase::Client
       {
         :'wallet_id' => :'String',
         :'wallet_user_id' => :'String',
+        :'address_id' => :'String',
         :'transaction_type' => :'TransactionType',
         :'transaction_id' => :'String',
         :'signature' => :'String'
@@ -112,6 +117,12 @@ module Coinbase::Client
         self.wallet_user_id = nil
       end
 
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
       if attributes.key?(:'transaction_type')
         self.transaction_type = attributes[:'transaction_type']
       else
@@ -144,6 +155,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
       end
 
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
       if @transaction_type.nil?
         invalid_properties.push('invalid value for "transaction_type", transaction_type cannot be nil.')
       end
@@ -165,6 +180,7 @@ module Coinbase::Client
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @wallet_id.nil?
       return false if @wallet_user_id.nil?
+      return false if @address_id.nil?
       return false if @transaction_type.nil?
       return false if @transaction_id.nil?
       return false if @signature.nil?
@@ -178,6 +194,7 @@ module Coinbase::Client
       self.class == o.class &&
           wallet_id == o.wallet_id &&
           wallet_user_id == o.wallet_user_id &&
+          address_id == o.address_id &&
           transaction_type == o.transaction_type &&
           transaction_id == o.transaction_id &&
           signature == o.signature
@@ -192,7 +209,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet_id, wallet_user_id, transaction_type, transaction_id, signature].hash
+      [wallet_id, wallet_user_id, address_id, transaction_type, transaction_id, signature].hash
     end
 
     # Builds the object from hash

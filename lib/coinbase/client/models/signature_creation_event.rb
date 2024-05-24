@@ -25,6 +25,9 @@ module Coinbase::Client
     # The ID of the user that the wallet belongs to
     attr_accessor :wallet_user_id
 
+    # The ID of the address the transfer belongs to
+    attr_accessor :address_id
+
     # The index of the address that the server-signer should sign with
     attr_accessor :address_index
 
@@ -64,6 +67,7 @@ module Coinbase::Client
         :'seed_id' => :'seed_id',
         :'wallet_id' => :'wallet_id',
         :'wallet_user_id' => :'wallet_user_id',
+        :'address_id' => :'address_id',
         :'address_index' => :'address_index',
         :'signing_payload' => :'signing_payload',
         :'transaction_type' => :'transaction_type',
@@ -82,6 +86,7 @@ module Coinbase::Client
         :'seed_id' => :'String',
         :'wallet_id' => :'String',
         :'wallet_user_id' => :'String',
+        :'address_id' => :'String',
         :'address_index' => :'Integer',
         :'signing_payload' => :'String',
         :'transaction_type' => :'TransactionType',
@@ -128,6 +133,12 @@ module Coinbase::Client
         self.wallet_user_id = nil
       end
 
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
       if attributes.key?(:'address_index')
         self.address_index = attributes[:'address_index']
       else
@@ -170,6 +181,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
       end
 
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
       if @address_index.nil?
         invalid_properties.push('invalid value for "address_index", address_index cannot be nil.')
       end
@@ -196,6 +211,7 @@ module Coinbase::Client
       return false if @seed_id.nil?
       return false if @wallet_id.nil?
       return false if @wallet_user_id.nil?
+      return false if @address_id.nil?
       return false if @address_index.nil?
       return false if @signing_payload.nil?
       return false if @transaction_type.nil?
@@ -211,6 +227,7 @@ module Coinbase::Client
           seed_id == o.seed_id &&
           wallet_id == o.wallet_id &&
           wallet_user_id == o.wallet_user_id &&
+          address_id == o.address_id &&
           address_index == o.address_index &&
           signing_payload == o.signing_payload &&
           transaction_type == o.transaction_type &&
@@ -226,7 +243,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [seed_id, wallet_id, wallet_user_id, address_index, signing_payload, transaction_type, transaction_id].hash
+      [seed_id, wallet_id, wallet_user_id, address_id, address_index, signing_payload, transaction_type, transaction_id].hash
     end
 
     # Builds the object from hash

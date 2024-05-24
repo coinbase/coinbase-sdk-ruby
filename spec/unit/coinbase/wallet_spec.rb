@@ -34,6 +34,26 @@ describe Coinbase::Wallet do
       }
     )
   end
+
+  let(:model_with_seed_pending) do
+    Coinbase::Client::Wallet.new(
+      {
+        'id': wallet_id,
+        'network_id': network_id,
+        'server_signer_status': 'pending_seed_creation'
+      }
+    )
+  end
+  let(:model_with_seed_active) do
+    Coinbase::Client::Wallet.new(
+      {
+        'id': wallet_id,
+        'network_id': network_id,
+        'default_address': address_model1,
+        'server_signer_status': 'active_seed'
+      }
+    )
+  end
   let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
   let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
@@ -144,7 +164,26 @@ describe Coinbase::Wallet do
 
     context 'when setting the network ID explicitly' do
       let(:network_id) { 'base-mainnet' }
-      let(:use_server_signer) { true }
+      let(:use_server_signer) { false }
+
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(
+            wallet_id,
+            satisfy do |req|
+              public_key = req[:create_address_request][:public_key]
+              attestation = req[:create_address_request][:attestation]
+
+              public_key.is_a?(String) && attestation.is_a?(String)
+            end
+          ).and_return(address_model1)
+
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
 
       subject(:created_wallet) do
         described_class.create(network_id: network_id)
@@ -161,6 +200,17 @@ describe Coinbase::Wallet do
 
     context 'when using a server signer' do
       let(:use_server_signer) { true }
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(wallet_id, { create_address_request: {} })
+          .and_return(address_model1)
+
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_seed_active)
+      end
 
       subject(:created_wallet) { described_class.create }
 
@@ -168,16 +218,33 @@ describe Coinbase::Wallet do
         expect(created_wallet).to be_a(Coinbase::Wallet)
       end
 
-      it 'does not create a default address' do
-        expect(created_wallet.default_address).to be_nil
-      end
-
-      it 'does not set any addresses' do
-        expect(created_wallet.addresses).to be_empty
+      it 'creates a default address' do
+        puts created_wallet
+        expect(created_wallet.default_address).to be_a(Coinbase::Address)
+        expect(created_wallet.addresses.length).to eq(1)
       end
 
       it 'sets the default network ID' do
         expect(created_wallet.network_id).to eq(:base_sepolia)
+      end
+    end
+
+    context 'when using a server signer is not active' do
+      let(:use_server_signer) { true }
+      before do
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_seed_pending)
+      end
+
+      subject(:created_wallet) do
+        described_class.create(0.2, 0.00001)
+      end
+
+      it 'raises a Timeout::Error' do
+        expect { created_wallet }.to raise_error(Timeout::Error,
+                                                 'Wallet creation timed out. Check status of your Server-Signer')
       end
     end
   end
@@ -361,9 +428,7 @@ describe Coinbase::Wallet do
       before do
         allow(addresses_api)
           .to receive(:create_address)
-          .with(
-            wallet_id
-          ).and_return(created_address_model)
+          .with(wallet_id).and_return(created_address_model)
         allow(wallets_api)
           .to receive(:get_wallet)
           .with(wallet_id)
