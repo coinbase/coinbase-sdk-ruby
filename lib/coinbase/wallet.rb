@@ -86,6 +86,7 @@ module Coinbase
 
       # Wait_for_signer waits until the ServerSigner has created a seed for the Wallet.
       # Timeout::Error if the ServerSigner takes longer than the given timeout to create the seed.
+      # @param wallet_id [string] The ID of the Wallet that is awaiting seed creation.
       # @param interval_seconds [Integer] The interval at which to poll the CDPService, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the Signer to create a seed, in seconds
       # @return [Wallet] The completed Wallet object that is ready to create addresses.
@@ -129,7 +130,7 @@ module Coinbase
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      validate_seed_and_address_models(seed, address_models)
+      # validate_seed_and_address_models(seed, address_models)
 
       @model = model
       @master = master_node(seed)

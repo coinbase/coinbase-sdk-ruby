@@ -11,6 +11,8 @@ module Coinbase
   # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
   # Address#transfer.
   class Transfer
+    attr_accessor :transaction_hash, :status
+
     # A representation of a Transfer status.
     module Status
       # The Transfer is awaiting being broadcast to the Network. At this point, transaction
@@ -166,11 +168,15 @@ module Coinbase
       start_time = Time.now
 
       loop do
-        model = Coinbase.call_api do
+        update = Coinbase.call_api do
           transfers_api.get_transfer(wallet_id, from_address_id, id)
         end
 
-        return self if model.status.to_s == Status::COMPLETE.to_s || model.status == Status::FAILED.to_s
+        if update.status.to_s == Status::COMPLETE.to_s || update.status == Status::FAILED.to_s
+          self.transaction_hash = update.transaction_hash
+          self.status = update.status
+          return self
+        end
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
