@@ -154,7 +154,7 @@ module Coinbase
       loop do
         reload
 
-        return @model if status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
+        return self if status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 

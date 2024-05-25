@@ -334,7 +334,7 @@ describe Coinbase::Transfer do
       end
 
       it 'returns the completed Transfer' do
-        expect(transfer.wait!(0.001, 0.1)).to eq(complete_broadcast_model)
+        expect(transfer.wait!(0.001, 0.1)).to eq(transfer)
         expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
       end
     end
@@ -352,7 +352,7 @@ describe Coinbase::Transfer do
       end
 
       it 'returns the failed Transfer' do
-        expect(transfer.wait!).to eq(failed_broadcast_model)
+        expect(transfer.wait!).to eq(transfer)
         expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
       end
     end
