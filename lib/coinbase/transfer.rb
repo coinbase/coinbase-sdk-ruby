@@ -137,6 +137,8 @@ module Coinbase
       @model.status
     end
 
+    # Reload reloads the Transfer model with the latest version from the server side.
+    # @return [Transfer] The most recent version of Transfer from the server.
     def reload
       @model = Coinbase.call_api do
         transfers_api.get_transfer(wallet_id, from_address_id, id)
