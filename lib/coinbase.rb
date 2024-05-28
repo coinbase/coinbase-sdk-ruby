@@ -27,27 +27,33 @@ module Coinbase
   end
 
   # Configures the Coinbase SDK.
+  # @return [String] A string indicating successful configuration
   def self.configure
     yield(configuration)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+
+    'Successfully configured Coinbase SDK'
   end
 
   # Configures the Coinbase SDK from the given CDP API Key JSON file.
   # @param file_path [String] (Optional) the path to the CDP API Key JSON file
   # file in the root directory by default.
-  def self.configure_from_json(file_path = 'coinbase_cloud_api_key.json')
+  # @return [String] A string indicating successful configuration
+  def self.configure_from_json(file_path = 'cdp_api_key.json')
     configuration.from_json(file_path)
 
     raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
     raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+
+    'Successfully configured Coinbase SDK'
   end
 
   # Configuration object for the Coinbase SDK.
   class Configuration
     attr_reader :base_sepolia_rpc_url, :base_sepolia_client
-    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :backup_file_path, :use_server_signer
+    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :use_server_signer
 
     # Initializes the configuration object.
     def initialize
@@ -55,14 +61,12 @@ module Coinbase
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
       @api_url = 'https://api.cdp.coinbase.com'
       @debug_api = false
-      @backup_file_path = 'seeds.json'
-      @use_server_signer = false
     end
 
     # Sets configuration values based on the provided CDP API Key JSON file.
     # @param file_path [String] (Optional) the path to the CDP API Key JSON file
     # file in the root directory by default.
-    def from_json(file_path = 'coinbase_cloud_api_key.json')
+    def from_json(file_path = 'cdp_api_key.json')
       # Expand paths to respect shortcuts like ~.
       file_path = File.expand_path(file_path)
 

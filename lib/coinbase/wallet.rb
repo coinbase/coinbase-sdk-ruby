@@ -238,24 +238,14 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
-    # Currently only the default_address is used to source the Transfer.
+    # Transfers the given amount of the given Asset to the specified address or wallet.
+    # Only same-network Transfers are supported. Currently only the default_address is used to source the Transfer.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
     # @param asset_id [Symbol] The ID of the Asset to send
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
     # @return [Transfer] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.default_address.id
-      elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.id
-      end
-
       default_address.transfer(amount, asset_id, destination)
     end
 
@@ -282,6 +272,87 @@ module Coinbase
     # @return [Boolean] Whether the Wallet has a seed with which to derive keys and sign transactions.
     def can_sign?
       !@master.nil?
+    end
+
+    # Saves the seed of the Wallet to the given file. Wallets whose seeds are saved this way can be
+    # rehydrated using load_seed. A single file can be used for multiple Wallet seeds.
+    # This is an insecure method of storing Wallet seeds and should only be used for development purposes.
+    #
+    # @param file_path [String] The path of the file to save the seed to
+    # @param encrypt [bool] (Optional) Whether the seed information persisted to the local file system should be
+    # encrypted or not. Data is unencrypted by default.
+    # @return [String] A string indicating the success of the operation
+    def save_seed!(file_path, encrypt: false)
+      raise 'Wallet does not have seed loaded' if @master.nil?
+
+      existing_seeds_in_store = existing_seeds(file_path)
+
+      seed_to_store = @master.seed_hex
+      auth_tag = ''
+      iv = ''
+      if encrypt
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
+        cipher.key = OpenSSL::Digest.digest('SHA256', encryption_key)
+        iv = cipher.random_iv
+        cipher.iv = iv
+        cipher.auth_data = ''
+        encrypted_data = cipher.update(@master.seed_hex) + cipher.final
+        auth_tag = cipher.auth_tag.unpack1('H*')
+        iv = iv.unpack1('H*')
+        seed_to_store = encrypted_data.unpack1('H*')
+      end
+
+      existing_seeds_in_store[id] = {
+        seed: seed_to_store,
+        encrypted: encrypt,
+        auth_tag: auth_tag,
+        iv: iv
+      }
+
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(existing_seeds_in_store))
+      end
+
+      "Successfully saved seed for wallet #{id} to #{file_path}."
+    end
+
+    # Loads the seed of the Wallet from the given file.
+    # @param file_path [String] The path of the file to load the seed from
+    # @return [String] A string indicating the success of the operation
+    def load_seed(file_path)
+      raise 'Wallet already has seed loaded' unless @master.nil?
+
+      existing_seeds_in_store = existing_seeds(file_path)
+
+      raise ArgumentError, "File #{file_path} does not contain seed data" if existing_seeds_in_store == {}
+
+      if existing_seeds_in_store[id].nil?
+        raise ArgumentError, "File #{file_path} does not contain seed data for wallet #{id}"
+      end
+
+      seed_data = existing_seeds_in_store[id]
+      local_seed = seed_data['seed']
+
+      raise ArgumentError, 'Seed data is malformed' if local_seed.nil? || local_seed == ''
+
+      if seed_data['encrypted']
+        raise ArgumentError, 'Encrypted seed data is malformed' if seed_data['iv'] == '' ||
+                                                                   seed_data['auth_tag'] == ''
+
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').decrypt
+        cipher.key = OpenSSL::Digest.digest('SHA256', encryption_key)
+        iv = [seed_data['iv']].pack('H*')
+        cipher.iv = iv
+        auth_tag = [seed_data['auth_tag']].pack('H*')
+        cipher.auth_tag = auth_tag
+        cipher.auth_data = ''
+        hex_decoded_data = [seed_data['seed']].pack('H*')
+        local_seed = cipher.update(hex_decoded_data) + cipher.final
+      end
+
+      self.seed = local_seed
+
+      "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
 
     # Returns a String representation of the Wallet.
@@ -449,6 +520,25 @@ module Coinbase
       return unless !seed.nil? && seed.empty? && address_models.empty?
 
       raise ArgumentError, 'Seed must be empty if address_models are not provided'
+    end
+
+    # Loads the Hash of Wallet seeds from the given file.
+    # @param file_path [String] The path of the file to load the seed from
+    # @return [Hash<String, Hash>] The Hash of from Wallet IDs to seed data
+    def existing_seeds(file_path)
+      existing_seed_data = '{}'
+      existing_seed_data = File.read(file_path) if File.exist?(file_path)
+      existing_seeds = JSON.parse(existing_seed_data)
+      raise ArgumentError, "#{file_path} is malformed, must be a valid JSON object" unless existing_seeds.is_a?(Hash)
+
+      existing_seeds
+    end
+
+    # Returns the shared secret to use for encrypting the seed.
+    def encryption_key
+      pk = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
+      public_key = pk.public_key # use own public key to generate the shared secret.
+      pk.dh_compute_key(public_key)
     end
 
     def addresses_api
