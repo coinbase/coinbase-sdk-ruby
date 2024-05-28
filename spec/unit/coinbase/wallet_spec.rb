@@ -477,7 +477,7 @@ describe Coinbase::Wallet do
           .and_return(transfer)
       end
 
-      it 'creates a transfer from the defaul address to the address' do
+      it 'creates a transfer from the default address to the address' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
