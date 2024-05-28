@@ -454,32 +454,30 @@ describe Coinbase::Wallet do
 
     context 'when the destination is a Wallet' do
       let(:destination) { other_wallet }
-      let(:to_address_id) { destination.default_address.id }
 
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
-          .with(amount, asset_id, to_address_id)
+          .with(amount, asset_id, destination)
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the default address ID' do
+      it 'creates a transfer from the default address to the wallet' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
-    context 'when the desination is an Address' do
+    context 'when the destination is an Address' do
       let(:destination) { other_wallet.default_address }
-      let(:to_address_id) { destination.id }
 
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
-          .with(amount, asset_id, to_address_id)
+          .with(amount, asset_id, destination)
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the address ID' do
+      it 'creates a transfer from the default address to the address' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -494,7 +492,7 @@ describe Coinbase::Wallet do
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the address ID' do
+      it 'creates a transfer from the default address to the address ID' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
