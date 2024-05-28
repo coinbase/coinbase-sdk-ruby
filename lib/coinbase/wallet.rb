@@ -177,24 +177,14 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
-    # Currently only the default_address is used to source the Transfer.
+    # Transfers the given amount of the given Asset to the specified address or wallet.
+    # Only same-network Transfers are supported. Currently only the default_address is used to source the Transfer.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
     # @param asset_id [Symbol] The ID of the Asset to send
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
     # @return [Transfer] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.default_address.id
-      elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.id
-      end
-
       default_address.transfer(amount, asset_id, destination)
     end
 
