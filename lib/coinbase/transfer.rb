@@ -156,7 +156,7 @@ module Coinbase
       loop do
         reload
 
-        return self if status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
+        return self if terminal_state?
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
@@ -183,6 +183,10 @@ module Coinbase
 
     def transfers_api
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    end
+
+    def terminal_state?
+      status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
     end
   end
 end
