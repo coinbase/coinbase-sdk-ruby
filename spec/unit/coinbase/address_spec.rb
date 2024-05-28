@@ -201,7 +201,6 @@ describe Coinbase::Address do
     let(:transfer) do
       double('Transfer', transaction: transaction, id: transfer_id)
     end
-    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
 
     before do
       allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
@@ -363,7 +362,7 @@ describe Coinbase::Address do
     end
 
     context 'when using server signer' do
-      let(:use_server_signer) { true }
+      let(:configuration) { double('Coinbase::Configuration', use_server_signer: true, api_client: nil) }
       let(:asset_id) { :wei }
       let(:amount) { 500_000_000_000_000_000 }
       let(:destination) { described_class.new(model, to_key) }
