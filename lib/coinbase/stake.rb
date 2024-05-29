@@ -10,8 +10,6 @@ module Coinbase
         'ethereum-holesky'
       ].freeze
 
-      SELF_SERVICE_INTEGRATOR_CONTRACT_ADDRESS_HOLESKY = '0xA55416de5DE61A0AC1aa8970a280E04388B1dE4b'
-
       # Builds a stake operation for a protocol on a given network.
       # @param protocol [Symbol] The protocol name.
       # @param network [Symbol] The network name.
@@ -33,7 +31,6 @@ module Coinbase
             'ethereum_kiln_staking_parameters' => {
               'stake_parameters' => {
                 'staker_address' => (params[:address]).to_s,
-                'integrator_contract_address' => SELF_SERVICE_INTEGRATOR_CONTRACT_ADDRESS_HOLESKY,
                 'amount' => {
                   'value' => (params[:amount]).to_s,
                   'currency' => 'ETH'
@@ -52,7 +49,7 @@ module Coinbase
       # @param params  [Hash] The parameters needed to create an unstake operation.
       # @param opts [Hash] Optional parameters related to an unstake operation.
       # @return [String] An unsigned transaction used to unstake.
-      def build_unstake_operation(protocol, network, params, opts = {})
+      def build_unstake_operation(protocol, network, params, opts = { mode: :partial })
         return if not_valid_protocol_network?(protocol, network)
 
         body = {}
@@ -67,7 +64,6 @@ module Coinbase
             'ethereum_kiln_staking_parameters' => {
               'unstake_parameters' => {
                 'staker_address' => (params[:address]).to_s,
-                'integrator_contract_address' => SELF_SERVICE_INTEGRATOR_CONTRACT_ADDRESS_HOLESKY,
                 'amount' => {
                   'value' => (params[:amount]).to_s,
                   'currency' => 'ETH'
@@ -86,7 +82,7 @@ module Coinbase
       # @param params  [Hash] The parameters needed to create a claim_stake operation.
       # @param opts [Hash] Optional parameters related to a claim_stake operation.
       # @return [String] An unsigned transaction used to claim_stake.
-      def build_claim_stake_operation(protocol, network, params, opts = {})
+      def build_claim_stake_operation(protocol, network, params, opts = { mode: :partial })
         return if not_valid_protocol_network?(protocol, network)
 
         body = {}
@@ -100,8 +96,7 @@ module Coinbase
             'action' => action("#{protocol}_kiln".to_sym, network, :claim_stake),
             'ethereum_kiln_staking_parameters' => {
               'claim_stake_parameters' => {
-                'staker_address' => (params[:address]).to_s,
-                'integrator_contract_address' => SELF_SERVICE_INTEGRATOR_CONTRACT_ADDRESS_HOLESKY
+                'staker_address' => (params[:address]).to_s
               }
             }
           }
