@@ -610,6 +610,28 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#trade' do
+    let(:trade) { double('Coinbase::Trade') }
+    let(:amount) { 5 }
+    let(:from_asset_id) { :eth }
+    let(:to_asset_id) { :weth }
+
+    subject(:wallet) do
+      described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
+    end
+
+    before do
+      allow(wallet.default_address)
+        .to receive(:trade)
+        .with(amount, from_asset_id, to_asset_id)
+        .and_return(trade)
+    end
+
+    it 'creates a trade from the default address' do
+      expect(wallet.trade(amount, from_asset_id, to_asset_id)).to eq(trade)
+    end
+  end
+
   describe '#export' do
     let(:seed_wallet) do
       described_class.new(model, seed: seed, address_models: [address_model1, address_model2])
