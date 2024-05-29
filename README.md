@@ -162,6 +162,11 @@ This will allow you to [authenticate](./authentication.md) with the Platform API
 u = Coinbase.default_user
 ```
 
+If you are using CDP Server-Signer to manage keys, enable it with
+
+```ruby
+Coinbase.configuration.use_server_signer=true
+```
 Now, create a wallet from the User. Wallets are created with a single default address.
 
 ```ruby
@@ -227,14 +232,17 @@ store(data.to_hash)
 
 For more information on wallet persistence, see [the documentation on wallets](./wallets.md#persisting-a-wallet).
 
-Alternatively, you can use the `save_wallet_locally!` function to persist wallets on your local file system. This is a
+Alternatively, you can use the `save_seed!` function to persist a wallet's seed to a local file. This is a
 convenience function purely for testing purposes, and should not be considered a secure method of persisting wallets.
 
 ```ruby
-# Set encrypt: true to encrypt the wallet export data with your CDP API key.
-u.save_wallet_locally!(w1, encrypt: true)
+# Pick a file to which to save your wallet seed.
+file_path = 'my_seed.json'
 
-puts "Wallet #{w1.id} successfully saved to local file storage."
+# Set encrypt: true to encrypt the wallet seed with your CDP API key.
+w1.save_seed!(file_path, encrypt: true)
+
+puts "Seed for wallet #{w1.id} successfully saved to #{file_path}."
 ```
 
 ## Re-instantiating a Wallet
@@ -250,17 +258,16 @@ fetched_data = fetch(w1.id)
 w3 = u.import_wallet(fetched_data)
 ```
 
-If you used the `save_wallet_locally!` function to persist wallets on your local file system, then you can use the
-`load_wallets_from_local` function re-instantiate the wallets.
+If you used the `save_seed!` function to persist a wallet's seed to a local file, then you can first fetch
+the unhydrated wallet from the server, and then use the `load_seed` method to re-instantiate the wallet.
 
 ```ruby
-# wallets will contain a Hash from wallet ID to wallet.
-wallets = u.load_wallets_from_local
+# Get the unhydrated wallet from the server.
+w4 = u.wallet(w1.id)
 
-puts "Wallets successfully loaded from local file storage."
-
-# w4 will be equivalent to w1 and w3.
-w4 = wallets[w1.id]
+# You can now load the seed into the wallet from the local file.
+# w4 will be equivalent to w1.
+w4.load_seed(file_path)
 ```
 
 ## Development

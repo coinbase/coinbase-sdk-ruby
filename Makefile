@@ -10,6 +10,10 @@ lint:
 test:
 	bundle exec rake test
 
+.PHONY: test-coverage
+test-coverage:
+	open coverage/index.html
+
 .PHONY: repl
 repl:
 	bundle exec bin/repl
