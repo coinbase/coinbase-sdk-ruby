@@ -162,6 +162,11 @@ This will allow you to [authenticate](./authentication.md) with the Platform API
 u = Coinbase.default_user
 ```
 
+If you are using CDP Server-Signer to manage keys, enable it with
+
+```ruby
+Coinbase.configuration.use_server_signer=true
+```
 Now, create a wallet from the User. Wallets are created with a single default address.
 
 ```ruby
