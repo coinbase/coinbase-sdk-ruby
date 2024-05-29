@@ -401,16 +401,26 @@ describe Coinbase::Address do
 
       before do
         allow(Coinbase).to receive(:configuration).and_return(configuration)
+        allow(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, transfer_asset_id)
+          .and_return(balance_response)
+
+        allow(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+          .and_return(transfer_model)
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(created_transfer)
       end
 
       it 'creates a transfer without broadcast' do
         expect(addresses_api)
           .to receive(:get_address_balance)
-                .with(wallet_id, address_id, 'eth')
-                .and_return(eth_balance_response)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(eth_balance_response)
         expect(transfers_api)
           .to receive(:create_transfer)
-                .with(wallet_id, address_id, create_transfer_request)
+          .with(wallet_id, address_id, create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end

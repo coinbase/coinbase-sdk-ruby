@@ -118,7 +118,7 @@ describe Coinbase::Wallet do
   describe '.create' do
     let(:wallet_id) { SecureRandom.uuid }
     let(:create_wallet_request) do
-      { wallet: { network_id: network_id } }
+      { wallet: { network_id: network_id, use_server_signer: nil } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
@@ -360,11 +360,11 @@ describe Coinbase::Wallet do
       before do
         allow(addresses_api)
           .to receive(:create_address)
-                .with(wallet_id).and_return(created_address_model)
+          .with(wallet_id).and_return(created_address_model)
         allow(wallets_api)
           .to receive(:get_wallet)
-                .with(wallet_id)
-                .and_return(model_with_default_address)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
       end
 
       it 'creates a new address' do

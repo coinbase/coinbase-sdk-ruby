@@ -86,13 +86,11 @@ module Coinbase
       transfer = create_transfer(amount, asset_id, destination_address)
 
       # Return here if ServerSigner is expected to sign the transfer.
-      return Coinbase::Transfer.new(transfer_model) if Coinbase.use_server_signer?
+      return transfer if Coinbase.use_server_signer?
 
       signed_payload = sign_transfer(transfer)
 
       broadcast_transfer(transfer, signed_payload)
-
-      Coinbase::Transfer.new(transfer_model)
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
