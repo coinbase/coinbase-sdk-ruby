@@ -21,11 +21,11 @@ module Coinbase
     module ServerSignerStatus
       # The Wallet is awaiting seed creation by the ServerSigner. At this point,
       # the Wallet cannot create addresses or sign transactions.
-      PENDING = :pending_seed_creation
+      PENDING = 'pending_seed_creation'
 
       # The Wallet has an associated seed created by the ServerSigner. It is ready
       # to create addresses and sign transactions.
-      ACTIVE = :active_seed
+      ACTIVE = 'active_seed'
     end
 
     class << self
@@ -91,7 +91,7 @@ module Coinbase
             wallets_api.get_wallet(wallet_id)
           end
 
-          return self if model.server_signer_status == ServerSignerStatus::ACTIVE.to_s
+          return self if model.server_signer_status == ServerSignerStatus::ACTIVE
 
           if Time.now - start_time > timeout_seconds
             raise Timeout::Error, 'Wallet creation timed out. Check status of your Server-Signer'
