@@ -47,12 +47,11 @@ module Coinbase
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
+      # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
       # @param interval_seconds [Integer] The interval at which to poll the CDPService for the Wallet to
       # have an active seed, if using a ServerSigner, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
       # create a seed for the Wallet, in seconds
-      # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
-      # @param server_signer [Boolean] (Optional) whether Wallet should use project's server signer. Defaults to false.
       # @return [Coinbase::Wallet] the new Wallet
       def create(network_id: 'base-sepolia', interval_seconds: 0.2, timeout_seconds: 20)
         model = Coinbase.call_api do
@@ -68,16 +67,10 @@ module Coinbase
 
         wallet = new(model)
 
-        # Create a default address if the Wallet is not using the ServerSigner.
         # When used with a ServerSigner, the Signer must first register
         # with the Wallet before addresses can be created.
-        unless Coinbase.use_server_signer?
-          wallet.create_address
-          return wallet
-        end
+        wait_for_signer(wallet.id, interval_seconds, timeout_seconds) if Coinbase.use_server_signer?
 
-        # Wait until ServerSigner is active and create the default_address.
-        wait_for_signer(wallet.id, interval_seconds, timeout_seconds)
         wallet.create_address
         wallet
       end

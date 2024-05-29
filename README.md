@@ -162,7 +162,7 @@ This will allow you to [authenticate](./authentication.md) with the Platform API
 u = Coinbase.default_user
 ```
 
-If you are using CDP Server-Signer to manage keys, enable it with
+If you are using a CDP Server-Signer to manage your private keys, enable it with
 
 ```ruby
 Coinbase.configuration.use_server_signer=true

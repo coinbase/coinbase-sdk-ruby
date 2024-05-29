@@ -55,47 +55,47 @@ describe Coinbase::Transfer do
                                    })
   end
   let(:broadcast_model) do
-    Coinbase::Client::Transfer.new({
-                                     'network_id' => network_id,
-                                     'wallet_id' => wallet_id,
-                                     'address_id' => from_address_id,
-                                     'destination' => to_address_id,
-                                     'asset_id' => 'eth',
-                                     'amount' => amount.to_s,
-                                     'transfer_id' => transfer_id,
-                                     'status' => 'pending',
-                                     'unsigned_payload' => unsigned_payload,
-                                     'signed_payload' => signed_payload,
-                                     'transaction_hash' => transaction_hash
-                                   })
+    Coinbase::Client::Transfer.new(
+      'network_id': network_id,
+      'wallet_id': wallet_id,
+      'address_id': from_address_id,
+      'destination': to_address_id,
+      'asset_id': 'eth',
+      'amount': amount.to_s,
+      'transfer_id': transfer_id,
+      'status': 'pending',
+      'unsigned_payload': unsigned_payload,
+      'signed_payload': signed_payload,
+      'transaction_hash': transaction_hash
+    )
   end
   let(:complete_broadcast_model) do
-    Coinbase::Client::Transfer.new({
-                                     'network_id' => network_id,
-                                     'wallet_id' => wallet_id,
-                                     'address_id' => from_address_id,
-                                     'destination' => to_address_id,
-                                     'asset_id' => 'eth',
-                                     'amount' => amount.to_s,
-                                     'transfer_id' => transfer_id,
-                                     'status' => 'complete',
-                                     'unsigned_payload' => unsigned_payload,
-                                     'signed_payload' => signed_payload,
-                                     'transaction_hash' => transaction_hash
-                                   })
+    Coinbase::Client::Transfer.new(
+      'network_id': network_id,
+      'wallet_id': wallet_id,
+      'address_id': from_address_id,
+      'destination': to_address_id,
+      'asset_id': 'eth',
+      'amount': amount.to_s,
+      'transfer_id': transfer_id,
+      'status': 'complete',
+      'unsigned_payload': unsigned_payload,
+      'signed_payload': signed_payload,
+      'transaction_hash': transaction_hash
+    )
   end
   let(:failed_broadcast_model) do
-    Coinbase::Client::Transfer.new({
-                                     'network_id' => network_id,
-                                     'wallet_id' => wallet_id,
-                                     'address_id' => from_address_id,
-                                     'destination' => to_address_id,
-                                     'asset_id' => 'eth',
-                                     'amount' => amount.to_s,
-                                     'transfer_id' => transfer_id,
-                                     'status' => 'failed',
-                                     'unsigned_payload' => unsigned_payload
-                                   })
+    Coinbase::Client::Transfer.new(
+      'network_id': network_id,
+      'wallet_id': wallet_id,
+      'address_id': from_address_id,
+      'destination': to_address_id,
+      'asset_id': 'eth',
+      'amount': amount.to_s,
+      'transfer_id': transfer_id,
+      'status': 'failed',
+      'unsigned_payload': unsigned_payload
+    )
   end
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
   let(:client) { double('Jimson::Client') }
@@ -261,9 +261,8 @@ describe Coinbase::Transfer do
       end
 
       it 'returns PENDING' do
-        status = transfer.reload.status
-        expect(status).to eq(Coinbase::Transfer::Status::PENDING.to_s)
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::PENDING.to_s)
+        expect(transfer).to be_a(Coinbase::Transfer)
+        expect(transfer.reload.status).to eq(Coinbase::Transfer::Status::PENDING.to_s)
       end
     end
 
@@ -282,21 +281,17 @@ describe Coinbase::Transfer do
       end
 
       it 'returns COMPLETE' do
-        status = transfer.reload.status
-        expect(status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
+        expect(transfer).to be_a(Coinbase::Transfer)
+        expect(transfer.reload.status).to eq(Coinbase::Transfer::Status::COMPLETE.to_s)
       end
     end
 
     context 'when the transaction has failed' do
-      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
-      let(:transaction_receipt) { { 'status' => '0x0' } }
       subject(:transfer) do
         described_class.new(broadcast_model)
       end
 
       before do
-        transfer.transaction.sign(from_key)
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
@@ -304,9 +299,8 @@ describe Coinbase::Transfer do
       end
 
       it 'returns FAILED' do
-        status = transfer.reload.status
-        expect(status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
-        expect(transfer.status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
+        expect(transfer).to be_a(Coinbase::Transfer)
+        expect(transfer.reload.status).to eq(Coinbase::Transfer::Status::FAILED.to_s)
       end
     end
   end
@@ -330,7 +324,7 @@ describe Coinbase::Transfer do
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)
-          .and_return(complete_broadcast_model)
+          .and_return(broadcast_model, complete_broadcast_model)
       end
 
       it 'returns the completed Transfer' do
@@ -340,11 +334,7 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transfer is failed' do
-      let(:onchain_transaction) { { 'blockHash' => '0xdeadbeef' } }
-      let(:transaction_receipt) { { 'status' => '0x0' } }
-
       before do
-        transfer.transaction.sign(from_key)
         allow(transfers_api)
           .to receive(:get_transfer)
           .with(transfer.wallet_id, transfer.from_address_id, transfer.id)

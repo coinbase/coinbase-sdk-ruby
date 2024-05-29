@@ -143,6 +143,8 @@ module Coinbase
       @model = Coinbase.call_api do
         transfers_api.get_transfer(wallet_id, from_address_id, id)
       end
+
+      self
     end
 
     # Waits until the Transfer is completed or failed by polling the Network at the given interval. Raises a

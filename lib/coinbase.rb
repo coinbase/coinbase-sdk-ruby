@@ -124,8 +124,8 @@ module Coinbase
     raise e
   end
 
-  # Returns the configuration use_server_signer.
-  # @return [bool] whether to use server signer or not.
+  # Returns whether to use a server signer to manage private keys.
+  # @return [bool] whether to use a server signer to manage private keys.
   def self.use_server_signer?
     Coinbase.configuration.use_server_signer
   end

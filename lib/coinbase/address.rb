@@ -85,7 +85,7 @@ module Coinbase
 
       transfer = create_transfer(amount, asset_id, destination_address)
 
-      # Return here if ServerSigner is expected to sign the transfer.
+      # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
 
       signed_payload = sign_transfer(transfer)
@@ -171,7 +171,7 @@ module Coinbase
     end
 
     def validate_can_transfer!(amount, asset_id, destination_network_id)
-      raise 'Cannot transfer from address without private key loaded' if !Coinbase.use_server_signer? && @key.nil?
+      raise 'Cannot transfer from address without private key loaded' unless can_sign? || Coinbase.use_server_signer?
 
       raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
 
