@@ -14,18 +14,19 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateAddressRequest
-    # The public key from which the address will be derived.
-    attr_accessor :public_key
+  # A Server-Signer assigned to sign transactions in a wallet.
+  class ServerSigner
+    # The ID of the server-signer
+    attr_accessor :server_signer_id
 
-    # An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
-    attr_accessor :attestation
+    # The IDs of the wallets that the server-signer can sign for
+    attr_accessor :wallets
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'public_key' => :'public_key',
-        :'attestation' => :'attestation'
+        :'server_signer_id' => :'server_signer_id',
+        :'wallets' => :'wallets'
       }
     end
 
@@ -37,8 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'public_key' => :'String',
-        :'attestation' => :'String'
+        :'server_signer_id' => :'String',
+        :'wallets' => :'Array<String>'
       }
     end
 
@@ -52,23 +53,27 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateAddressRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ServerSigner` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateAddressRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ServerSigner`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'public_key')
-        self.public_key = attributes[:'public_key']
+      if attributes.key?(:'server_signer_id')
+        self.server_signer_id = attributes[:'server_signer_id']
+      else
+        self.server_signer_id = nil
       end
 
-      if attributes.key?(:'attestation')
-        self.attestation = attributes[:'attestation']
+      if attributes.key?(:'wallets')
+        if (value = attributes[:'wallets']).is_a?(Array)
+          self.wallets = value
+        end
       end
     end
 
@@ -77,6 +82,10 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @server_signer_id.nil?
+        invalid_properties.push('invalid value for "server_signer_id", server_signer_id cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +93,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @server_signer_id.nil?
       true
     end
 
@@ -92,8 +102,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          public_key == o.public_key &&
-          attestation == o.attestation
+          server_signer_id == o.server_signer_id &&
+          wallets == o.wallets
     end
 
     # @see the `==` method
@@ -105,7 +115,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [public_key, attestation].hash
+      [server_signer_id, wallets].hash
     end
 
     # Builds the object from hash

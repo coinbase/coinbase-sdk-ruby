@@ -14,18 +14,26 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateAddressRequest
-    # The public key from which the address will be derived.
-    attr_accessor :public_key
+  # 
+  class ServerSignerEventList
+    attr_accessor :data
 
-    # An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
-    attr_accessor :attestation
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
+
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
+
+    # The total number of events for the server signer.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'public_key' => :'public_key',
-        :'attestation' => :'attestation'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -37,8 +45,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'public_key' => :'String',
-        :'attestation' => :'String'
+        :'data' => :'Array<ServerSignerEvent>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -52,23 +62,41 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateAddressRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ServerSignerEventList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateAddressRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ServerSignerEventList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'public_key')
-        self.public_key = attributes[:'public_key']
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
+      else
+        self.data = nil
       end
 
-      if attributes.key?(:'attestation')
-        self.attestation = attributes[:'attestation']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
+      else
+        self.has_more = nil
+      end
+
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
+      else
+        self.next_page = nil
+      end
+
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
+      else
+        self.total_count = nil
       end
     end
 
@@ -77,6 +105,22 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
+      end
+
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
+      end
+
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
+      end
+
+      if @total_count.nil?
+        invalid_properties.push('invalid value for "total_count", total_count cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +128,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
+      return false if @total_count.nil?
       true
     end
 
@@ -92,8 +140,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          public_key == o.public_key &&
-          attestation == o.attestation
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -105,7 +155,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [public_key, attestation].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash

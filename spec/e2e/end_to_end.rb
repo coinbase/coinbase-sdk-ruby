@@ -52,7 +52,7 @@ describe Coinbase do
       a1 = addresses[0]
       a2 = addresses[1]
       t = a1.transfer(1, :gwei, a2).wait!
-      expect(t.status).to eq(:complete)
+      expect(t.status).to eq('complete')
       puts "Transferred 1 Gwei from #{a1} to #{a2}"
 
       puts 'Fetching updated balances...'

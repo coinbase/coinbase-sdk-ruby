@@ -389,6 +389,41 @@ describe Coinbase::Address do
         end.to raise_error('Cannot transfer from address without private key loaded')
       end
     end
+
+    context 'when using server signer' do
+      let(:configuration) { double('Coinbase::Configuration', use_server_signer: true, api_client: nil) }
+      let(:asset_id) { :wei }
+      let(:amount) { 500_000_000_000_000_000 }
+      let(:destination) { described_class.new(model, to_key) }
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.id }
+      end
+
+      before do
+        allow(Coinbase).to receive(:configuration).and_return(configuration)
+        allow(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, transfer_asset_id)
+          .and_return(balance_response)
+
+        allow(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+          .and_return(transfer_model)
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(created_transfer)
+      end
+
+      it 'creates a transfer without broadcast' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(eth_balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
   end
 
   describe '#can_sign?' do

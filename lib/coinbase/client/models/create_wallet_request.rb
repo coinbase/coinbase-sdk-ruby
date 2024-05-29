@@ -32,7 +32,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'wallet' => :'Wallet'
+        :'wallet' => :'CreateWalletRequestWallet'
       }
     end
 

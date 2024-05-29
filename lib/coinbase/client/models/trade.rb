@@ -14,18 +14,44 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateAddressRequest
-    # The public key from which the address will be derived.
-    attr_accessor :public_key
+  # A trade of an asset to another asset
+  class Trade
+    # The ID of the blockchain network
+    attr_accessor :network_id
 
-    # An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
-    attr_accessor :attestation
+    # The ID of the wallet that owns the from address
+    attr_accessor :wallet_id
+
+    # The onchain address of the sender
+    attr_accessor :address_id
+
+    # The ID of the trade
+    attr_accessor :trade_id
+
+    # The amount of the from asset to be traded (in atomic units of the from asset)
+    attr_accessor :from_amount
+
+    attr_accessor :from_asset
+
+    # The amount of the to asset that will be received (in atomic units of the to asset)
+    attr_accessor :to_amount
+
+    attr_accessor :to_asset
+
+    attr_accessor :transaction
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'public_key' => :'public_key',
-        :'attestation' => :'attestation'
+        :'network_id' => :'network_id',
+        :'wallet_id' => :'wallet_id',
+        :'address_id' => :'address_id',
+        :'trade_id' => :'trade_id',
+        :'from_amount' => :'from_amount',
+        :'from_asset' => :'from_asset',
+        :'to_amount' => :'to_amount',
+        :'to_asset' => :'to_asset',
+        :'transaction' => :'transaction'
       }
     end
 
@@ -37,8 +63,15 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'public_key' => :'String',
-        :'attestation' => :'String'
+        :'network_id' => :'String',
+        :'wallet_id' => :'String',
+        :'address_id' => :'String',
+        :'trade_id' => :'String',
+        :'from_amount' => :'String',
+        :'from_asset' => :'Asset',
+        :'to_amount' => :'String',
+        :'to_asset' => :'Asset',
+        :'transaction' => :'Transaction'
       }
     end
 
@@ -52,23 +85,69 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateAddressRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Trade` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateAddressRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Trade`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'public_key')
-        self.public_key = attributes[:'public_key']
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
+      else
+        self.network_id = nil
       end
 
-      if attributes.key?(:'attestation')
-        self.attestation = attributes[:'attestation']
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
+      else
+        self.wallet_id = nil
+      end
+
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
+      if attributes.key?(:'trade_id')
+        self.trade_id = attributes[:'trade_id']
+      else
+        self.trade_id = nil
+      end
+
+      if attributes.key?(:'from_amount')
+        self.from_amount = attributes[:'from_amount']
+      else
+        self.from_amount = nil
+      end
+
+      if attributes.key?(:'from_asset')
+        self.from_asset = attributes[:'from_asset']
+      else
+        self.from_asset = nil
+      end
+
+      if attributes.key?(:'to_amount')
+        self.to_amount = attributes[:'to_amount']
+      else
+        self.to_amount = nil
+      end
+
+      if attributes.key?(:'to_asset')
+        self.to_asset = attributes[:'to_asset']
+      else
+        self.to_asset = nil
+      end
+
+      if attributes.key?(:'transaction')
+        self.transaction = attributes[:'transaction']
+      else
+        self.transaction = nil
       end
     end
 
@@ -77,6 +156,42 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      end
+
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      end
+
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
+      if @trade_id.nil?
+        invalid_properties.push('invalid value for "trade_id", trade_id cannot be nil.')
+      end
+
+      if @from_amount.nil?
+        invalid_properties.push('invalid value for "from_amount", from_amount cannot be nil.')
+      end
+
+      if @from_asset.nil?
+        invalid_properties.push('invalid value for "from_asset", from_asset cannot be nil.')
+      end
+
+      if @to_amount.nil?
+        invalid_properties.push('invalid value for "to_amount", to_amount cannot be nil.')
+      end
+
+      if @to_asset.nil?
+        invalid_properties.push('invalid value for "to_asset", to_asset cannot be nil.')
+      end
+
+      if @transaction.nil?
+        invalid_properties.push('invalid value for "transaction", transaction cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +199,15 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @network_id.nil?
+      return false if @wallet_id.nil?
+      return false if @address_id.nil?
+      return false if @trade_id.nil?
+      return false if @from_amount.nil?
+      return false if @from_asset.nil?
+      return false if @to_amount.nil?
+      return false if @to_asset.nil?
+      return false if @transaction.nil?
       true
     end
 
@@ -92,8 +216,15 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          public_key == o.public_key &&
-          attestation == o.attestation
+          network_id == o.network_id &&
+          wallet_id == o.wallet_id &&
+          address_id == o.address_id &&
+          trade_id == o.trade_id &&
+          from_amount == o.from_amount &&
+          from_asset == o.from_asset &&
+          to_amount == o.to_amount &&
+          to_asset == o.to_asset &&
+          transaction == o.transaction
     end
 
     # @see the `==` method
@@ -105,7 +236,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [public_key, attestation].hash
+      [network_id, wallet_id, address_id, trade_id, from_amount, from_asset, to_amount, to_asset, transaction].hash
     end
 
     # Builds the object from hash
