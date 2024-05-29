@@ -160,6 +160,7 @@ describe Coinbase::Address do
     let(:transfer_asset_id) { 'eth' }
     let(:balance_response) { eth_balance_response }
     let(:destination) { to_address_id }
+    let(:test) { 'sup' }
 
     subject(:transfer) { address.transfer(amount, asset_id, destination) }
 
@@ -445,7 +446,7 @@ describe Coinbase::Address do
         end
 
         it 'raises a FaucetLimitReachedError' do
-          expect { address.faucet }.to raise_error(::Coinbase::FaucetLimitReachedError)
+          expect { address.faucet }.to raise_error(Coinbase::FaucetLimitReachedError)
         end
       end
 
@@ -461,7 +462,7 @@ describe Coinbase::Address do
         end
 
         it 'raises an internal error' do
-          expect { address.faucet }.to raise_error(::Coinbase::InternalError)
+          expect { address.faucet }.to raise_error(Coinbase::InternalError)
         end
       end
     end

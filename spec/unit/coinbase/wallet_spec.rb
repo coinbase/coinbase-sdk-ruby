@@ -4,35 +4,35 @@ describe Coinbase::Wallet do
   let(:client) { double('Jimson::Client') }
   let(:wallet_id) { SecureRandom.uuid }
   let(:network_id) { 'base-sepolia' }
-  let(:model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
+  let(:model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
   let(:address_model1) do
     Coinbase::Client::Address.new(
-      {
-        'address_id': '0x919538116b4F25f1CE01429fd9Ed7964556bf565',
-        'wallet_id': wallet_id,
-        'public_key': '0292df2f2c31a5c4b0d4946e922cc3bd25ad7196ffeb049905b0952b9ac48ef25f',
-        'network_id': network_id
-      }
+      address_id: '0x919538116b4F25f1CE01429fd9Ed7964556bf565',
+      wallet_id: wallet_id,
+      public_key: '0292df2f2c31a5c4b0d4946e922cc3bd25ad7196ffeb049905b0952b9ac48ef25f',
+      network_id: network_id
     )
   end
   let(:address_model2) do
     Coinbase::Client::Address.new(
-      {
-        'address_id': '0xf23692a9DE556Ee1711b172Bf744C5f33B13DC89',
-        'wallet_id': wallet_id,
-        'public_key': '034ecbfc86f7447c8bfd1a5f71b13600d767ccb58d290c7b146632090f3a05c66c',
-        'network_id': network_id
-      }
+      address_id: '0xf23692a9DE556Ee1711b172Bf744C5f33B13DC89',
+      wallet_id: wallet_id,
+      public_key: '034ecbfc86f7447c8bfd1a5f71b13600d767ccb58d290c7b146632090f3a05c66c',
+      network_id: network_id
     )
   end
   let(:model_with_default_address) do
     Coinbase::Client::Wallet.new(
-      {
-        'id': wallet_id,
-        'network_id': network_id,
-        'default_address': address_model1
-      }
+      id: wallet_id,
+      network_id: network_id,
+      default_address: address_model1
     )
+  end
+  let(:eth_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+  end
+  let(:usdc_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
   end
   let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
   let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
@@ -49,13 +49,11 @@ describe Coinbase::Wallet do
   describe '.import' do
     let(:client) { double('Jimson::Client') }
     let(:wallet_id) { SecureRandom.uuid }
-    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
+    let(:wallet_model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
     let(:address_list_model) do
       Coinbase::Client::AddressList.new(
-        {
-          'data' => [address_model1, address_model2],
-          'total_count' => 2
-        }
+        data: [address_model1, address_model2],
+        total_count: 2
       )
     end
     let(:exported_data) do
@@ -87,7 +85,7 @@ describe Coinbase::Wallet do
     end
 
     context 'when there are no addresses' do
-      let(:address_list_model) { Coinbase::Client::AddressList.new({ 'data' => [], 'total_count' => 0 }) }
+      let(:address_list_model) { Coinbase::Client::AddressList.new(data: [], total_count: 0) }
 
       it 'loads the wallet addresses' do
         expect(imported_wallet.addresses.length).to eq(0)
@@ -101,15 +99,13 @@ describe Coinbase::Wallet do
       { wallet: { network_id: network_id } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
-    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
+    let(:wallet_model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
     let(:default_address_model) do
       Coinbase::Client::Address.new(
-        {
-          'address_id': '0xdeadbeef',
-          'wallet_id': wallet_id,
-          'public_key': '0x1234567890',
-          'network_id': network_id
-        }
+        address_id: '0xdeadbeef',
+        wallet_id: wallet_id,
+        public_key: '0x1234567890',
+        network_id: network_id
       )
     end
 
@@ -366,30 +362,13 @@ describe Coinbase::Wallet do
   describe '#balances' do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
-        'data' => [
-          Coinbase::Client::Balance.new(
-            {
-              'amount' => '1000000000000000000',
-              'asset' => Coinbase::Client::Asset.new({
-                                                       'network_id': 'base-sepolia',
-                                                       'asset_id': 'eth',
-                                                       'decimals': 18
-                                                     })
-            }
-          ),
-          Coinbase::Client::Balance.new(
-            {
-              'amount' => '5000000',
-              'asset' => Coinbase::Client::Asset.new({
-                                                       'network_id': 'base-sepolia',
-                                                       'asset_id': 'usdc',
-                                                       'decimals': 6
-                                                     })
-            }
-          )
+        data: [
+          Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset),
+          Coinbase::Client::Balance.new(amount: '5000000', asset: usdc_asset)
         ]
       )
     end
+
     before do
       expect(wallets_api).to receive(:list_wallet_balances).and_return(response)
     end
@@ -401,16 +380,7 @@ describe Coinbase::Wallet do
 
   describe '#balance' do
     let(:response) do
-      Coinbase::Client::Balance.new(
-        {
-          'amount' => '5000000000000000000',
-          'asset' => Coinbase::Client::Asset.new({
-                                                   'network_id': 'base-sepolia',
-                                                   'asset_id': 'eth',
-                                                   'decimals': 18
-                                                 })
-        }
-      )
+      Coinbase::Client::Balance.new(amount: '5000000000000000000', asset: eth_asset)
     end
 
     before do
@@ -437,11 +407,9 @@ describe Coinbase::Wallet do
     let(:other_wallet) do
       described_class.new(
         Coinbase::Client::Wallet.new(
-          {
-            'id': wallet_id,
-            'network_id': 'base-sepolia',
-            'default_address': address_model2
-          }
+          id: wallet_id,
+          network_id: 'base-sepolia',
+          default_address: address_model2
         ),
         seed: '',
         address_models: [address_model2]
@@ -523,7 +491,7 @@ describe Coinbase::Wallet do
 
   describe '#faucet' do
     let(:faucet_transaction_model) do
-      Coinbase::Client::FaucetTransaction.new({ 'transaction_hash': '0x123456789' })
+      Coinbase::Client::FaucetTransaction.new(transaction_hash: '0x123456789')
     end
     let(:wallet) do
       described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
@@ -570,9 +538,7 @@ describe Coinbase::Wallet do
     before do
       @api_key_private_key = Coinbase.configuration.api_key_private_key
       Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
-      File.open(file_path, 'w') do |file|
-        file.write(initial_seed_data)
-      end
+      File.write(file_path, initial_seed_data)
     end
 
     after do
@@ -616,11 +582,9 @@ describe Coinbase::Wallet do
     end
 
     it 'throws an error when the file is malformed' do
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate({
-          malformed: 'test'
-        }.to_json))
-      end
+      File.write(file_path, JSON.pretty_generate({
+        malformed: 'test'
+      }.to_json))
       expect do
         seed_wallet.save_seed!(file_path)
       end.to raise_error(ArgumentError)
@@ -632,10 +596,8 @@ describe Coinbase::Wallet do
     let(:initial_seed_data) { JSON.pretty_generate({}) }
     let(:address_list_model) do
       Coinbase::Client::AddressList.new(
-        {
-          'data' => [address_model1],
-          'total_count' => 1
-        }
+        data: [address_model1],
+        total_count: 1
       )
     end
     let(:seed_wallet) do
@@ -669,13 +631,11 @@ describe Coinbase::Wallet do
     before do
       @api_key_private_key = Coinbase.configuration.api_key_private_key
       Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(initial_seed_data))
-      end
+      File.write(file_path, JSON.pretty_generate(initial_seed_data))
     end
 
     after do
-      File.delete(file_path) if File.exist?(file_path)
+      FileUtils.rm_f(file_path)
       Coinbase.configuration.api_key_private_key = @api_key_private_key
     end
 
@@ -693,7 +653,7 @@ describe Coinbase::Wallet do
     it 'loads the encrypted seed from file with multiple seeds' do
       seed_wallet.save_seed!(file_path, encrypt: true)
 
-      other_model = Coinbase::Client::Wallet.new({ 'id': SecureRandom.uuid, 'network_id': network_id })
+      other_model = Coinbase::Client::Wallet.new(id: SecureRandom.uuid, network_id: network_id)
       other_wallet = described_class.new(other_model)
       other_wallet.save_seed!(file_path, encrypt: true)
 
@@ -708,9 +668,7 @@ describe Coinbase::Wallet do
     end
 
     it 'throws an error when file contains different wallet data' do
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(other_seed_data))
-      end
+      File.write(file_path, JSON.pretty_generate(other_seed_data))
 
       expect do
         seedless_wallet.load_seed(file_path)
@@ -725,9 +683,7 @@ describe Coinbase::Wallet do
     end
 
     it 'throws an error when the backup file is corrupted' do
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(malformed_seed_data))
-      end
+      File.write(file_path, JSON.pretty_generate(malformed_seed_data))
       expect do
         seedless_wallet.load_seed(file_path)
       end.to raise_error(ArgumentError, 'Seed data is malformed')

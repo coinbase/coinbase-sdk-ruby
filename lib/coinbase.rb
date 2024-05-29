@@ -119,7 +119,5 @@ module Coinbase
     yield
   rescue Coinbase::Client::ApiError => e
     raise Coinbase::APIError.from_error(e)
-  rescue StandardError => e
-    raise e
   end
 end

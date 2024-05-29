@@ -2,7 +2,7 @@
 
 describe Coinbase::User do
   let(:user_id) { SecureRandom.uuid }
-  let(:model) { Coinbase::Client::User.new({ 'id': user_id }) }
+  let(:model) { Coinbase::Client::User.new({ id: user_id }) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
@@ -59,38 +59,38 @@ describe Coinbase::User do
   describe '#wallets' do
     let(:page_size) { 20 }
     let(:next_page_token) { SecureRandom.uuid }
-    let(:wallet_model1) { Coinbase::Client::Wallet.new({ 'id': 'wallet1', 'network_id': 'base-sepolia' }) }
-    let(:wallet_model2) { Coinbase::Client::Wallet.new({ 'id': 'wallet2', 'network_id': 'base-sepolia' }) }
+    let(:wallet_model1) { Coinbase::Client::Wallet.new({ id: 'wallet1', network_id: 'base-sepolia' }) }
+    let(:wallet_model2) { Coinbase::Client::Wallet.new({ id: 'wallet2', network_id: 'base-sepolia' }) }
     let(:address_model1) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef1',
-                                      'wallet_id': 'wallet1',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
+                                      address_id: '0xdeadbeef1',
+                                      wallet_id: 'wallet1',
+                                      public_key: '0x1234567890',
+                                      network_id: 'base-sepolia'
                                     })
     end
     let(:address_model2) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef2',
-                                      'wallet_id': 'wallet1',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
+                                      address_id: '0xdeadbeef2',
+                                      wallet_id: 'wallet1',
+                                      public_key: '0x1234567890',
+                                      network_id: 'base-sepolia'
                                     })
     end
     let(:address_model3) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef3',
-                                      'wallet_id': 'wallet2',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
+                                      address_id: '0xdeadbeef3',
+                                      wallet_id: 'wallet2',
+                                      public_key: '0x1234567890',
+                                      network_id: 'base-sepolia'
                                     })
     end
     let(:address_model4) do
       Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef4',
-                                      'wallet_id': 'wallet2',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
+                                      address_id: '0xdeadbeef4',
+                                      wallet_id: 'wallet2',
+                                      public_key: '0x1234567890',
+                                      network_id: 'base-sepolia'
                                     })
     end
 

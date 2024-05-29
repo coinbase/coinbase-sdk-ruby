@@ -248,9 +248,7 @@ module Coinbase
         iv: iv
       }
 
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(existing_seeds_in_store))
-      end
+      File.write(file_path, JSON.pretty_generate(existing_seeds_in_store))
 
       "Successfully saved seed for wallet #{id} to #{file_path}."
     end

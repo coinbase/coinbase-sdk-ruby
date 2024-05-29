@@ -12,7 +12,7 @@ describe Coinbase do
       api_key_private_key = ENV['API_KEY_PRIVATE_KEY'].gsub('\n', "\n")
 
       # Use default API URL if not provided
-      api_url = ENV['API_URL']
+      api_url = ENV.fetch('API_URL', nil)
 
       Coinbase.configure do |config|
         config.api_key_name = api_key_name
@@ -31,7 +31,7 @@ describe Coinbase do
       puts "Created new wallet with ID: #{w1.id}, default address: #{w1.default_address}"
 
       puts 'Importing wallet with balance...'
-      data_string = ENV['WALLET_DATA']
+      data_string = ENV.fetch('WALLET_DATA', nil)
       data_hash = JSON.parse(data_string)
       data = Coinbase::Wallet::Data.from_hash(data_hash)
       w2 = u.import_wallet(data)
