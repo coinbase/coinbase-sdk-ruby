@@ -61,6 +61,7 @@ module Coinbase
       @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
       @api_url = 'https://api.cdp.coinbase.com'
       @debug_api = false
+      @use_server_signer = false
     end
 
     # Sets configuration values based on the provided CDP API Key JSON file.

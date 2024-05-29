@@ -118,7 +118,7 @@ describe Coinbase::Wallet do
   describe '.create' do
     let(:wallet_id) { SecureRandom.uuid }
     let(:create_wallet_request) do
-      { wallet: { network_id: network_id, use_server_signer: nil } }
+      { wallet: { network_id: network_id, use_server_signer: false } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
@@ -352,7 +352,7 @@ describe Coinbase::Wallet do
     end
 
     context 'when using a server signer' do
-      let(:use_server_signer) { true }
+      let(:configuration) { double('Coinbase::Configuration', use_server_signer: true, api_client: nil) }
       let(:created_address_model) { address_model1 }
 
       subject(:created_address) { wallet.create_address }
