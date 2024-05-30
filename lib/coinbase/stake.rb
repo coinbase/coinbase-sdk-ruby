@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'faraday'
-
 module Coinbase
   # A representation of a Stake operation used for a end-user custody flow.
   class Stake
