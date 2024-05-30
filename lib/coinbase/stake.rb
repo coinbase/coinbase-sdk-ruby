@@ -4,10 +4,6 @@ module Coinbase
   # A representation of a Stake operation used for a end-user custody flow.
   class Stake
     class << self
-      VALID_PROTOCOL_NETWORK = [
-        'ethereum-holesky'
-      ].freeze
-
       # Builds a stake operation for a protocol on a given network.
       # @param protocol [Symbol] The protocol name.
       # @param network [Symbol] The network name.
@@ -15,8 +11,6 @@ module Coinbase
       # @param opts [Hash] Optional parameters related to a stake operation.
       # @return [String] An unsigned transaction used to stake.
       def build_stake_operation(protocol, network, params, opts = { mode: :partial })
-        return if not_valid_protocol_network?(protocol, network)
-
         body = {}
 
         case protocol_network(protocol, network)
@@ -48,8 +42,6 @@ module Coinbase
       # @param opts [Hash] Optional parameters related to an unstake operation.
       # @return [String] An unsigned transaction used to unstake.
       def build_unstake_operation(protocol, network, params, opts = { mode: :partial })
-        return if not_valid_protocol_network?(protocol, network)
-
         body = {}
 
         case protocol_network(protocol, network)
@@ -81,8 +73,6 @@ module Coinbase
       # @param opts [Hash] Optional parameters related to a claim_stake operation.
       # @return [String] An unsigned transaction used to claim_stake.
       def build_claim_stake_operation(protocol, network, params, opts = { mode: :partial })
-        return if not_valid_protocol_network?(protocol, network)
-
         body = {}
 
         case protocol_network(protocol, network)
@@ -101,19 +91,6 @@ module Coinbase
         end
 
         call_client(body)
-      end
-
-      # Checks if the protocol/network combo is supported.
-      #  @param protocol [Symbol] The protocol name.
-      #  @param network [Symbol] The network name.
-      #  @return [Boolean] If the protocol-network combo is supported.
-      def not_valid_protocol_network?(protocol, network)
-        if VALID_PROTOCOL_NETWORK.none?(protocol_network(
-                                          protocol, network
-                                        ))
-          raise ArgumentError,
-                "Unsupported #{protocol_network(protocol, network)}"
-        end
       end
 
       # Checks to see if the input parameters have all required fields.
