@@ -92,7 +92,7 @@ module Coinbase
     end
 
     # Trades the given amount of the given Asset for another Asset.
-    # Only same-network Transfers are supported.
+    # Only same-network Trades are supported.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
     # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
     # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.

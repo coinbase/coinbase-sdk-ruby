@@ -101,6 +101,7 @@ module Coinbase
     end
 
     # Signs the Transaction with the provided key and returns the hex signing payload.
+    # @return [String] The hex-encoded signed payload
     def sign(key)
       raw.sign(key)
 
