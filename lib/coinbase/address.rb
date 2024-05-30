@@ -77,7 +77,7 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
-    # @return [String] The hash of the Transfer transaction.
+    # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination)
       destination_address, destination_network = destination_address_and_network(destination)
 
@@ -88,9 +88,24 @@ module Coinbase
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
 
-      signed_payload = sign_transfer(transfer)
+      broadcast_transfer(transfer, sign_transaction(transfer.transaction))
+    end
 
-      broadcast_transfer(transfer, signed_payload)
+    # Trades the given amount of the given Asset for another Asset.
+    # Only same-network Trades are supported.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
+    # @return [Coinbase::Trade] The Trade object.
+    def trade(amount, from_asset_id, to_asset_id)
+      validate_can_trade!(amount, from_asset_id, to_asset_id)
+
+      trade = create_trade(amount, from_asset_id, to_asset_id)
+
+      # If a server signer is managing keys, it will sign and broadcast the underlying trade transaction out of band.
+      return trade if Coinbase.use_server_signer?
+
+      broadcast_trade(trade, trade.transaction.sign(@key))
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
@@ -163,6 +178,10 @@ module Coinbase
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
 
+    def trades_api
+      @trades_api ||= Coinbase::Client::TradesApi.new(Coinbase.configuration.api_client)
+    end
+
     def destination_address_and_network(destination)
       return [destination.default_address.id, destination.network_id] if destination.is_a?(Wallet)
       return [destination.id, destination.network_id] if destination.is_a?(Address)
@@ -199,19 +218,53 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
-    def sign_transfer(transfer)
-      transaction = transfer.transaction
-      transaction.sign(@key)
-
-      transaction.hex
-    end
-
     def broadcast_transfer(transfer, signed_payload)
       transfer_model = Coinbase.call_api do
         transfers_api.broadcast_transfer(wallet_id, id, transfer.id, { signed_payload: signed_payload })
       end
 
       Coinbase::Transfer.new(transfer_model)
+    end
+
+    def validate_can_trade!(amount, from_asset_id, to_asset_id)
+      raise 'Cannot trade from address without private key loaded' unless can_sign?
+
+      raise ArgumentError, "Unsupported from asset: #{from_asset_id}" unless Coinbase::Asset.supported?(from_asset_id)
+      raise ArgumentError, "Unsupported to asset: #{to_asset_id}" unless Coinbase::Asset.supported?(to_asset_id)
+
+      current_balance = balance(from_asset_id)
+
+      return unless current_balance < amount
+
+      raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
+    end
+
+    def create_trade(amount, from_asset_id, to_asset_id)
+      create_trade_request = {
+        amount: Coinbase::Asset.to_atomic_amount(amount, from_asset_id).to_i.to_s,
+        from_asset_id: Coinbase::Asset.primary_denomination(from_asset_id).to_s,
+        to_asset_id: Coinbase::Asset.primary_denomination(to_asset_id).to_s
+      }
+
+      trade_model = Coinbase.call_api do
+        trades_api.create_trade(wallet_id, id, create_trade_request)
+      end
+
+      Coinbase::Trade.new(trade_model)
+    end
+
+    def broadcast_trade(trade, signed_payload)
+      trade_model = Coinbase.call_api do
+        trades_api.broadcast_trade(wallet_id, id, trade.id, { signed_payload: signed_payload })
+      end
+
+      Coinbase::Trade.new(trade_model)
+    end
+
+    def sign_transaction(transaction)
+      transaction.sign(@key)
+
+      transaction.hex
     end
   end
 end
