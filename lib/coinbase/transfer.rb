@@ -152,7 +152,7 @@ module Coinbase
     # @param interval_seconds [Integer] The interval at which to poll the Network, in seconds
     # @param timeout_seconds [Integer] The maximum amount of time to wait for the Transfer to complete, in seconds
     # @return [Transfer] The completed Transfer object
-    def wait!(interval_seconds = 0.2, timeout_seconds = 15)
+    def wait!(interval_seconds = 0.2, timeout_seconds = 20)
       start_time = Time.now
 
       loop do
