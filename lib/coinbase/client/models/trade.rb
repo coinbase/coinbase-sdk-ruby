@@ -40,6 +40,8 @@ module Coinbase::Client
 
     attr_accessor :transaction
 
+    attr_accessor :approve_transaction
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -51,7 +53,8 @@ module Coinbase::Client
         :'from_asset' => :'from_asset',
         :'to_amount' => :'to_amount',
         :'to_asset' => :'to_asset',
-        :'transaction' => :'transaction'
+        :'transaction' => :'transaction',
+        :'approve_transaction' => :'approve_transaction'
       }
     end
 
@@ -71,7 +74,8 @@ module Coinbase::Client
         :'from_asset' => :'Asset',
         :'to_amount' => :'String',
         :'to_asset' => :'Asset',
-        :'transaction' => :'Transaction'
+        :'transaction' => :'Transaction',
+        :'approve_transaction' => :'Transaction'
       }
     end
 
@@ -149,6 +153,10 @@ module Coinbase::Client
       else
         self.transaction = nil
       end
+
+      if attributes.key?(:'approve_transaction')
+        self.approve_transaction = attributes[:'approve_transaction']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -224,7 +232,8 @@ module Coinbase::Client
           from_asset == o.from_asset &&
           to_amount == o.to_amount &&
           to_asset == o.to_asset &&
-          transaction == o.transaction
+          transaction == o.transaction &&
+          approve_transaction == o.approve_transaction
     end
 
     # @see the `==` method
@@ -236,7 +245,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, wallet_id, address_id, trade_id, from_amount, from_asset, to_amount, to_asset, transaction].hash
+      [network_id, wallet_id, address_id, trade_id, from_amount, from_asset, to_amount, to_asset, transaction, approve_transaction].hash
     end
 
     # Builds the object from hash
