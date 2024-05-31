@@ -37,6 +37,7 @@ describe Coinbase::Trade do
   let(:transaction_model) do
     Coinbase::Client::Transaction.new(
       status: 'pending',
+      from_address_id: address_id,
       unsigned_payload: unsigned_payload
     )
   end
@@ -174,7 +175,11 @@ describe Coinbase::Trade do
 
   describe '#reload' do
     let(:updated_transaction_model) do
-      Coinbase::Client::Transaction.new(status: 'complete', unsigned_payload: unsigned_payload)
+      Coinbase::Client::Transaction.new(
+        status: 'complete',
+        from_address_id: address_id,
+        unsigned_payload: unsigned_payload
+      )
     end
 
     let(:updated_to_amount) { BigDecimal(500_000_000) }
@@ -240,6 +245,7 @@ describe Coinbase::Trade do
       let(:updated_transaction_model) do
         Coinbase::Client::Transaction.new(
           status: 'complete',
+          from_address_id: address_id,
           unsigned_payload: unsigned_payload
         )
       end
@@ -254,6 +260,7 @@ describe Coinbase::Trade do
       let(:updated_transaction_model) do
         Coinbase::Client::Transaction.new(
           status: 'failed',
+          from_address_id: address_id,
           unsigned_payload: unsigned_payload
         )
       end
@@ -268,6 +275,7 @@ describe Coinbase::Trade do
       let(:updated_transaction_model) do
         Coinbase::Client::Transaction.new(
           status: 'pending',
+          from_address_id: address_id,
           unsigned_payload: unsigned_payload
         )
       end
@@ -300,6 +308,7 @@ describe Coinbase::Trade do
       let(:transaction_model) do
         Coinbase::Client::Transaction.new(
           status: 'broadcast',
+          from_address_id: address_id,
           unsigned_payload: unsigned_payload,
           signed_payload: signed_payload,
           transaction_hash: transaction_hash

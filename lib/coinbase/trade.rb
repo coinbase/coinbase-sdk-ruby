@@ -86,7 +86,7 @@ module Coinbase
     # Returns the Trade transaction.
     # @return [Coinbase::Transaction] The Trade transaction
     def transaction
-      @transaction ||= Coinbase::Transaction.new(@model.transaction, from_address_id: address_id)
+      @transaction ||= Coinbase::Transaction.new(@model.transaction)
     end
 
     # Returns the status of the Trade.
@@ -123,7 +123,7 @@ module Coinbase
         trades_api.get_trade(wallet_id, address_id, id)
       end
 
-      @transaction = Coinbase::Transaction.new(@model.transaction, from_address_id: address_id)
+      @transaction = Coinbase::Transaction.new(@model.transaction)
 
       self
     end

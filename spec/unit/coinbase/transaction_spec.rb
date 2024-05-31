@@ -29,6 +29,7 @@ describe Coinbase::Transaction do
   let(:model) do
     Coinbase::Client::Transaction.new(
       status: 'pending',
+      from_address_id: from_address_id,
       unsigned_payload: unsigned_payload
     )
   end
@@ -36,6 +37,7 @@ describe Coinbase::Transaction do
   let(:broadcasted_model) do
     Coinbase::Client::Transaction.new(
       status: 'broadcast',
+      from_address_id: from_address_id,
       unsigned_payload: unsigned_payload,
       signed_payload: signed_payload,
       transaction_hash: transaction_hash
@@ -43,7 +45,7 @@ describe Coinbase::Transaction do
   end
 
   subject(:transaction) do
-    described_class.new(model, from_address_id: from_address_id)
+    described_class.new(model)
   end
 
   describe '#initialize' do
@@ -54,14 +56,8 @@ describe Coinbase::Transaction do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(Coinbase::Client::Balance.new, from_address_id: from_address_id)
+          described_class.new(Coinbase::Client::Balance.new)
         end.to raise_error
-      end
-    end
-
-    context 'when initialized without a from_address_id' do
-      it 'raises an error' do
-        expect { described_class.new(model) }.to raise_error(ArgumentError)
       end
     end
   end
@@ -81,7 +77,7 @@ describe Coinbase::Transaction do
 
     context 'when the transaction has been broadcast on chain' do
       subject(:transaction) do
-        described_class.new(broadcasted_model, from_address_id: from_address_id)
+        described_class.new(broadcasted_model)
       end
 
       it 'returns the signed payload' do
@@ -98,7 +94,7 @@ describe Coinbase::Transaction do
     end
     context 'when the transaction has been broadcast on chain' do
       subject(:transaction) do
-        described_class.new(broadcasted_model, from_address_id: from_address_id)
+        described_class.new(broadcasted_model)
       end
 
       it 'returns the transaction hash' do
@@ -177,7 +173,7 @@ describe Coinbase::Transaction do
 
     context 'when the transaction has been broadcast on chain' do
       subject(:transaction) do
-        described_class.new(broadcasted_model, from_address_id: from_address_id)
+        described_class.new(broadcasted_model)
       end
 
       it 'includes the transaction hash' do
