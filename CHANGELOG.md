@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.5] - 2024-05-20
 
-### [0.0.5] - 2024-06-03
+### [0.0.6] - 2024-06-03
 
 - `wallets` method on the User class
 - Ability to hydrate wallets (i.e. set the seed on it)
