@@ -440,6 +440,30 @@
 </li>
 
       
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#use_server_signer%3F-class_method" title="use_server_signer? (class method)">.<strong>use_server_signer?</strong>  &#x21d2; bool </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns whether to use a server signer to manage private keys.</p>
+</div></span>
+  
+</li>
+
+      
     </ul>
   
 
@@ -475,16 +499,16 @@
       <pre class="lines">
 
 
-118
 119
 120
 121
 122
 123
-124</pre>
+124
+125</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 118</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 119</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_call_api'>call_api</span>
   <span class='kw'>yield</span>
@@ -800,12 +824,12 @@
       <pre class="lines">
 
 
-97
 98
-99</pre>
+99
+100</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_user'>default_user</span>
   <span class='ivar'>@default_user</span> <span class='op'>||=</span> <span class='id identifier rubyid_load_default_user'>load_default_user</span>
@@ -859,14 +883,14 @@
       <pre class="lines">
 
 
-110
 111
 112
 113
-114</pre>
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 111</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_load_default_user'>load_default_user</span>
   <span class='id identifier rubyid_users_api'>users_api</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client/UsersApi.html" title="Coinbase::Client::UsersApi (class)">UsersApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Coinbase/Client/UsersApi.html#initialize-instance_method" title="Coinbase::Client::UsersApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='period'>.</span><span class='id identifier rubyid_api_client'>api_client</span><span class='rparen'>)</span>
@@ -942,15 +966,74 @@
       <pre class="lines">
 
 
-104
 105
-106</pre>
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 105</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="use_server_signer?-class_method">
+  
+    .<strong>use_server_signer?</strong>  &#x21d2; <tt>bool</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns whether to use a server signer to manage private keys.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>bool</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>whether to use a server signer to manage private keys.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+129
+130
+131</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 129</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'>use_server_signer?</span>
+  <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer'><span class='object_link'><a href="Coinbase/Configuration.html#use_server_signer-instance_method" title="Coinbase::Configuration#use_server_signer (method)">use_server_signer</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
