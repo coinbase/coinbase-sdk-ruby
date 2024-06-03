@@ -128,7 +128,7 @@ module Coinbase
       @model = model
       @addresses = []
 
-      return @model if Coinbase.use_server_signer?
+      return if Coinbase.use_server_signer?
 
       @master = master_node(seed)
 
