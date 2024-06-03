@@ -123,11 +123,15 @@ module Coinbase
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      validate_seed_and_address_models(seed, address_models)
+      validate_seed_and_address_models(seed, address_models) unless Coinbase.use_server_signer?
 
       @model = model
-      @master = master_node(seed)
       @addresses = []
+
+      return @model if Coinbase.use_server_signer?
+
+      @master = master_node(seed)
+
       @private_key_index = 0
 
       derive_addresses(address_models)
@@ -245,6 +249,10 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
+      puts Coinbase.use_server_signer?
+      # TODO: Improve this check by relying on the backend data to decide whether a wallet is server-signer backed.
+      raise 'Cannot export data for Server-Signer backed Wallet' if Coinbase.use_server_signer?
+
       raise 'Cannot export Wallet without loaded seed' if @master.nil?
 
       Data.new(wallet_id: id, seed: @master.seed_hex)
