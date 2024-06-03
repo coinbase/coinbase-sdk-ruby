@@ -248,7 +248,6 @@ module Coinbase
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
-      puts Coinbase.use_server_signer?
       # TODO: Improve this check by relying on the backend data to decide whether a wallet is server-signer backed.
       raise 'Cannot export data for Server-Signer backed Wallet' if Coinbase.use_server_signer?
 
