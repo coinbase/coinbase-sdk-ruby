@@ -74,6 +74,7 @@ describe Coinbase::Wallet do
         seed: seed
       )
     end
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
     subject(:imported_wallet) { Coinbase::Wallet.import(exported_data) }
 
     before do
@@ -82,25 +83,48 @@ describe Coinbase::Wallet do
         .to receive(:list_addresses)
         .with(wallet_id, { limit: 20 })
         .and_return(address_list_model)
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
     end
 
-    it 'imports an exported wallet' do
-      expect(imported_wallet.id).to eq(wallet_id)
-    end
+    context 'when not using server signer' do
+      let(:use_server_signer) { false }
+      it 'imports an exported wallet' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
 
-    it 'loads the wallet addresses' do
-      expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
-    end
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
 
-    it 'contains the same seed when re-exported' do
-      expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      it 'contains the same seed when re-exported' do
+        expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      end
     end
 
     context 'when there are no addresses' do
+      let(:use_server_signer) { false }
       let(:address_list_model) { Coinbase::Client::AddressList.new({ 'data' => [], 'total_count' => 0 }) }
 
       it 'loads the wallet addresses' do
         expect(imported_wallet.addresses.length).to eq(0)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+
+      it 'imports a wallet with id' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
+
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
+
+      it 'cannot export the wallet' do
+        expect do
+          imported_wallet.export
+        end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
   end
@@ -611,24 +635,45 @@ describe Coinbase::Wallet do
   end
 
   describe '#export' do
-    let(:seed_wallet) do
-      described_class.new(model, seed: seed, address_models: [address_model1, address_model2])
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
+    before do
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
     end
 
-    it 'exports the wallet data' do
-      wallet_data = seed_wallet.export
-      expect(wallet_data).to be_a(Coinbase::Wallet::Data)
-      expect(wallet_data.wallet_id).to eq(seed_wallet.id)
-      expect(wallet_data.seed).to eq(seed)
+    context 'when not using a server signer' do
+      let(:use_server_signer) { false }
+      let(:seed_wallet) do
+        described_class.new(model, seed: seed, address_models: [address_model1, address_model2])
+      end
+
+      it 'exports the wallet data' do
+        wallet_data = seed_wallet.export
+        expect(wallet_data).to be_a(Coinbase::Wallet::Data)
+        expect(wallet_data.wallet_id).to eq(seed_wallet.id)
+        expect(wallet_data.seed).to eq(seed)
+      end
+
+      it 'allows for re-creation of a Wallet' do
+        wallet_data = seed_wallet.export
+        new_wallet = described_class
+                     .new(model, seed: wallet_data.seed, address_models: [address_model1, address_model2])
+        expect(new_wallet.addresses.length).to eq(2)
+        new_wallet.addresses.each_with_index do |address, i|
+          expect(address.id).to eq(seed_wallet.addresses[i].id)
+        end
+      end
     end
 
-    it 'allows for re-creation of a Wallet' do
-      wallet_data = seed_wallet.export
-      new_wallet = described_class
-                   .new(model, seed: wallet_data.seed, address_models: [address_model1, address_model2])
-      expect(new_wallet.addresses.length).to eq(2)
-      new_wallet.addresses.each_with_index do |address, i|
-        expect(address.id).to eq(seed_wallet.addresses[i].id)
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+      let(:wallet_without_seed) do
+        described_class.new(model, seed: nil, address_models: [address_model1, address_model2])
+      end
+
+      it 'does not export seed data' do
+        expect do
+          wallet_without_seed.export
+        end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
   end
