@@ -38,7 +38,7 @@ module Coinbase
 
       claims = {
         sub: Coinbase.configuration.api_key_name,
-        iss: 'coinbase-cloud',
+        iss: 'cdp',
         aud: ['cdp_service'],
         nbf: Time.now.to_i,
         exp: Time.now.to_i + 60, # Expiration time: 1 minute from now.

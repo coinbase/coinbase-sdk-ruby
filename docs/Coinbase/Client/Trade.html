@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Class: Coinbase::Client::CreateAddressRequest
+  Class: Coinbase::Client::Trade
   
     &mdash; Documentation by YARD 0.9.36
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "Coinbase::Client::CreateAddressRequest";
+  pathId = "Coinbase::Client::Trade";
   relpath = '../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../_index.html">Index (C)</a> &raquo;
+    <a href="../../_index.html">Index (T)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Client.html" title="Coinbase::Client (module)">Client</a></span></span>
      &raquo; 
-    <span class="title">CreateAddressRequest</span>
+    <span class="title">Trade</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Class: Coinbase::Client::CreateAddressRequest
+      <div id="content"><h1>Class: Coinbase::Client::Trade
   
   
   
@@ -74,7 +74,7 @@
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">Coinbase::Client::CreateAddressRequest</li>
+            <li class="next">Coinbase::Client::Trade</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -94,12 +94,23 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/coinbase/client/models/create_address_request.rb</dd>
+    <dd>lib/coinbase/client/models/trade.rb</dd>
   </dl>
   
 </div>
 
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A trade of an asset to another asset</p>
 
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
 
 
 
@@ -109,7 +120,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#attestation-instance_method" title="#attestation (instance method)">#<strong>attestation</strong>  &#x21d2; Object </a>
+      <a href="#address_id-instance_method" title="#address_id (instance method)">#<strong>address_id</strong>  &#x21d2; Object </a>
     
 
     
@@ -127,7 +138,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>An attestation signed by the private key that is associated with the wallet.</p>
+<p>The onchain address of the sender.</p>
 </div></span>
   
 </li>
@@ -136,7 +147,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#public_key-instance_method" title="#public_key (instance method)">#<strong>public_key</strong>  &#x21d2; Object </a>
+      <a href="#from_amount-instance_method" title="#from_amount (instance method)">#<strong>from_amount</strong>  &#x21d2; Object </a>
     
 
     
@@ -154,7 +165,196 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The public key from which the address will be derived.</p>
+<p>The amount of the from asset to be traded (in atomic units of the from asset).</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#from_asset-instance_method" title="#from_asset (instance method)">#<strong>from_asset</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute from_asset.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#network_id-instance_method" title="#network_id (instance method)">#<strong>network_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The ID of the blockchain network.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_amount-instance_method" title="#to_amount (instance method)">#<strong>to_amount</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The amount of the to asset that will be received (in atomic units of the to asset).</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_asset-instance_method" title="#to_asset (instance method)">#<strong>to_asset</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute to_asset.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#trade_id-instance_method" title="#trade_id (instance method)">#<strong>trade_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The ID of the trade.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#transaction-instance_method" title="#transaction (instance method)">#<strong>transaction</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute transaction.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wallet_id-instance_method" title="#wallet_id (instance method)">#<strong>wallet_id</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The ID of the wallet that owns the from address.</p>
 </div></span>
   
 </li>
@@ -423,7 +623,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(attributes = {})  &#x21d2; CreateAddressRequest </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(attributes = {})  &#x21d2; Trade </a>
     
 
     
@@ -575,7 +775,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(attributes = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Client::CreateAddressRequest (class)">CreateAddressRequest</a></span></tt> 
+    #<strong>initialize</strong>(attributes = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Client::Trade (class)">Trade</a></span></tt> 
   
 
   
@@ -620,50 +820,142 @@
       <pre class="lines">
 
 
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73</pre>
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 86</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The input argument (attributes) must be a hash in `Coinbase::Client::CreateAddressRequest` initialize method</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The input argument (attributes) must be a hash in `Coinbase::Client::Trade` initialize method</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
 
   <span class='comment'># check to see if the attribute exists and convert string to symbol for hash key
 </span>  <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_h'>h</span><span class='op'>|</span>
     <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>`</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is not a valid attribute in `Coinbase::Client::CreateAddressRequest`. Please check the name to make sure it&#39;s valid. List of attributes: </span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span>
+      <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>`</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is not a valid attribute in `Coinbase::Client::Trade`. Please check the name to make sure it&#39;s valid. List of attributes: </span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span>
     <span class='kw'>end</span>
     <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span>
   <span class='rbrace'>}</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;public_key&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_public_key'>public_key</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;public_key&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;network_id&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;network_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;attestation&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attestation'>attestation</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;attestation&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;wallet_id&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;wallet_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;address_id&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_address_id'>address_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;address_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_address_id'>address_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;trade_id&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_trade_id'>trade_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;trade_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_trade_id'>trade_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;from_amount&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_amount'>from_amount</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;from_amount&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_amount'>from_amount</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;from_asset&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_asset'>from_asset</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;from_asset&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_asset'>from_asset</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;to_amount&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_amount'>to_amount</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;to_amount&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_amount'>to_amount</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;to_asset&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_asset'>to_asset</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;to_asset&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_to_asset'>to_asset</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;transaction&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;transaction&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -677,11 +969,11 @@
     <h2>Instance Attribute Details</h2>
     
       
-      <span id="attestation=-instance_method"></span>
+      <span id="address_id=-instance_method"></span>
       <div class="method_details first">
-  <h3 class="signature first" id="attestation-instance_method">
+  <h3 class="signature first" id="address_id-instance_method">
   
-    #<strong>attestation</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>address_id</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -690,7 +982,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.</p>
+<p>The onchain address of the sender</p>
 
 
   </div>
@@ -704,15 +996,15 @@
       <pre class="lines">
 
 
-22
-23
-24</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 26</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_attestation'>attestation</span>
-  <span class='ivar'>@attestation</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_address_id'>address_id</span>
+  <span class='ivar'>@address_id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -720,11 +1012,11 @@
 </div>
     
       
-      <span id="public_key=-instance_method"></span>
+      <span id="from_amount=-instance_method"></span>
       <div class="method_details ">
-  <h3 class="signature " id="public_key-instance_method">
+  <h3 class="signature " id="from_amount-instance_method">
   
-    #<strong>public_key</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>from_amount</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -733,7 +1025,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>The public key from which the address will be derived.</p>
+<p>The amount of the from asset to be traded (in atomic units of the from asset)</p>
 
 
   </div>
@@ -747,15 +1039,316 @@
       <pre class="lines">
 
 
-19
-20
-21</pre>
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 32</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_public_key'>public_key</span>
-  <span class='ivar'>@public_key</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_from_amount'>from_amount</span>
+  <span class='ivar'>@from_amount</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="from_asset=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="from_asset-instance_method">
+  
+    #<strong>from_asset</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute from_asset.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_from_asset'>from_asset</span>
+  <span class='ivar'>@from_asset</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="network_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="network_id-instance_method">
+  
+    #<strong>network_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The ID of the blockchain network</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+20
+21
+22</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 20</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
+  <span class='ivar'>@network_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="to_amount=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="to_amount-instance_method">
+  
+    #<strong>to_amount</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The amount of the to asset that will be received (in atomic units of the to asset)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+37
+38
+39</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 37</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_amount'>to_amount</span>
+  <span class='ivar'>@to_amount</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="to_asset=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="to_asset-instance_method">
+  
+    #<strong>to_asset</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute to_asset.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+39
+40
+41</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 39</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_asset'>to_asset</span>
+  <span class='ivar'>@to_asset</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="trade_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="trade_id-instance_method">
+  
+    #<strong>trade_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The ID of the trade</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_trade_id'>trade_id</span>
+  <span class='ivar'>@trade_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="transaction=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="transaction-instance_method">
+  
+    #<strong>transaction</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute transaction.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+41
+42
+43</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 41</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_transaction'>transaction</span>
+  <span class='ivar'>@transaction</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="wallet_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="wallet_id-instance_method">
+  
+    #<strong>wallet_id</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The ID of the wallet that owns the from address</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+23
+24
+25</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 23</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span>
+  <span class='ivar'>@wallet_id</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -849,47 +1442,47 @@
       <pre class="lines">
 
 
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175</pre>
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 138</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 269</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -960,12 +1553,12 @@
       <pre class="lines">
 
 
-33
-34
-35</pre>
+59
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -1001,20 +1594,34 @@
       <pre class="lines">
 
 
-25
-26
-27
-28
-29
-30</pre>
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
-    <span class='symbol'>:&#39;public_key&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;public_key&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;attestation&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;attestation&#39;</span>
+    <span class='symbol'>:&#39;network_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;network_id&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;wallet_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;wallet_id&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;address_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;address_id&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;trade_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;trade_id&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;from_amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;from_amount&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;from_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;from_asset&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;to_amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;to_amount&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;to_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;to_asset&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;transaction&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;transaction&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1086,28 +1693,28 @@
       <pre class="lines">
 
 
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132</pre>
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 114</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 245</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1159,13 +1766,13 @@
       <pre class="lines">
 
 
-46
-47
-48
-49</pre>
+79
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 46</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 79</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -1202,20 +1809,34 @@
       <pre class="lines">
 
 
-38
-39
-40
-41
-42
-43</pre>
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
-    <span class='symbol'>:&#39;public_key&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;attestation&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span>
+    <span class='symbol'>:&#39;network_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;wallet_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;address_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;trade_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;from_amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;from_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Asset&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;to_amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;to_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Asset&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;transaction&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Transaction&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1275,21 +1896,35 @@
       <pre class="lines">
 
 
-92
-93
-94
-95
-96
-97</pre>
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 92</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 216</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_public_key'>public_key</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_public_key'>public_key</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_attestation'>attestation</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_attestation'>attestation</span>
+      <span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_address_id'>address_id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_address_id'>address_id</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_trade_id'>trade_id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_trade_id'>trade_id</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_from_amount'>from_amount</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_from_amount'>from_amount</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_from_asset'>from_asset</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_from_asset'>from_asset</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_to_amount'>to_amount</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_to_amount'>to_amount</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_to_asset'>to_asset</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_to_asset'>to_asset</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_transaction'>transaction</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1360,22 +1995,22 @@
       <pre class="lines">
 
 
-209
-210
-211
-212
-213
-214
-215
-216
-217
-218
-219
-220
-221</pre>
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 209</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 340</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1459,12 +2094,12 @@
       <pre class="lines">
 
 
-101
-102
-103</pre>
+232
+233
+234</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 232</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1518,15 +2153,15 @@
       <pre class="lines">
 
 
-107
-108
-109</pre>
+238
+239
+240</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 107</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 238</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_public_key'>public_key</span><span class='comma'>,</span> <span class='id identifier rubyid_attestation'>attestation</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_trade_id'>trade_id</span><span class='comma'>,</span> <span class='id identifier rubyid_from_amount'>from_amount</span><span class='comma'>,</span> <span class='id identifier rubyid_from_asset'>from_asset</span><span class='comma'>,</span> <span class='id identifier rubyid_to_amount'>to_amount</span><span class='comma'>,</span> <span class='id identifier rubyid_to_asset'>to_asset</span><span class='comma'>,</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1577,18 +2212,90 @@
       <pre class="lines">
 
 
-77
-78
-79
-80
-81</pre>
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>if</span> <span class='ivar'>@network_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;network_id&quot;, network_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@wallet_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;wallet_id&quot;, wallet_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@address_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;address_id&quot;, address_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@trade_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;trade_id&quot;, trade_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@from_amount</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;from_amount&quot;, from_amount cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@from_asset</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;from_asset&quot;, from_asset cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@to_amount</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;to_amount&quot;, to_amount cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@to_asset</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;to_asset&quot;, to_asset cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@transaction</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;transaction&quot;, transaction cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1640,12 +2347,12 @@
       <pre class="lines">
 
 
-185
-186
-187</pre>
+316
+317
+318</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 185</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 316</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -1699,22 +2406,22 @@
       <pre class="lines">
 
 
-191
-192
-193
-194
-195
-196
-197
-198
-199
-200
-201
-202
-203</pre>
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 191</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 322</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1778,12 +2485,12 @@
       <pre class="lines">
 
 
-179
-180
-181</pre>
+310
+311
+312</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 179</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 310</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1837,16 +2544,34 @@
       <pre class="lines">
 
 
-85
-86
-87
-88</pre>
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_address_request.rb', line 85</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/trade.rb', line 200</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@network_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@wallet_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@address_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@trade_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@from_amount</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@from_asset</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@to_amount</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@to_asset</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@transaction</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>true</span>
 <span class='kw'>end</span></pre>
     </td>

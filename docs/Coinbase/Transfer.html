@@ -332,6 +332,30 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#reload-instance_method" title="#reload (instance method)">#<strong>reload</strong>  &#x21d2; Transfer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Reload reloads the Transfer model with the latest version from the server side.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#signed_payload-instance_method" title="#signed_payload (instance method)">#<strong>signed_payload</strong>  &#x21d2; String </a>
     
 
@@ -373,6 +397,28 @@
     <span class="summary_desc"><div class='inline'>
 <p>Returns the status of the Transfer.</p>
 </div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#terminal_state%3F-instance_method" title="#terminal_state? (instance method)">#<strong>terminal_state?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -476,6 +522,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#transfers_api-instance_method" title="#transfers_api (instance method)">#<strong>transfers_api</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#unsigned_payload-instance_method" title="#unsigned_payload (instance method)">#<strong>unsigned_payload</strong>  &#x21d2; String </a>
     
 
@@ -500,7 +568,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#wait!-instance_method" title="#wait! (instance method)">#<strong>wait!</strong>(interval_seconds = 0.2, timeout_seconds = 10)  &#x21d2; Transfer </a>
+      <a href="#wait!-instance_method" title="#wait! (instance method)">#<strong>wait!</strong>(interval_seconds = 0.2, timeout_seconds = 20)  &#x21d2; Transfer </a>
     
 
     
@@ -968,12 +1036,12 @@
       <pre class="lines">
 
 
-190
-191
-192</pre>
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1036,6 +1104,73 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="reload-instance_method">
+  
+    #<strong>reload</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Reload reloads the Transfer model with the latest version from the server side.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The most recent version of Transfer from the server.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+142
+143
+144
+145
+146
+147
+148</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 142</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
+  <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_get_transfer'>get_transfer</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_from_address_id'>from_address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1147,53 +1282,65 @@
 
 136
 137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158</pre>
+138</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 136</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
-  <span class='comment'># Check if the transfer has been signed yet.
-</span>  <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#PENDING-constant" title="Coinbase::Transfer::Status::PENDING (constant)">PENDING</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="terminal_state?-instance_method">
+  
+    #<strong>terminal_state?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
 
-  <span class='id identifier rubyid_onchain_transaction'>onchain_transaction</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_client'><span class='object_link'><a href="Configuration.html#base_sepolia_client-instance_method" title="Coinbase::Configuration#base_sepolia_client (method)">base_sepolia_client</a></span></span><span class='period'>.</span><span class='id identifier rubyid_eth_getTransactionByHash'>eth_getTransactionByHash</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='rparen'>)</span>
+  
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_onchain_transaction'>onchain_transaction</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='comment'># If the transaction has not been broadcast, it is still pending.
-</span>    <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#PENDING-constant" title="Coinbase::Transfer::Status::PENDING (constant)">PENDING</a></span></span>
-  <span class='kw'>elsif</span> <span class='id identifier rubyid_onchain_transaction'>onchain_transaction</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>blockHash</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='comment'># If the transaction has been broadcast but hasn&#39;t been included in a block, it is
-</span>    <span class='comment'># broadcast.
-</span>    <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#BROADCAST-constant" title="Coinbase::Transfer::Status::BROADCAST (constant)">BROADCAST</a></span></span>
-  <span class='kw'>else</span>
-    <span class='id identifier rubyid_transaction_receipt'>transaction_receipt</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_base_sepolia_client'><span class='object_link'><a href="Configuration.html#base_sepolia_client-instance_method" title="Coinbase::Configuration#base_sepolia_client (method)">base_sepolia_client</a></span></span><span class='period'>.</span><span class='id identifier rubyid_eth_getTransactionReceipt'>eth_getTransactionReceipt</span><span class='lparen'>(</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='rparen'>)</span>
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
 
-    <span class='kw'>if</span> <span class='id identifier rubyid_transaction_receipt'>transaction_receipt</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>status</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='int'>1</span>
-      <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#COMPLETE-constant" title="Coinbase::Transfer::Status::COMPLETE (constant)">COMPLETE</a></span></span>
-    <span class='kw'>else</span>
-      <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#FAILED-constant" title="Coinbase::Transfer::Status::FAILED (constant)">FAILED</a></span></span>
-    <span class='kw'>end</span>
-  <span class='kw'>end</span>
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+190
+191
+192</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 190</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_terminal_state?'>terminal_state?</span>
+  <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#COMPLETE-constant" title="Coinbase::Transfer::Status::COMPLETE (constant)">COMPLETE</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'><span class='object_link'><a href="#to_s-instance_method" title="Coinbase::Transfer#to_s (method)">to_s</a></span></span> <span class='op'>||</span> <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#FAILED-constant" title="Coinbase::Transfer::Status::FAILED (constant)">FAILED</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_s'><span class='object_link'><a href="#to_s-instance_method" title="Coinbase::Transfer#to_s (method)">to_s</a></span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1244,15 +1391,15 @@
       <pre class="lines">
 
 
-181
-182
-183
-184
-185
-186</pre>
+173
+174
+175
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 181</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Transfer{transfer_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network_id'>network_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, </span><span class='tstring_end'>&quot;</span></span> \
@@ -1481,6 +1628,36 @@
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="transfers_api-instance_method">
+  
+    #<strong>transfers_api</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+186
+187
+188</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 186</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_transfers_api'>transfers_api</span>
+  <span class='ivar'>@transfers_api</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/TransfersApi.html" title="Coinbase::Client::TransfersApi (class)">TransfersApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Client/TransfersApi.html#initialize-instance_method" title="Coinbase::Client::TransfersApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_client'><span class='object_link'><a href="Configuration.html#api_client-instance_method" title="Coinbase::Configuration#api_client (method)">api_client</a></span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="unsigned_payload-instance_method">
   
     #<strong>unsigned_payload</strong>  &#x21d2; <tt>String</tt> 
@@ -1542,7 +1719,7 @@
       <div class="method_details ">
   <h3 class="signature " id="wait!-instance_method">
   
-    #<strong>wait!</strong>(interval_seconds = 0.2, timeout_seconds = 10)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt> 
+    #<strong>wait!</strong>(interval_seconds = 0.2, timeout_seconds = 20)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt> 
   
 
   
@@ -1586,7 +1763,7 @@
         <span class='type'>(<tt>Integer</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>10</tt>)</em>
+        <em class="default">(defaults to: <tt>20</tt>)</em>
       
       
         &mdash;
@@ -1623,28 +1800,32 @@
       <pre class="lines">
 
 
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
 165
 166
 167
 168
-169
-170
-171
-172
-173
-174
-175
-176
-177</pre>
+169</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 165</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 155</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_wait!'>wait!</span><span class='lparen'>(</span><span class='id identifier rubyid_interval_seconds'>interval_seconds</span> <span class='op'>=</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span> <span class='op'>=</span> <span class='int'>10</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_wait!'>wait!</span><span class='lparen'>(</span><span class='id identifier rubyid_interval_seconds'>interval_seconds</span> <span class='op'>=</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span> <span class='op'>=</span> <span class='int'>20</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
 
   <span class='id identifier rubyid_loop'>loop</span> <span class='kw'>do</span>
-    <span class='kw'>return</span> <span class='kw'>self</span> <span class='kw'>if</span> <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#COMPLETE-constant" title="Coinbase::Transfer::Status::COMPLETE (constant)">COMPLETE</a></span></span> <span class='op'>||</span> <span class='id identifier rubyid_status'>status</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Transfer/Status.html" title="Coinbase::Transfer::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transfer/Status.html#FAILED-constant" title="Coinbase::Transfer::Status::FAILED (constant)">FAILED</a></span></span>
+    <span class='id identifier rubyid_reload'>reload</span>
+
+    <span class='kw'>return</span> <span class='kw'>self</span> <span class='kw'>if</span> <span class='id identifier rubyid_terminal_state?'>terminal_state?</span>
 
     <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Timeout</span><span class='op'>::</span><span class='const'>Error</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Transfer timed out</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span>
 

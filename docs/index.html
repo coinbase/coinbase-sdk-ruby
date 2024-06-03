@@ -200,6 +200,11 @@ rbenv global 2.7.0
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_user'><span class='object_link'><a href="Coinbase.html#default_user-class_method" title="Coinbase.default_user (method)">default_user</a></span></span>
 </code></pre>
 
+<p>If you are using a CDP Server-Signer to manage your private keys, enable it with</p>
+
+<pre class="code ruby"><code class="ruby"><span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer'><span class='object_link'><a href="Coinbase/Configuration.html#use_server_signer-instance_method" title="Coinbase::Configuration#use_server_signer (method)">use_server_signer</a></span></span><span class='op'>=</span><span class='kw'>true</span>
+</code></pre>
+
 <p>Now, create a wallet from the User. Wallets are created with a single default address.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Create a wallet with one address by default.
