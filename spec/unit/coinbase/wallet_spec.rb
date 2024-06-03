@@ -642,13 +642,13 @@ describe Coinbase::Wallet do
 
     context 'when using a server signer' do
       let(:use_server_signer) { true }
-      let(:seed_wallet) do
+      let(:wallet_without_seed) do
         described_class.new(model, seed: nil, address_models: [address_model1, address_model2])
       end
 
       it 'does not export seed data' do
         expect do
-          seed_wallet.export
+          wallet_without_seed.export
         end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
