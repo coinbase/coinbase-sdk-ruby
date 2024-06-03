@@ -128,11 +128,10 @@ module Coinbase
       @model = model
       @addresses = []
 
-      return if Coinbase.use_server_signer?
-
-      @master = master_node(seed)
-
-      @private_key_index = 0
+      unless Coinbase.use_server_signer?
+        @master = master_node(seed)
+        @private_key_index = 0
+      end
 
       derive_addresses(address_models)
     end
