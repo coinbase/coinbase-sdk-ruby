@@ -65,14 +65,10 @@ module Coinbase::Client
 
       if attributes.key?(:'public_key')
         self.public_key = attributes[:'public_key']
-      else
-        self.public_key = nil
       end
 
       if attributes.key?(:'attestation')
         self.attestation = attributes[:'attestation']
-      else
-        self.attestation = nil
       end
     end
 
@@ -81,14 +77,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @public_key.nil?
-        invalid_properties.push('invalid value for "public_key", public_key cannot be nil.')
-      end
-
-      if @attestation.nil?
-        invalid_properties.push('invalid value for "attestation", attestation cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -96,8 +84,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @public_key.nil?
-      return false if @attestation.nil?
       true
     end
 

@@ -9,12 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Trade
 
+## [0.0.6] - 2024-06-03
+
+### Added
+
+- Server-Signer feature: ability to create wallets backed by server signers and create transfers with them.
+
+### Changed
+
+- Changed save_wallet to save_seed
+- Changed load_wallets to load_seed and moved at wallet level
+
 ## [0.0.5] - 2024-05-20
 
 ### Added
 
 - `wallets` method on the User class
 - Ability to hydrate wallets (i.e. set the seed on it)
+- Ability to create wallets backed by server signers.
+    - Note: External developers cannot use this until we enable them to create and run them.
 
 ## [0.0.4] - 2024-05-13
 

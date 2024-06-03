@@ -7,12 +7,21 @@ describe Coinbase::Address do
   let(:address_id) { key.address.to_s }
   let(:wallet_id) { SecureRandom.uuid }
   let(:model) do
-    Coinbase::Client::Address.new({
-                                    'network_id' => 'base-sepolia',
-                                    'address_id' => address_id,
-                                    'wallet_id' => wallet_id,
-                                    'public_key' => key.public_key.compressed.unpack1('H*')
-                                  })
+    Coinbase::Client::Address.new(
+      network_id: 'base-sepolia',
+      address_id: address_id,
+      wallet_id: wallet_id,
+      public_key: key.public_key.compressed.unpack1('H*')
+    )
+  end
+  let(:eth_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+  end
+  let(:usdc_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
+  end
+  let(:weth_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'weth', decimals: 18)
   end
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
@@ -55,37 +64,10 @@ describe Coinbase::Address do
   describe '#balances' do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
-        'data' => [
-          Coinbase::Client::Balance.new(
-            {
-              'amount' => '1000000000000000000',
-              'asset' => Coinbase::Client::Asset.new({
-                                                       'network_id': 'base-sepolia',
-                                                       'asset_id': 'eth',
-                                                       'decimals': 18
-                                                     })
-            }
-          ),
-          Coinbase::Client::Balance.new(
-            {
-              'amount' => '5000000000',
-              'asset' => Coinbase::Client::Asset.new({
-                                                       'network_id': 'base-sepolia',
-                                                       'asset_id': 'usdc',
-                                                       'decimals': 6
-                                                     })
-            }
-          ),
-          Coinbase::Client::Balance.new(
-            {
-              'amount' => '3000000000000000000',
-              'asset' => Coinbase::Client::Asset.new({
-                                                       'network_id': 'base-sepolia',
-                                                       'asset_id': 'weth',
-                                                       'decimals': 6
-                                                     })
-            }
-          )
+        data: [
+          Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset),
+          Coinbase::Client::Balance.new(amount: '5000000000', asset: usdc_asset),
+          Coinbase::Client::Balance.new(amount: '3000000000000000000', asset: weth_asset)
         ]
       )
     end
@@ -118,16 +100,7 @@ describe Coinbase::Address do
 
   describe '#balance' do
     let(:response) do
-      Coinbase::Client::Balance.new(
-        {
-          'amount' => '1000000000000000000',
-          'asset' => Coinbase::Client::Asset.new({
-                                                   'network_id': 'base-sepolia',
-                                                   'asset_id': 'eth',
-                                                   'decimals': 18
-                                                 })
-        }
-      )
+      Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset)
     end
 
     it 'returns the correct ETH balance' do
@@ -165,28 +138,10 @@ describe Coinbase::Address do
 
   describe '#transfer' do
     let(:eth_balance_response) do
-      Coinbase::Client::Balance.new(
-        {
-          'amount' => '1000000000000000000',
-          'asset' => Coinbase::Client::Asset.new({
-                                                   'network_id': 'base-sepolia',
-                                                   'asset_id': 'eth',
-                                                   'decimals': 18
-                                                 })
-        }
-      )
+      Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset)
     end
     let(:usdc_balance_response) do
-      Coinbase::Client::Balance.new(
-        {
-          'amount' => '10000000000',
-          'asset' => Coinbase::Client::Asset.new({
-                                                   'network_id': 'base-sepolia',
-                                                   'asset_id': 'usdc',
-                                                   'decimals': 6
-                                                 })
-        }
-      )
+      Coinbase::Client::Balance.new(amount: '10000000000', asset: usdc_asset)
     end
     let(:transfer_id) { SecureRandom.uuid }
     let(:to_key) { Eth::Key.new }
@@ -198,145 +153,219 @@ describe Coinbase::Address do
       { signed_payload: raw_signed_transaction }
     end
     let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
-    let(:transfer) do
-      double('Transfer', transaction: transaction, id: transfer_id)
-    end
+    let(:created_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
+    let(:transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'pending') }
+    let(:broadcasted_transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'broadcast') }
+    let(:broadcasted_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
+    let(:transfer_asset_id) { 'eth' }
+    let(:balance_response) { eth_balance_response }
+    let(:destination) { to_address_id }
 
-    before do
-      allow(Coinbase::Transfer).to receive(:new).and_return(transfer)
-    end
+    subject(:transfer) { address.transfer(amount, asset_id, destination) }
 
-    # TODO: Add test case for when the destination is a Wallet.
-
-    context 'when the destination is a valid Address' do
+    context 'when the transfer is successful' do
       let(:asset_id) { :wei }
       let(:amount) { 500_000_000_000_000_000 }
-      let(:destination) { described_class.new(model, to_key) }
+      let(:transfer_amount) { 500_000_000_000_000_000 }
       let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.id }
+        { amount: transfer_amount.to_s, network_id: network_id, asset_id: transfer_asset_id,
+          destination: to_address_id }
       end
 
-      it 'creates a Transfer' do
-        expect(addresses_api)
+      before do
+        allow(addresses_api)
           .to receive(:get_address_balance)
-          .with(wallet_id, address_id, 'eth')
-          .and_return(eth_balance_response)
-        expect(transfers_api)
+          .with(wallet_id, address_id, transfer_asset_id)
+          .and_return(balance_response)
+
+        allow(transfers_api)
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
-        expect(transfers_api)
+          .and_return(transfer_model)
+
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(created_transfer)
+
+        allow(transfers_api)
           .to receive(:broadcast_transfer)
           .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
-        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+          .and_return(broadcasted_transfer_model)
+
+        allow(Coinbase::Transfer).to receive(:new).with(broadcasted_transfer_model).and_return(broadcasted_transfer)
+
+        transfer
+      end
+
+      it 'creates the transfer' do
+        expect(transfers_api)
+          .to have_received(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+      end
+
+      it 'returns the broadcasted transfer' do
+        expect(transfer).to eq(broadcasted_transfer)
+      end
+
+      it 'signs the transaction with the key' do
+        expect(transaction).to have_received(:sign).with(key)
+      end
+
+      context 'when the asset is Gwei' do
+        let(:asset_id) { :gwei }
+        let(:amount) { 500_000_000 }
+
+        it 'returns the broadcast transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+
+        it 'signs the transaction with the address key' do
+          expect(transaction).to have_received(:sign).with(key)
+        end
+      end
+
+      context 'when the asset is ETH' do
+        let(:asset_id) { :eth }
+        let(:amount) { 0.5 }
+        let(:transfer_amount) { 500_000_000_000_000_000 }
+
+        it 'returns the broadcast transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+
+        it 'signs the transaction with the address key' do
+          expect(transaction).to have_received(:sign).with(key)
+        end
+      end
+
+      context 'when the asset is USDC' do
+        let(:asset_id) { :usdc }
+        let(:transfer_asset_id) { 'usdc' }
+        let(:amount) { 5 }
+        let(:transfer_amount) { 5_000_000 }
+        let(:balance_response) { usdc_balance_response }
+
+        it 'creates a Transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+      end
+
+      context 'when the destination is a Wallet' do
+        let(:default_address_model) do
+          Coinbase::Client::Address.new(
+            network_id: 'base-sepolia',
+            address_id: to_address_id,
+            wallet_id: wallet_id,
+            public_key: to_key.public_key.compressed.unpack1('H*')
+          )
+        end
+        let(:destination) do
+          Coinbase::Wallet.new(
+            Coinbase::Client::Wallet.new(id: wallet_id, network_id: 'base-sepolia',
+                                         default_address: default_address_model),
+            seed: '',
+            address_models: [default_address_model]
+          )
+        end
+
+        it 'returns the broadcasted transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+
+        it 'signs the transaction with the address key' do
+          expect(transaction).to have_received(:sign).with(key)
+        end
+      end
+
+      context 'when the destination is a Address' do
+        let(:asset_id) { :wei }
+        let(:amount) { 500_000_000_000_000_000 }
+        let(:transfer_amount) { amount }
+        let(:balance_response) { eth_balance_response }
+        let(:to_model) do
+          Coinbase::Client::Address.new(
+            network_id: 'base-sepolia',
+            address_id: to_address_id,
+            wallet_id: wallet_id,
+            public_key: to_key.public_key.compressed.unpack1('H*')
+          )
+        end
+        let(:destination) { described_class.new(to_model, to_key) }
+        let(:destination_address) { destination.id }
+
+        it 'returns the broadcasted transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+
+        it 'signs the transaction with the address key' do
+          expect(transaction).to have_received(:sign).with(key)
+        end
       end
     end
 
-    context 'when the destination is a valid Address and asset is USDC' do
-      let(:asset_id) { :usdc }
-      let(:usdc_amount) { 5 }
-      let(:usdc_atomic_amount) { 5_000_000 }
-      let(:destination) { described_class.new(model, to_key) }
-      let(:create_transfer_request) do
-        {
-          amount: usdc_atomic_amount.to_s,
-          network_id: network_id,
-          asset_id: 'usdc',
-          destination: destination.id
-        }
+    context 'when the destination Address is on a different network' do
+      let(:to_model) do
+        Coinbase::Client::Address.new(
+          network_id: 'ethereum-sepolia',
+          address_id: to_address_id,
+          wallet_id: wallet_id,
+          public_key: to_key.public_key.compressed.unpack1('H*')
+        )
       end
-
-      it 'creates a Transfer' do
-        expect(addresses_api)
-          .to receive(:get_address_balance)
-          .with(wallet_id, address_id, 'usdc')
-          .and_return(usdc_balance_response)
-        expect(transfers_api)
-          .to receive(:create_transfer)
-          .with(wallet_id, address_id, create_transfer_request)
-        expect(transfers_api)
-          .to receive(:broadcast_transfer)
-          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
-
-        expect(address.transfer(usdc_amount, asset_id, destination)).to eq(transfer)
-      end
-    end
-
-    context 'when the destination is a valid Address ID' do
-      let(:asset_id) { :wei }
       let(:amount) { 500_000_000_000_000_000 }
-      let(:destination) { to_address_id }
-      let(:create_transfer_request) do
-        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
-      end
-      it 'creates a Transfer' do
-        expect(addresses_api)
-          .to receive(:get_address_balance)
-          .with(wallet_id, address_id, 'eth')
-          .and_return(eth_balance_response)
-        expect(transfers_api)
-          .to receive(:create_transfer)
-          .with(wallet_id, address_id, create_transfer_request)
-        expect(transfers_api)
-          .to receive(:broadcast_transfer)
-          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
-        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      let(:asset_id) { :wei }
+      let(:destination) { described_class.new(to_model, to_key) }
+
+      it 'raises an ArgumentError' do
+        expect do
+          address.transfer(amount, asset_id, destination)
+        end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
 
-    context 'when the destination is a valid Address ID and asset is Gwei' do
-      let(:asset_id) { :gwei }
-      let(:amount) { 500_000_000 }
-      let(:wei_amount) { 500_000_000_000_000_000 }
-      let(:destination) { to_address_id }
-      let(:create_transfer_request) do
-        { amount: wei_amount.to_s, network_id: network_id, asset_id: 'eth', destination: to_address_id }
+    context 'when the destination Wallet is on a different network' do
+      let(:default_address_model) do
+        Coinbase::Client::Address.new(
+          network_id: 'base-sepolia',
+          address_id: to_address_id,
+          wallet_id: wallet_id,
+          public_key: to_key.public_key.compressed.unpack1('H*')
+        )
       end
-      it 'creates a Transfer' do
-        expect(addresses_api)
-          .to receive(:get_address_balance)
-          .with(wallet_id, address_id, 'eth')
-          .and_return(eth_balance_response)
-        expect(transfers_api)
-          .to receive(:create_transfer)
-          .with(wallet_id, address_id, create_transfer_request)
-        expect(transfers_api)
-          .to receive(:broadcast_transfer)
-          .with(wallet_id, address_id, transfer_id, broadcast_transfer_request)
-        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      let(:destination) do
+        Coinbase::Wallet.new(
+          Coinbase::Client::Wallet.new(id: wallet_id, network_id: 'base-mainnet',
+                                       default_address: default_address_model),
+          seed: '',
+          address_models: [default_address_model]
+        )
+      end
+
+      let(:amount) { 500_000_000_000_000_000 }
+      let(:asset_id) { :wei }
+
+      it 'raises an ArgumentError' do
+        expect do
+          address.transfer(amount, asset_id, destination)
+        end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
       end
     end
 
     context 'when the asset is unsupported' do
       let(:amount) { 500_000_000_000_000_000 }
-      it 'raises an ArgumentError' do
-        expect { address.transfer(amount, :uni, to_address_id) }.to raise_error(ArgumentError, 'Unsupported asset: uni')
-      end
-    end
-
-    # TODO: Add test case for when the destination is a Wallet.
-
-    context 'when the destination Address is on a different network' do
-      let(:asset_id) { :wei }
-      let(:amount) { 500_000_000_000_000_000 }
-      let(:new_model) do
-        Coinbase::Client::Address.new({
-                                        'network_id' => 'base-mainnet',
-                                        'address_id' => address_id,
-                                        'wallet_id' => wallet_id,
-                                        'public_key' => key.public_key.compressed.unpack1('H*')
-                                      })
-      end
+      let(:transfer_amount) { amount }
+      let(:asset_id) { :uni }
 
       it 'raises an ArgumentError' do
         expect do
-          address.transfer(amount, asset_id, Coinbase::Address.new(new_model, to_key))
-        end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
+          address.transfer(amount, asset_id, destination)
+        end.to raise_error(ArgumentError, 'Unsupported asset: uni')
       end
     end
 
     context 'when the balance is insufficient' do
       let(:asset_id) { :wei }
       let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
+      let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
+
       before do
         expect(addresses_api)
           .to receive(:get_address_balance)
@@ -358,6 +387,41 @@ describe Coinbase::Address do
         expect do
           unhydrated_address.transfer(1, :wei, to_address_id)
         end.to raise_error('Cannot transfer from address without private key loaded')
+      end
+    end
+
+    context 'when using server signer' do
+      let(:configuration) { double('Coinbase::Configuration', use_server_signer: true, api_client: nil) }
+      let(:asset_id) { :wei }
+      let(:amount) { 500_000_000_000_000_000 }
+      let(:destination) { described_class.new(model, to_key) }
+      let(:create_transfer_request) do
+        { amount: amount.to_s, network_id: network_id, asset_id: 'eth', destination: destination.id }
+      end
+
+      before do
+        allow(Coinbase).to receive(:configuration).and_return(configuration)
+        allow(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, transfer_asset_id)
+          .and_return(balance_response)
+
+        allow(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+          .and_return(transfer_model)
+        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(created_transfer)
+      end
+
+      it 'creates a transfer without broadcast' do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(eth_balance_response)
+        expect(transfers_api)
+          .to receive(:create_transfer)
+          .with(wallet_id, address_id, create_transfer_request)
+        expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
   end
@@ -460,9 +524,9 @@ describe Coinbase::Address do
       Array.new(page_size) { SecureRandom.uuid }
     end
     let(:data) do
-      transfer_ids.map { |id| Coinbase::Client::Transfer.new({ 'transfer_id': id, 'network_id': 'base-sepolia' }) }
+      transfer_ids.map { |id| Coinbase::Client::Transfer.new(transfer_id: id, network_id: 'base-sepolia') }
     end
-    let(:transfers_list) { Coinbase::Client::TransferList.new({ 'data' => data }) }
+    let(:transfers_list) { Coinbase::Client::TransferList.new(data: data) }
     let(:expected_transfers) do
       data.map { |transfer_model| Coinbase::Transfer.new(transfer_model) }
     end
@@ -482,14 +546,27 @@ describe Coinbase::Address do
       expect(address.transfers).to eq(expected_transfers)
     end
 
+    context 'with no transfers' do
+      let(:data) { [] }
+
+      it 'returns an empty list' do
+        expect(transfers_api)
+          .to receive(:list_transfers)
+          .with(wallet_id, address_id, { limit: 100, page: nil })
+          .and_return(transfers_list)
+
+        expect(address.transfers).to be_empty
+      end
+    end
+
     context 'with multiple pages' do
       let(:page_size) { 150 }
       let(:next_page) { 'page_token_2' }
       let(:transfers_list_page1) do
-        Coinbase::Client::TransferList.new({ 'data' => data.take(100), 'has_more' => true, 'next_page' => next_page })
+        Coinbase::Client::TransferList.new(data: data.take(100), has_more: true, next_page: next_page)
       end
       let(:transfers_list_page2) do
-        Coinbase::Client::TransferList.new({ 'data' => data.drop(100), 'has_more' => false, 'next_page' => nil })
+        Coinbase::Client::TransferList.new(data: data.drop(100), has_more: false, next_page: nil)
       end
 
       it 'lists all of the transfers' do

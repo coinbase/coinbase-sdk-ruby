@@ -134,27 +134,17 @@ module Coinbase
     # Returns the status of the Transfer.
     # @return [Symbol] The status
     def status
-      # Check if the transfer has been signed yet.
-      return Status::PENDING if transaction_hash.nil?
+      @model.status
+    end
 
-      onchain_transaction = Coinbase.configuration.base_sepolia_client.eth_getTransactionByHash(transaction_hash)
-
-      if onchain_transaction.nil?
-        # If the transaction has not been broadcast, it is still pending.
-        Status::PENDING
-      elsif onchain_transaction['blockHash'].nil?
-        # If the transaction has been broadcast but hasn't been included in a block, it is
-        # broadcast.
-        Status::BROADCAST
-      else
-        transaction_receipt = Coinbase.configuration.base_sepolia_client.eth_getTransactionReceipt(transaction_hash)
-
-        if transaction_receipt['status'].to_i(16) == 1
-          Status::COMPLETE
-        else
-          Status::FAILED
-        end
+    # Reload reloads the Transfer model with the latest version from the server side.
+    # @return [Transfer] The most recent version of Transfer from the server.
+    def reload
+      @model = Coinbase.call_api do
+        transfers_api.get_transfer(wallet_id, from_address_id, id)
       end
+
+      self
     end
 
     # Waits until the Transfer is completed or failed by polling the Network at the given interval. Raises a
@@ -162,11 +152,13 @@ module Coinbase
     # @param interval_seconds [Integer] The interval at which to poll the Network, in seconds
     # @param timeout_seconds [Integer] The maximum amount of time to wait for the Transfer to complete, in seconds
     # @return [Transfer] The completed Transfer object
-    def wait!(interval_seconds = 0.2, timeout_seconds = 10)
+    def wait!(interval_seconds = 0.2, timeout_seconds = 20)
       start_time = Time.now
 
       loop do
-        return self if status == Status::COMPLETE || status == Status::FAILED
+        reload
+
+        return self if terminal_state?
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
@@ -189,6 +181,14 @@ module Coinbase
     # @return [String] a String representation of the Transfer
     def inspect
       to_s
+    end
+
+    def transfers_api
+      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    end
+
+    def terminal_state?
+      status == Status::COMPLETE.to_s || status == Status::FAILED.to_s
     end
   end
 end

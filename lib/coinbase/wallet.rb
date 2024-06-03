@@ -17,6 +17,17 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
+    # A representation of ServerSigner status in a Wallet.
+    module ServerSignerStatus
+      # The Wallet is awaiting seed creation by the ServerSigner. At this point,
+      # the Wallet cannot create addresses or sign transactions.
+      PENDING = 'pending_seed_creation'
+
+      # The Wallet has an associated seed created by the ServerSigner. It is ready
+      # to create addresses and sign transactions.
+      ACTIVE = 'active_seed'
+    end
+
     class << self
       # Imports a Wallet from previously exported wallet data.
       # @param data [Coinbase::Wallet::Data] the Wallet data to import
@@ -37,13 +48,18 @@ module Coinbase
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
       # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+      # @param interval_seconds [Integer] The interval at which to poll the CDPService for the Wallet to
+      # have an active seed, if using a ServerSigner, in seconds
+      # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
+      # create a seed for the Wallet, in seconds
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia')
+      def create(network_id: 'base-sepolia', interval_seconds: 0.2, timeout_seconds: 20)
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
-                network_id: network_id
+                network_id: network_id,
+                use_server_signer: Coinbase.use_server_signer?
               }
             }
           )
@@ -51,12 +67,41 @@ module Coinbase
 
         wallet = new(model)
 
-        wallet.create_address
+        # When used with a ServerSigner, the Signer must first register
+        # with the Wallet before addresses can be created.
+        wait_for_signer(wallet.id, interval_seconds, timeout_seconds) if Coinbase.use_server_signer?
 
+        wallet.create_address
         wallet
       end
 
       private
+
+      # Wait_for_signer waits until the ServerSigner has created a seed for the Wallet.
+      # Timeout::Error if the ServerSigner takes longer than the given timeout to create the seed.
+      # @param wallet_id [string] The ID of the Wallet that is awaiting seed creation.
+      # @param interval_seconds [Integer] The interval at which to poll the CDPService, in seconds
+      # @param timeout_seconds [Integer] The maximum amount of time to wait for the Signer to create a seed, in seconds
+      # @return [Wallet] The completed Wallet object that is ready to create addresses.
+      def wait_for_signer(wallet_id, interval_seconds, timeout_seconds)
+        start_time = Time.now
+
+        loop do
+          model = Coinbase.call_api do
+            wallets_api.get_wallet(wallet_id)
+          end
+
+          return self if model.server_signer_status == ServerSignerStatus::ACTIVE
+
+          if Time.now - start_time > timeout_seconds
+            raise Timeout::Error, 'Wallet creation timed out. Check status of your Server-Signer'
+          end
+
+          self.sleep interval_seconds
+        end
+
+        self
+      end
 
       # TODO: Memoize these objects in a thread-safe way at the top-level.
       def addresses_api
@@ -78,12 +123,15 @@ module Coinbase
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     # @param client [Jimson::Client] (Optional) The JSON RPC client to use for interacting with the Network
     def initialize(model, seed: nil, address_models: [])
-      validate_seed_and_address_models(seed, address_models)
+      validate_seed_and_address_models(seed, address_models) unless Coinbase.use_server_signer?
 
       @model = model
-      @master = master_node(seed)
       @addresses = []
-      @private_key_index = 0
+
+      unless Coinbase.use_server_signer?
+        @master = master_node(seed)
+        @private_key_index = 0
+      end
 
       derive_addresses(address_models)
     end
@@ -98,6 +146,12 @@ module Coinbase
     # @return [Symbol] The Network ID
     def network_id
       Coinbase.to_sym(@model.network_id)
+    end
+
+    # Returns the ServerSigner Status of the Wallet.
+    # @return [Symbol] The ServerSigner Status
+    def server_signer_status
+      Coinbase.to_sym(@model.server_signer_status)
     end
 
     # Sets the seed of the Wallet. This seed is used to derive keys and sign transactions.
@@ -121,16 +175,19 @@ module Coinbase
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
-      key = derive_key
-      attestation = create_attestation(key)
-      public_key = key.public_key.compressed.unpack1('H*')
+      opts = { create_address_request: {} }
 
-      opts = {
-        create_address_request: {
-          public_key: public_key,
-          attestation: attestation
+      unless Coinbase.use_server_signer?
+        key = derive_key
+
+        opts = {
+          create_address_request: {
+            public_key: key.public_key.compressed.unpack1('H*'),
+            attestation: create_attestation(key)
+          }
         }
-      }
+      end
+
       address_model = Coinbase.call_api do
         addresses_api.create_address(id, opts)
       end
@@ -177,30 +234,23 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
-    # Currently only the default_address is used to source the Transfer.
+    # Transfers the given amount of the given Asset to the specified address or wallet.
+    # Only same-network Transfers are supported. Currently only the default_address is used to source the Transfer.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
     # @param asset_id [Symbol] The ID of the Asset to send
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
     # @return [Transfer] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.default_address.id
-      elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
-
-        destination = destination.id
-      end
-
       default_address.transfer(amount, asset_id, destination)
     end
 
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
+      # TODO: Improve this check by relying on the backend data to decide whether a wallet is server-signer backed.
+      raise 'Cannot export data for Server-Signer backed Wallet' if Coinbase.use_server_signer?
+
       raise 'Cannot export Wallet without loaded seed' if @master.nil?
 
       Data.new(wallet_id: id, seed: @master.seed_hex)
@@ -221,6 +271,87 @@ module Coinbase
     # @return [Boolean] Whether the Wallet has a seed with which to derive keys and sign transactions.
     def can_sign?
       !@master.nil?
+    end
+
+    # Saves the seed of the Wallet to the given file. Wallets whose seeds are saved this way can be
+    # rehydrated using load_seed. A single file can be used for multiple Wallet seeds.
+    # This is an insecure method of storing Wallet seeds and should only be used for development purposes.
+    #
+    # @param file_path [String] The path of the file to save the seed to
+    # @param encrypt [bool] (Optional) Whether the seed information persisted to the local file system should be
+    # encrypted or not. Data is unencrypted by default.
+    # @return [String] A string indicating the success of the operation
+    def save_seed!(file_path, encrypt: false)
+      raise 'Wallet does not have seed loaded' if @master.nil?
+
+      existing_seeds_in_store = existing_seeds(file_path)
+
+      seed_to_store = @master.seed_hex
+      auth_tag = ''
+      iv = ''
+      if encrypt
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').encrypt
+        cipher.key = OpenSSL::Digest.digest('SHA256', encryption_key)
+        iv = cipher.random_iv
+        cipher.iv = iv
+        cipher.auth_data = ''
+        encrypted_data = cipher.update(@master.seed_hex) + cipher.final
+        auth_tag = cipher.auth_tag.unpack1('H*')
+        iv = iv.unpack1('H*')
+        seed_to_store = encrypted_data.unpack1('H*')
+      end
+
+      existing_seeds_in_store[id] = {
+        seed: seed_to_store,
+        encrypted: encrypt,
+        auth_tag: auth_tag,
+        iv: iv
+      }
+
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(existing_seeds_in_store))
+      end
+
+      "Successfully saved seed for wallet #{id} to #{file_path}."
+    end
+
+    # Loads the seed of the Wallet from the given file.
+    # @param file_path [String] The path of the file to load the seed from
+    # @return [String] A string indicating the success of the operation
+    def load_seed(file_path)
+      raise 'Wallet already has seed loaded' unless @master.nil?
+
+      existing_seeds_in_store = existing_seeds(file_path)
+
+      raise ArgumentError, "File #{file_path} does not contain seed data" if existing_seeds_in_store == {}
+
+      if existing_seeds_in_store[id].nil?
+        raise ArgumentError, "File #{file_path} does not contain seed data for wallet #{id}"
+      end
+
+      seed_data = existing_seeds_in_store[id]
+      local_seed = seed_data['seed']
+
+      raise ArgumentError, 'Seed data is malformed' if local_seed.nil? || local_seed == ''
+
+      if seed_data['encrypted']
+        raise ArgumentError, 'Encrypted seed data is malformed' if seed_data['iv'] == '' ||
+                                                                   seed_data['auth_tag'] == ''
+
+        cipher = OpenSSL::Cipher.new('aes-256-gcm').decrypt
+        cipher.key = OpenSSL::Digest.digest('SHA256', encryption_key)
+        iv = [seed_data['iv']].pack('H*')
+        cipher.iv = iv
+        auth_tag = [seed_data['auth_tag']].pack('H*')
+        cipher.auth_tag = auth_tag
+        cipher.auth_data = ''
+        hex_decoded_data = [seed_data['seed']].pack('H*')
+        local_seed = cipher.update(hex_decoded_data) + cipher.final
+      end
+
+      self.seed = local_seed
+
+      "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
 
     # Returns a String representation of the Wallet.
@@ -388,6 +519,25 @@ module Coinbase
       return unless !seed.nil? && seed.empty? && address_models.empty?
 
       raise ArgumentError, 'Seed must be empty if address_models are not provided'
+    end
+
+    # Loads the Hash of Wallet seeds from the given file.
+    # @param file_path [String] The path of the file to load the seed from
+    # @return [Hash<String, Hash>] The Hash of from Wallet IDs to seed data
+    def existing_seeds(file_path)
+      existing_seed_data = '{}'
+      existing_seed_data = File.read(file_path) if File.exist?(file_path)
+      existing_seeds = JSON.parse(existing_seed_data)
+      raise ArgumentError, "#{file_path} is malformed, must be a valid JSON object" unless existing_seeds.is_a?(Hash)
+
+      existing_seeds
+    end
+
+    # Returns the shared secret to use for encrypting the seed.
+    def encryption_key
+      pk = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
+      public_key = pk.public_key # use own public key to generate the shared secret.
+      pk.dh_compute_key(public_key)
     end
 
     def addresses_api

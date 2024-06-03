@@ -7,31 +7,41 @@ describe Coinbase::Wallet do
   let(:model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
   let(:address_model1) do
     Coinbase::Client::Address.new(
-      {
-        'address_id': '0x919538116b4F25f1CE01429fd9Ed7964556bf565',
-        'wallet_id': wallet_id,
-        'public_key': '0292df2f2c31a5c4b0d4946e922cc3bd25ad7196ffeb049905b0952b9ac48ef25f',
-        'network_id': network_id
-      }
+      'address_id': '0x919538116b4F25f1CE01429fd9Ed7964556bf565',
+      'wallet_id': wallet_id,
+      'public_key': '0292df2f2c31a5c4b0d4946e922cc3bd25ad7196ffeb049905b0952b9ac48ef25f',
+      'network_id': network_id
     )
   end
   let(:address_model2) do
     Coinbase::Client::Address.new(
-      {
-        'address_id': '0xf23692a9DE556Ee1711b172Bf744C5f33B13DC89',
-        'wallet_id': wallet_id,
-        'public_key': '034ecbfc86f7447c8bfd1a5f71b13600d767ccb58d290c7b146632090f3a05c66c',
-        'network_id': network_id
-      }
+      'address_id': '0xf23692a9DE556Ee1711b172Bf744C5f33B13DC89',
+      'wallet_id': wallet_id,
+      'public_key': '034ecbfc86f7447c8bfd1a5f71b13600d767ccb58d290c7b146632090f3a05c66c',
+      'network_id': network_id
     )
   end
   let(:model_with_default_address) do
     Coinbase::Client::Wallet.new(
-      {
-        'id': wallet_id,
-        'network_id': network_id,
-        'default_address': address_model1
-      }
+      'id': wallet_id,
+      'network_id': network_id,
+      'default_address': address_model1
+    )
+  end
+
+  let(:model_with_seed_pending) do
+    Coinbase::Client::Wallet.new(
+      'id': wallet_id,
+      'network_id': network_id,
+      'server_signer_status': 'pending_seed_creation'
+    )
+  end
+  let(:model_with_seed_active) do
+    Coinbase::Client::Wallet.new(
+      'id': wallet_id,
+      'network_id': network_id,
+      'default_address': address_model1,
+      'server_signer_status': 'active_seed'
     )
   end
   let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
@@ -64,6 +74,7 @@ describe Coinbase::Wallet do
         seed: seed
       )
     end
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
     subject(:imported_wallet) { Coinbase::Wallet.import(exported_data) }
 
     before do
@@ -72,25 +83,48 @@ describe Coinbase::Wallet do
         .to receive(:list_addresses)
         .with(wallet_id, { limit: 20 })
         .and_return(address_list_model)
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
     end
 
-    it 'imports an exported wallet' do
-      expect(imported_wallet.id).to eq(wallet_id)
-    end
+    context 'when not using server signer' do
+      let(:use_server_signer) { false }
+      it 'imports an exported wallet' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
 
-    it 'loads the wallet addresses' do
-      expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
-    end
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
 
-    it 'contains the same seed when re-exported' do
-      expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      it 'contains the same seed when re-exported' do
+        expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      end
     end
 
     context 'when there are no addresses' do
+      let(:use_server_signer) { false }
       let(:address_list_model) { Coinbase::Client::AddressList.new({ 'data' => [], 'total_count' => 0 }) }
 
       it 'loads the wallet addresses' do
         expect(imported_wallet.addresses.length).to eq(0)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+
+      it 'imports a wallet with id' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
+
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
+
+      it 'cannot export the wallet' do
+        expect do
+          imported_wallet.export
+        end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
   end
@@ -98,7 +132,7 @@ describe Coinbase::Wallet do
   describe '.create' do
     let(:wallet_id) { SecureRandom.uuid }
     let(:create_wallet_request) do
-      { wallet: { network_id: network_id } }
+      { wallet: { network_id: network_id, use_server_signer: use_server_signer } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
@@ -112,40 +146,67 @@ describe Coinbase::Wallet do
         }
       )
     end
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
 
     subject(:created_wallet) { described_class.create }
 
     before do
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
       allow(wallets_api).to receive(:create_wallet).with(request).and_return(wallet_model)
-
-      allow(addresses_api)
-        .to receive(:create_address)
-        .with(
-          wallet_id,
-          satisfy do |opts|
-            public_key_present = opts[:create_address_request][:public_key].is_a?(String)
-            attestation_present = opts[:create_address_request][:attestation].is_a?(String)
-            public_key_present && attestation_present
-          end
-        ).and_return(address_model1)
-
-      allow(wallets_api)
-        .to receive(:get_wallet)
-        .with(wallet_id)
-        .and_return(model_with_default_address)
     end
 
-    it 'creates a new wallet' do
-      expect(created_wallet).to be_a(Coinbase::Wallet)
-    end
+    context 'when not using a server signer' do
+      let(:use_server_signer) { false }
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(
+            wallet_id,
+            satisfy do |opts|
+              public_key_present = opts[:create_address_request][:public_key].is_a?(String)
+              attestation_present = opts[:create_address_request][:attestation].is_a?(String)
+              public_key_present && attestation_present
+            end
+          ).and_return(address_model1)
 
-    it 'creates a default address' do
-      expect(created_wallet.default_address).to be_a(Coinbase::Address)
-      expect(created_wallet.addresses.length).to eq(1)
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
+
+      it 'creates a new wallet' do
+        expect(created_wallet).to be_a(Coinbase::Wallet)
+      end
+
+      it 'creates a default address' do
+        expect(created_wallet.default_address).to be_a(Coinbase::Address)
+        expect(created_wallet.addresses.length).to eq(1)
+      end
     end
 
     context 'when setting the network ID explicitly' do
       let(:network_id) { 'base-mainnet' }
+      let(:use_server_signer) { false }
+
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(
+            wallet_id,
+            satisfy do |req|
+              public_key = req[:create_address_request][:public_key]
+              attestation = req[:create_address_request][:attestation]
+
+              public_key.is_a?(String) && attestation.is_a?(String)
+            end
+          ).and_return(address_model1)
+
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
 
       subject(:created_wallet) do
         described_class.create(network_id: network_id)
@@ -157,6 +218,58 @@ describe Coinbase::Wallet do
 
       it 'sets the specified network ID' do
         expect(created_wallet.network_id).to eq(:base_mainnet)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(wallet_id, { create_address_request: {} })
+          .and_return(address_model1)
+
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_seed_active)
+      end
+
+      subject(:created_wallet) do
+        described_class.create(interval_seconds: 0.2, timeout_seconds: 0.00001)
+      end
+
+      it 'creates a new wallet' do
+        expect(created_wallet).to be_a(Coinbase::Wallet)
+      end
+
+      it 'creates a default address' do
+        expect(created_wallet.default_address).to be_a(Coinbase::Address)
+        expect(created_wallet.addresses.length).to eq(1)
+      end
+
+      it 'sets the default network ID' do
+        expect(created_wallet.network_id).to eq(:base_sepolia)
+      end
+    end
+
+    context 'when using a server signer is not active' do
+      let(:use_server_signer) { true }
+      before do
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_seed_pending)
+      end
+
+      subject(:created_wallet) do
+        described_class.create(interval_seconds: 0.2, timeout_seconds: 0.00001)
+      end
+
+      it 'raises a Timeout::Error' do
+        expect do
+          created_wallet
+        end.to raise_error(Timeout::Error, 'Wallet creation timed out. Check status of your Server-Signer')
       end
     end
   end
@@ -272,6 +385,8 @@ describe Coinbase::Wallet do
       described_class.new(model, seed: seed)
     end
 
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
+
     subject(:created_address) { wallet.create_address }
 
     before do
@@ -326,6 +441,27 @@ describe Coinbase::Wallet do
 
       it 'is not sets as the default address' do
         expect(created_address).not_to eq(wallet.default_address)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:configuration) { double('Coinbase::Configuration', use_server_signer: true, api_client: nil) }
+      let(:created_address_model) { address_model1 }
+
+      subject(:created_address) { wallet.create_address }
+
+      before do
+        allow(addresses_api)
+          .to receive(:create_address)
+          .with(wallet_id).and_return(created_address_model)
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model_with_default_address)
+      end
+
+      it 'creates a new address' do
+        expect(created_address).to be_a(Coinbase::Address)
       end
     end
   end
@@ -454,32 +590,30 @@ describe Coinbase::Wallet do
 
     context 'when the destination is a Wallet' do
       let(:destination) { other_wallet }
-      let(:to_address_id) { destination.default_address.id }
 
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
-          .with(amount, asset_id, to_address_id)
+          .with(amount, asset_id, destination)
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the default address ID' do
+      it 'creates a transfer from the default address to the wallet' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
-    context 'when the desination is an Address' do
+    context 'when the destination is an Address' do
       let(:destination) { other_wallet.default_address }
-      let(:to_address_id) { destination.id }
 
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
-          .with(amount, asset_id, to_address_id)
+          .with(amount, asset_id, destination)
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the address ID' do
+      it 'creates a transfer from the default address to the address' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
@@ -494,31 +628,52 @@ describe Coinbase::Wallet do
           .and_return(transfer)
       end
 
-      it 'creates a transfer to the address ID' do
+      it 'creates a transfer from the default address to the address ID' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
   end
 
   describe '#export' do
-    let(:seed_wallet) do
-      described_class.new(model, seed: seed, address_models: [address_model1, address_model2])
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
+    before do
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
     end
 
-    it 'exports the wallet data' do
-      wallet_data = seed_wallet.export
-      expect(wallet_data).to be_a(Coinbase::Wallet::Data)
-      expect(wallet_data.wallet_id).to eq(seed_wallet.id)
-      expect(wallet_data.seed).to eq(seed)
+    context 'when not using a server signer' do
+      let(:use_server_signer) { false }
+      let(:seed_wallet) do
+        described_class.new(model, seed: seed, address_models: [address_model1, address_model2])
+      end
+
+      it 'exports the wallet data' do
+        wallet_data = seed_wallet.export
+        expect(wallet_data).to be_a(Coinbase::Wallet::Data)
+        expect(wallet_data.wallet_id).to eq(seed_wallet.id)
+        expect(wallet_data.seed).to eq(seed)
+      end
+
+      it 'allows for re-creation of a Wallet' do
+        wallet_data = seed_wallet.export
+        new_wallet = described_class
+                     .new(model, seed: wallet_data.seed, address_models: [address_model1, address_model2])
+        expect(new_wallet.addresses.length).to eq(2)
+        new_wallet.addresses.each_with_index do |address, i|
+          expect(address.id).to eq(seed_wallet.addresses[i].id)
+        end
+      end
     end
 
-    it 'allows for re-creation of a Wallet' do
-      wallet_data = seed_wallet.export
-      new_wallet = described_class
-                   .new(model, seed: wallet_data.seed, address_models: [address_model1, address_model2])
-      expect(new_wallet.addresses.length).to eq(2)
-      new_wallet.addresses.each_with_index do |address, i|
-        expect(address.id).to eq(seed_wallet.addresses[i].id)
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+      let(:wallet_without_seed) do
+        described_class.new(model, seed: nil, address_models: [address_model1, address_model2])
+      end
+
+      it 'does not export seed data' do
+        expect do
+          wallet_without_seed.export
+        end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
   end
@@ -559,6 +714,180 @@ describe Coinbase::Wallet do
       it 'returns false' do
         expect(wallet.can_sign?).to be false
       end
+    end
+  end
+
+  describe '#save_seed!' do
+    let(:file_path) { "#{SecureRandom.uuid}.json" }
+    let(:initial_seed_data) { JSON.pretty_generate({}) }
+    let(:seed_wallet) do
+      described_class.new(model_with_default_address, seed: seed, address_models: [address_model1])
+    end
+
+    before do
+      @api_key_private_key = Coinbase.configuration.api_key_private_key
+      Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+      File.open(file_path, 'w') do |file|
+        file.write(initial_seed_data)
+      end
+    end
+
+    after do
+      File.delete(file_path)
+      Coinbase.configuration.api_key_private_key = @api_key_private_key
+    end
+
+    it 'saves the seed when encrypt is false' do
+      seed_wallet.save_seed!(file_path, encrypt: false)
+
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(false)
+      expect(data['iv']).to eq('')
+      expect(data['auth_tag']).to eq('')
+      expect(data['seed']).to eq(seed)
+    end
+
+    it 'saves the seed when encryption is true' do
+      seed_wallet.save_seed!(file_path, encrypt: true)
+
+      # Verify that the file has new wallet.
+      stored_seed_data = File.read(file_path)
+      wallets = JSON.parse(stored_seed_data)
+      data = wallets[seed_wallet.id]
+      expect(data).not_to be_empty
+      expect(data['encrypted']).to eq(true)
+      expect(data['iv']).not_to be_empty
+      expect(data['auth_tag']).not_to be_empty
+      expect(data['seed']).not_to eq(seed)
+    end
+
+    it 'throws an error when the wallet is seedless' do
+      seedless_wallet = described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
+      expect do
+        seedless_wallet.save_seed!(file_path)
+      end.to raise_error 'Wallet does not have seed loaded'
+    end
+
+    it 'throws an error when the file is malformed' do
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate({
+          malformed: 'test'
+        }.to_json))
+      end
+      expect do
+        seed_wallet.save_seed!(file_path)
+      end.to raise_error(ArgumentError)
+    end
+  end
+
+  describe '#load_seed' do
+    let(:file_path) { "#{SecureRandom.uuid}.json" }
+    let(:initial_seed_data) { JSON.pretty_generate({}) }
+    let(:address_list_model) do
+      Coinbase::Client::AddressList.new(
+        {
+          'data' => [address_model1],
+          'total_count' => 1
+        }
+      )
+    end
+    let(:seed_wallet) do
+      described_class.new(model_with_default_address, seed: seed, address_models: [address_model1])
+    end
+    let(:seedless_wallet) do
+      described_class.new(model_with_default_address, seed: '', address_models: [address_model1])
+    end
+    let(:initial_seed_data) do
+      {
+        wallet_id => {
+          seed: seed,
+          encrypted: false
+        }
+      }
+    end
+    let(:other_seed_data) do
+      {
+        SecureRandom.uuid => {
+          seed: 'other-seed',
+          encrypted: false
+        }
+      }
+    end
+    let(:malformed_seed_data) do
+      {
+        wallet_id => 'test'
+      }
+    end
+
+    before do
+      @api_key_private_key = Coinbase.configuration.api_key_private_key
+      Coinbase.configuration.api_key_private_key = OpenSSL::PKey::EC.generate('prime256v1').to_pem
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(initial_seed_data))
+      end
+    end
+
+    after do
+      File.delete(file_path) if File.exist?(file_path)
+      Coinbase.configuration.api_key_private_key = @api_key_private_key
+    end
+
+    it 'loads the seed from the file' do
+      seedless_wallet.load_seed(file_path)
+      expect(seedless_wallet.can_sign?).to be true
+    end
+
+    it 'loads the encrypted seed from the file' do
+      seed_wallet.save_seed!(file_path, encrypt: true)
+      seedless_wallet.load_seed(file_path)
+      expect(seedless_wallet.can_sign?).to be true
+    end
+
+    it 'loads the encrypted seed from file with multiple seeds' do
+      seed_wallet.save_seed!(file_path, encrypt: true)
+
+      other_model = Coinbase::Client::Wallet.new({ 'id': SecureRandom.uuid, 'network_id': network_id })
+      other_wallet = described_class.new(other_model)
+      other_wallet.save_seed!(file_path, encrypt: true)
+
+      seedless_wallet.load_seed(file_path)
+      expect(seedless_wallet.can_sign?).to be true
+    end
+
+    it 'throws an error when the wallet is already hydrated' do
+      expect do
+        seed_wallet.load_seed(file_path)
+      end.to raise_error('Wallet already has seed loaded')
+    end
+
+    it 'throws an error when file contains different wallet data' do
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(other_seed_data))
+      end
+
+      expect do
+        seedless_wallet.load_seed(file_path)
+      end.to raise_error(ArgumentError, /does not contain seed data for wallet/)
+    end
+
+    it 'throws an error when the file is absent' do
+      File.delete(file_path)
+      expect do
+        seedless_wallet.load_seed(file_path)
+      end.to raise_error(ArgumentError, /does not contain seed data/)
+    end
+
+    it 'throws an error when the backup file is corrupted' do
+      File.open(file_path, 'w') do |file|
+        file.write(JSON.pretty_generate(malformed_seed_data))
+      end
+      expect do
+        seedless_wallet.load_seed(file_path)
+      end.to raise_error(ArgumentError, 'Seed data is malformed')
     end
   end
 

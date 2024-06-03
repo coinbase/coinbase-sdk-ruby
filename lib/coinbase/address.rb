@@ -71,59 +71,26 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the given address. Only same-Network Transfers are supported.
+    # Transfers the given amount of the given Asset to the specified address or wallet.
+    # Only same-network Transfers are supported.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
     # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
     # @return [String] The hash of the Transfer transaction.
     def transfer(amount, asset_id, destination)
-      raise 'Cannot transfer from address without private key loaded' if @key.nil?
+      destination_address, destination_network = destination_address_and_network(destination)
 
-      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
+      validate_can_transfer!(amount, asset_id, destination_network)
 
-      if destination.is_a?(Wallet)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
+      transfer = create_transfer(amount, asset_id, destination_address)
 
-        destination = destination.default_address.id
-      elsif destination.is_a?(Address)
-        raise ArgumentError, 'Transfer must be on the same Network' if destination.network_id != network_id
+      # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
+      return transfer if Coinbase.use_server_signer?
 
-        destination = destination.id
-      end
+      signed_payload = sign_transfer(transfer)
 
-      current_balance = balance(asset_id)
-      if current_balance < amount
-        raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
-      end
-
-      create_transfer_request = {
-        amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
-        network_id: network_id,
-        asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
-        destination: destination
-      }
-
-      transfer_model = Coinbase.call_api do
-        transfers_api.create_transfer(wallet_id, id, create_transfer_request)
-      end
-
-      transfer = Coinbase::Transfer.new(transfer_model)
-
-      transaction = transfer.transaction
-      transaction.sign(@key)
-
-      signed_payload = transaction.hex
-
-      broadcast_transfer_request = {
-        signed_payload: signed_payload
-      }
-
-      transfer_model = Coinbase.call_api do
-        transfers_api.broadcast_transfer(wallet_id, id, transfer.id, broadcast_transfer_request)
-      end
-
-      Coinbase::Transfer.new(transfer_model)
+      broadcast_transfer(transfer, signed_payload)
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
@@ -170,12 +137,13 @@ module Coinbase
       page = nil
 
       loop do
-        puts "fetch transfers page: #{page}"
         response = Coinbase.call_api do
           transfers_api.list_transfers(wallet_id, id, { limit: 100, page: page })
         end
 
-        transfers.concat(response.data.map { |transfer| Coinbase::Transfer.new(transfer) }) if response.data
+        break if response.data.empty?
+
+        transfers.concat(response.data.map { |transfer| Coinbase::Transfer.new(transfer) })
 
         break unless response.has_more
 
@@ -193,6 +161,57 @@ module Coinbase
 
     def transfers_api
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    end
+
+    def destination_address_and_network(destination)
+      return [destination.default_address.id, destination.network_id] if destination.is_a?(Wallet)
+      return [destination.id, destination.network_id] if destination.is_a?(Address)
+
+      [destination, network_id]
+    end
+
+    def validate_can_transfer!(amount, asset_id, destination_network_id)
+      raise 'Cannot transfer from address without private key loaded' unless can_sign? || Coinbase.use_server_signer?
+
+      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
+
+      raise ArgumentError, 'Transfer must be on the same Network' unless destination_network_id == network_id
+
+      current_balance = balance(asset_id)
+
+      return unless current_balance < amount
+
+      raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
+    end
+
+    def create_transfer(amount, asset_id, destination)
+      create_transfer_request = {
+        amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
+        network_id: network_id,
+        asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
+        destination: destination
+      }
+
+      transfer_model = Coinbase.call_api do
+        transfers_api.create_transfer(wallet_id, id, create_transfer_request)
+      end
+
+      Coinbase::Transfer.new(transfer_model)
+    end
+
+    def sign_transfer(transfer)
+      transaction = transfer.transaction
+      transaction.sign(@key)
+
+      transaction.hex
+    end
+
+    def broadcast_transfer(transfer, signed_payload)
+      transfer_model = Coinbase.call_api do
+        transfers_api.broadcast_transfer(wallet_id, id, transfer.id, { signed_payload: signed_payload })
+      end
+
+      Coinbase::Transfer.new(transfer_model)
     end
   end
 end
