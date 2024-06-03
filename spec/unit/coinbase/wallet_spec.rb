@@ -74,6 +74,7 @@ describe Coinbase::Wallet do
         seed: seed
       )
     end
+    let(:configuration) { double('Coinbase::Configuration', use_server_signer: use_server_signer, api_client: nil) }
     subject(:imported_wallet) { Coinbase::Wallet.import(exported_data) }
 
     before do
@@ -82,25 +83,48 @@ describe Coinbase::Wallet do
         .to receive(:list_addresses)
         .with(wallet_id, { limit: 20 })
         .and_return(address_list_model)
+      allow(Coinbase).to receive(:configuration).and_return(configuration)
     end
 
-    it 'imports an exported wallet' do
-      expect(imported_wallet.id).to eq(wallet_id)
-    end
+    context 'when not using server signer' do
+      let(:use_server_signer) { false }
+      it 'imports an exported wallet' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
 
-    it 'loads the wallet addresses' do
-      expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
-    end
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
 
-    it 'contains the same seed when re-exported' do
-      expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      it 'contains the same seed when re-exported' do
+        expect(imported_wallet.export.seed).to eq(exported_data.seed)
+      end
     end
 
     context 'when there are no addresses' do
+      let(:use_server_signer) { false }
       let(:address_list_model) { Coinbase::Client::AddressList.new({ 'data' => [], 'total_count' => 0 }) }
 
       it 'loads the wallet addresses' do
         expect(imported_wallet.addresses.length).to eq(0)
+      end
+    end
+
+    context 'when using a server signer' do
+      let(:use_server_signer) { true }
+
+      it 'imports a wallet with id' do
+        expect(imported_wallet.id).to eq(wallet_id)
+      end
+
+      it 'loads the wallet addresses' do
+        expect(imported_wallet.addresses.length).to eq(address_list_model.total_count)
+      end
+
+      it 'cannot export the wallet' do
+        expect do
+          imported_wallet.export
+        end.to raise_error 'Cannot export data for Server-Signer backed Wallet'
       end
     end
   end
