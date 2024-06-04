@@ -76,6 +76,8 @@ module Coinbase
         InvalidSignedPayloadError.new(err)
       when 'invalid_transfer_status'
         InvalidTransferStatusError.new(err)
+      when 'network_feature_unsupported'
+        NetworkFeatureUnsupportedError.new(err)
       else
         APIError.new(err)
       end
@@ -117,4 +119,5 @@ module Coinbase
   class FaucetLimitReachedError < APIError; end
   class InvalidSignedPayloadError < APIError; end
   class InvalidTransferStatusError < APIError; end
+  class NetworkFeatureUnsupportedError < APIError; end
 end
