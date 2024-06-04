@@ -102,8 +102,7 @@ module Coinbase
 
       trade = create_trade(amount, from_asset_id, to_asset_id)
 
-      # If a server signer is managing keys, it will sign and broadcast the underlying trade transaction out of band.
-      return trade if Coinbase.use_server_signer?
+      # NOTE: Trading does not yet support server signers at this point.
 
       payloads = { signed_payload: trade.transaction.sign(@key) }
 

@@ -610,22 +610,6 @@ describe Coinbase::Address do
           end
         end
       end
-
-      context 'when using server signer' do
-        let(:use_server_signer) { true }
-
-        before do
-          trade
-        end
-
-        it 'creates a Trade' do
-          expect(trade).to eq(created_trade)
-        end
-
-        it 'does not sign the transaction' do
-          expect(transaction).not_to have_received(:sign)
-        end
-      end
     end
 
     describe 'when the address cannot sign' do
