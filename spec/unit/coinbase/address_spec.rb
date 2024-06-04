@@ -444,7 +444,15 @@ describe Coinbase::Address do
       { signed_payload: signed_payload }
     end
     let(:transaction) { double(Coinbase::Transaction, sign: signed_payload) }
-    let(:created_trade) { double(Coinbase::Trade, transaction: transaction, id: trade_id) }
+    let(:approve_transaction) { nil }
+    let(:created_trade) do
+      double(
+        Coinbase::Trade,
+        id: trade_id,
+        transaction: transaction,
+        approve_transaction: approve_transaction
+      )
+    end
     let(:transaction_model) do
       Coinbase::Client::Transaction.new(
         status: 'pending',
@@ -575,6 +583,30 @@ describe Coinbase::Address do
 
           it 'creates a Trade' do
             expect(trade).to eq(broadcasted_trade)
+          end
+        end
+
+        context 'when there is an approve transaction' do
+          let(:approve_signed_payload) { 'approve_signed_payload' }
+          let(:approve_transaction) { double(Coinbase::Transaction, sign: approve_signed_payload) }
+
+          let(:broadcast_trade_request) do
+            {
+              signed_payload: signed_payload,
+              approve_transaction_signed_payload: approve_signed_payload
+            }
+          end
+
+          it 'creates a Trade' do
+            expect(trade).to eq(broadcasted_trade)
+          end
+
+          it 'signs the trade transaction with the address key' do
+            expect(transaction).to have_received(:sign).with(key)
+          end
+
+          it 'signs the approve transaction with the address key' do
+            expect(approve_transaction).to have_received(:sign).with(key)
           end
         end
       end

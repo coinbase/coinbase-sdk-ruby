@@ -86,7 +86,11 @@ module Coinbase
     # Returns the Trade transaction.
     # @return [Coinbase::Transaction] The Trade transaction
     def transaction
-      @transaction ||= Coinbase::Transaction.new(@model.transaction, from_address_id: address_id)
+      @transaction ||= Coinbase::Transaction.new(@model.transaction)
+    end
+
+    def approve_transaction
+      @approve_transaction ||= @model.approve_transaction ? Coinbase::Transaction.new(@model.approve_transaction) : nil
     end
 
     # Returns the status of the Trade.
@@ -106,6 +110,10 @@ module Coinbase
       loop do
         reload
 
+        # Wait for the trade transaction to be in a terminal state.
+        # The approve transaction is optional and must last first, so we don't need to wait for it.
+        # We may want to handle a situation where the approve transaction fails and the
+        # trade transaction does not ever get broadcast.
         break if transaction.terminal_state?
 
         raise Timeout::Error, 'Trade timed out' if Time.now - start_time > timeout_seconds
@@ -123,7 +131,8 @@ module Coinbase
         trades_api.get_trade(wallet_id, address_id, id)
       end
 
-      @transaction = Coinbase::Transaction.new(@model.transaction, from_address_id: address_id)
+      @transaction = Coinbase::Transaction.new(@model.transaction)
+      @approve_transaction = @model.approve_transaction ? Coinbase::Transaction.new(@model.approve_transaction) : nil
 
       self
     end

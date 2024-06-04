@@ -31,14 +31,11 @@ module Coinbase
 
     # Returns a new Transaction object. Do not use this method directly.
     # @param model [Coinbase::Client::Transaction] The underlying Transaction object
-    def initialize(model, from_address_id:)
+    def initialize(model)
       raise unless model.is_a?(Coinbase::Client::Transaction)
 
       @model = model
-      @from_address_id = from_address_id
     end
-
-    attr_reader :from_address_id
 
     # Returns the Unsigned Payload of the Transaction.
     # @return [String] The Unsigned Payload
@@ -62,6 +59,12 @@ module Coinbase
     # @return [Symbol] The status
     def status
       @model.status
+    end
+
+    # Returns the from address for the Transaction.
+    # @return [String] The from address
+    def from_address_id
+      @model.from_address_id
     end
 
     # Returns whether the Transaction is in a terminal state.

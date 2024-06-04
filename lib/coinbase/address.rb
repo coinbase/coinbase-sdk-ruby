@@ -105,7 +105,11 @@ module Coinbase
       # If a server signer is managing keys, it will sign and broadcast the underlying trade transaction out of band.
       return trade if Coinbase.use_server_signer?
 
-      broadcast_trade(trade, trade.transaction.sign(@key))
+      payloads = { signed_payload: trade.transaction.sign(@key) }
+
+      payloads[:approve_tx_signed_payload] = trade.approve_transaction.sign(@key) unless trade.approve_transaction.nil?
+
+      broadcast_trade(trade, **payloads)
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
@@ -253,9 +257,13 @@ module Coinbase
       Coinbase::Trade.new(trade_model)
     end
 
-    def broadcast_trade(trade, signed_payload)
+    def broadcast_trade(trade, signed_payload:, approve_tx_signed_payload: nil)
+      req = { signed_payload: signed_payload }
+
+      req[:approve_transaction_signed_payload] = approve_tx_signed_payload unless approve_tx_signed_payload.nil?
+
       trade_model = Coinbase.call_api do
-        trades_api.broadcast_trade(wallet_id, id, trade.id, { signed_payload: signed_payload })
+        trades_api.broadcast_trade(wallet_id, id, trade.id, req)
       end
 
       Coinbase::Trade.new(trade_model)
