@@ -14,6 +14,7 @@ require_relative 'coinbase/network'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
+require_relative 'coinbase/signer'
 require 'json'
 
 # The Coinbase SDK.
