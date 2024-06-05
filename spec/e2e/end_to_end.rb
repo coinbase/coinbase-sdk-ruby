@@ -4,7 +4,7 @@ require 'dotenv'
 Dotenv.load
 
 describe Coinbase do
-  describe 'v0.0.4 SDK' do
+  describe 'v0.0.7 SDK' do
     it 'behaves as expected' do
       # GitHub secrets truncate newlines as whitespace, so we need to replace them.
       # See https://github.com/github/docs/issues/14207

@@ -147,15 +147,38 @@ describe Coinbase::Address do
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
-    let(:raw_signed_transaction) { '0123456789abcdef' }
+    let(:unsigned_payload) { 'unsigned_payload' }
     let(:signed_payload) { '0x12345' }
     let(:broadcast_transfer_request) do
-      { signed_payload: raw_signed_transaction }
+      { signed_payload: signed_payload }
     end
-    let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
+    let(:transaction) { double(Coinbase::Transaction, sign: signed_payload) }
+    let(:transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'pending',
+        unsigned_payload: unsigned_payload
+      )
+    end
     let(:created_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
-    let(:transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'pending') }
-    let(:broadcasted_transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'broadcast') }
+    let(:transfer_model) do
+      instance_double(
+        Coinbase::Client::Transfer,
+        transaction: transaction_model
+      )
+    end
+    let(:broadcasted_transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'broadcast',
+        unsigned_payload: unsigned_payload,
+        signed_payload: signed_payload
+      )
+    end
+    let(:broadcasted_transfer_model) do
+      instance_double(
+        Coinbase::Client::Transfer,
+        transaction: broadcasted_transaction_model
+      )
+    end
     let(:broadcasted_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
     let(:transfer_asset_id) { 'eth' }
     let(:balance_response) { eth_balance_response }

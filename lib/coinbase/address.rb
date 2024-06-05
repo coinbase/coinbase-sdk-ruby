@@ -88,9 +88,7 @@ module Coinbase
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
 
-      signed_payload = sign_transfer(transfer)
-
-      broadcast_transfer(transfer, signed_payload)
+      broadcast_transfer(transfer, transfer.transaction.sign(@key))
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
@@ -197,13 +195,6 @@ module Coinbase
       end
 
       Coinbase::Transfer.new(transfer_model)
-    end
-
-    def sign_transfer(transfer)
-      transaction = transfer.transaction
-      transaction.sign(@key)
-
-      transaction.hex
     end
 
     def broadcast_transfer(transfer, signed_payload)
