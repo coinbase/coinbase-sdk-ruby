@@ -222,7 +222,9 @@ module Coinbase::Client
     # List server signers for the current project
     # List server signers for the current project
     # @param [Hash] opts the optional parameters
-    # @return [ServerSigner]
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [ServerSignerList]
     def list_server_signers(opts = {})
       data, _status_code, _headers = list_server_signers_with_http_info(opts)
       data
@@ -231,16 +233,24 @@ module Coinbase::Client
     # List server signers for the current project
     # List server signers for the current project
     # @param [Hash] opts the optional parameters
-    # @return [Array<(ServerSigner, Integer, Hash)>] ServerSigner data, response status code and response headers
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [Array<(ServerSignerList, Integer, Hash)>] ServerSignerList data, response status code and response headers
     def list_server_signers_with_http_info(opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: ServerSignersApi.list_server_signers ...'
       end
+      if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
+        fail ArgumentError, 'invalid value for "opts[:"page"]" when calling ServerSignersApi.list_server_signers, the character length must be smaller than or equal to 5000.'
+      end
+
       # resource path
       local_var_path = '/v1/server_signers'
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'limit'] = opts[:'limit'] if !opts[:'limit'].nil?
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
@@ -254,7 +264,7 @@ module Coinbase::Client
       post_body = opts[:debug_body]
 
       # return_type
-      return_type = opts[:debug_return_type] || 'ServerSigner'
+      return_type = opts[:debug_return_type] || 'ServerSignerList'
 
       # auth_names
       auth_names = opts[:debug_auth_names] || []

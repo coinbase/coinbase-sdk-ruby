@@ -77,7 +77,7 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
-    # @return [String] The hash of the Transfer transaction.
+    # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination)
       destination_address, destination_network = destination_address_and_network(destination)
 
