@@ -26,6 +26,7 @@ describe Coinbase::Transaction do
     '6dd10094a02115d1b52c49b39b6cb520077161c9bf636730b1b40e749250743f4524e9e4ba'
   end
   let(:transaction_hash) { '0x6c087c1676e8269dd81e0777244584d0cbfd39b6997b3477242a008fa9349e11' }
+  let(:transaction_link) { "https://sepolia.basescan.org/tx/#{transaction_hash}" }
   let(:model) do
     Coinbase::Client::Transaction.new(
       status: 'pending',
@@ -40,7 +41,8 @@ describe Coinbase::Transaction do
       from_address_id: from_address_id,
       unsigned_payload: unsigned_payload,
       signed_payload: signed_payload,
-      transaction_hash: transaction_hash
+      transaction_hash: transaction_hash,
+      transaction_link: transaction_link
     )
   end
 
@@ -99,6 +101,66 @@ describe Coinbase::Transaction do
 
       it 'returns the transaction hash' do
         expect(transaction.transaction_hash).to eq(transaction_hash)
+      end
+    end
+  end
+
+  describe '#status' do
+    it 'returns the status' do
+      expect(transaction.status).to eq('pending')
+    end
+  end
+
+  describe '#from_address_id' do
+    it 'returns the from address' do
+      expect(transaction.from_address_id).to eq(from_address_id)
+    end
+  end
+
+  describe '#terminal_state?' do
+    let(:model) do
+      Coinbase::Client::Transaction.new(
+        status: status,
+        from_address_id: from_address_id,
+        unsigned_payload: unsigned_payload
+      )
+    end
+
+    %w[pending broadcast].each do |state|
+      context "when the state is #{state}" do
+        let(:status) { state }
+
+        it 'returns false' do
+          expect(transaction.terminal_state?).to be(false)
+        end
+      end
+    end
+
+    %w[complete failed].each do |state|
+      context "when the state is #{state}" do
+        let(:status) { state }
+
+        it 'returns true' do
+          expect(transaction.terminal_state?).to be(true)
+        end
+      end
+    end
+  end
+
+  describe '#transaction_link' do
+    context 'when the transaction has not been broadcast' do
+      it 'returns nil' do
+        expect(transaction.transaction_link).to be_nil
+      end
+    end
+
+    context 'when the transaction has been broadcast' do
+      subject(:transaction) do
+        described_class.new(broadcasted_model)
+      end
+
+      it 'returns the transaction link' do
+        expect(transaction.transaction_link).to eq(transaction_link)
       end
     end
   end
