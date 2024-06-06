@@ -107,6 +107,57 @@ describe Coinbase::Asset do
     end
   end
 
+  describe '.from_model' do
+    let(:asset_model) do
+      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+    end
+    subject(:asset) { described_class.from_model(asset_model) }
+
+    it 'returns an Asset' do
+      expect(asset).to be_a(described_class)
+    end
+
+    it 'sets the network_id' do
+      expect(asset.network_id).to eq(:base_sepolia)
+    end
+
+    it 'sets the asset_id' do
+      expect(asset.asset_id).to eq(:eth)
+    end
+
+    it 'sets the decimals' do
+      expect(asset.decimals).to eq(18)
+    end
+
+    it 'does not set the address_id' do
+      expect(asset.address_id).to be_nil
+    end
+
+    context 'when the asset is not a Coinbase::Client::Asset' do
+      it 'raises an error' do
+        expect do
+          described_class.from_model(Coinbase::Client::Balance.new)
+        end.to raise_error(StandardError)
+      end
+    end
+
+    context 'when the asset has a contract address' do
+      let(:contract_address) { '0x036CbD53842c5426634e7929541eC2318f3dCF7e' }
+      let(:asset_model) do
+        Coinbase::Client::Asset.new(
+          network_id: 'base-sepolia',
+          asset_id: 'usdc',
+          decimals: 6,
+          contract_address: contract_address
+        )
+      end
+
+      it 'sets the address_id' do
+        expect(asset.address_id).to eq(contract_address)
+      end
+    end
+  end
+
   describe '#initialize' do
     let(:network_id) { :base_sepolia }
     let(:asset_id) { :eth }
@@ -136,6 +187,38 @@ describe Coinbase::Asset do
 
     it 'sets the address_id' do
       expect(asset.address_id).to eq(address_id)
+    end
+
+    it 'does not set decimals' do
+      expect(asset.decimals).to be_nil
+    end
+
+    context 'when decimals is specified' do
+      let(:decimals) { 18 }
+
+      subject(:asset) do
+        described_class.new(
+          network_id: network_id,
+          asset_id: asset_id,
+          display_name: display_name,
+          address_id: address_id,
+          decimals: decimals
+        )
+      end
+
+      it 'sets the decimals' do
+        expect(asset.decimals).to eq(decimals)
+      end
+    end
+
+    context 'when display name is not specified' do
+      subject(:asset) do
+        described_class.new(network_id: network_id, asset_id: asset_id, address_id: address_id)
+      end
+
+      it 'does not set display_name' do
+        expect(asset.display_name).to be_nil
+      end
     end
   end
 

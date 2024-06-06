@@ -61,26 +61,40 @@ module Coinbase
       asset_id
     end
 
+    def self.from_model(asset_model)
+      raise unless asset_model.is_a?(Coinbase::Client::Asset)
+
+      new(
+        network_id: Coinbase.to_sym(asset_model.network_id),
+        asset_id: Coinbase.to_sym(asset_model.asset_id),
+        address_id: asset_model.contract_address,
+        decimals: asset_model.decimals
+      )
+    end
+
     # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in
     # the Coinbase module.
     # @param network_id [Symbol] The ID of the Network to which the Asset belongs
     # @param asset_id [Symbol] The Asset ID
-    # @param display_name [String] The Asset's display name
+    # @param display_name [String] (Optional) The Asset's display name
     # @param address_id [String] (Optional) The Asset's address ID, if one exists
-    def initialize(network_id:, asset_id:, display_name:, address_id: nil)
+    # @param decimals [Integer] (Optional) The number of decimal places the Asset uses
+    def initialize(network_id:, asset_id:, display_name: nil, address_id: nil, decimals: nil)
       @network_id = network_id
       @asset_id = asset_id
       @display_name = display_name
       @address_id = address_id
+      @decimals = decimals
     end
 
-    attr_reader :network_id, :asset_id, :display_name, :address_id
+    attr_reader :network_id, :asset_id, :display_name, :address_id, :decimals
 
     # Returns a string representation of the Asset.
     # @return [String] a string representation of the Asset
     def to_s
       "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', display_name: '#{display_name}'" +
-        (address_id.nil? ? '}' : ", address_id: '#{address_id}'}")
+        (address_id.nil? ? '}' : ", address_id: '#{address_id}'}") +
+        (decimals.nil? ? '}' : ", decimals: '#{decimals}'}")
     end
 
     # Same as to_s.
