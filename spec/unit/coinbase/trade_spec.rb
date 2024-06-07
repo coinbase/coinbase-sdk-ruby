@@ -76,7 +76,7 @@ describe Coinbase::Trade do
       it 'raises an error' do
         expect do
           described_class.new(Coinbase::Client::Balance.new)
-        end.to raise_error
+        end.to raise_error(StandardError)
       end
     end
   end

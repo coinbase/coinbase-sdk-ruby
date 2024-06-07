@@ -73,7 +73,7 @@ describe Coinbase::Transfer do
       it 'raises an error' do
         expect do
           described_class.new(Coinbase::Client::Balance.new)
-        end.to raise_error
+        end.to raise_error(RuntimeError)
       end
     end
   end

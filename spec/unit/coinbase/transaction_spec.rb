@@ -59,7 +59,7 @@ describe Coinbase::Transaction do
       it 'raises an error' do
         expect do
           described_class.new(Coinbase::Client::Balance.new)
-        end.to raise_error
+        end.to raise_error(RuntimeError)
       end
     end
   end
@@ -219,7 +219,7 @@ describe Coinbase::Transaction do
 
     context 'when it is signed again' do
       it 'raises an error' do
-        expect { transaction.sign(from_key) }.to raise_error
+        expect { transaction.sign(from_key) }.to raise_error(Eth::Signature::SignatureError)
       end
     end
   end
