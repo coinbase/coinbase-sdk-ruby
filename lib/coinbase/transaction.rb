@@ -106,8 +106,15 @@ module Coinbase
     # @return [String] The hex-encoded signed payload
     def sign(key)
       raw.sign(key)
+      @signed = true
 
       raw.hex
+    end
+
+    # Returns whether the Transaction has been signed.
+    # @return [Boolean] Whether the Transaction has been signed
+    def signed?
+      @signed
     end
 
     # Returns a String representation of the Transaction.
