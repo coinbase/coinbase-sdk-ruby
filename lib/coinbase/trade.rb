@@ -107,7 +107,7 @@ module Coinbase
       self
     end
 
-    # Reload reloads the Trade model with the latest version from the server side.
+    # Reloads the Trade model with the latest version from the server side.
     # @return [Trade] The most recent version of Trade from the server.
     def reload
       @model = Coinbase.call_api do
