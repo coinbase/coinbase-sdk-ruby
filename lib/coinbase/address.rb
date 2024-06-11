@@ -91,6 +91,26 @@ module Coinbase
       broadcast_transfer(transfer, transfer.transaction.sign(@key))
     end
 
+    # Trades the given amount of the given Asset for another Asset.
+    # Only same-network Trades are supported.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
+    # @return [Coinbase::Trade] The Trade object.
+    def trade(amount, from_asset_id, to_asset_id)
+      validate_can_trade!(amount, from_asset_id, to_asset_id)
+
+      trade = create_trade(amount, from_asset_id, to_asset_id)
+
+      # NOTE: Trading does not yet support server signers at this point.
+
+      payloads = { signed_payload: trade.transaction.sign(@key) }
+
+      payloads[:approve_tx_signed_payload] = trade.approve_transaction.sign(@key) unless trade.approve_transaction.nil?
+
+      broadcast_trade(trade, **payloads)
+    end
+
     # Returns whether the Address has a private key backing it to sign transactions.
     # @return [Boolean] Whether the Address has a private key backing it to sign transactions.
     def can_sign?
@@ -161,6 +181,10 @@ module Coinbase
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
 
+    def trades_api
+      @trades_api ||= Coinbase::Client::TradesApi.new(Coinbase.configuration.api_client)
+    end
+
     def destination_address_and_network(destination)
       return [destination.default_address.id, destination.network_id] if destination.is_a?(Wallet)
       return [destination.id, destination.network_id] if destination.is_a?(Address)
@@ -203,6 +227,45 @@ module Coinbase
       end
 
       Coinbase::Transfer.new(transfer_model)
+    end
+
+    def validate_can_trade!(amount, from_asset_id, to_asset_id)
+      raise 'Cannot trade from address without private key loaded' unless can_sign?
+
+      raise ArgumentError, "Unsupported from asset: #{from_asset_id}" unless Coinbase::Asset.supported?(from_asset_id)
+      raise ArgumentError, "Unsupported to asset: #{to_asset_id}" unless Coinbase::Asset.supported?(to_asset_id)
+
+      current_balance = balance(from_asset_id)
+
+      return unless current_balance < amount
+
+      raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
+    end
+
+    def create_trade(amount, from_asset_id, to_asset_id)
+      create_trade_request = {
+        amount: Coinbase::Asset.to_atomic_amount(amount, from_asset_id).to_i.to_s,
+        from_asset_id: Coinbase::Asset.primary_denomination(from_asset_id).to_s,
+        to_asset_id: Coinbase::Asset.primary_denomination(to_asset_id).to_s
+      }
+
+      trade_model = Coinbase.call_api do
+        trades_api.create_trade(wallet_id, id, create_trade_request)
+      end
+
+      Coinbase::Trade.new(trade_model)
+    end
+
+    def broadcast_trade(trade, signed_payload:, approve_tx_signed_payload: nil)
+      req = { signed_payload: signed_payload }
+
+      req[:approve_transaction_signed_payload] = approve_tx_signed_payload unless approve_tx_signed_payload.nil?
+
+      trade_model = Coinbase.call_api do
+        trades_api.broadcast_trade(wallet_id, id, trade.id, req)
+      end
+
+      Coinbase::Trade.new(trade_model)
     end
   end
 end
