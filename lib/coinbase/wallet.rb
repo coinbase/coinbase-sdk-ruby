@@ -240,9 +240,20 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
-    # @return [Transfer] The hash of the Transfer transaction.
+    # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination)
       default_address.transfer(amount, asset_id, destination)
+    end
+
+    # Trades the given amount of the given Asset for another Asset.
+    # Currently only the default_address is used to source the Trade
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
+    #  default address. If a String, interprets it as the address ID.
+    # @return [Coinbase::Trade] The Trade object.
+    def trade(amount, from_asset_id, to_asset_id)
+      default_address.trade(amount, from_asset_id, to_asset_id)
     end
 
     # Exports the Wallet's data to a Data object.

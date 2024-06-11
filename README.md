@@ -210,7 +210,23 @@ t = w1.transfer(0.00001, :eth, w2).wait!
 puts "Transfer successfully completed: #{t}"
 ```
 
-See [Transers](./transfers.md) for more information.
+See [Transfers](https://docs.cdp.coinbase.com/wallets/docs/transfers) for more information.
+
+## Trading Funds
+
+```ruby
+
+wallet = Coinbase::Wallet.create(network_id: "base-mainnet")
+
+puts "Wallet successfully created: #{wallet}"
+puts "Send `base-mainnet` ETH to wallets default address: #{wallet.default_address.id}"
+
+trade = wallet.trade(0.00001, :eth, :usdc).wait!
+
+puts "Trade successfully completed: #{trade}"
+```
+
+See [Trades](https://docs.cdp.coinbase.com/wallets/docs/trades) for more information.
 
 ## Persisting a Wallet
 

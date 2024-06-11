@@ -23,6 +23,9 @@ module Coinbase::Client
 
     attr_accessor :default_address
 
+    # The features enabled for the wallet
+    attr_accessor :enabled_features
+
     # The status of the Server-Signer for the wallet if present.
     attr_accessor :server_signer_status
 
@@ -54,6 +57,7 @@ module Coinbase::Client
         :'id' => :'id',
         :'network_id' => :'network_id',
         :'default_address' => :'default_address',
+        :'enabled_features' => :'enabled_features',
         :'server_signer_status' => :'server_signer_status'
       }
     end
@@ -69,6 +73,7 @@ module Coinbase::Client
         :'id' => :'String',
         :'network_id' => :'String',
         :'default_address' => :'Address',
+        :'enabled_features' => :'Array<Feature>',
         :'server_signer_status' => :'String'
       }
     end
@@ -110,6 +115,14 @@ module Coinbase::Client
         self.default_address = attributes[:'default_address']
       end
 
+      if attributes.key?(:'enabled_features')
+        if (value = attributes[:'enabled_features']).is_a?(Array)
+          self.enabled_features = value
+        end
+      else
+        self.enabled_features = nil
+      end
+
       if attributes.key?(:'server_signer_status')
         self.server_signer_status = attributes[:'server_signer_status']
       end
@@ -128,6 +141,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
+      if @enabled_features.nil?
+        invalid_properties.push('invalid value for "enabled_features", enabled_features cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -137,6 +154,7 @@ module Coinbase::Client
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @id.nil?
       return false if @network_id.nil?
+      return false if @enabled_features.nil?
       server_signer_status_validator = EnumAttributeValidator.new('String', ["pending_seed_creation", "active_seed"])
       return false unless server_signer_status_validator.valid?(@server_signer_status)
       true
@@ -160,6 +178,7 @@ module Coinbase::Client
           id == o.id &&
           network_id == o.network_id &&
           default_address == o.default_address &&
+          enabled_features == o.enabled_features &&
           server_signer_status == o.server_signer_status
     end
 
@@ -172,7 +191,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network_id, default_address, server_signer_status].hash
+      [id, network_id, default_address, enabled_features, server_signer_status].hash
     end
 
     # Builds the object from hash

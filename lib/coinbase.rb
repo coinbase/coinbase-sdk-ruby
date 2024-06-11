@@ -11,9 +11,12 @@ require_relative 'coinbase/errors'
 require_relative 'coinbase/faucet_transaction'
 require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
+require_relative 'coinbase/trade'
 require_relative 'coinbase/transfer'
+require_relative 'coinbase/transaction'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
+require_relative 'coinbase/server_signer'
 require 'json'
 
 # The Coinbase SDK.

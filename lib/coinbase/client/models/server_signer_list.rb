@@ -14,61 +14,26 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # An onchain transaction.
-  class Transaction
-    # The ID of the blockchain network
-    attr_accessor :network_id
+  # 
+  class ServerSignerList
+    attr_accessor :data
 
-    # The onchain address of the sender
-    attr_accessor :from_address_id
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # The unsigned payload of the transaction. This is the payload that needs to be signed by the sender.
-    attr_accessor :unsigned_payload
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
 
-    # The signed payload of the transaction. This is the payload that has been signed by the sender.
-    attr_accessor :signed_payload
-
-    # The hash of the transaction
-    attr_accessor :transaction_hash
-
-    # The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
-    attr_accessor :transaction_link
-
-    # The status of the transaction
-    attr_accessor :status
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The total number of server-signers for the project.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'network_id' => :'network_id',
-        :'from_address_id' => :'from_address_id',
-        :'unsigned_payload' => :'unsigned_payload',
-        :'signed_payload' => :'signed_payload',
-        :'transaction_hash' => :'transaction_hash',
-        :'transaction_link' => :'transaction_link',
-        :'status' => :'status'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -80,13 +45,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'network_id' => :'String',
-        :'from_address_id' => :'String',
-        :'unsigned_payload' => :'String',
-        :'signed_payload' => :'String',
-        :'transaction_hash' => :'String',
-        :'transaction_link' => :'String',
-        :'status' => :'String'
+        :'data' => :'Array<ServerSigner>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -100,51 +62,41 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Transaction` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ServerSignerList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Transaction`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ServerSignerList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
       else
-        self.network_id = nil
+        self.data = nil
       end
 
-      if attributes.key?(:'from_address_id')
-        self.from_address_id = attributes[:'from_address_id']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
       else
-        self.from_address_id = nil
+        self.has_more = nil
       end
 
-      if attributes.key?(:'unsigned_payload')
-        self.unsigned_payload = attributes[:'unsigned_payload']
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
       else
-        self.unsigned_payload = nil
+        self.next_page = nil
       end
 
-      if attributes.key?(:'signed_payload')
-        self.signed_payload = attributes[:'signed_payload']
-      end
-
-      if attributes.key?(:'transaction_hash')
-        self.transaction_hash = attributes[:'transaction_hash']
-      end
-
-      if attributes.key?(:'transaction_link')
-        self.transaction_link = attributes[:'transaction_link']
-      end
-
-      if attributes.key?(:'status')
-        self.status = attributes[:'status']
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
       else
-        self.status = nil
+        self.total_count = nil
       end
     end
 
@@ -153,20 +105,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
       end
 
-      if @from_address_id.nil?
-        invalid_properties.push('invalid value for "from_address_id", from_address_id cannot be nil.')
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
       end
 
-      if @unsigned_payload.nil?
-        invalid_properties.push('invalid value for "unsigned_payload", unsigned_payload cannot be nil.')
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
       end
 
-      if @status.nil?
-        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      if @total_count.nil?
+        invalid_properties.push('invalid value for "total_count", total_count cannot be nil.')
       end
 
       invalid_properties
@@ -176,23 +128,11 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network_id.nil?
-      return false if @from_address_id.nil?
-      return false if @unsigned_payload.nil?
-      return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
-      return false unless status_validator.valid?(@status)
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
+      return false if @total_count.nil?
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] status Object to be assigned
-    def status=(status)
-      validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
-      unless validator.valid?(status)
-        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
-      end
-      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -200,13 +140,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          network_id == o.network_id &&
-          from_address_id == o.from_address_id &&
-          unsigned_payload == o.unsigned_payload &&
-          signed_payload == o.signed_payload &&
-          transaction_hash == o.transaction_hash &&
-          transaction_link == o.transaction_link &&
-          status == o.status
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -218,7 +155,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, from_address_id, unsigned_payload, signed_payload, transaction_hash, transaction_link, status].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash

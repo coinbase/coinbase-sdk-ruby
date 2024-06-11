@@ -34,8 +34,12 @@ module Coinbase::Client
     # The ID of the asset being transferred
     attr_accessor :asset_id
 
+    attr_accessor :asset
+
     # The ID of the transfer
     attr_accessor :transfer_id
+
+    attr_accessor :transaction
 
     # The unsigned payload of the transfer. This is the payload that needs to be signed by the sender.
     attr_accessor :unsigned_payload
@@ -80,7 +84,9 @@ module Coinbase::Client
         :'destination' => :'destination',
         :'amount' => :'amount',
         :'asset_id' => :'asset_id',
+        :'asset' => :'asset',
         :'transfer_id' => :'transfer_id',
+        :'transaction' => :'transaction',
         :'unsigned_payload' => :'unsigned_payload',
         :'signed_payload' => :'signed_payload',
         :'transaction_hash' => :'transaction_hash',
@@ -102,7 +108,9 @@ module Coinbase::Client
         :'destination' => :'String',
         :'amount' => :'String',
         :'asset_id' => :'String',
+        :'asset' => :'Asset',
         :'transfer_id' => :'String',
+        :'transaction' => :'Transaction',
         :'unsigned_payload' => :'String',
         :'signed_payload' => :'String',
         :'transaction_hash' => :'String',
@@ -167,10 +175,22 @@ module Coinbase::Client
         self.asset_id = nil
       end
 
+      if attributes.key?(:'asset')
+        self.asset = attributes[:'asset']
+      else
+        self.asset = nil
+      end
+
       if attributes.key?(:'transfer_id')
         self.transfer_id = attributes[:'transfer_id']
       else
         self.transfer_id = nil
+      end
+
+      if attributes.key?(:'transaction')
+        self.transaction = attributes[:'transaction']
+      else
+        self.transaction = nil
       end
 
       if attributes.key?(:'unsigned_payload')
@@ -223,8 +243,16 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
       end
 
+      if @asset.nil?
+        invalid_properties.push('invalid value for "asset", asset cannot be nil.')
+      end
+
       if @transfer_id.nil?
         invalid_properties.push('invalid value for "transfer_id", transfer_id cannot be nil.')
+      end
+
+      if @transaction.nil?
+        invalid_properties.push('invalid value for "transaction", transaction cannot be nil.')
       end
 
       if @unsigned_payload.nil?
@@ -248,7 +276,9 @@ module Coinbase::Client
       return false if @destination.nil?
       return false if @amount.nil?
       return false if @asset_id.nil?
+      return false if @asset.nil?
       return false if @transfer_id.nil?
+      return false if @transaction.nil?
       return false if @unsigned_payload.nil?
       return false if @status.nil?
       status_validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
@@ -277,7 +307,9 @@ module Coinbase::Client
           destination == o.destination &&
           amount == o.amount &&
           asset_id == o.asset_id &&
+          asset == o.asset &&
           transfer_id == o.transfer_id &&
+          transaction == o.transaction &&
           unsigned_payload == o.unsigned_payload &&
           signed_payload == o.signed_payload &&
           transaction_hash == o.transaction_hash &&
@@ -293,7 +325,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, wallet_id, address_id, destination, amount, asset_id, transfer_id, unsigned_payload, signed_payload, transaction_hash, status].hash
+      [network_id, wallet_id, address_id, destination, amount, asset_id, asset, transfer_id, transaction, unsigned_payload, signed_payload, transaction_hash, status].hash
     end
 
     # Builds the object from hash

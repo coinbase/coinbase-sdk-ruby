@@ -18,10 +18,14 @@ module Coinbase::Client
     # The hex-encoded signed payload of the trade
     attr_accessor :signed_payload
 
+    # The hex-encoded signed payload of the approval transaction
+    attr_accessor :approve_transaction_signed_payload
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'signed_payload' => :'signed_payload'
+        :'signed_payload' => :'signed_payload',
+        :'approve_transaction_signed_payload' => :'approve_transaction_signed_payload'
       }
     end
 
@@ -33,7 +37,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'signed_payload' => :'String'
+        :'signed_payload' => :'String',
+        :'approve_transaction_signed_payload' => :'String'
       }
     end
 
@@ -63,6 +68,10 @@ module Coinbase::Client
       else
         self.signed_payload = nil
       end
+
+      if attributes.key?(:'approve_transaction_signed_payload')
+        self.approve_transaction_signed_payload = attributes[:'approve_transaction_signed_payload']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -90,7 +99,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          signed_payload == o.signed_payload
+          signed_payload == o.signed_payload &&
+          approve_transaction_signed_payload == o.approve_transaction_signed_payload
     end
 
     # @see the `==` method
@@ -102,7 +112,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [signed_payload].hash
+      [signed_payload, approve_transaction_signed_payload].hash
     end
 
     # Builds the object from hash

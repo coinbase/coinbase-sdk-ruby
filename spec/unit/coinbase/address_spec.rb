@@ -25,12 +25,12 @@ describe Coinbase::Address do
   end
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
-  let(:client) { double('Jimson::Client') }
+  let(:trades_api) { double('Coinbase::Client::TradesApi') }
 
   before(:each) do
-    allow(Coinbase.configuration).to receive(:base_sepolia_client).and_return(client)
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
     allow(Coinbase::Client::TransfersApi).to receive(:new).and_return(transfers_api)
+    allow(Coinbase::Client::TradesApi).to receive(:new).and_return(trades_api)
   end
 
   subject(:address) do
@@ -147,15 +147,38 @@ describe Coinbase::Address do
     let(:to_key) { Eth::Key.new }
     let(:to_address_id) { to_key.address.to_s }
     let(:transaction_hash) { '0xdeadbeef' }
-    let(:raw_signed_transaction) { '0123456789abcdef' }
+    let(:unsigned_payload) { 'unsigned_payload' }
     let(:signed_payload) { '0x12345' }
     let(:broadcast_transfer_request) do
-      { signed_payload: raw_signed_transaction }
+      { signed_payload: signed_payload }
     end
-    let(:transaction) { double('Transaction', sign: transaction_hash, hex: raw_signed_transaction) }
+    let(:transaction) { double(Coinbase::Transaction, sign: signed_payload) }
+    let(:transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'pending',
+        unsigned_payload: unsigned_payload
+      )
+    end
     let(:created_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
-    let(:transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'pending') }
-    let(:broadcasted_transfer_model) { instance_double('Coinbase::Client::Transfer', status: 'broadcast') }
+    let(:transfer_model) do
+      instance_double(
+        Coinbase::Client::Transfer,
+        transaction: transaction_model
+      )
+    end
+    let(:broadcasted_transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'broadcast',
+        unsigned_payload: unsigned_payload,
+        signed_payload: signed_payload
+      )
+    end
+    let(:broadcasted_transfer_model) do
+      instance_double(
+        Coinbase::Client::Transfer,
+        transaction: broadcasted_transaction_model
+      )
+    end
     let(:broadcasted_transfer) { double('Transfer', transaction: transaction, id: transfer_id) }
     let(:transfer_asset_id) { 'eth' }
     let(:balance_response) { eth_balance_response }
@@ -364,7 +387,7 @@ describe Coinbase::Address do
     context 'when the balance is insufficient' do
       let(:asset_id) { :wei }
       let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
-      let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
+      let(:current_balance) { BigDecimal(eth_balance_response.amount) }
 
       before do
         expect(addresses_api)
@@ -376,7 +399,10 @@ describe Coinbase::Address do
       it 'raises an ArgumentError' do
         expect do
           address.transfer(excessive_amount, asset_id, to_address_id)
-        end.to raise_error(ArgumentError)
+        end.to raise_error(
+          ArgumentError,
+          "Insufficient funds: #{excessive_amount} requested, but only #{current_balance} available"
+        )
       end
     end
 
@@ -422,6 +448,238 @@ describe Coinbase::Address do
           .to receive(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
         expect(address.transfer(amount, asset_id, destination)).to eq(transfer)
+      end
+    end
+  end
+
+  describe '#trade' do
+    let(:eth_balance_response) do
+      Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset)
+    end
+    let(:usdc_balance_response) do
+      Coinbase::Client::Balance.new(amount: '10000000000', asset: usdc_asset)
+    end
+    let(:trade_id) { SecureRandom.uuid }
+    let(:transaction_hash) { '0xdeadbeef' }
+    let(:unsigned_payload) { 'unsigned_payload' }
+    let(:signed_payload) { 'signed_payload' }
+    let(:broadcast_trade_request) do
+      { signed_payload: signed_payload }
+    end
+    let(:transaction) { double(Coinbase::Transaction, sign: signed_payload) }
+    let(:approve_transaction) { nil }
+    let(:created_trade) do
+      double(
+        Coinbase::Trade,
+        id: trade_id,
+        transaction: transaction,
+        approve_transaction: approve_transaction
+      )
+    end
+    let(:transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'pending',
+        unsigned_payload: unsigned_payload
+      )
+    end
+    let(:trade_model) do
+      instance_double(
+        Coinbase::Client::Trade,
+        transaction: transaction_model,
+        address_id: address_id
+      )
+    end
+    let(:broadcasted_transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'broadcast',
+        unsigned_payload: unsigned_payload,
+        signed_payload: signed_payload
+      )
+    end
+    let(:broadcasted_trade_model) do
+      instance_double(
+        Coinbase::Client::Trade,
+        transaction: broadcasted_transaction_model,
+        address_id: address_id
+      )
+    end
+    let(:broadcasted_trade) { double(Coinbase::Trade, transaction: transaction, id: trade_id) }
+    let(:from_asset_id) { :eth }
+    let(:normalized_from_asset_id) { 'eth' }
+    let(:to_asset_id) { :usdc }
+    let(:balance_response) { eth_balance_response }
+    let(:destination) { to_address_id }
+    let(:amount) { 500_000_000_000_000_000 }
+    let(:use_server_signer) { false }
+
+    subject(:trade) { address.trade(amount, from_asset_id, to_asset_id) }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the trade is successful' do
+      let(:from_asset_id) { :wei }
+      let(:trade_amount) { 500_000_000_000_000_000 }
+      let(:create_trade_request) do
+        {
+          amount: trade_amount.to_s,
+          from_asset_id: normalized_from_asset_id,
+          to_asset_id: to_asset_id.to_s
+        }
+      end
+
+      before do
+        allow(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, normalized_from_asset_id)
+          .and_return(balance_response)
+
+        allow(trades_api)
+          .to receive(:create_trade)
+          .with(wallet_id, address_id, create_trade_request)
+          .and_return(trade_model)
+
+        allow(Coinbase::Trade).to receive(:new).with(trade_model).and_return(created_trade)
+      end
+
+      context 'when not using server signer' do
+        before do
+          allow(trades_api)
+            .to receive(:broadcast_trade)
+            .with(wallet_id, address_id, trade_id, broadcast_trade_request)
+            .and_return(broadcasted_trade_model)
+
+          allow(Coinbase::Trade).to receive(:new).with(broadcasted_trade_model).and_return(broadcasted_trade)
+
+          trade
+        end
+
+        it 'returns the broadcasted trade' do
+          expect(trade).to eq(broadcasted_trade)
+        end
+
+        it 'creates the trade' do
+          expect(trades_api)
+            .to have_received(:create_trade)
+            .with(wallet_id, address_id, create_trade_request)
+        end
+
+        it 'signs the transaction with the key' do
+          expect(transaction).to have_received(:sign).with(key)
+        end
+
+        context 'when the asset is Gwei' do
+          let(:from_asset_id) { :gwei }
+          let(:normalized_from_asset_id) { 'eth' }
+          let(:amount) { 500_000_000 }
+
+          it 'returns the broadcast trade' do
+            expect(trade).to eq(broadcasted_trade)
+          end
+
+          it 'signs the transaction with the address key' do
+            expect(transaction).to have_received(:sign).with(key)
+          end
+        end
+
+        context 'when the asset is ETH' do
+          let(:from_asset_id) { :eth }
+          let(:amount) { 0.5 }
+          let(:trade_amount) { 500_000_000_000_000_000 }
+
+          it 'returns the broadcast trade' do
+            expect(trade).to eq(broadcasted_trade)
+          end
+
+          it 'signs the transaction with the address key' do
+            expect(transaction).to have_received(:sign).with(key)
+          end
+        end
+
+        context 'when the asset is USDC' do
+          let(:from_asset_id) { :usdc }
+          let(:normalized_from_asset_id) { 'usdc' }
+          let(:amount) { 5 }
+          let(:trade_amount) { 5_000_000 }
+          let(:balance_response) { usdc_balance_response }
+
+          it 'creates a Trade' do
+            expect(trade).to eq(broadcasted_trade)
+          end
+        end
+
+        context 'when there is an approve transaction' do
+          let(:approve_signed_payload) { 'approve_signed_payload' }
+          let(:approve_transaction) { double(Coinbase::Transaction, sign: approve_signed_payload) }
+
+          let(:broadcast_trade_request) do
+            {
+              signed_payload: signed_payload,
+              approve_transaction_signed_payload: approve_signed_payload
+            }
+          end
+
+          it 'creates a Trade' do
+            expect(trade).to eq(broadcasted_trade)
+          end
+
+          it 'signs the trade transaction with the address key' do
+            expect(transaction).to have_received(:sign).with(key)
+          end
+
+          it 'signs the approve transaction with the address key' do
+            expect(approve_transaction).to have_received(:sign).with(key)
+          end
+        end
+      end
+    end
+
+    describe 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an error' do
+        expect do
+          unhydrated_address.trade(12_345, from_asset_id, to_asset_id)
+        end.to raise_error('Cannot trade from address without private key loaded')
+      end
+    end
+
+    describe 'when the from asset is unsupported' do
+      it 'raises an ArgumentError' do
+        expect do
+          address.trade(amount, :uni, to_asset_id)
+        end.to raise_error(ArgumentError, 'Unsupported from asset: uni')
+      end
+    end
+
+    describe 'when the to asset is unsupported' do
+      it 'raises an ArgumentError' do
+        expect do
+          address.trade(amount, from_asset_id, :uni)
+        end.to raise_error(ArgumentError, 'Unsupported to asset: uni')
+      end
+    end
+
+    context 'when the balance is insufficient' do
+      let(:from_asset_id) { :wei }
+      let(:excessive_amount) { 9_000_000_000_000_000_000_000 }
+      let(:current_balance) { BigDecimal(eth_balance_response.amount.to_i).to_s }
+
+      before do
+        expect(addresses_api)
+          .to receive(:get_address_balance)
+          .with(wallet_id, address_id, 'eth')
+          .and_return(eth_balance_response)
+      end
+
+      it 'raises an ArgumentError' do
+        expect do
+          address.trade(excessive_amount, from_asset_id, to_asset_id)
+        end.to raise_error(
+          ArgumentError,
+          "Insufficient funds: #{excessive_amount} requested, but only #{current_balance} available"
+        )
       end
     end
   end

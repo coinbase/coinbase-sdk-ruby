@@ -7,7 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- Trade
+## [0.0.7] - 2024-06-11
+
+### Added
+
+- Ability to trade assets from wallet and addresses
+  - Note: Only supported on `base-mainnet`, not on `base-sepolia`.
+- `base-mainnet` network support
+  - Note: Faucet functionality is not supported.
+  - Note: Server signer functionality is not yet supported.
+- ServerSigner object
+- Ability to get default Server-Signer
+
+### Change
 
 ## [0.0.6] - 2024-06-03
 
