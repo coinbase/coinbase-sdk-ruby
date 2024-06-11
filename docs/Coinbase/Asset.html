@@ -178,6 +178,35 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#decimals-instance_method" title="#decimals (instance method)">#<strong>decimals</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute decimals.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#display_name-instance_method" title="#display_name (instance method)">#<strong>display_name</strong>  &#x21d2; Object </a>
     
 
@@ -273,6 +302,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#from_model-class_method" title="from_model (class method)">.<strong>from_model</strong>(asset_model)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#primary_denomination-class_method" title="primary_denomination (class method)">.<strong>primary_denomination</strong>(asset_id)  &#x21d2; Symbol </a>
     
 
@@ -354,7 +405,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(network_id:, asset_id:, display_name:, address_id: nil)  &#x21d2; Asset </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(network_id:, asset_id:, display_name: nil, address_id: nil, decimals: nil)  &#x21d2; Asset </a>
     
 
     
@@ -434,7 +485,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(network_id:, asset_id:, display_name:, address_id: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Asset (class)">Asset</a></span></tt> 
+    #<strong>initialize</strong>(network_id:, asset_id:, display_name: nil, address_id: nil, decimals: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Asset (class)">Asset</a></span></tt> 
   
 
   
@@ -492,10 +543,12 @@
         <span class='type'>(<tt>String</tt>)</span>
       
       
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
       
         &mdash;
         <div class='inline'>
-<p>The Asset&#39;s display name</p>
+<p>(Optional) The Asset&#39;s display name</p>
 </div>
       
     </li>
@@ -518,6 +571,24 @@
       
     </li>
   
+    <li>
+      
+        <span class='name'>decimals</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>(Optional) The number of decimal places the Asset uses</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 
@@ -527,21 +598,23 @@
       <pre class="lines">
 
 
-70
-71
-72
-73
-74
-75</pre>
+82
+83
+84
+85
+86
+87
+88</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 82</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>asset_id:</span><span class='comma'>,</span> <span class='label'>display_name:</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>asset_id:</span><span class='comma'>,</span> <span class='label'>display_name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>decimals:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@network_id</span> <span class='op'>=</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='ivar'>@asset_id</span> <span class='op'>=</span> <span class='id identifier rubyid_asset_id'>asset_id</span>
   <span class='ivar'>@display_name</span> <span class='op'>=</span> <span class='id identifier rubyid_display_name'>display_name</span>
   <span class='ivar'>@address_id</span> <span class='op'>=</span> <span class='id identifier rubyid_address_id'>address_id</span>
+  <span class='ivar'>@decimals</span> <span class='op'>=</span> <span class='id identifier rubyid_decimals'>decimals</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -581,12 +654,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_address_id'>address_id</span>
   <span class='ivar'>@address_id</span>
@@ -624,15 +697,58 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_asset_id'>asset_id</span>
   <span class='ivar'>@asset_id</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="decimals-instance_method">
+  
+    #<strong>decimals</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute decimals.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+90
+91
+92</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 90</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_decimals'>decimals</span>
+  <span class='ivar'>@decimals</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -667,12 +783,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_display_name'>display_name</span>
   <span class='ivar'>@display_name</span>
@@ -710,12 +826,12 @@
       <pre class="lines">
 
 
-77
-78
-79</pre>
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 90</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='ivar'>@network_id</span>
@@ -843,6 +959,50 @@
   <span class='kw'>else</span>
     <span class='id identifier rubyid_atomic_amount'>atomic_amount</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="from_model-class_method">
+  
+    .<strong>from_model</strong>(asset_model)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 64</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_model'>from_model</span><span class='lparen'>(</span><span class='id identifier rubyid_asset_model'>asset_model</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='kw'>unless</span> <span class='id identifier rubyid_asset_model'>asset_model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Asset.html" title="Coinbase::Client::Asset (class)">Asset</a></span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span>
+    <span class='label'>network_id:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_asset_model'>asset_model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>asset_id:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_asset_model'>asset_model</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>address_id:</span> <span class='id identifier rubyid_asset_model'>asset_model</span><span class='period'>.</span><span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+    <span class='label'>decimals:</span> <span class='id identifier rubyid_asset_model'>asset_model</span><span class='period'>.</span><span class='id identifier rubyid_decimals'>decimals</span>
+  <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1178,12 +1338,12 @@
       <pre class="lines">
 
 
-88
-89
-90</pre>
+102
+103
+104</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1237,17 +1397,19 @@
       <pre class="lines">
 
 
-81
-82
-83
-84</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 81</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/asset.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Asset{network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network_id'>network_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, asset_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, display_name: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_display_name'>display_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span>
-    <span class='lparen'>(</span><span class='id identifier rubyid_address_id'>address_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>}</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, address_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_address_id'>address_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='lparen'>(</span><span class='id identifier rubyid_address_id'>address_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>}</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, address_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_address_id'>address_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='op'>+</span>
+    <span class='lparen'>(</span><span class='id identifier rubyid_decimals'>decimals</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>}</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>, decimals: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_decimals'>decimals</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
