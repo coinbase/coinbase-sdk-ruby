@@ -76,8 +76,7 @@ module Coinbase
     # Returns the link to the transaction on the blockchain explorer.
     # @return [String] The link to the transaction on the blockchain explorer
     def transaction_link
-      # TODO: Parameterize this by Network.
-      "https://sepolia.basescan.org/tx/#{transaction_hash}"
+      @model.transaction_link
     end
 
     # Returns the underlying raw transaction.

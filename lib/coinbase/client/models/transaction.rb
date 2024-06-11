@@ -31,6 +31,9 @@ module Coinbase::Client
     # The hash of the transaction
     attr_accessor :transaction_hash
 
+    # The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
+    attr_accessor :transaction_link
+
     # The status of the transaction
     attr_accessor :status
 
@@ -64,6 +67,7 @@ module Coinbase::Client
         :'unsigned_payload' => :'unsigned_payload',
         :'signed_payload' => :'signed_payload',
         :'transaction_hash' => :'transaction_hash',
+        :'transaction_link' => :'transaction_link',
         :'status' => :'status'
       }
     end
@@ -81,6 +85,7 @@ module Coinbase::Client
         :'unsigned_payload' => :'String',
         :'signed_payload' => :'String',
         :'transaction_hash' => :'String',
+        :'transaction_link' => :'String',
         :'status' => :'String'
       }
     end
@@ -130,6 +135,10 @@ module Coinbase::Client
 
       if attributes.key?(:'transaction_hash')
         self.transaction_hash = attributes[:'transaction_hash']
+      end
+
+      if attributes.key?(:'transaction_link')
+        self.transaction_link = attributes[:'transaction_link']
       end
 
       if attributes.key?(:'status')
@@ -196,6 +205,7 @@ module Coinbase::Client
           unsigned_payload == o.unsigned_payload &&
           signed_payload == o.signed_payload &&
           transaction_hash == o.transaction_hash &&
+          transaction_link == o.transaction_link &&
           status == o.status
     end
 
@@ -208,7 +218,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, from_address_id, unsigned_payload, signed_payload, transaction_hash, status].hash
+      [network_id, from_address_id, unsigned_payload, signed_payload, transaction_hash, transaction_link, status].hash
     end
 
     # Builds the object from hash
