@@ -12,8 +12,6 @@ describe Coinbase do
 
   describe 'use serve signer' do
     it 'behaves as expected' do
-      # Use Server-Signer in only half of the runs to save time.
-      # skip if rand >= 0.5
       e2e_test(use_server_signer: true)
     end
   end
