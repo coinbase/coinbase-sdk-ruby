@@ -33,7 +33,7 @@ describe Coinbase do
   describe 'use for serve signer' do
     it 'behaves as expected' do
       # Use Server-Signer only half the runs to save test time.
-      # skip if rand >= 0.5
+      skip if rand >= 0.5
       Coinbase.configuration.use_server_signer = true
       signer = Coinbase::ServerSigner.default
       puts "Using ServerSigner with ID: #{signer.id}"
