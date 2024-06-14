@@ -129,10 +129,9 @@ end
 def fetch_existing_wallet(user)
   # TODO: Change to using get method when available.
   data_string = ENV['SERVER_SIGNER_WALLET_DATA']
-  puts "Data #{data_string}"
   expect(data_string).not_to be_nil
-
-  data_hash = JSON.parse(data_string)
+  decoded_data = Base64.decode64(data_string)
+  data_hash = JSON.parse(decoded_data)
   data = Coinbase::Wallet::Data.from_hash(data_hash)
   puts "imported wallet id #{data.wallet_id}"
   expect(data).not_to be_nil
