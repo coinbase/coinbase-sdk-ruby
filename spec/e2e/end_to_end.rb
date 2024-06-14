@@ -67,6 +67,10 @@ def e2e_test(use_server_signer: false)
 
   data_hash = JSON.parse(data_string)
   data = Coinbase::Wallet::Data.from_hash(data_hash)
+  expect(data).not_to be_nil
+  expect(data.wallet_id).not_to be_nil
+  expect(data.seed).not_to be_nil
+
   w2 = u.import_wallet(data)
   expect(w2).not_to be_nil
   puts "Imported wallet with ID: #{w2.id}, default address: #{w2.default_address}"
