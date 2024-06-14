@@ -67,6 +67,7 @@ def e2e_test(use_server_signer: false)
 
   data_hash = JSON.parse(data_string)
   data = Coinbase::Wallet::Data.from_hash(data_hash)
+  puts "wallet_id", data.wallet_id
   expect(data).not_to be_nil
   expect(data.wallet_id).not_to be_nil
   expect(data.seed).not_to be_nil
