@@ -421,9 +421,9 @@ module Coinbase
     end
 
     def address_path_prefix
-      # TODO: Add support for other networks.
+      # TODO: Push this logic to the backend.
       @address_path_prefix ||= case network_id.to_s.split('_').first
-                               when 'base'
+                               when 'base', 'ethereum'
                                  "m/44'/60'/0'/0"
                                else
                                  raise ArgumentError, "Unsupported network ID: #{network_id}"
