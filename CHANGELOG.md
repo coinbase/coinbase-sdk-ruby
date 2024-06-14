@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Support external addresses for balance fetching and requesting faucet funds.
+
+## [0.0.8]
+
 - Remove unused `base_sepolia_rpc_url` configuration option.
 - Support assets dynamically from the backend without SDK changes.
 
