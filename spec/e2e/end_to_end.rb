@@ -50,10 +50,9 @@ end
 
 def fetch_user_test
   puts 'Fetching default user...'
-  u = Coinbase.default_user
-  expect(u).not_to be_nil
-  puts "Fetched default user with ID: #{u.id}"
-  u
+  user = Coinbase.default_user
+  expect(user).not_to be_nil
+  user
 end
 
 def create_new_address_test(user)
@@ -130,6 +129,7 @@ end
 def fetch_existing_wallet(user)
   # TODO: Change to using get method when available.
   data_string = ENV['SERVER_SIGNER_WALLET_DATA']
+  puts "Data #{data_string}"
   expect(data_string).not_to be_nil
 
   data_hash = JSON.parse(data_string)
