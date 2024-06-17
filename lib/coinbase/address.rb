@@ -98,7 +98,7 @@ module Coinbase
     # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::Trade] The Trade object.
     def trade(amount, from_asset_id, to_asset_id)
-      validate_can_trade!(amount, from_asset_id, to_asset_id)
+      validate_can_trade!(amount, from_asset_id)
 
       trade = create_trade(amount, from_asset_id, to_asset_id)
 
@@ -195,8 +195,6 @@ module Coinbase
     def validate_can_transfer!(amount, asset_id, destination_network_id)
       raise 'Cannot transfer from address without private key loaded' unless can_sign? || Coinbase.use_server_signer?
 
-      raise ArgumentError, "Unsupported asset: #{asset_id}" unless Coinbase::Asset.supported?(asset_id)
-
       raise ArgumentError, 'Transfer must be on the same Network' unless destination_network_id == network_id
 
       current_balance = balance(asset_id)
@@ -208,6 +206,8 @@ module Coinbase
 
     def create_transfer(amount, asset_id, destination)
       create_transfer_request = {
+        # TODO: Handle non-atomic amounts for all assets. For an arbitrary asset,
+        # we may not know the precision until we make a call to the backend.
         amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
         network_id: network_id,
         asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
@@ -229,11 +229,8 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
-    def validate_can_trade!(amount, from_asset_id, to_asset_id)
+    def validate_can_trade!(amount, from_asset_id)
       raise 'Cannot trade from address without private key loaded' unless can_sign?
-
-      raise ArgumentError, "Unsupported from asset: #{from_asset_id}" unless Coinbase::Asset.supported?(from_asset_id)
-      raise ArgumentError, "Unsupported to asset: #{to_asset_id}" unless Coinbase::Asset.supported?(to_asset_id)
 
       current_balance = balance(from_asset_id)
 

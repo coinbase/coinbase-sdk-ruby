@@ -103,36 +103,64 @@ describe Coinbase::Address do
       Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset)
     end
 
-    it 'returns the correct ETH balance' do
-      expect(addresses_api)
+    before do
+      allow(addresses_api)
         .to receive(:get_address_balance)
-        .with(wallet_id, address_id, 'eth')
+        .with(wallet_id, address_id, primary_denomination)
         .and_return(response)
-      expect(address.balance(:eth)).to eq BigDecimal('1')
     end
 
-    it 'returns the correct Gwei balance' do
-      expect(addresses_api)
-        .to receive(:get_address_balance)
-        .with(wallet_id, address_id, 'eth')
-        .and_return(response)
-      expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
+    context 'when the asset_id is :eth' do
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct ETH balance' do
+        expect(address.balance(:eth)).to eq BigDecimal('1')
+      end
     end
 
-    it 'returns the correct Wei balance' do
-      expect(addresses_api)
-        .to receive(:get_address_balance)
-        .with(wallet_id, address_id, 'eth')
-        .and_return(response)
-      expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+    context 'when the asset_id is :gwei' do
+      let(:asset_id) { :gwei }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct Gwei balance' do
+        expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
+      end
     end
 
-    it 'returns 0 for an unsupported asset' do
-      expect(addresses_api)
-        .to receive(:get_address_balance)
-        .with(wallet_id, address_id, 'uni')
-        .and_return(nil)
-      expect(address.balance(:uni)).to eq BigDecimal('0')
+    context 'when the asset_id is :wei' do
+      let(:asset_id) { :wei }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct Wei balance' do
+        expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+      end
+    end
+
+    context 'when the asset id is a non-eth denomination' do
+      let(:asset_id) { :other }
+      let(:primary_denomination) { 'other' }
+      let(:decimals) { 7 }
+      let(:other_asset) do
+        Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
+      end
+      let(:response) do
+        Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: other_asset)
+      end
+
+      it 'returns the correct balance' do
+        expect(address.balance(:other)).to eq BigDecimal('100_000_000_000')
+      end
+    end
+
+    context 'when there is no response' do
+      let(:response) { nil }
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns 0' do
+        expect(address.balance(:eth)).to eq BigDecimal('0')
+      end
     end
   end
 
@@ -369,18 +397,6 @@ describe Coinbase::Address do
         expect do
           address.transfer(amount, asset_id, destination)
         end.to raise_error(ArgumentError, 'Transfer must be on the same Network')
-      end
-    end
-
-    context 'when the asset is unsupported' do
-      let(:amount) { 500_000_000_000_000_000 }
-      let(:transfer_amount) { amount }
-      let(:asset_id) { :uni }
-
-      it 'raises an ArgumentError' do
-        expect do
-          address.transfer(amount, asset_id, destination)
-        end.to raise_error(ArgumentError, 'Unsupported asset: uni')
       end
     end
 
@@ -642,22 +658,6 @@ describe Coinbase::Address do
         expect do
           unhydrated_address.trade(12_345, from_asset_id, to_asset_id)
         end.to raise_error('Cannot trade from address without private key loaded')
-      end
-    end
-
-    describe 'when the from asset is unsupported' do
-      it 'raises an ArgumentError' do
-        expect do
-          address.trade(amount, :uni, to_asset_id)
-        end.to raise_error(ArgumentError, 'Unsupported from asset: uni')
-      end
-    end
-
-    describe 'when the to asset is unsupported' do
-      it 'raises an ArgumentError' do
-        expect do
-          address.trade(amount, from_asset_id, :uni)
-        end.to raise_error(ArgumentError, 'Unsupported to asset: uni')
       end
     end
 
