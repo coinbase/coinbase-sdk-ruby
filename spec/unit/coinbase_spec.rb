@@ -106,11 +106,5 @@ describe Coinbase do
         expect(Coinbase.configuration.api_url).to eq 'https://api.cdp.coinbase.com'
       end
     end
-
-    describe '#base_sepolia_rpc_url' do
-      it 'returns the default base sepolia rpc url' do
-        expect(Coinbase.configuration.base_sepolia_rpc_url).to eq 'https://sepolia.base.org'
-      end
-    end
   end
 end
