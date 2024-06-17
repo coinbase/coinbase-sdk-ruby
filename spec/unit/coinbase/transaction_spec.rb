@@ -166,7 +166,7 @@ describe Coinbase::Transaction do
   end
 
   describe '#raw' do
-    it 'returns the rraw transaction' do
+    it 'returns the raw transaction' do
       expect(transaction.raw).to be_a(Eth::Tx::Eip1559)
     end
 

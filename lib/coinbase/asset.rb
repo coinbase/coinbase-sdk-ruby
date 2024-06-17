@@ -25,27 +25,9 @@ module Coinbase
       when :weth
         amount * BigDecimal(Coinbase::WEI_PER_ETHER)
       else
+        # TODO: This will not support any other assets until we support fetching the
+        # asset from the API by asset ID or support passing whole amounts to the backend.
         amount
-      end
-    end
-
-    # Converts an amount from the atomic value of the primary denomination of the provided Asset ID
-    # to whole units of the specified asset ID.
-    # @param atomic_amount [BigDecimal] The amount in atomic units
-    # @param asset_id [Symbol] The Asset ID
-    # @return [BigDecimal] The amount in whole units of the specified asset ID
-    def self.from_atomic_amount(atomic_amount, asset_id)
-      case asset_id
-      when :eth
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_GWEI.to_s)
-      when :usdc
-        atomic_amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      when :weth
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_ETHER)
-      else
-        atomic_amount
       end
     end
 
@@ -61,14 +43,29 @@ module Coinbase
       asset_id
     end
 
-    def self.from_model(asset_model)
+    def self.from_model(asset_model, asset_id: nil)
       raise unless asset_model.is_a?(Coinbase::Client::Asset)
+
+      decimals = asset_model.decimals
+
+      # Handle the non-primary denomination case at the asset level.
+      # TODO: Push this logic down to the backend.
+      if asset_id && asset_id != Coinbase.to_sym(asset_model.asset_id)
+        case asset_id
+        when :gwei
+          decimals = GWEI_DECIMALS
+        when :wei
+          decimals = 0
+        else
+          raise ArgumentError, "Unsupported asset ID: #{asset_id}"
+        end
+      end
 
       new(
         network_id: Coinbase.to_sym(asset_model.network_id),
-        asset_id: Coinbase.to_sym(asset_model.asset_id),
+        asset_id: asset_id || Coinbase.to_sym(asset_model.asset_id),
         address_id: asset_model.contract_address,
-        decimals: asset_model.decimals
+        decimals: decimals
       )
     end
 
@@ -76,25 +73,28 @@ module Coinbase
     # the Coinbase module.
     # @param network_id [Symbol] The ID of the Network to which the Asset belongs
     # @param asset_id [Symbol] The Asset ID
-    # @param display_name [String] (Optional) The Asset's display name
     # @param address_id [String] (Optional) The Asset's address ID, if one exists
     # @param decimals [Integer] (Optional) The number of decimal places the Asset uses
-    def initialize(network_id:, asset_id:, display_name: nil, address_id: nil, decimals: nil)
+    def initialize(network_id:, asset_id:, decimals:, address_id: nil)
       @network_id = network_id
       @asset_id = asset_id
-      @display_name = display_name
       @address_id = address_id
       @decimals = decimals
     end
 
-    attr_reader :network_id, :asset_id, :display_name, :address_id, :decimals
+    attr_reader :network_id, :asset_id, :address_id, :decimals
+
+    def from_atomic_amount(atomic_amount)
+      # Return the amount in the whole units of the denomination based on
+      # the assets configured decimals.
+      BigDecimal(atomic_amount) / BigDecimal(10).power(decimals)
+    end
 
     # Returns a string representation of the Asset.
     # @return [String] a string representation of the Asset
     def to_s
-      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', display_name: '#{display_name}'" +
-        (address_id.nil? ? '}' : ", address_id: '#{address_id}'}") +
-        (decimals.nil? ? '}' : ", decimals: '#{decimals}'}")
+      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', decimals: '#{decimals}'" \
+        "#{address_id.nil? ? '' : ", address_id: '#{address_id}'"}}"
     end
 
     # Same as to_s.
