@@ -422,7 +422,7 @@ describe Coinbase::Wallet do
       end
     end
 
-    context 'when an address already exists', focus: true do
+    context 'when an address already exists' do
       let(:created_address_model) { address_model2 }
 
       let(:wallet) do

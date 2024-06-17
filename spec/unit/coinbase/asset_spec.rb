@@ -57,40 +57,6 @@ describe Coinbase::Asset do
     end
   end
 
-  describe '.from_atomic_amount' do
-    let(:atomic_amount) { BigDecimal('123000000000000000000') }
-
-    context 'when the asset_id is :eth' do
-      it 'returns the amount in whole units' do
-        expect(described_class.from_atomic_amount(atomic_amount, :eth)).to eq(BigDecimal('123.0'))
-      end
-    end
-
-    context 'when the asset_id is :gwei' do
-      it 'returns the amount in gwei' do
-        expect(described_class.from_atomic_amount(atomic_amount, :gwei)).to eq(BigDecimal('123000000000'))
-      end
-    end
-
-    context 'when the asset_id is :usdc' do
-      it 'returns the amount in whole units' do
-        expect(described_class.from_atomic_amount(atomic_amount, :usdc)).to eq(BigDecimal('123000000000000'))
-      end
-    end
-
-    context 'when the asset_id is :weth' do
-      it 'returns the amount in whole units' do
-        expect(described_class.from_atomic_amount(atomic_amount, :weth)).to eq(BigDecimal('123.0'))
-      end
-    end
-
-    context 'when the asset_id is :wei' do
-      it 'returns the amount' do
-        expect(described_class.from_atomic_amount(atomic_amount, :wei)).to eq(BigDecimal('123000000000000000000'))
-      end
-    end
-  end
-
   describe '.primary_denomination' do
     %i[wei gwei].each do |asset_id|
       context "when the asset_id is #{asset_id}" do
@@ -133,6 +99,41 @@ describe Coinbase::Asset do
       expect(asset.address_id).to be_nil
     end
 
+    context 'when the asset_id is gwei' do
+      let(:asset_id) { :gwei }
+      subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      it 'sets the asset_id' do
+        expect(asset.asset_id).to eq(asset_id)
+      end
+
+      it 'sets the decimals' do
+        expect(asset.decimals).to eq(Coinbase::GWEI_DECIMALS)
+      end
+    end
+
+    context 'when the asset_id is wei' do
+      let(:asset_id) { :wei }
+      subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      it 'sets the asset_id' do
+        expect(asset.asset_id).to eq(asset_id)
+      end
+
+      it 'sets the decimals' do
+        expect(asset.decimals).to eq(0)
+      end
+    end
+
+    context 'when the asset_id is invalid' do
+      let(:asset_id) { :other }
+      subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      it 'raises an error' do
+        expect { asset }.to raise_error(ArgumentError)
+      end
+    end
+
     context 'when the asset is not a Coinbase::Client::Asset' do
       it 'raises an error' do
         expect do
@@ -161,15 +162,13 @@ describe Coinbase::Asset do
   describe '#initialize' do
     let(:network_id) { :base_sepolia }
     let(:asset_id) { :eth }
-    let(:display_name) { 'Ether' }
-    let(:address_id) { '0x036CbD53842' }
+    let(:decimals) { 7 }
 
     subject(:asset) do
       described_class.new(
         network_id: network_id,
         asset_id: asset_id,
-        display_name: display_name,
-        address_id: address_id
+        decimals: decimals
       )
     end
 
@@ -181,65 +180,65 @@ describe Coinbase::Asset do
       expect(asset.asset_id).to eq(asset_id)
     end
 
-    it 'sets the display_name' do
-      expect(asset.display_name).to eq(display_name)
+    it 'does not set the address_id' do
+      expect(asset.address_id).to be_nil
     end
 
-    it 'sets the address_id' do
-      expect(asset.address_id).to eq(address_id)
+    it 'sets the decimals' do
+      expect(asset.decimals).to eq(decimals)
     end
 
-    it 'does not set decimals' do
-      expect(asset.decimals).to be_nil
-    end
-
-    context 'when decimals is specified' do
-      let(:decimals) { 18 }
+    context 'when address_id is specified' do
+      let(:address_id) { '0x036CbD53842' }
+      let(:network_id) { :base_sepolia }
 
       subject(:asset) do
         described_class.new(
           network_id: network_id,
           asset_id: asset_id,
-          display_name: display_name,
           address_id: address_id,
           decimals: decimals
         )
       end
 
-      it 'sets the decimals' do
-        expect(asset.decimals).to eq(decimals)
+      it 'sets the address_id' do
+        expect(asset.address_id).to eq(address_id)
       end
     end
+  end
 
-    context 'when display name is not specified' do
-      subject(:asset) do
-        described_class.new(network_id: network_id, asset_id: asset_id, address_id: address_id)
-      end
+  describe '#from_atomic_amount' do
+    let(:amount) { BigDecimal('123000000000000000000') }
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
 
-      it 'does not set display_name' do
-        expect(asset.display_name).to be_nil
-      end
+    subject(:asset) do
+      described_class.new(
+        network_id: network_id,
+        asset_id: asset_id,
+        decimals: 7
+      )
+    end
+
+    it 'returns the whole amount in the primary denomination' do
+      expect(asset.from_atomic_amount(amount)).to eq(BigDecimal('12_300_000_000_000'))
     end
   end
 
   describe '#inspect' do
     let(:network_id) { :base_sepolia }
     let(:asset_id) { :eth }
-    let(:display_name) { 'Ether' }
+    let(:decimals) { 7 }
 
     subject(:asset) do
-      described_class.new(
-        network_id: network_id,
-        asset_id: asset_id,
-        display_name: display_name
-      )
+      described_class.new(network_id: network_id, asset_id: asset_id, decimals: decimals)
     end
 
     it 'includes asset details' do
       expect(asset.inspect).to include(
         Coinbase.to_sym(network_id).to_s,
         asset_id.to_s,
-        display_name
+        decimals.to_s
       )
     end
 
@@ -254,12 +253,12 @@ describe Coinbase::Asset do
         described_class.new(
           network_id: network_id,
           asset_id: asset_id,
-          display_name: display_name,
-          address_id: address_id
+          address_id: address_id,
+          decimals: decimals
         )
       end
 
-      it 'includes the transaction hash' do
+      it 'includes the address id' do
         expect(asset.inspect).to include(address_id)
       end
     end
