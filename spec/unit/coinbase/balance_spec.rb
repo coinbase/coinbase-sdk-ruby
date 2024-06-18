@@ -72,7 +72,7 @@ describe Coinbase::Balance do
         let(:asset_id) { :gwei }
 
         it 'returns a new Balance object with the correct amount' do
-          expect(balance.amount).to eq(amount / BigDecimal(Coinbase::GWEI_PER_ETHER))
+          expect(balance.amount).to eq(amount / BigDecimal(10).power(Coinbase::GWEI_DECIMALS))
         end
 
         it 'returns a new Balance object with the correct asset_id' do

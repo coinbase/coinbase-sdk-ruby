@@ -7,7 +7,6 @@ describe Coinbase::Transfer do
   let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
   let(:amount) { BigDecimal(100) }
-  let(:eth_amount) { amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
   let(:to_address_id) { to_key.address.to_s }
   let(:transfer_id) { SecureRandom.uuid }
   let(:unsigned_payload) do \
@@ -41,6 +40,7 @@ describe Coinbase::Transfer do
   let(:usdc_asset) do
     Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
   end
+  let(:eth_amount) { Coinbase::Asset.from_model(asset).from_atomic_amount(amount) }
   let(:asset) { eth_asset }
   let(:model) do
     Coinbase::Client::Transfer.new(
@@ -168,7 +168,7 @@ describe Coinbase::Transfer do
     end
 
     let(:updated_amount) { BigDecimal(500_000_000) }
-    let(:updated_eth_amount) { updated_amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
+    let(:updated_eth_amount) { Coinbase::Asset.from_model(asset).from_atomic_amount(updated_amount) }
 
     let(:updated_model) do
       Coinbase::Client::Transfer.new(

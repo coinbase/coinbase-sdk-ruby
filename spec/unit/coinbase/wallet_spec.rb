@@ -536,17 +536,12 @@ describe Coinbase::Wallet do
   end
 
   describe '#balance' do
+    let(:eth_asset) do
+      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+    end
+    let(:amount) { 5_000_000_000_000_000_000 }
     let(:response) do
-      Coinbase::Client::Balance.new(
-        {
-          'amount' => '5000000000000000000',
-          'asset' => Coinbase::Client::Asset.new({
-                                                   'network_id': 'base-sepolia',
-                                                   'asset_id': 'eth',
-                                                   'decimals': 18
-                                                 })
-        }
-      )
+      Coinbase::Client::Balance.new(amount: '5000000000000000000', asset: eth_asset)
     end
 
     before do
@@ -554,15 +549,18 @@ describe Coinbase::Wallet do
     end
 
     it 'returns the correct ETH balance' do
-      expect(wallet.balance(:eth)).to eq(BigDecimal(5))
+      expect(wallet.balance(:eth)).to eq(Coinbase::Asset.from_model(eth_asset,
+                                                                    asset_id: :eth).from_atomic_amount(amount))
     end
 
     it 'returns the correct Gwei balance' do
-      expect(wallet.balance(:gwei)).to eq(BigDecimal(5 * Coinbase::GWEI_PER_ETHER))
+      expect(wallet.balance(:gwei)).to eq(Coinbase::Asset.from_model(eth_asset,
+                                                                     asset_id: :gwei).from_atomic_amount(amount))
     end
 
     it 'returns the correct Wei balance' do
-      expect(wallet.balance(:wei)).to eq(BigDecimal(5 * Coinbase::WEI_PER_ETHER))
+      expect(wallet.balance(:wei)).to eq(Coinbase::Asset.from_model(eth_asset,
+                                                                    asset_id: :wei).from_atomic_amount(amount))
     end
   end
 

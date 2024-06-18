@@ -5,8 +5,11 @@ describe Coinbase::Transaction do
   let(:network_id) { :base_sepolia }
   let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
-  let(:amount) { BigDecimal(100) }
-  let(:eth_amount) { amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
+  let(:whole_amount) { BigDecimal(100) }
+  let(:eth_asset) do
+    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+  end
+  let(:atomic_amount) { Coinbase::Asset.from_model(eth_asset).to_atomic_amount(whole_amount) }
   let(:to_address_id) { '0x4D9E4F3f4D1A8B5F4f7b1F5b5C7b8d6b2B3b1b0b' }
   let(:unsigned_payload) do \
     '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63' \
@@ -171,7 +174,7 @@ describe Coinbase::Transaction do
     end
 
     it 'returns the correct amount' do
-      expect(transaction.raw.amount).to eq(amount * Coinbase::WEI_PER_ETHER)
+      expect(transaction.raw.amount).to eq(atomic_amount)
     end
 
     it 'returns the correct chain ID' do

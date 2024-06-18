@@ -8,12 +8,14 @@ describe Coinbase::BalanceMap do
   describe '.from_balances' do
     let(:eth_amount) { BigDecimal('123.0') }
     let(:eth_balance_model) { instance_double('Coinbase::Client::Balance', asset: eth_asset, amount: eth_amount) }
+    let(:eth_atomic_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(eth_amount) }
 
     let(:usdc_amount) { BigDecimal('456.0') }
     let(:usdc_asset) do
       Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
     end
     let(:usdc_balance_model) { instance_double('Coinbase::Client::Balance', asset: usdc_asset, amount: usdc_amount) }
+    let(:usdc_atomic_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(usdc_amount) }
 
     let(:weth_amount) { BigDecimal('789.0') }
     let(:weth_asset) { instance_double('Coinbase::Client::Asset', asset_id: 'WETH') }
@@ -21,15 +23,16 @@ describe Coinbase::BalanceMap do
       Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'weth', decimals: 18)
     end
     let(:weth_balance_model) { instance_double('Coinbase::Client::Balance', asset: weth_asset, amount: weth_amount) }
+    let(:weth_atomic_amount) { Coinbase::Asset.from_model(weth_asset).from_atomic_amount(weth_amount) }
 
     let(:balances) { [eth_balance_model, usdc_balance_model, weth_balance_model] }
 
     subject { described_class.from_balances(balances) }
 
     it 'returns a new BalanceMap object with the correct balances' do
-      expect(subject[:eth]).to eq(eth_amount / BigDecimal(Coinbase::WEI_PER_ETHER))
-      expect(subject[:usdc]).to eq(usdc_amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC))
-      expect(subject[:weth]).to eq(weth_amount / BigDecimal(Coinbase::WEI_PER_ETHER))
+      expect(subject[:eth]).to eq(eth_atomic_amount)
+      expect(subject[:usdc]).to eq(usdc_atomic_amount)
+      expect(subject[:weth]).to eq(weth_atomic_amount)
     end
   end
 
