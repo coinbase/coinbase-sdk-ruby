@@ -11,3 +11,4 @@ SimpleCov.start do
 end
 
 require_relative '../lib/coinbase'
+require_relative 'support/shared_examples/pagination'

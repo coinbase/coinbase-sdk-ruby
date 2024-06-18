@@ -825,69 +825,32 @@ describe Coinbase::WalletAddress do
   end
 
   describe '#transfers' do
-    let(:page_size) { 6 }
-    let(:transfer_ids) do
-      Array.new(page_size) { SecureRandom.uuid }
-    end
-    let(:data) do
-      transfer_ids.map { |id| Coinbase::Client::Transfer.new(transfer_id: id, network_id: normalized_network_id) }
-    end
-    let(:transfers_list) { Coinbase::Client::TransferList.new(data: data) }
-    let(:expected_transfers) do
-      data.map { |transfer_model| Coinbase::Transfer.new(transfer_model) }
+    let(:api) { transfers_api }
+    let(:fetch_params) { ->(page) { [wallet_id, address_id, { limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::TransferList }
+    let(:item_klass) { Coinbase::Transfer }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::Transfer.new(transfer_id: id, network_id: normalized_network_id) }
     end
 
-    before do
-      data.each_with_index do |transfer_model, i|
-        allow(Coinbase::Transfer).to receive(:new).with(transfer_model).and_return(expected_transfers[i])
-      end
+    subject(:enumerator) { address.transfers }
+
+    it_behaves_like 'it is a paginated enumerator', :transfers
+  end
+
+  describe '#trades' do
+    let(:api) { trades_api }
+    let(:fetch_params) { ->(page) { [wallet_id, address_id, { limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::TradeList }
+    let(:item_klass) { Coinbase::Trade }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::Trade.new(trade_id: id, network_id: normalized_network_id) }
     end
 
-    it 'lists the transfers' do
-      expect(transfers_api)
-        .to receive(:list_transfers)
-        .with(wallet_id, address_id, { limit: 100, page: nil })
-        .and_return(transfers_list)
+    subject(:enumerator) { address.trades }
 
-      expect(address.transfers).to eq(expected_transfers)
-    end
-
-    context 'with no transfers' do
-      let(:data) { [] }
-
-      it 'returns an empty list' do
-        expect(transfers_api)
-          .to receive(:list_transfers)
-          .with(wallet_id, address_id, { limit: 100, page: nil })
-          .and_return(transfers_list)
-
-        expect(address.transfers).to be_empty
-      end
-    end
-
-    context 'with multiple pages' do
-      let(:page_size) { 150 }
-      let(:next_page) { 'page_token_2' }
-      let(:transfers_list_page1) do
-        Coinbase::Client::TransferList.new(data: data.take(100), has_more: true, next_page: next_page)
-      end
-      let(:transfers_list_page2) do
-        Coinbase::Client::TransferList.new(data: data.drop(100), has_more: false, next_page: nil)
-      end
-
-      it 'lists all of the transfers' do
-        expect(transfers_api)
-          .to receive(:list_transfers)
-          .with(wallet_id, address_id, { limit: 100, page: nil })
-          .and_return(transfers_list_page1)
-
-        expect(transfers_api)
-          .to receive(:list_transfers)
-          .with(wallet_id, address_id, { limit: 100, page: next_page })
-          .and_return(transfers_list_page2)
-
-        expect(address.transfers).to eq(expected_transfers)
-      end
-    end
+    it_behaves_like 'it is a paginated enumerator', :trades
   end
 end

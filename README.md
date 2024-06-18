@@ -195,6 +195,8 @@ puts "Faucet transaction successfully completed: #{faucet_tx}"
 
 ## Transferring Funds
 
+See [Transfers](https://docs.cdp.coinbase.com/wallets/docs/transfers) for more information.
+
 Now that your faucet transaction has successfully completed, you can send the funds in your wallet to another wallet.
 The code below creates another wallet, and uses the `transfer` function to send testnet ETH from the first wallet to
 the second:
@@ -210,9 +212,24 @@ t = w1.transfer(0.00001, :eth, w2).wait!
 puts "Transfer successfully completed: #{t}"
 ```
 
-See [Transfers](https://docs.cdp.coinbase.com/wallets/docs/transfers) for more information.
+## Listing Transfers
+
+```
+# Get the first transfer from the address.
+address.transfers.first
+
+# Iterate over all transfers in the address. This will lazily fetch transfers from the server.
+address.transfers.each do |transfer|
+  puts transfer
+end
+
+# Return array of all transfers. This will paginate and fetch all transfers for the address.
+address.transfers.to_a
+```
 
 ## Trading Funds
+
+See [Trades](https://docs.cdp.coinbase.com/wallets/docs/trades) for more information.
 
 ```ruby
 
@@ -226,7 +243,20 @@ trade = wallet.trade(0.00001, :eth, :usdc).wait!
 puts "Trade successfully completed: #{trade}"
 ```
 
-See [Trades](https://docs.cdp.coinbase.com/wallets/docs/trades) for more information.
+## Listing Trades
+
+```
+# Get the first trade from the address.
+address.trades.first
+
+# Iterate over all trades in the address. This will lazily fetch trades from the server.
+address.trades.each do |trade|
+  puts trade
+end
+
+# Return array of all trades. This will paginate and fetch all trades for the address.
+address.trades.to_a
+```
 
 ## Persisting a Wallet
 
