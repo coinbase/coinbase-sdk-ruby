@@ -3,98 +3,108 @@
 module Coinbase
   # A representation of an Asset.
   class Asset
-    # Retuns whether the provided asset ID is supported.
-    # @param asset_id [Symbol] The Asset ID
-    # @return [Boolean] Whether the Asset ID is supported
-    def self.supported?(asset_id)
-      !!Coinbase::SUPPORTED_ASSET_IDS[asset_id]
-    end
+    class << self
+      # Returns the primary denomination for the provided Asset ID.
+      # For assets with multiple denominations, e.g. eth can also be denominated in wei and gwei,
+      # this method will return the primary denomination.
+      # e.g. eth.
+      # @param asset_id [Symbol] The Asset ID
+      # @return [Symbol] The primary denomination for the Asset ID
+      def primary_denomination(asset_id)
+        return :eth if %i[wei gwei].include?(asset_id)
 
-    # Converts the amount of the Asset to the atomic units of the primary denomination of the Asset.
-    # @param amount [Integer, Float, BigDecimal] The amount to normalize
-    # @param asset_id [Symbol] The ID of the Asset being transferred
-    # @return [BigDecimal] The normalized amount in atomic units
-    def self.to_atomic_amount(amount, asset_id)
-      case asset_id
-      when :eth
-        amount * BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        amount * BigDecimal(Coinbase::WEI_PER_GWEI.to_s)
-      when :usdc
-        amount * BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      when :weth
-        amount * BigDecimal(Coinbase::WEI_PER_ETHER)
-      else
-        amount
+        asset_id
       end
-    end
 
-    # Converts an amount from the atomic value of the primary denomination of the provided Asset ID
-    # to whole units of the specified asset ID.
-    # @param atomic_amount [BigDecimal] The amount in atomic units
-    # @param asset_id [Symbol] The Asset ID
-    # @return [BigDecimal] The amount in whole units of the specified asset ID
-    def self.from_atomic_amount(atomic_amount, asset_id)
-      case asset_id
-      when :eth
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s)
-      when :gwei
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_GWEI.to_s)
-      when :usdc
-        atomic_amount / BigDecimal(Coinbase::ATOMIC_UNITS_PER_USDC.to_s)
-      when :weth
-        atomic_amount / BigDecimal(Coinbase::WEI_PER_ETHER)
-      else
-        atomic_amount
+      def from_model(asset_model, asset_id: nil)
+        raise unless asset_model.is_a?(Coinbase::Client::Asset)
+
+        decimals = asset_model.decimals
+
+        # Handle the non-primary denomination case at the asset level.
+        # TODO: Push this logic down to the backend.
+        if asset_id && asset_id != Coinbase.to_sym(asset_model.asset_id)
+          case asset_id
+          when :gwei
+            decimals = GWEI_DECIMALS
+          when :wei
+            decimals = 0
+          else
+            raise ArgumentError, "Unsupported asset ID: #{asset_id}"
+          end
+        end
+
+        new(
+          network_id: Coinbase.to_sym(asset_model.network_id),
+          asset_id: asset_id || Coinbase.to_sym(asset_model.asset_id),
+          address_id: asset_model.contract_address,
+          decimals: decimals
+        )
       end
-    end
 
-    # Returns the primary denomination for the provided Asset ID.
-    # For assets with multiple denominations, e.g. eth can also be denominated in wei and gwei,
-    # this method will return the primary denomination.
-    # e.g. eth.
-    # @param asset_id [Symbol] The Asset ID
-    # @return [Symbol] The primary denomination for the Asset ID
-    def self.primary_denomination(asset_id)
-      return :eth if %i[wei gwei].include?(asset_id)
+      # Fetches the Asset with the provided Asset ID.
+      # @param asset_id [Symbol] The Asset ID
+      # @return [Coinbase::Asset] The Asset
+      def fetch(network_id, asset_id)
+        asset_model = Coinbase.call_api do
+          assets_api.get_asset(
+            Coinbase.normalize_network(network_id),
+            primary_denomination(asset_id).to_s
+          )
+        end
 
-      asset_id
-    end
+        from_model(asset_model, asset_id: asset_id)
+      end
 
-    def self.from_model(asset_model)
-      raise unless asset_model.is_a?(Coinbase::Client::Asset)
+      private
 
-      new(
-        network_id: Coinbase.to_sym(asset_model.network_id),
-        asset_id: Coinbase.to_sym(asset_model.asset_id),
-        address_id: asset_model.contract_address,
-        decimals: asset_model.decimals
-      )
+      def assets_api
+        Coinbase::Client::AssetsApi.new(Coinbase.configuration.api_client)
+      end
     end
 
     # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in
     # the Coinbase module.
     # @param network_id [Symbol] The ID of the Network to which the Asset belongs
     # @param asset_id [Symbol] The Asset ID
-    # @param display_name [String] (Optional) The Asset's display name
     # @param address_id [String] (Optional) The Asset's address ID, if one exists
     # @param decimals [Integer] (Optional) The number of decimal places the Asset uses
-    def initialize(network_id:, asset_id:, display_name: nil, address_id: nil, decimals: nil)
+    def initialize(network_id:, asset_id:, decimals:, address_id: nil)
       @network_id = network_id
       @asset_id = asset_id
-      @display_name = display_name
       @address_id = address_id
       @decimals = decimals
     end
 
-    attr_reader :network_id, :asset_id, :display_name, :address_id, :decimals
+    attr_reader :network_id, :asset_id, :address_id, :decimals
+
+    # Converts the amount of the Asset from atomic to whole units.
+    # @param atomic_amount [Integer, Float, BigDecimal] The atomic amount to convert to whole units.
+    # @return [BigDecimal] The amount in whole units
+    def from_atomic_amount(atomic_amount)
+      BigDecimal(atomic_amount) / BigDecimal(10).power(decimals)
+    end
+
+    # Converts the amount of the Asset from whole to atomic units.
+    # @param whole_amount [Integer, Float, BigDecimal] The whole amount to convert to atomic units.
+    # @return [BigDecimal] The amount in atomic units
+    def to_atomic_amount(whole_amount)
+      whole_amount * BigDecimal(10).power(decimals)
+    end
+
+    # Returns the primary denomination for the Asset.
+    # For `gwei` and `wei` the primary denomination is `eth`.
+    # For all other assets, the primary denomination is the same asset ID.
+    # @return [Symbol] The primary denomination for the Asset
+    def primary_denomination
+      self.class.primary_denomination(asset_id)
+    end
 
     # Returns a string representation of the Asset.
     # @return [String] a string representation of the Asset
     def to_s
-      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', display_name: '#{display_name}'" +
-        (address_id.nil? ? '}' : ", address_id: '#{address_id}'}") +
-        (decimals.nil? ? '}' : ", decimals: '#{decimals}'}")
+      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', decimals: '#{decimals}'" \
+        "#{address_id.nil? ? '' : ", address_id: '#{address_id}'"}}"
     end
 
     # Same as to_s.

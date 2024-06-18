@@ -7,8 +7,8 @@ describe Coinbase::Trade do
   let(:address_id) { from_key.address.to_s }
   let(:from_amount) { BigDecimal(100) }
   let(:to_amount) { BigDecimal(100_000) }
-  let(:eth_amount) { from_amount / BigDecimal(Coinbase::WEI_PER_ETHER.to_s) }
-  let(:usdc_amount) { to_amount / Coinbase::ATOMIC_UNITS_PER_USDC }
+  let(:eth_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(from_amount) }
+  let(:usdc_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(to_amount) }
   let(:trade_id) { SecureRandom.uuid }
   let(:unsigned_payload) do \
     '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63' \
@@ -76,7 +76,7 @@ describe Coinbase::Trade do
       it 'raises an error' do
         expect do
           described_class.new(Coinbase::Client::Balance.new)
-        end.to raise_error
+        end.to raise_error(StandardError)
       end
     end
   end
@@ -183,6 +183,9 @@ describe Coinbase::Trade do
     end
 
     let(:updated_to_amount) { BigDecimal(500_000_000) }
+    let(:updated_usdc_amount) do
+      Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(updated_to_amount)
+    end
 
     let(:updated_model) do
       Coinbase::Client::Trade.new(
@@ -212,7 +215,7 @@ describe Coinbase::Trade do
 
     it 'updates properties on the trade' do
       expect(trade.to_amount).to eq(usdc_amount)
-      expect(trade.reload.to_amount).to eq(updated_to_amount / Coinbase::ATOMIC_UNITS_PER_USDC)
+      expect(trade.reload.to_amount).to eq(updated_usdc_amount)
     end
   end
 
