@@ -109,6 +109,13 @@ module Coinbase
     value.to_s.gsub('-', '_').to_sym
   end
 
+  # Converts a network symbol to a string, replacing underscores with hyphens.
+  # @param network_sym [Symbol] the network symbol to convert
+  # @return [String] the converted string
+  def self.normalize_network(network_sym)
+    network_sym.to_s.gsub(/_/, '-')
+  end
+
   # Loads the default user.
   # @return [Coinbase::User] the default user
   def self.load_default_user
