@@ -294,11 +294,11 @@ describe Coinbase::WalletAddress do
           .and_return(broadcasted_transfer_model)
 
         allow(Coinbase::Transfer).to receive(:new).with(broadcasted_transfer_model).and_return(broadcasted_transfer)
-
-        transfer
       end
 
       it 'creates the transfer' do
+        transfer
+
         expect(transfers_api)
           .to have_received(:create_transfer)
           .with(wallet_id, address_id, create_transfer_request)
@@ -309,6 +309,8 @@ describe Coinbase::WalletAddress do
       end
 
       it 'signs the transaction with the key' do
+        transfer
+
         expect(transaction).to have_received(:sign).with(key)
       end
 
@@ -321,6 +323,8 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the address key' do
+          transfer
+
           expect(transaction).to have_received(:sign).with(key)
         end
       end
@@ -335,6 +339,8 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the address key' do
+          transfer
+
           expect(transaction).to have_received(:sign).with(key)
         end
       end
@@ -361,6 +367,7 @@ describe Coinbase::WalletAddress do
             public_key: to_key.public_key.compressed.unpack1('H*')
           )
         end
+        let(:default_address) { Coinbase::WalletAddress.new(default_address_model, nil) }
         let(:destination) do
           Coinbase::Wallet.new(
             Coinbase::Client::Wallet.new(
@@ -368,9 +375,12 @@ describe Coinbase::WalletAddress do
               network_id: normalized_network_id,
               default_address: default_address_model
             ),
-            seed: '',
-            address_models: [default_address_model]
+            seed: ''
           )
+        end
+
+        before do
+          allow(destination).to receive(:default_address).and_return(default_address)
         end
 
         it 'returns the broadcasted transfer' do
@@ -378,11 +388,13 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the address key' do
+          transfer
+
           expect(transaction).to have_received(:sign).with(key)
         end
       end
 
-      context 'when the destination is a Address' do
+      context 'when the destination is a WalletAddress' do
         let(:asset_id) { :wei }
         let(:amount) { 500_000_000_000_000_000 }
         let(:transfer_amount) { amount }
@@ -403,6 +415,27 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the address key' do
+          transfer
+
+          expect(transaction).to have_received(:sign).with(key)
+        end
+      end
+
+      context 'when the destination is an ExternalAddress' do
+        let(:asset_id) { :wei }
+        let(:amount) { 500_000_000_000_000_000 }
+        let(:transfer_amount) { amount }
+        let(:balance_response) { eth_balance_response }
+        let(:destination) { Coinbase::ExternalAddress.new(normalized_network_id, to_address_id) }
+        let(:destination_address) { destination.id }
+
+        it 'returns the broadcasted transfer' do
+          expect(transfer).to eq(broadcasted_transfer)
+        end
+
+        it 'signs the transaction with the address key' do
+          transfer
+
           expect(transaction).to have_received(:sign).with(key)
         end
       end
@@ -431,12 +464,13 @@ describe Coinbase::WalletAddress do
     context 'when the destination Wallet is on a different network' do
       let(:default_address_model) do
         Coinbase::Client::Address.new(
-          network_id: 'base-sepolia',
+          network_id: normalized_network_id,
           address_id: to_address_id,
           wallet_id: wallet_id,
           public_key: to_key.public_key.compressed.unpack1('H*')
         )
       end
+      let(:default_address) { Coinbase::Address.new(default_address_model, nil) }
       let(:destination) do
         Coinbase::Wallet.new(
           Coinbase::Client::Wallet.new(
@@ -444,13 +478,16 @@ describe Coinbase::WalletAddress do
             network_id: 'base-mainnet',
             default_address: default_address_model
           ),
-          seed: '',
-          address_models: [default_address_model]
+          seed: ''
         )
       end
 
       let(:amount) { 500_000_000_000_000_000 }
       let(:asset_id) { :wei }
+
+      before do
+        allow(destination).to receive(:default_address).and_return(default_address)
+      end
 
       it 'raises an ArgumentError' do
         expect do
