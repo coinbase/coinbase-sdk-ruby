@@ -286,6 +286,17 @@ w4 = u.wallet(w1.id)
 w4.load_seed(file_path)
 ```
 
+## External Addresses
+
+Addresses that do not belong CDP wallets can still be interacted with via the Platform SDK.
+
+You can fetch balances, request faucet funds, and eventually construct unsigned transactions that
+can be signed by the owner of the address (e.g. your user's self-custodied wallet).
+
+See [External Addresses docs](./docs/external-addresses.md) for more information.
+
+```ruby
+
 ## Development
 
 ### Ruby Version

@@ -219,6 +219,21 @@ describe Coinbase::Wallet do
       it 'sets the specified network ID' do
         expect(created_wallet.network_id).to eq(:base_mainnet)
       end
+
+      context 'when using a network symbol' do
+        let(:network_id) { :base_mainnet }
+        let(:create_wallet_request) do
+          { wallet: { network_id: 'base-mainnet', use_server_signer: use_server_signer } }
+        end
+
+        it 'creates a new wallet' do
+          expect(created_wallet).to be_a(Coinbase::Wallet)
+        end
+
+        it 'sets the specified network ID' do
+          expect(created_wallet.network_id).to eq(:base_mainnet)
+        end
+      end
     end
 
     context 'when using a server signer' do

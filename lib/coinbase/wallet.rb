@@ -58,7 +58,7 @@ module Coinbase
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
-                network_id: network_id,
+                network_id: Coinbase.normalize_network(network_id),
                 use_server_signer: Coinbase.use_server_signer?
               }
             }
@@ -476,7 +476,7 @@ module Coinbase
     # @param key [Eth::Key] The private key of the Address
     # @return [Address] The new Address
     def cache_address(address_model, key)
-      address = Address.new(address_model, key)
+      address = WalletAddress.new(address_model, key)
       @addresses << address
       address
     end
