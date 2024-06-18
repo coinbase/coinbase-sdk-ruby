@@ -41,6 +41,34 @@ describe Coinbase do
     end
   end
 
+  describe '#to_sym' do
+    context 'when the value is a string' do
+      it 'returns the symbolized version of the string' do
+        expect(Coinbase.to_sym('base-mainnet')).to eq :base_mainnet
+      end
+    end
+
+    context 'when the value is already a symbol' do
+      it 'returns the same symbol' do
+        expect(Coinbase.to_sym(:base_mainnet)).to eq :base_mainnet
+      end
+    end
+  end
+
+  describe '#normalize_network' do
+    context 'when the value is a symbol' do
+      it 'returns the normalized network string' do
+        expect(Coinbase.normalize_network(:base_mainnet)).to eq 'base-mainnet'
+      end
+    end
+
+    context 'when the value is already a string' do
+      it 'returns the symbolized version of the string' do
+        expect(Coinbase.normalize_network('base-mainnet')).to eq 'base-mainnet'
+      end
+    end
+  end
+
   describe '#default_user' do
     let(:users_api) { double Coinbase::Client::UsersApi }
     let(:user_model) { double 'User Model' }
@@ -104,12 +132,6 @@ describe Coinbase do
     describe '#api_url' do
       it 'returns the default api url' do
         expect(Coinbase.configuration.api_url).to eq 'https://api.cdp.coinbase.com'
-      end
-    end
-
-    describe '#base_sepolia_rpc_url' do
-      it 'returns the default base sepolia rpc url' do
-        expect(Coinbase.configuration.base_sepolia_rpc_url).to eq 'https://sepolia.base.org'
       end
     end
   end

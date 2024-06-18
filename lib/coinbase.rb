@@ -55,13 +55,10 @@ module Coinbase
 
   # Configuration object for the Coinbase SDK.
   class Configuration
-    attr_reader :base_sepolia_rpc_url, :base_sepolia_client
     attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :use_server_signer
 
     # Initializes the configuration object.
     def initialize
-      @base_sepolia_rpc_url = 'https://sepolia.base.org'
-      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
       @api_url = 'https://api.cdp.coinbase.com'
       @debug_api = false
       @use_server_signer = false
@@ -82,13 +79,6 @@ module Coinbase
       @api_key_private_key = data['privateKey']
     end
 
-    # Sets the Base Sepolia RPC URL.
-    # @param new_base_sepolia_rpc_url [String] the new Base Sepolia RPC URL
-    def base_sepolia_rpc_url=(new_base_sepolia_rpc_url)
-      @base_sepolia_rpc_url = new_base_sepolia_rpc_url
-      @base_sepolia_client = Jimson::Client.new(@base_sepolia_rpc_url)
-    end
-
     # Returns the API client.
     # @return [Coinbase::Client::ApiClient] the API client
     def api_client
@@ -107,6 +97,13 @@ module Coinbase
   # @return [Symbol] the converted symbol
   def self.to_sym(value)
     value.to_s.gsub('-', '_').to_sym
+  end
+
+  # Converts a network symbol to a string, replacing underscores with hyphens.
+  # @param network_sym [Symbol] the network symbol to convert
+  # @return [String] the converted string
+  def self.normalize_network(network_sym)
+    network_sym.to_s.gsub(/_/, '-')
   end
 
   # Loads the default user.

@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- Remove unused `base_sepolia_rpc_url` configuration option.
+- Support assets dynamically from the backend without SDK changes.
+
 ## [0.0.7] - 2024-06-11
 
 ### Added
