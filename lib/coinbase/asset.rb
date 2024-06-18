@@ -79,14 +79,14 @@ module Coinbase
     attr_reader :network_id, :asset_id, :address_id, :decimals
 
     # Converts the amount of the Asset from atomic to whole units.
-    # @param amount [Integer, Float, BigDecimal] The amount to convert
+    # @param atomic_amount [Integer, Float, BigDecimal] The atomic amount to convert to whole units.
     # @return [BigDecimal] The amount in whole units
     def from_atomic_amount(atomic_amount)
       BigDecimal(atomic_amount) / BigDecimal(10).power(decimals)
     end
 
     # Converts the amount of the Asset from whole to atomic units.
-    # @param amount [Integer, Float, BigDecimal] The amount to convert
+    # @param whole_amount [Integer, Float, BigDecimal] The whole amount to convert to atomic units.
     # @return [BigDecimal] The amount in atomic units
     def to_atomic_amount(whole_amount)
       whole_amount * BigDecimal(10).power(decimals)
