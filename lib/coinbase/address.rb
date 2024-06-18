@@ -79,11 +79,13 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination)
+      asset = Asset.fetch(network_id, asset_id)
+
       destination_address, destination_network = destination_address_and_network(destination)
 
-      validate_can_transfer!(amount, asset_id, destination_network)
+      validate_can_transfer!(amount, asset, destination_network)
 
-      transfer = create_transfer(amount, asset_id, destination_address)
+      transfer = create_transfer(amount, asset, destination_address)
 
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
@@ -98,9 +100,12 @@ module Coinbase
     # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::Trade] The Trade object.
     def trade(amount, from_asset_id, to_asset_id)
-      validate_can_trade!(amount, from_asset_id)
+      from_asset = Asset.fetch(network_id, from_asset_id)
+      to_asset = Asset.fetch(network_id, to_asset_id)
 
-      trade = create_trade(amount, from_asset_id, to_asset_id)
+      validate_can_trade!(amount, from_asset)
+
+      trade = create_trade(amount, from_asset, to_asset)
 
       # NOTE: Trading does not yet support server signers at this point.
 
@@ -192,25 +197,23 @@ module Coinbase
       [destination, network_id]
     end
 
-    def validate_can_transfer!(amount, asset_id, destination_network_id)
+    def validate_can_transfer!(amount, asset, destination_network_id)
       raise 'Cannot transfer from address without private key loaded' unless can_sign? || Coinbase.use_server_signer?
 
       raise ArgumentError, 'Transfer must be on the same Network' unless destination_network_id == network_id
 
-      current_balance = balance(asset_id)
+      current_balance = balance(asset.asset_id)
 
       return unless current_balance < amount
 
       raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
     end
 
-    def create_transfer(amount, asset_id, destination)
+    def create_transfer(amount, asset, destination)
       create_transfer_request = {
-        # TODO: Handle non-atomic amounts for all assets. For an arbitrary asset,
-        # we may not know the precision until we make a call to the backend.
-        amount: Coinbase::Asset.to_atomic_amount(amount, asset_id).to_i.to_s,
+        amount: asset.to_atomic_amount(amount).to_i.to_s,
         network_id: network_id,
-        asset_id: Coinbase::Asset.primary_denomination(asset_id).to_s,
+        asset_id: asset.primary_denomination.to_s,
         destination: destination
       }
 
@@ -229,21 +232,21 @@ module Coinbase
       Coinbase::Transfer.new(transfer_model)
     end
 
-    def validate_can_trade!(amount, from_asset_id)
+    def validate_can_trade!(amount, from_asset)
       raise 'Cannot trade from address without private key loaded' unless can_sign?
 
-      current_balance = balance(from_asset_id)
+      current_balance = balance(from_asset.asset_id)
 
       return unless current_balance < amount
 
       raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
     end
 
-    def create_trade(amount, from_asset_id, to_asset_id)
+    def create_trade(amount, from_asset, to_asset)
       create_trade_request = {
-        amount: Coinbase::Asset.to_atomic_amount(amount, from_asset_id).to_i.to_s,
-        from_asset_id: Coinbase::Asset.primary_denomination(from_asset_id).to_s,
-        to_asset_id: Coinbase::Asset.primary_denomination(to_asset_id).to_s
+        amount: from_asset.to_atomic_amount(amount).to_i.to_s,
+        from_asset_id: from_asset.primary_denomination.to_s,
+        to_asset_id: to_asset.primary_denomination.to_s
       }
 
       trade_model = Coinbase.call_api do

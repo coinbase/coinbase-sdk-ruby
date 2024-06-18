@@ -1,78 +1,6 @@
 # frozen_string_literal: true
 
 describe Coinbase::Asset do
-  describe '.supported?' do
-    %i[eth gwei wei usdc weth].each do |asset_id|
-      context "when the asset_id is #{asset_id}" do
-        it 'returns true' do
-          expect(described_class.supported?(asset_id)).to be true
-        end
-      end
-    end
-
-    context 'when the asset_id is not supported' do
-      it 'returns false' do
-        expect(described_class.supported?(:unsupported)).to be false
-      end
-    end
-  end
-
-  describe '.to_atomic_amount' do
-    let(:amount) { 123.0 }
-
-    context 'when the asset_id is :eth' do
-      it 'returns the amount in atomic units' do
-        expect(described_class.to_atomic_amount(amount, :eth)).to eq(BigDecimal('123000000000000000000'))
-      end
-    end
-
-    context 'when the asset_id is :gwei' do
-      it 'returns the amount in atomic units' do
-        expect(described_class.to_atomic_amount(amount, :gwei)).to eq(BigDecimal('123000000000'))
-      end
-    end
-
-    context 'when the asset_id is :usdc' do
-      it 'returns the amount in atomic units' do
-        expect(described_class.to_atomic_amount(amount, :usdc)).to eq(BigDecimal('123000000'))
-      end
-    end
-
-    context 'when the asset_id is :weth' do
-      it 'returns the amount in atomic units' do
-        expect(described_class.to_atomic_amount(amount, :weth)).to eq(BigDecimal('123000000000000000000'))
-      end
-    end
-
-    context 'when the asset_id is :wei' do
-      it 'returns the amount' do
-        expect(described_class.to_atomic_amount(amount, :wei)).to eq(BigDecimal('123.0'))
-      end
-    end
-
-    context 'when the asset_id is not explicitly handled' do
-      it 'returns the amount' do
-        expect(described_class.to_atomic_amount(amount, :other)).to eq(BigDecimal('123.0'))
-      end
-    end
-  end
-
-  describe '.primary_denomination' do
-    %i[wei gwei].each do |asset_id|
-      context "when the asset_id is #{asset_id}" do
-        it 'returns :eth' do
-          expect(described_class.primary_denomination(asset_id)).to eq(:eth)
-        end
-      end
-    end
-
-    context 'when the asset_id is not wei or gwei' do
-      it 'returns the asset_id' do
-        expect(described_class.primary_denomination(:other)).to eq(:other)
-      end
-    end
-  end
-
   describe '.from_model' do
     let(:asset_model) do
       Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
@@ -159,6 +87,96 @@ describe Coinbase::Asset do
     end
   end
 
+  describe '.primary_denomination' do
+    %i[wei gwei].each do |asset_id|
+      context "when the asset_id is #{asset_id}" do
+        it 'returns :eth' do
+          expect(described_class.primary_denomination(asset_id)).to eq(:eth)
+        end
+      end
+    end
+
+    context 'when the asset_id is not wei or gwei' do
+      it 'returns the asset_id' do
+        expect(described_class.primary_denomination(:other)).to eq(:other)
+      end
+    end
+  end
+
+  describe '.fetch' do
+    let(:assets_api) { instance_double(Coinbase::Client::AssetsApi) }
+    let(:asset_id) { :eth }
+    let(:network_id) { :base_sepolia }
+    let(:asset_model) do
+      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
+    end
+
+    subject(:asset) { described_class.fetch(network_id, asset_id) }
+
+    before do
+      allow(Coinbase::Client::AssetsApi).to receive(:new).and_return(assets_api)
+      allow(assets_api).to receive(:get_asset).and_return(asset_model)
+    end
+
+    it 'is called with the asset_id' do
+      expect(assets_api).to receive(:get_asset).with('base-sepolia', asset_id.to_s)
+
+      asset
+    end
+
+    it 'returns an Asset' do
+      expect(asset).to be_a(described_class)
+    end
+
+    it 'sets the network_id' do
+      expect(asset.network_id).to eq(:base_sepolia)
+    end
+
+    it 'sets the asset_id' do
+      expect(asset.asset_id).to eq(:eth)
+    end
+
+    it 'sets the decimals' do
+      expect(asset.decimals).to eq(18)
+    end
+
+    context 'when the asset_id is gwei' do
+      let(:asset_id) { :gwei }
+
+      it 'fetches the `eth` primary denomination ' do
+        expect(assets_api).to receive(:get_asset).with('base-sepolia', 'eth')
+
+        asset
+      end
+
+      it 'sets the asset_id' do
+        expect(asset.asset_id).to eq(asset_id)
+      end
+
+      it 'sets the decimals' do
+        expect(asset.decimals).to eq(Coinbase::GWEI_DECIMALS)
+      end
+    end
+
+    context 'when the asset_id is wei' do
+      let(:asset_id) { :wei }
+
+      it 'fetches the `eth` primary denomination ' do
+        expect(assets_api).to receive(:get_asset).with('base-sepolia', 'eth')
+
+        asset
+      end
+
+      it 'sets the asset_id' do
+        expect(asset.asset_id).to eq(asset_id)
+      end
+
+      it 'sets the decimals' do
+        expect(asset.decimals).to eq(0)
+      end
+    end
+  end
+
   describe '#initialize' do
     let(:network_id) { :base_sepolia }
     let(:asset_id) { :eth }
@@ -220,8 +238,54 @@ describe Coinbase::Asset do
       )
     end
 
-    it 'returns the whole amount in the primary denomination' do
+    it 'returns the whole amount' do
       expect(asset.from_atomic_amount(amount)).to eq(BigDecimal('12_300_000_000_000'))
+    end
+  end
+
+  describe '#to_atomic_amount' do
+    let(:amount) { 123.0 }
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
+
+    subject(:asset) do
+      described_class.new(
+        network_id: network_id,
+        asset_id: asset_id,
+        decimals: 7
+      )
+    end
+
+    it 'returns the atomic amount' do
+      expect(asset.to_atomic_amount(amount)).to eq(BigDecimal('1_230_000_000'))
+    end
+  end
+
+  describe '#primary_denomination' do
+    subject(:asset) do
+      described_class.new(
+        network_id: :base_sepolia,
+        asset_id: asset_id,
+        decimals: 7
+      )
+    end
+
+    %i[wei gwei eth].each do |asset_id|
+      context "when the asset_id is #{asset_id}" do
+        let(:asset_id) { asset_id }
+
+        it 'returns :eth' do
+          expect(asset.primary_denomination).to eq(:eth)
+        end
+      end
+    end
+
+    context 'when the asset_id is not wei or gwei' do
+      let(:asset_id) { :other }
+
+      it 'returns the asset_id' do
+        expect(asset.primary_denomination).to eq(:other)
+      end
     end
   end
 
