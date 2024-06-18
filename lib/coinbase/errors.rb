@@ -6,92 +6,51 @@ require 'json'
 module Coinbase
   # A wrapper for API errors to provide more context.
   class APIError < StandardError
-    attr_reader :http_code, :api_code, :api_message
+    attr_reader :http_code, :api_code, :api_message, :handled
 
     # Initializes a new APIError object.
     # @param err [Coinbase::Client::APIError] The underlying error object.
-    def initialize(err)
-      super
+    def initialize(err, code: nil, message: nil, unhandled: false)
       @http_code = err.code
+      @api_code = code
+      @api_message = message
+      @handled = code && message && !unhandled
 
-      return unless err.response_body
-
-      body = JSON.parse(err.response_body)
-      @api_code = body['code']
-      @api_message = body['message']
+      super(err)
     end
 
     # Creates a specific APIError based on the API error code.
     # @param err [Coinbase::Client::APIError] The underlying error object.
     # @return [APIError] The specific APIError object.
-    # rubocop:disable Metrics/MethodLength
     def self.from_error(err)
       raise ArgumentError, 'Argument must be a Coinbase::Client::APIError' unless err.is_a? Coinbase::Client::ApiError
       return APIError.new(err) unless err.response_body
 
-      body = JSON.parse(err.response_body)
+      begin
+        body = JSON.parse(err.response_body)
+      rescue JSON::ParserError
+        return APIError.new(err)
+      end
 
-      case body['code']
-      when 'unimplemented'
-        UnimplementedError.new(err)
-      when 'unauthorized'
-        UnauthorizedError.new(err)
-      when 'internal'
-        InternalError.new(err)
-      when 'not_found'
-        NotFoundError.new(err)
-      when 'invalid_wallet_id'
-        InvalidWalletIDError.new(err)
-      when 'invalid_address_id'
-        InvalidAddressIDError.new(err)
-      when 'invalid_wallet'
-        InvalidWalletError.new(err)
-      when 'invalid_address'
-        InvalidAddressError.new(err)
-      when 'invalid_amount'
-        InvalidAmountError.new(err)
-      when 'invalid_transfer_id'
-        InvalidTransferIDError.new(err)
-      when 'invalid_page_token'
-        InvalidPageError.new(err)
-      when 'invalid_page_limit'
-        InvalidLimitError.new(err)
-      when 'already_exists'
-        AlreadyExistsError.new(err)
-      when 'malformed_request'
-        MalformedRequestError.new(err)
-      when 'unsupported_asset'
-        UnsupportedAssetError.new(err)
-      when 'invalid_asset_id'
-        InvalidAssetIDError.new(err)
-      when 'invalid_destination'
-        InvalidDestinationError.new(err)
-      when 'invalid_network_id'
-        InvalidNetworkIDError.new(err)
-      when 'resource_exhausted'
-        ResourceExhaustedError.new(err)
-      when 'faucet_limit_reached'
-        FaucetLimitReachedError.new(err)
-      when 'invalid_signed_payload'
-        InvalidSignedPayloadError.new(err)
-      when 'invalid_transfer_status'
-        InvalidTransferStatusError.new(err)
-      when 'network_feature_unsupported'
-        NetworkFeatureUnsupportedError.new(err)
+      message = body['message']
+      code = body['code']
+
+      if ERROR_CODE_TO_ERROR_CLASS.key?(code)
+        ERROR_CODE_TO_ERROR_CLASS[code].new(err, code: code, message: message)
       else
-        APIError.new(err)
+        APIError.new(err, code: code, message: message, unhandled: true)
       end
     end
-    # rubocop:enable Metrics/MethodLength
 
-    # Returns a String representation of the APIError.
-    # @return [String] a String representation of the APIError
+    # Override to_s to display a friendly error message
     def to_s
-      "APIError{http_code: #{@http_code}, api_code: #{@api_code}, api_message: #{@api_message}}"
+      # For handled errors, display just the API message as that provides sufficient context.
+      return api_message if handled
+
+      # For unhandled errors, display the full error message
+      super
     end
 
-    # Same as to_s.
-    # @return [String] a String representation of the APIError
     def inspect
       to_s
     end
@@ -120,4 +79,30 @@ module Coinbase
   class InvalidSignedPayloadError < APIError; end
   class InvalidTransferStatusError < APIError; end
   class NetworkFeatureUnsupportedError < APIError; end
+
+  ERROR_CODE_TO_ERROR_CLASS = {
+    'unimplemented' => UnimplementedError,
+    'unauthorized' => UnauthorizedError,
+    'internal' => InternalError,
+    'not_found' => NotFoundError,
+    'invalid_wallet_id' => InvalidWalletIDError,
+    'invalid_address_id' => InvalidAddressIDError,
+    'invalid_wallet' => InvalidWalletError,
+    'invalid_address' => InvalidAddressError,
+    'invalid_amount' => InvalidAmountError,
+    'invalid_transfer_id' => InvalidTransferIDError,
+    'invalid_page_token' => InvalidPageError,
+    'invalid_page_limit' => InvalidLimitError,
+    'already_exists' => AlreadyExistsError,
+    'malformed_request' => MalformedRequestError,
+    'unsupported_asset' => UnsupportedAssetError,
+    'invalid_asset_id' => InvalidAssetIDError,
+    'invalid_destination' => InvalidDestinationError,
+    'invalid_network_id' => InvalidNetworkIDError,
+    'resource_exhausted' => ResourceExhaustedError,
+    'faucet_limit_reached' => FaucetLimitReachedError,
+    'invalid_signed_payload' => InvalidSignedPayloadError,
+    'invalid_transfer_status' => InvalidTransferStatusError,
+    'network_feature_unsupported' => NetworkFeatureUnsupportedError
+  }.freeze
 end
