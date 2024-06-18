@@ -49,7 +49,7 @@ module Coinbase
     private
 
     def addresses_api
-      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+      @addresses_api ||= Coinbase::Client::ExternalAddressesApi.new(Coinbase.configuration.api_client)
     end
   end
 end
