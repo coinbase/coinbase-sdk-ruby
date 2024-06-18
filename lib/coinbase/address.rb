@@ -15,5 +15,35 @@ module Coinbase
       @network_id = Coinbase.to_sym(network_id)
       @id = id
     end
+
+    # Returns a String representation of the Address.
+    # @return [String] a String representation of the Address
+    def to_s
+      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}'}"
+    end
+
+    # Same as to_s.
+    # @return [String] a String representation of the Address
+    def inspect
+      to_s
+    end
+
+    # Returns true if the Address can sign transactions.
+    # @return [Boolean] true if the Address can sign transactions
+    def can_sign?
+      false
+    end
+
+    def balances
+      raise StandardError, 'Must be implemented by subclass'
+    end
+
+    def balance(_asset_id)
+      raise StandardError, 'Must be implemented by subclass'
+    end
+
+    def faucet
+      raise StandardError, 'Must be implemented by subclass'
+    end
   end
 end
