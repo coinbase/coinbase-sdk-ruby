@@ -19,7 +19,8 @@ describe Coinbase do
       config.api_url = api_url if api_url
     end
   end
-  describe 'v0.0.7 SDK' do
+
+  describe 'v0.0.8 SDK' do
     it 'behaves as expected' do
       user = fetch_user_test
       new_address = create_new_address_test(user)
