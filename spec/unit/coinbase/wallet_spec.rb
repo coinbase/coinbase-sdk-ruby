@@ -61,6 +61,46 @@ describe Coinbase::Wallet do
     allow(Coinbase).to receive(:configuration).and_return(configuration)
   end
 
+  describe '.list' do
+    let(:api) { wallets_api }
+    let(:fetch_params) { ->(page) { [{ limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::WalletList }
+    let(:item_klass) { Coinbase::Wallet }
+    let(:item_initialize_args) { { seed: '' } }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::Wallet.new(id: id, network_id: 'base-mainnet') }
+    end
+    subject(:enumerator) { described_class.list }
+
+    it_behaves_like 'it is a paginated enumerator', :wallets
+  end
+
+  describe '.fetch' do
+    subject(:fetched_wallet) { described_class.fetch(wallet_id) }
+
+    before do
+      allow(wallets_api).to receive(:get_wallet).with(wallet_id).and_return(model_with_default_address)
+    end
+
+    it 'returns a Wallet' do
+      expect(fetched_wallet).to be_a(Coinbase::Wallet)
+    end
+
+    it 'calls the get wallet endpoint' do
+      expect(wallets_api).to receive(:get_wallet).with(wallet_id)
+
+      fetched_wallet
+    end
+
+    it 'sets the model instance variable' do
+      expect(fetched_wallet.instance_variable_get(:@model)).to eq(model_with_default_address)
+    end
+
+    it 'returns a wallet that cannot sign' do
+      expect(fetched_wallet.can_sign?).to be(false)
+    end
+  end
+
   describe '.import' do
     let(:wallet_id) { SecureRandom.uuid }
     let(:wallet_model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
@@ -299,6 +339,10 @@ describe Coinbase::Wallet do
       it 'sets the master seed' do
         expect(wallet.instance_variable_get(:@master)).to be_a(MoneyTree::Master)
       end
+
+      it 'can sign' do
+        expect(wallet.can_sign?).to be(true)
+      end
     end
 
     context 'when a seed is provided' do
@@ -322,11 +366,37 @@ describe Coinbase::Wallet do
         expect(wallet.instance_variable_get(:@master).seed_hex).to eq(seed)
       end
 
+      it 'can sign' do
+        expect(wallet.can_sign?).to be(true)
+      end
+
       context 'when the seed is invalid' do
         let(:seed) { 'invalid' }
 
         it 'raises an error for an invalid seed' do
           expect { wallet }.to raise_error(ArgumentError, 'Seed must be 32 bytes')
+        end
+      end
+
+      context 'when the seed is empty' do
+        let(:seed) { '' }
+
+        it 'initializes a new Wallet' do
+          expect(wallet).to be_a(Coinbase::Wallet)
+        end
+
+        it 'does not generate a new master seed' do
+          expect(MoneyTree::Master).not_to receive(:new)
+
+          wallet
+        end
+
+        it 'does not set the master seed' do
+          expect(wallet.instance_variable_get(:@master)).to be_nil
+        end
+
+        it 'cannot sign' do
+          expect(wallet.can_sign?).to be(false)
         end
       end
     end

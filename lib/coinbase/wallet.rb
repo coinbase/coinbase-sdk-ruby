@@ -14,6 +14,9 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
+    # The maximum number of wallets to fetch in a single page.
+    PAGE_LIMIT = 100
+
     # A representation of ServerSigner status in a Wallet.
     module ServerSignerStatus
       # The Wallet is awaiting seed creation by the ServerSigner. At this point,
@@ -37,6 +40,27 @@ module Coinbase
         end
 
         new(model, seed: data.seed)
+      end
+
+      # Enumerates the wallets for the requesting user.
+      # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+      # converted to an array, etc...
+      # @return [Enumerable<Coinbase::Wallet>] Enumerator that returns wallets
+      def list
+        Coinbase::Pagination.enumerate(lambda(&method(:fetch_wallets_page))) do |wallet|
+          Coinbase::Wallet.new(wallet, seed: '')
+        end
+      end
+
+      # Fetches a Wallet by its ID, without setting a seed.
+      # @param wallet_id [String] The ID of the Wallet to fetch
+      # @return [Coinbase::Wallet] The fetched Wallet
+      def fetch(wallet_id)
+        model = Coinbase.call_api do
+          wallets_api.get_wallet(wallet_id)
+        end
+
+        new(model, seed: '')
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
@@ -98,6 +122,14 @@ module Coinbase
 
       def addresses_api
         Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
+      end
+
+      def wallets_api
+        Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+      end
+
+      def fetch_wallets_page(page)
+        wallets_api.list_wallets({ limit: PAGE_LIMIT, page: page })
       end
     end
 

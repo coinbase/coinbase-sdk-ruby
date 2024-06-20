@@ -2,7 +2,7 @@
 
 describe Coinbase::User do
   let(:user_id) { SecureRandom.uuid }
-  let(:model) { Coinbase::Client::User.new({ 'id': user_id }) }
+  let(:model) { Coinbase::Client::User.new(id: user_id) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
@@ -57,77 +57,21 @@ describe Coinbase::User do
   end
 
   describe '#wallets' do
-    let(:page_size) { 20 }
-    let(:next_page_token) { SecureRandom.uuid }
-    let(:wallet_model1) { Coinbase::Client::Wallet.new({ 'id': 'wallet1', 'network_id': 'base-sepolia' }) }
-    let(:wallet_model2) { Coinbase::Client::Wallet.new({ 'id': 'wallet2', 'network_id': 'base-sepolia' }) }
-    let(:address_model1) do
-      Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef1',
-                                      'wallet_id': 'wallet1',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
-                                    })
-    end
-    let(:address_model2) do
-      Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef2',
-                                      'wallet_id': 'wallet1',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
-                                    })
-    end
-    let(:address_model3) do
-      Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef3',
-                                      'wallet_id': 'wallet2',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
-                                    })
-    end
-    let(:address_model4) do
-      Coinbase::Client::Address.new({
-                                      'address_id': '0xdeadbeef4',
-                                      'wallet_id': 'wallet2',
-                                      'public_key': '0x1234567890',
-                                      'network_id': 'base-sepolia'
-                                    })
+    let(:wallet_model1) { Coinbase::Client::Wallet.new(id: 'wallet1', network_id: 'base-sepolia') }
+    let(:wallet_model2) { Coinbase::Client::Wallet.new(id: 'wallet2', network_id: 'base-sepolia') }
+    let(:wallet_enumerator) do
+      Enumerator.new do |yielder|
+        yielder << wallet_model1
+        yielder << wallet_model2
+      end
     end
 
     before do
-      allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
-      allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
-      expect(wallets_api)
-        .to receive(:list_wallets)
-        .and_return(
-          Coinbase::Client::WalletList.new(
-            {
-              'data' => [wallet_model1, wallet_model2],
-              'next_page' => 'next_page_token',
-              'total_count' => 2
-            }
-          )
-        )
-      expect(addresses_api)
-        .to receive(:list_addresses)
-        .with('wallet1', { limit: Coinbase::Wallet::MAX_ADDRESSES })
-        .and_return(
-          Coinbase::Client::AddressList.new({ 'data' => [address_model1, address_model2], 'total_count' => 2 })
-        )
-      expect(addresses_api)
-        .to receive(:list_addresses)
-        .with('wallet2', { limit: Coinbase::Wallet::MAX_ADDRESSES })
-        .and_return(
-          Coinbase::Client::AddressList.new({ 'data' => [address_model3, address_model4], 'total_count' => 2 })
-        )
+      allow(Coinbase::Wallet).to receive(:list).and_return(wallet_enumerator)
     end
 
-    it 'returns all wallets' do
-      wallets, next_page_token = user.wallets
-      expect(wallets.size).to eq(2)
-      expect(wallets[0].id).to eq(wallet_model1.id)
-      expect(wallets[1].id).to eq(wallet_model2.id)
-      expect(next_page_token).to eq('next_page_token')
+    it 'returns a wallet enumerator' do
+      expect(user.wallets).to eq(wallet_enumerator)
     end
   end
 
