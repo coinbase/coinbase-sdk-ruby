@@ -4,7 +4,7 @@ describe Coinbase::ExternalAddress do
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
-  let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
+  let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
   let(:eth_asset) do
     Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
   end
@@ -18,7 +18,7 @@ describe Coinbase::ExternalAddress do
   subject(:address) { described_class.new(network_id, address_id) }
 
   before(:each) do
-    allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
+    allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
   end
 
   describe '#initialize' do
@@ -50,17 +50,27 @@ describe Coinbase::ExternalAddress do
       )
     end
 
-    it 'returns a hash with balances' do
-      expect(addresses_api)
+    before do
+      allow(external_addresses_api)
         .to receive(:list_external_address_balances)
         .with(normalized_network_id, address_id)
         .and_return(response)
+    end
 
+    it 'returns a hash with balances' do
       expect(address.balances).to eq(
         eth: BigDecimal('1'),
         usdc: BigDecimal('5000'),
         weth: BigDecimal('3')
       )
+    end
+
+    it 'lists external address balances' do
+      address.balances
+
+      expect(external_addresses_api)
+        .to have_received(:list_external_address_balances)
+        .with(normalized_network_id, address_id)
     end
   end
 
@@ -69,36 +79,64 @@ describe Coinbase::ExternalAddress do
       Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset)
     end
 
-    it 'returns the correct ETH balance' do
-      expect(addresses_api)
+    before do
+      allow(external_addresses_api)
         .to receive(:get_external_address_balance)
-        .with(normalized_network_id, address_id, 'eth')
+        .with(normalized_network_id, address_id, primary_denomination)
         .and_return(response)
-      expect(address.balance(:eth)).to eq BigDecimal('1')
     end
 
-    it 'returns the correct Gwei balance' do
-      expect(addresses_api)
-        .to receive(:get_external_address_balance)
-        .with(normalized_network_id, address_id, 'eth')
-        .and_return(response)
-      expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
+    context 'when the asset_id is :eth' do
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct ETH balance' do
+        expect(address.balance(:eth)).to eq BigDecimal('1')
+      end
     end
 
-    it 'returns the correct Wei balance' do
-      expect(addresses_api)
-        .to receive(:get_external_address_balance)
-        .with(normalized_network_id, address_id, 'eth')
-        .and_return(response)
-      expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+    context 'when the asset_id is :gwei' do
+      let(:asset_id) { :gwei }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct Gwei balance' do
+        expect(address.balance(:gwei)).to eq BigDecimal('1_000_000_000')
+      end
     end
 
-    it 'returns 0 for an unsupported asset' do
-      expect(addresses_api)
-        .to receive(:get_external_address_balance)
-        .with(normalized_network_id, address_id, 'uni')
-        .and_return(nil)
-      expect(address.balance(:uni)).to eq BigDecimal('0')
+    context 'when the asset_id is :wei' do
+      let(:asset_id) { :wei }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct Wei balance' do
+        expect(address.balance(:wei)).to eq BigDecimal('1_000_000_000_000_000_000')
+      end
+    end
+
+    context 'when the asset id is a non-eth denomination' do
+      let(:asset_id) { :other }
+      let(:primary_denomination) { 'other' }
+      let(:decimals) { 7 }
+      let(:other_asset) do
+        Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
+      end
+      let(:response) do
+        Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: other_asset)
+      end
+
+      it 'returns the correct balance' do
+        expect(address.balance(:other)).to eq BigDecimal('100_000_000_000')
+      end
+    end
+
+    context 'when there is no response' do
+      let(:response) { nil }
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns 0' do
+        expect(address.balance(:eth)).to eq BigDecimal('0')
+      end
     end
   end
 
@@ -113,7 +151,7 @@ describe Coinbase::ExternalAddress do
       subject(:faucet_response) { address.faucet }
 
       before do
-        expect(addresses_api)
+        expect(external_addresses_api)
           .to receive(:request_external_faucet_funds)
           .with(normalized_network_id, address_id)
           .and_return(faucet_tx)
@@ -127,7 +165,7 @@ describe Coinbase::ExternalAddress do
 
     context 'when the request is unsuccesful' do
       before do
-        expect(addresses_api)
+        expect(external_addresses_api)
           .to receive(:request_external_faucet_funds)
           .with(normalized_network_id, address_id)
           .and_raise(api_error)
