@@ -4,7 +4,7 @@ describe Coinbase::ExternalAddress do
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
-  let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
+  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:id) { '0x1234' }
   let(:address) { described_class.new(network_id, id) }
