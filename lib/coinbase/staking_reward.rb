@@ -22,7 +22,7 @@ module Coinbase
         loop do
           staking_reward = Coinbase.call_api do
             req = {
-              network_id: network_id,
+              network_id: Coinbase.normalize_network(network_id),
               asset_id: asset_id,
               address_ids: address_ids,
               start_time: start_time.iso8601,
