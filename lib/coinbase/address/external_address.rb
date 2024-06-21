@@ -100,7 +100,7 @@ module Coinbase
         stake_api.get_staking_context(
           {
             asset_id: asset_id,
-            network_id: normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network_id),
             address_id: id,
             options: {
               mode: mode
@@ -194,7 +194,7 @@ module Coinbase
             asset_id: asset.primary_denomination.to_s,
             address_id: id,
             action: action,
-            network_id: normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network_id),
             options: {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               mode: mode
@@ -208,10 +208,6 @@ module Coinbase
 
     def stake_api
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
-    end
-
-    def normalize_network(network_id)
-      network_id.to_s.gsub(/_/, '-')
     end
   end
 end
