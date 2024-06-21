@@ -36,7 +36,7 @@ describe Coinbase::ExternalAddress do
     )
   end
 
-  before(:each) do
+  before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(Coinbase::Asset).to receive(:fetch).and_return(
@@ -107,7 +107,7 @@ describe Coinbase::ExternalAddress do
       )
     end
 
-    before(:each) do
+    before do
       allow(stake_api).to receive(:build_staking_operation).and_return(staking_operation)
       allow(Coinbase::StakingOperation).to receive(:new)
       allow(stake_api).to receive(:get_staking_context).and_return(staking_context)
