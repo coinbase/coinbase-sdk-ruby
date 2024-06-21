@@ -10,15 +10,14 @@ describe Coinbase::StakingReward do
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:format) { :usd }
   let(:has_more) { false }
-  let(:staking_rewards_response) do
-  end
+  let(:staking_reward_model) { instance_double(Coinbase::Client::StakingReward, amount: 100) }
 
   before do
     allow(Coinbase::Asset).to receive(:fetch).and_return(asset)
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:fetch_staking_rewards).and_return(
-      instance_double(Coinbase::Client::FetchStakingRewards200Response, has_more: true),
-      instance_double(Coinbase::Client::FetchStakingRewards200Response, has_more: false)
+      instance_double(Coinbase::Client::FetchStakingRewards200Response, data: [staking_reward_model], has_more: true),
+      instance_double(Coinbase::Client::FetchStakingRewards200Response, data: [], has_more: false)
     )
   end
 
@@ -51,7 +50,6 @@ describe Coinbase::StakingReward do
   end
 
   describe '#amount' do
-    let(:staking_reward_model) { instance_double(Coinbase::Client::StakingReward, amount: 100) }
     let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
     subject(:amount) { staking_reward.amount }
 
