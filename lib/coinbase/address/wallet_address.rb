@@ -36,30 +36,6 @@ module Coinbase
       @key = key
     end
 
-    # Returns the balances of the Address.
-    # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
-    #  in ETH.
-    def balances
-      response = Coinbase.call_api do
-        addresses_api.list_address_balances(wallet_id, id)
-      end
-
-      Coinbase::BalanceMap.from_balances(response.data)
-    end
-
-    # Returns the balance of the provided Asset.
-    # @param asset_id [Symbol] The Asset to retrieve the balance for
-    # @return [BigDecimal] The balance of the Asset
-    def balance(asset_id)
-      response = Coinbase.call_api do
-        addresses_api.get_address_balance(wallet_id, id, Coinbase::Asset.primary_denomination(asset_id).to_s)
-      end
-
-      return BigDecimal('0') if response.nil?
-
-      Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
-    end
-
     # Transfers the given amount of the given Asset to the specified address or wallet.
     # Only same-network Transfers are supported.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
@@ -111,17 +87,6 @@ module Coinbase
       !@key.nil?
     end
 
-    # Requests funds for the address from the faucet and returns the faucet transaction.
-    # This is only supported on testnet networks.
-    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
-    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
-    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
-    def faucet
-      Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(wallet_id, id))
-      end
-    end
-
     # Exports the Address's private key to a hex string.
     # @return [String] The Address's private key as a hex String
     def export
@@ -164,10 +129,6 @@ module Coinbase
 
     def fetch_trades_page(page)
       trades_api.list_trades(wallet_id, id, { limit: PAGE_LIMIT, page: page })
-    end
-
-    def addresses_api
-      @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
     end
 
     def transfers_api

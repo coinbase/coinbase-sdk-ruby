@@ -34,16 +34,51 @@ module Coinbase
       false
     end
 
+    # Returns the balances of the Address.
+    # @return [BalanceMap] The balances of the Address, keyed by asset ID. Ether balances are denominated
+    #  in ETH.
     def balances
-      raise NotImplementedError, 'Must be implemented by subclass'
+      response = Coinbase.call_api do
+        addresses_api.list_external_address_balances(Coinbase.normalize_network(network_id), id)
+      end
+
+      Coinbase::BalanceMap.from_balances(response.data)
     end
 
-    def balance(_asset_id)
-      raise NotImplementedError, 'Must be implemented by subclass'
+    # Returns the balance of the provided Asset.
+    # @param asset_id [Symbol] The Asset to retrieve the balance for
+    # @return [BigDecimal] The balance of the Asset
+    def balance(asset_id)
+      response = Coinbase.call_api do
+        addresses_api.get_external_address_balance(
+          Coinbase.normalize_network(network_id),
+          id,
+          Coinbase::Asset.primary_denomination(asset_id).to_s
+        )
+      end
+
+      return BigDecimal('0') if response.nil?
+
+      Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
+    # Requests funds for the address from the faucet and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
-      raise NotImplementedError, 'Must be implemented by subclass'
+      Coinbase.call_api do
+        Coinbase::FaucetTransaction.new(
+          addresses_api.request_external_faucet_funds(Coinbase.normalize_network(network_id), id)
+        )
+      end
+    end
+
+    private
+
+    def addresses_api
+      @addresses_api ||= Coinbase::Client::ExternalAddressesApi.new(Coinbase.configuration.api_client)
     end
   end
 end
