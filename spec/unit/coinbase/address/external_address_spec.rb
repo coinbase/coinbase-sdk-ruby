@@ -299,7 +299,7 @@ describe Coinbase::ExternalAddress do
       expect(Coinbase::Client::StakeApi).to have_received(:new)
     end
 
-    it 'calls get_staking_context' do
+    it 'calls staking_context' do
       subject
 
       expect(stake_api).to have_received(:get_staking_context).with(
@@ -313,8 +313,8 @@ describe Coinbase::ExternalAddress do
     end
   end
 
-  describe '#get_staking_balances' do
-    subject { address.get_staking_balances(eth_asset.asset_id, mode: mode) }
+  describe '#staking_balances' do
+    subject { address.staking_balances(eth_asset.asset_id, mode: mode) }
 
     it 'returns the staking balances' do
       expect(subject).to eq(
@@ -327,24 +327,24 @@ describe Coinbase::ExternalAddress do
     it_behaves_like 'it called staking context balances'
   end
 
-  describe '#get_stakeable_balance' do
-    subject { address.get_stakeable_balance(eth_asset.asset_id, mode: mode) }
+  describe '#stakeable_balance' do
+    subject { address.stakeable_balance(eth_asset.asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 
     it { is_expected.to eq(stake_balance) }
   end
 
-  describe '#get_unstakeable_balance' do
-    subject { address.get_unstakeable_balance(eth_asset.asset_id, mode: mode) }
+  describe '#unstakeable_balance' do
+    subject { address.unstakeable_balance(eth_asset.asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 
     it { is_expected.to eq(unstake_balance) }
   end
 
-  describe '#get_claimable_balance' do
-    subject { address.get_claimable_balance(eth_asset.asset_id, mode: mode) }
+  describe '#claimable_balance' do
+    subject { address.claimable_balance(eth_asset.asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 

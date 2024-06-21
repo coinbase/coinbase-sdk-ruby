@@ -91,7 +91,7 @@ module Coinbase
     # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
     # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
     # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
-    def get_staking_balances(asset_id, mode: :default, options: {})
+    def staking_balances(asset_id, mode: :default, options: {})
       asset = Coinbase.call_api do
         Coinbase::Asset.fetch(network_id, asset_id)
       end
@@ -130,8 +130,8 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
     # @return [BigDecimal] The stakeable balance
-    def get_stakeable_balance(asset_id, mode: :default, options: {})
-      get_staking_balances(asset_id, mode: mode, options: options)[:stakeable_balance]
+    def stakeable_balance(asset_id, mode: :default, options: {})
+      staking_balances(asset_id, mode: mode, options: options)[:stakeable_balance]
     end
 
     # Retreives the unstakeable balance for the supplied asset.
@@ -139,8 +139,8 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
     # @return [BigDecimal] The unstakeable balance
-    def get_unstakeable_balance(asset_id, mode: :default, options: {})
-      get_staking_balances(asset_id, mode: mode, options: options)[:unstakeable_balance]
+    def unstakeable_balance(asset_id, mode: :default, options: {})
+      staking_balances(asset_id, mode: mode, options: options)[:unstakeable_balance]
     end
 
     # Retreives the claimable balance for the supplied asset.
@@ -148,8 +148,8 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
     # @return [BigDecimal] The claimable balance
-    def get_claimable_balance(asset_id, mode: :default, options: {})
-      get_staking_balances(asset_id, mode: mode, options: options)[:claimable_balance]
+    def claimable_balance(asset_id, mode: :default, options: {})
+      staking_balances(asset_id, mode: mode, options: options)[:claimable_balance]
     end
 
     # Lists the staking rewards for the address.
@@ -169,19 +169,19 @@ module Coinbase
     end
 
     def validate_can_stake!(amount, asset_id, mode, options)
-      stakeable_balance = get_stakeable_balance(asset_id, mode: mode, options: options)
+      stakeable_balance = stakeable_balance(asset_id, mode: mode, options: options)
 
       raise InsufficientFundsError.new(amount, stakeable_balance) unless stakeable_balance >= amount
     end
 
     def validate_can_unstake!(amount, asset_id, mode, options)
-      unstakeable_balance = get_unstakeable_balance(asset_id, mode: mode, options: options)
+      unstakeable_balance = unstakeable_balance(asset_id, mode: mode, options: options)
 
       raise InsufficientFundsError.new(amount, unstakeable_balance) unless unstakeable_balance >= amount
     end
 
     def validate_can_claim_stake!(amount, asset_id, mode, options)
-      claimable_balance = get_claimable_balance(asset_id, mode: mode, options: options)
+      claimable_balance = claimable_balance(asset_id, mode: mode, options: options)
 
       raise InsufficientFundsError.new(amount, claimable_balance) unless claimable_balance >= amount
     end
