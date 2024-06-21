@@ -16,12 +16,13 @@ require 'time'
 module Coinbase::Client
   # An onchain transaction to help realize a staking action.
   class StakingOperation
-    attr_accessor :transaction
+    # The transaction(s) that will execute the staking operation onchain
+    attr_accessor :transactions
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'transaction' => :'transaction'
+        :'transactions' => :'transactions'
       }
     end
 
@@ -33,7 +34,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'transaction' => :'Transaction'
+        :'transactions' => :'Array<Transaction>'
       }
     end
 
@@ -58,10 +59,12 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'transaction')
-        self.transaction = attributes[:'transaction']
+      if attributes.key?(:'transactions')
+        if (value = attributes[:'transactions']).is_a?(Array)
+          self.transactions = value
+        end
       else
-        self.transaction = nil
+        self.transactions = nil
       end
     end
 
@@ -70,8 +73,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @transaction.nil?
-        invalid_properties.push('invalid value for "transaction", transaction cannot be nil.')
+      if @transactions.nil?
+        invalid_properties.push('invalid value for "transactions", transactions cannot be nil.')
       end
 
       invalid_properties
@@ -81,7 +84,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @transaction.nil?
+      return false if @transactions.nil?
       true
     end
 
@@ -90,7 +93,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          transaction == o.transaction
+          transactions == o.transactions
     end
 
     # @see the `==` method
@@ -102,7 +105,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [transaction].hash
+      [transactions].hash
     end
 
     # Builds the object from hash

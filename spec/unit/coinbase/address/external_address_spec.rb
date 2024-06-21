@@ -103,7 +103,7 @@ describe Coinbase::ExternalAddress do
     let(:staking_operation) do
       instance_double(
         'Coinbase::Client::StakingOperation',
-        transaction: transaction
+        transactions: [transaction]
       )
     end
 

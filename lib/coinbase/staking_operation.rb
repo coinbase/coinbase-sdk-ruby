@@ -22,7 +22,7 @@ module Coinbase
     # @param key [Eth::Key] The key to sign the transactions with
     def sign(key)
       transactions.each do |transaction|
-        raw.sign(key) unless transaction.signed?
+        transaction.sign(key) unless transaction.signed?
       end
     end
   end
