@@ -31,19 +31,19 @@ describe Coinbase::Address do
 
   describe '#balances' do
     it 'raises an error' do
-      expect { model.balances }.to raise_error(StandardError, 'Must be implemented by subclass')
+      expect { model.balances }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
     end
   end
 
   describe '#balance' do
     it 'raises an error' do
-      expect { model.balance(:eth) }.to raise_error(StandardError, 'Must be implemented by subclass')
+      expect { model.balance(:eth) }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
     end
   end
 
   describe '#faucet' do
     it 'raises an error' do
-      expect { model.faucet }.to raise_error(StandardError, 'Must be implemented by subclass')
+      expect { model.faucet }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
     end
   end
 end

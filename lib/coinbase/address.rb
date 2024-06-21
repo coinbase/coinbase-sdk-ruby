@@ -35,15 +35,15 @@ module Coinbase
     end
 
     def balances
-      raise StandardError, 'Must be implemented by subclass'
+      raise NotImplementedError, 'Must be implemented by subclass'
     end
 
     def balance(_asset_id)
-      raise StandardError, 'Must be implemented by subclass'
+      raise NotImplementedError, 'Must be implemented by subclass'
     end
 
     def faucet
-      raise StandardError, 'Must be implemented by subclass'
+      raise NotImplementedError, 'Must be implemented by subclass'
     end
   end
 end

@@ -13,7 +13,7 @@ module Coinbase
     def initialize(model)
       @model = model
 
-      @transactions = [model.transaction].map do |transaction_model|
+      @transactions = model.transactions.map do |transaction_model|
         Transaction.new(transaction_model)
       end
     end

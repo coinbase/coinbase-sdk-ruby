@@ -92,10 +92,11 @@ module Coinbase
     # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
     # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
     def get_staking_balances(asset_id, mode: :default, options: {})
-      asset = Coinbase::Asset.fetch(asset_id)
+      asset = Coinbase.call_api do
+        Coinbase::Asset.fetch(network_id, asset_id)
+      end
 
       context_model = Coinbase.call_api do
-        Coinbase::Asset.fetch(network_id, asset_id)
         stake_api.get_staking_context(
           {
             asset_id: asset_id,
@@ -151,6 +152,16 @@ module Coinbase
       get_staking_balances(asset_id, mode: mode, options: options)[:claimable_balance]
     end
 
+    # Lists the staking rewards for the address.
+    # @param asset_id [Symbol] The asset to retrieve staking rewards for
+    # @param start_time [Time] The start time for the rewards
+    # @param end_time [Time] The end time for the rewards
+    # @param format [Symbol] The format to return the rewards in. Defaults to :usd.
+    # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
+    def staking_rewards(asset_id, start_time, end_time, format: :usd)
+      StakingReward.list(network_id, asset_id, [id], start_time, end_time, format: format)
+    end
+
     private
 
     def addresses_api
@@ -176,9 +187,8 @@ module Coinbase
     end
 
     def build_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      asset = Coinbase::Asset.fetch(asset_id)
-
       operation_model = Coinbase.call_api do
+        asset = Coinbase::Asset.fetch(network_id, asset_id)
         stake_api.build_staking_operation(
           {
             asset_id: asset.primary_denomination.to_s,

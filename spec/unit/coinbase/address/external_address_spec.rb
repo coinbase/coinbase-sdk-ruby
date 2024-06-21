@@ -350,4 +350,19 @@ describe Coinbase::ExternalAddress do
 
     it { is_expected.to eq(claim_stake_balance) }
   end
+
+  describe '#staking_rewards' do
+    it 'calls list on StakingReward' do
+      start_time = Time.now
+      expect(Coinbase::StakingReward).to receive(:list).with(
+        network_id,
+        eth_asset.asset_id,
+        [id],
+        start_time,
+        start_time,
+        format: :usd
+      )
+      subject.staking_rewards(eth_asset.asset_id, start_time, start_time)
+    end
+  end
 end
