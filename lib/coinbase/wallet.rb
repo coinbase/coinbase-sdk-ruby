@@ -52,7 +52,10 @@ module Coinbase
         end
       end
 
-      # Fetches a Wallet by its ID, without setting a seed.
+      # Fetches a Wallet by its ID.
+      # The returned wallet can be immediately used for signing operations if backed by a server signer.
+      # If the wallet is not backed by a server signer, the wallet's seed will need to be set before
+      # it can be used for signing operations.
       # @param wallet_id [String] The ID of the Wallet to fetch
       # @return [Coinbase::Wallet] The fetched Wallet
       def fetch(wallet_id)
