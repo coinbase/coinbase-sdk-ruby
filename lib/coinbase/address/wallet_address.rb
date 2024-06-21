@@ -9,6 +9,8 @@ module Coinbase
   # Addresses are used to send and receive Assets, and should be created using
   # Wallet#create_address. Addresses require an Eth::Key to sign transaction data.
   class WalletAddress < Address
+    PAGE_LIMIT = 100
+
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use
     # the Wallet's default_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
@@ -128,27 +130,24 @@ module Coinbase
       @key.private_hex
     end
 
-    # Returns all of the transfers associated with the address.
-    # @return [Array<Coinbase::Transfer>] The transfers associated with the address
+    # Enumerates the transfers associated with the address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::Transfer>] Enumerator that returns the address's transfers
     def transfers
-      transfers = []
-      page = nil
-
-      loop do
-        response = Coinbase.call_api do
-          transfers_api.list_transfers(wallet_id, id, { limit: 100, page: page })
-        end
-
-        break if response.data.empty?
-
-        transfers.concat(response.data.map { |transfer| Coinbase::Transfer.new(transfer) })
-
-        break unless response.has_more
-
-        page = response.next_page
+      Coinbase::Pagination.enumerate(lambda(&method(:fetch_transfers_page))) do |transfer|
+        Coinbase::Transfer.new(transfer)
       end
+    end
 
-      transfers
+    # Enumerates the trades associated with the address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::Trade>] Enumerator that returns the address's trades
+    def trades
+      Coinbase::Pagination.enumerate(lambda(&method(:fetch_trades_page))) do |trade|
+        Coinbase::Trade.new(trade)
+      end
     end
 
     # Returns a String representation of the WalletAddress.
@@ -158,6 +157,14 @@ module Coinbase
     end
 
     private
+
+    def fetch_transfers_page(page)
+      transfers_api.list_transfers(wallet_id, id, { limit: PAGE_LIMIT, page: page })
+    end
+
+    def fetch_trades_page(page)
+      trades_api.list_trades(wallet_id, id, { limit: PAGE_LIMIT, page: page })
+    end
 
     def addresses_api
       @addresses_api ||= Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)
