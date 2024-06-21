@@ -20,7 +20,7 @@ module Coinbase
         page = nil
 
         loop do
-          staking_reward = Coinbase.call_api do
+          resp = Coinbase.call_api do
             req = {
               network_id: Coinbase.normalize_network(network_id),
               asset_id: asset_id,
@@ -33,9 +33,11 @@ module Coinbase
             stake_api.fetch_staking_rewards(req)
           end
 
-          yielder << new(staking_reward, asset, format)
+          resp.data.each do |staking_reward|
+            yielder << new(staking_reward, asset, format)
+          end
 
-          break unless staking_reward.has_more
+          break unless resp.has_more
         end
       end
     end

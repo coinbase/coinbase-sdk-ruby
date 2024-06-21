@@ -35,7 +35,7 @@ describe Coinbase::StakingReward do
       list.to_a
 
       expect(stake_api).to have_received(:fetch_staking_rewards).with(
-        network_id: network_id,
+        network_id: 'network-id',
         asset_id: asset_id,
         address_ids: address_ids,
         start_time: start_time.iso8601,
