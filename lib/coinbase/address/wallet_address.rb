@@ -2,7 +2,6 @@
 
 require 'bigdecimal'
 require 'eth'
-require 'jimson'
 
 module Coinbase
   # A representation of a blockchain Address that belongs to a Coinbase::Wallet.

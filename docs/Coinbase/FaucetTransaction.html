@@ -114,40 +114,6 @@
 
 
 
-  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
-  <ul class="summary">
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#model-instance_method" title="#model (instance method)">#<strong>model</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute model.</p>
-</div></span>
-  
-</li>
-
-    
-  </ul>
-
 
 
 
@@ -350,54 +316,6 @@
   
 </div>
 
-  <div id="instance_attr_details" class="attr_details">
-    <h2>Instance Attribute Details</h2>
-    
-      
-      <span id=""></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="model-instance_method">
-  
-    #<strong>model</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Returns the value of attribute model.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-15
-16
-17</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 15</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_model'>model</span>
-  <span class='ivar'>@model</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
-
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -447,12 +365,12 @@
       <pre class="lines">
 
 
-38
-39
-40</pre>
+35
+36
+37</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -506,12 +424,12 @@
       <pre class="lines">
 
 
-32
-33
-34</pre>
+29
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 32</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::FaucetTransaction{transaction_hash: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, transaction_link: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_link'>transaction_link</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
@@ -565,12 +483,12 @@
       <pre class="lines">
 
 
-19
-20
-21</pre>
+17
+18
+19</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 17</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
   <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
@@ -624,17 +542,15 @@
       <pre class="lines">
 
 
-25
-26
-27
-28</pre>
+23
+24
+25</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/faucet_transaction.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_link'>transaction_link</span>
-  <span class='comment'># TODO: Parameterize this by Network.
-</span>  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://sepolia.basescan.org/tx/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_link'>transaction_link</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>

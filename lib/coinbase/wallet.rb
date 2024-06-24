@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'digest'
-require 'jimson'
 require 'json'
 require 'money-tree'
 require 'securerandom'
