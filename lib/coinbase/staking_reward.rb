@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'date'
+
 module Coinbase
   # A representation of a staking reward earned on a network for a given asset.
   class StakingReward
@@ -7,11 +9,11 @@ module Coinbase
     # @param network_id [Symbol] The network ID
     # @param asset_id [Symbol] The asset ID
     # @param address_ids [Array<String>] The address IDs
-    # @param start_time [Time] The start time
+    # @param start_time [Time] The start time. Defaults to one month ago.
     # @param end_time [Time] The end time. Defaults to the current time.
     # @param format [Symbol] The format to return the rewards in. (:usd, :native) Defaults to :usd.
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
-    def self.list(network_id, asset_id, address_ids, start_time, end_time = Time.now, format: :usd)
+    def self.list(network_id, asset_id, address_ids, start_time: DateTime.now.prev_month(1), end_time: DateTime.now, format: :usd)
       Enumerator.new do |yielder|
         asset = Coinbase.call_api do
           Asset.fetch(network_id, asset_id)

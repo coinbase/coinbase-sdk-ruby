@@ -5,7 +5,7 @@ describe Coinbase::StakingReward do
   let(:asset_id) { :asset_id }
   let(:asset) { instance_double(Coinbase::Asset) }
   let(:start_time) { Time.now }
-  let(:finish_time) { Time.now }
+  let(:end_time) { Time.now }
   let(:address_ids) { %w[address_id] }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:format) { :usd }
@@ -22,7 +22,15 @@ describe Coinbase::StakingReward do
   end
 
   describe '.list' do
-    subject(:list) { described_class.list(network_id, asset_id, address_ids, start_time, finish_time, format: format) }
+    subject(:list) do
+      described_class.list(
+        network_id, asset_id,
+        address_ids,
+        start_time: start_time,
+        end_time: end_time,
+        format: format
+      )
+    end
 
     it 'loads the asset' do
       list.to_a
@@ -38,7 +46,7 @@ describe Coinbase::StakingReward do
         asset_id: asset_id,
         address_ids: address_ids,
         start_time: start_time.iso8601,
-        end_time: finish_time.iso8601,
+        end_time: end_time.iso8601,
         format: format,
         next_page: nil
       ).twice

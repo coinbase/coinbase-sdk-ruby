@@ -358,11 +358,11 @@ describe Coinbase::ExternalAddress do
         network_id,
         eth_asset.asset_id,
         [id],
-        start_time,
-        start_time,
+        start_time: start_time,
+        end_time: start_time,
         format: :usd
       )
-      subject.staking_rewards(eth_asset.asset_id, start_time, start_time)
+      subject.staking_rewards(eth_asset.asset_id, start_time: start_time, end_time: start_time)
     end
   end
 end
