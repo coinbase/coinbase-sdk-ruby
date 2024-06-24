@@ -12,8 +12,6 @@ module Coinbase
       @model = model
     end
 
-    attr_reader :model
-
     # Returns the transaction hash.
     # @return [String] The onchain transaction hash
     def transaction_hash
@@ -23,8 +21,7 @@ module Coinbase
     # Returns the link to the transaction on the blockchain explorer.
     # @return [String] The link to the transaction on the blockchain explorer
     def transaction_link
-      # TODO: Parameterize this by Network.
-      "https://sepolia.basescan.org/tx/#{transaction_hash}"
+      model.transaction_link
     end
 
     # Returns a String representation of the FaucetTransaction.
@@ -38,5 +35,9 @@ module Coinbase
     def inspect
       to_s
     end
+
+    private
+
+    attr_reader :model
   end
 end

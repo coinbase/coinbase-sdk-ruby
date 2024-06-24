@@ -14,14 +14,19 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
+  # The faucet transaction
   class FaucetTransaction
     # The transaction hash of the transaction the faucet created.
     attr_accessor :transaction_hash
 
+    # Link to the transaction on the blockchain explorer.
+    attr_accessor :transaction_link
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'transaction_hash' => :'transaction_hash'
+        :'transaction_hash' => :'transaction_hash',
+        :'transaction_link' => :'transaction_link'
       }
     end
 
@@ -33,7 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'transaction_hash' => :'String'
+        :'transaction_hash' => :'String',
+        :'transaction_link' => :'String'
       }
     end
 
@@ -63,6 +69,12 @@ module Coinbase::Client
       else
         self.transaction_hash = nil
       end
+
+      if attributes.key?(:'transaction_link')
+        self.transaction_link = attributes[:'transaction_link']
+      else
+        self.transaction_link = nil
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -74,6 +86,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "transaction_hash", transaction_hash cannot be nil.')
       end
 
+      if @transaction_link.nil?
+        invalid_properties.push('invalid value for "transaction_link", transaction_link cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -82,6 +98,7 @@ module Coinbase::Client
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @transaction_hash.nil?
+      return false if @transaction_link.nil?
       true
     end
 
@@ -90,7 +107,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          transaction_hash == o.transaction_hash
+          transaction_hash == o.transaction_hash &&
+          transaction_link == o.transaction_link
     end
 
     # @see the `==` method
@@ -102,7 +120,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [transaction_hash].hash
+      [transaction_hash, transaction_link].hash
     end
 
     # Builds the object from hash
