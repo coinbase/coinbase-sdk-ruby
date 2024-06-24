@@ -102,7 +102,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses, each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses, list their balances, and transfer Assets to other Addresses. Wallets should be created through User#create_wallet or User#import_wallet.</p>
+<p>A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses, each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses, list their balances, and transfer Assets to other Addresses.</p>
 
 
   </div>
@@ -147,74 +147,27 @@
         </dt>
         <dd><pre class="code"><span class='int'>20</span></pre></dd>
       
+        <dt id="PAGE_LIMIT-constant" class="">PAGE_LIMIT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The maximum number of wallets to fetch in a single page.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>100</span></pre></dd>
+      
     </dl>
   
 
 
 
-
-  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
-  <ul class="summary">
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#addresses-instance_method" title="#addresses (instance method)">#<strong>addresses</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute addresses.</p>
-</div></span>
-  
-</li>
-
-    
-      <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#model-instance_method" title="#model (instance method)">#<strong>model</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-    
-      <span class="note title readonly">readonly</span>
-    
-    
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute model.</p>
-</div></span>
-  
-</li>
-
-    
-  </ul>
 
 
 
@@ -254,6 +207,30 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#fetch-class_method" title="fetch (class method)">.<strong>fetch</strong>(wallet_id)  &#x21d2; Coinbase::Wallet </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Fetches a Wallet by its ID.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#import-class_method" title="import (class method)">.<strong>import</strong>(data)  &#x21d2; Coinbase::Wallet </a>
     
 
@@ -270,6 +247,30 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Imports a Wallet from previously exported wallet data.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>  &#x21d2; Enumerable&lt;Coinbase::Wallet&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Enumerates the wallets for the requesting user.</p>
 </div></span>
   
 </li>
@@ -303,6 +304,30 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Returns the Address with the given ID.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#addresses-instance_method" title="#addresses (instance method)">#<strong>addresses</strong>  &#x21d2; Array&lt;Coinbase::WalletAddress&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the addresses belonging to the Wallet.</p>
 </div></span>
   
 </li>
@@ -446,7 +471,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Exports the Wallet&#39;s data to a Data object.</p>
+<p>Exports the Wallet’s data to a Data object.</p>
 </div></span>
   
 </li>
@@ -470,7 +495,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Requests funds from the faucet for the Wallet&#39;s default address and returns the faucet transaction.</p>
+<p>Requests funds from the faucet for the Wallet’s default address and returns the faucet transaction.</p>
 </div></span>
   
 </li>
@@ -503,7 +528,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(model, seed: nil, address_models: [])  &#x21d2; Wallet </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(model, seed: nil)  &#x21d2; Wallet </a>
     
 
     
@@ -751,7 +776,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(model, seed: nil, address_models: [])  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Wallet</a></span></tt> 
+    #<strong>initialize</strong>(model, seed: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Wallet</a></span></tt> 
   
 
   
@@ -798,41 +823,7 @@
       
         &mdash;
         <div class='inline'>
-<p>(Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix. If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be instantiated without a seed and its corresponding private keys.</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>address_models</span>
-      
-      
-        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="Client/Address.html" title="Coinbase::Client::Address (class)">Coinbase::Client::Address</a></span>&gt;</tt>)</span>
-      
-      
-        <em class="default">(defaults to: <tt>[]</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>(Optional) The models of the addresses already registered with the Wallet. If not provided, the Wallet will derive the first default address.</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>client</span>
-      
-      
-        <span class='type'>(<tt>Jimson::Client</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>(Optional) The JSON RPC client to use for interacting with the Network</p>
+<p>(Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix. If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be instantiated without a seed and its corresponding private keys. with the Wallet. If not provided, the Wallet will derive the first default address.</p>
 </div>
       
     </li>
@@ -846,35 +837,23 @@
       <pre class="lines">
 
 
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137</pre>
+145
+146
+147
+148
+149
+150
+151</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 125</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 145</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>address_models:</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_validate_seed_and_address_models'>validate_seed_and_address_models</span><span class='lparen'>(</span><span class='id identifier rubyid_seed'>seed</span><span class='comma'>,</span> <span class='id identifier rubyid_address_models'>address_models</span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
-
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='id identifier rubyid_model'>model</span>
-  <span class='ivar'>@addresses</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
 
-  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
-    <span class='ivar'>@master</span> <span class='op'>=</span> <span class='id identifier rubyid_master_node'>master_node</span><span class='lparen'>(</span><span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
-    <span class='ivar'>@private_key_index</span> <span class='op'>=</span> <span class='int'>0</span>
-  <span class='kw'>end</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
 
-  <span class='id identifier rubyid_derive_addresses'>derive_addresses</span><span class='lparen'>(</span><span class='id identifier rubyid_address_models'>address_models</span><span class='rparen'>)</span>
+  <span class='ivar'>@master</span> <span class='op'>=</span> <span class='id identifier rubyid_master_node'>master_node</span><span class='lparen'>(</span><span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -882,97 +861,6 @@
 </div>
   
 </div>
-
-  <div id="instance_attr_details" class="attr_details">
-    <h2>Instance Attribute Details</h2>
-    
-      
-      <span id=""></span>
-      <div class="method_details first">
-  <h3 class="signature first" id="addresses-instance_method">
-  
-    #<strong>addresses</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Returns the value of attribute addresses.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-15
-16
-17</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 15</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_addresses'>addresses</span>
-  <span class='ivar'>@addresses</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id=""></span>
-      <div class="method_details ">
-  <h3 class="signature " id="model-instance_method">
-  
-    #<strong>model</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Returns the value of attribute model.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-15
-16
-17</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 15</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_model'>model</span>
-  <span class='ivar'>@model</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-  </div>
 
 
   <div id="class_method_details" class="method_details_list">
@@ -1013,7 +901,7 @@
       
         &mdash;
         <div class='inline'>
-<p>(Optional) the ID of the blockchain network. Defaults to &#39;base-sepolia&#39;.</p>
+<p>(Optional) the ID of the blockchain network. Defaults to ‘base-sepolia’.</p>
 </div>
       
     </li>
@@ -1081,37 +969,37 @@
       <pre class="lines">
 
 
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
 75
-76</pre>
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span><span class='lparen'>(</span><span class='label'>network_id:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>base-sepolia</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>interval_seconds:</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='label'>timeout_seconds:</span> <span class='int'>20</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_wallets_api'>wallets_api</span><span class='period'>.</span><span class='id identifier rubyid_create_wallet'>create_wallet</span><span class='lparen'>(</span>
       <span class='label'>create_wallet_request:</span> <span class='lbrace'>{</span>
         <span class='label'>wallet:</span> <span class='lbrace'>{</span>
-          <span class='label'>network_id:</span> <span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span>
+          <span class='label'>network_id:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalize_network'><span class='object_link'><a href="../Coinbase.html#normalize_network-class_method" title="Coinbase.normalize_network (method)">normalize_network</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span><span class='comma'>,</span>
           <span class='label'>use_server_signer:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
         <span class='rbrace'>}</span>
       <span class='rbrace'>}</span>
@@ -1126,6 +1014,93 @@
 
   <span class='id identifier rubyid_wallet'>wallet</span><span class='period'>.</span><span class='id identifier rubyid_create_address'>create_address</span>
   <span class='id identifier rubyid_wallet'>wallet</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="fetch-class_method">
+  
+    .<strong>fetch</strong>(wallet_id)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Coinbase::Wallet</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Fetches a Wallet by its ID. The returned wallet can be immediately used for signing operations if backed by a server signer. If the wallet is not backed by a server signer, the wallet’s seed will need to be set before it can be used for signing operations.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>wallet_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ID of the Wallet to fetch</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Coinbase::Wallet</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The fetched Wallet</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+60
+61
+62
+63
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 60</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_wallets_api'>wallets_api</span><span class='period'>.</span><span class='id identifier rubyid_get_wallet'>get_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1209,6 +1184,7 @@
       <pre class="lines">
 
 
+34
 35
 36
 37
@@ -1216,15 +1192,10 @@
 39
 40
 41
-42
-43
-44
-45
-46
-47</pre>
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_import'>import</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>data must be a Coinbase::Wallet::Data object</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Wallet/Data.html" title="Coinbase::Wallet::Data (class)">Data</a></span></span><span class='rparen'>)</span>
@@ -1233,11 +1204,70 @@
     <span class='id identifier rubyid_wallets_api'>wallets_api</span><span class='period'>.</span><span class='id identifier rubyid_get_wallet'>get_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='id identifier rubyid_address_list'>address_list</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_addresses_api'>addresses_api</span><span class='period'>.</span><span class='id identifier rubyid_list_addresses'>list_addresses</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='const'><span class='object_link'><a href="#MAX_ADDRESSES-constant" title="Coinbase::Wallet::MAX_ADDRESSES (constant)">MAX_ADDRESSES</a></span></span> <span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='kw'>end</span>
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list-class_method">
+  
+    .<strong>list</strong>  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Wallet (class)">Coinbase::Wallet</a></span>&gt;</tt> 
+  
 
-  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_seed'>seed</span><span class='comma'>,</span> <span class='label'>address_models:</span> <span class='id identifier rubyid_address_list'>address_list</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Enumerates the wallets for the requesting user. The result is an enumerator that lazily fetches from the server, and can be iterated over, converted to an array, etc…</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Wallet (class)">Coinbase::Wallet</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enumerator that returns wallets</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+48
+49
+50
+51
+52</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 48</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span>
+  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_lambda'>lambda</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:fetch_wallets_page</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_wallet'>wallet</span><span class='op'>|</span>
+    <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Coinbase::Wallet (class)">Wallet</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="Coinbase::Wallet#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_wallet'>wallet</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1314,15 +1344,92 @@
       <pre class="lines">
 
 
-210
-211
-212</pre>
+249
+250
+251</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 249</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_address'>address</span><span class='lparen'>(</span><span class='id identifier rubyid_address_id'>address_id</span><span class='rparen'>)</span>
-  <span class='ivar'>@addresses</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_address'>address</span><span class='op'>|</span> <span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_address_id'>address_id</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_addresses'>addresses</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_address'>address</span><span class='op'>|</span> <span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_address_id'>address_id</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="addresses-instance_method">
+  
+    #<strong>addresses</strong>  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="WalletAddress.html" title="Coinbase::WalletAddress (class)">Coinbase::WalletAddress</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the addresses belonging to the Wallet.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="WalletAddress.html" title="Coinbase::WalletAddress (class)">Coinbase::WalletAddress</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The addresses belonging to the Wallet</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 155</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_addresses'>addresses</span>
+  <span class='ivar'>@addresses</span> <span class='op'>||=</span> <span class='kw'>begin</span>
+    <span class='id identifier rubyid_address_list'>address_list</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+      <span class='id identifier rubyid_addresses_api'>addresses_api</span><span class='period'>.</span><span class='id identifier rubyid_list_addresses'>list_addresses</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='lbrace'>{</span> <span class='label'>limit:</span> <span class='const'><span class='object_link'><a href="#MAX_ADDRESSES-constant" title="Coinbase::Wallet::MAX_ADDRESSES (constant)">MAX_ADDRESSES</a></span></span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Build the WalletAddress objects, injecting the key if available.
+</span>    <span class='id identifier rubyid_address_list'>address_list</span><span class='period'>.</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_address_model'>address_model</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
+      <span class='id identifier rubyid_build_wallet_address'>build_wallet_address</span><span class='lparen'>(</span><span class='id identifier rubyid_address_model'>address_model</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1393,18 +1500,18 @@
       <pre class="lines">
 
 
-227
-228
-229
-230
-231
-232
-233
-234
-235</pre>
+266
+267
+268
+269
+270
+271
+272
+273
+274</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 227</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 266</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_balance'>balance</span><span class='lparen'>(</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -1464,16 +1571,16 @@
       <pre class="lines">
 
 
-216
-217
-218
-219
-220
-221
-222</pre>
+255
+256
+257
+258
+259
+260
+261</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 216</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 255</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_balances'>balances</span>
   <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -1531,12 +1638,12 @@
       <pre class="lines">
 
 
-283
-284
-285</pre>
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 283</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 322</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_can_sign?'>can_sign?</span>
   <span class='op'>!</span><span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1590,38 +1697,47 @@
       <pre class="lines">
 
 
-177
-178
-179
-180
-181
-182
-183
-184
-185
-186
-187
-188
-189
-190
-191
-192
-193
-194
-195
-196
-197
-198
-199</pre>
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 177</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 210</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create_address'>create_address</span>
   <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>create_address_request:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='rbrace'>}</span>
 
   <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
-    <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_derive_key'>derive_key</span>
+    <span class='comment'># The index for the next address is the number of addresses already registered.
+</span>    <span class='id identifier rubyid_private_key_index'>private_key_index</span> <span class='op'>=</span> <span class='id identifier rubyid_addresses'>addresses</span><span class='period'>.</span><span class='id identifier rubyid_count'>count</span>
+
+    <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_derive_key'>derive_key</span><span class='lparen'>(</span><span class='id identifier rubyid_private_key_index'>private_key_index</span><span class='rparen'>)</span>
 
     <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span>
       <span class='label'>create_address_request:</span> <span class='lbrace'>{</span>
@@ -1636,9 +1752,12 @@
   <span class='kw'>end</span>
 
   <span class='comment'># Auto-reload wallet to set default address on first address creation.
-</span>  <span class='id identifier rubyid_reload'>reload</span> <span class='kw'>if</span> <span class='id identifier rubyid_addresses'>addresses</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+</span>  <span class='id identifier rubyid_reload'>reload</span> <span class='kw'>if</span> <span class='id identifier rubyid_default_address'>default_address</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
-  <span class='id identifier rubyid_cache_address'>cache_address</span><span class='lparen'>(</span><span class='id identifier rubyid_address_model'>address_model</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='comment'># Cache the address in our memoized list
+</span>  <span class='id identifier rubyid_address'>address</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="WalletAddress.html" title="Coinbase::WalletAddress (class)">WalletAddress</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="WalletAddress.html#initialize-instance_method" title="Coinbase::WalletAddress#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_address_model'>address_model</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='ivar'>@addresses</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_address'>address</span>
+  <span class='id identifier rubyid_address'>address</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1689,12 +1808,12 @@
       <pre class="lines">
 
 
-203
-204
-205</pre>
+242
+243
+244</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 203</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 242</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_address'>default_address</span>
   <span class='id identifier rubyid_address'>address</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span><span class='op'>&amp;.</span><span class='id identifier rubyid_address_id'>address_id</span><span class='rparen'>)</span>
@@ -1716,7 +1835,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Exports the Wallet&#39;s data to a Data object.</p>
+<p>Exports the Wallet’s data to a Data object.</p>
 
 
   </div>
@@ -1748,17 +1867,17 @@
       <pre class="lines">
 
 
-261
-262
-263
-264
-265
-266
-267
-268</pre>
+300
+301
+302
+303
+304
+305
+306
+307</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 261</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 300</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_export'>export</span>
   <span class='comment'># TODO: Improve this check by relying on the backend data to decide whether a wallet is server-signer backed.
@@ -1785,7 +1904,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Requests funds from the faucet for the Wallet&#39;s default address and returns the faucet transaction. This is only supported on testnet networks.</p>
+<p>Requests funds from the faucet for the Wallet’s default address and returns the faucet transaction. This is only supported on testnet networks.</p>
 
 
   </div>
@@ -1849,14 +1968,14 @@
       <pre class="lines">
 
 
-275
-276
-277
-278
-279</pre>
+314
+315
+316
+317
+318</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 275</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 314</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_faucet'>faucet</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -1912,12 +2031,12 @@
       <pre class="lines">
 
 
-141
-142
-143</pre>
+170
+171
+172</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 170</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
@@ -1971,12 +2090,12 @@
       <pre class="lines">
 
 
-377
-378
-379</pre>
+416
+417
+418</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 377</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 416</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -2063,44 +2182,44 @@
       <pre class="lines">
 
 
-332
-333
-334
-335
-336
-337
-338
-339
-340
-341
-342
-343
-344
-345
-346
-347
-348
-349
-350
-351
-352
-353
-354
-355
-356
-357
-358
-359
-360
-361
-362
-363
-364
-365
-366</pre>
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 332</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 371</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_load_seed'>load_seed</span><span class='lparen'>(</span><span class='id identifier rubyid_file_path'>file_path</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Wallet already has seed loaded</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -2186,12 +2305,12 @@
       <pre class="lines">
 
 
-147
-148
-149</pre>
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 147</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 176</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
@@ -2285,42 +2404,42 @@
       <pre class="lines">
 
 
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
-323
-324
-325
-326
-327</pre>
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 295</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 334</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_save_seed!'>save_seed!</span><span class='lparen'>(</span><span class='id identifier rubyid_file_path'>file_path</span><span class='comma'>,</span> <span class='label'>encrypt:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Wallet does not have seed loaded</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -2419,38 +2538,46 @@
       <pre class="lines">
 
 
-159
-160
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173</pre>
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 188</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_seed='>seed=</span><span class='lparen'>(</span><span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Seed must be 32 bytes</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_seed'>seed</span><span class='period'>.</span><span class='id identifier rubyid_length'>length</span> <span class='op'>!=</span> <span class='int'>64</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Seed is already set</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot set seed for Wallet with non-zero private key index</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@private_key_index</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Seed must not be empty</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_seed'>seed</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_seed'>seed</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>StandardError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Seed is already set</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='ivar'>@master</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
-  <span class='ivar'>@master</span> <span class='op'>=</span> <span class='const'>MoneyTree</span><span class='op'>::</span><span class='const'>Master</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>seed_hex:</span> <span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
+  <span class='ivar'>@master</span> <span class='op'>=</span> <span class='id identifier rubyid_master_node'>master_node</span><span class='lparen'>(</span><span class='id identifier rubyid_seed'>seed</span><span class='rparen'>)</span>
 
-  <span class='ivar'>@addresses</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_derive_key'>derive_key</span>
-    <span class='id identifier rubyid_a'>a</span> <span class='op'>=</span> <span class='id identifier rubyid_address'>address</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Seed does not match wallet; cannot find address </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='comment'># If the addresses are not loaded the keys will be set on them whenever they are loaded.
+</span>  <span class='kw'>return</span> <span class='kw'>if</span> <span class='ivar'>@addresses</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
-    <span class='id identifier rubyid_a'>a</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_key'>key</span>
+  <span class='comment'># If addresses are already loaded, set the keys on each address.
+</span>  <span class='id identifier rubyid_addresses'>addresses</span><span class='period'>.</span><span class='id identifier rubyid_each_with_index'>each_with_index</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_address'>address</span><span class='comma'>,</span> <span class='id identifier rubyid_index'>index</span><span class='op'>|</span>
+    <span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_derive_key'>derive_key</span><span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span><span class='rparen'>)</span>
+
+    <span class='comment'># If we derive a key the derived address must match the address from the API.
+</span>    <span class='id identifier rubyid_raise'>raise</span> <span class='const'>StandardError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Seed does not match wallet</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+
+    <span class='id identifier rubyid_address'>address</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span> <span class='op'>=</span> <span class='id identifier rubyid_key'>key</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2502,12 +2629,12 @@
       <pre class="lines">
 
 
-153
-154
-155</pre>
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 153</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_server_signer_status'>server_signer_status</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_server_signer_status'>server_signer_status</span><span class='rparen'>)</span>
@@ -2561,13 +2688,13 @@
       <pre class="lines">
 
 
-370
-371
-372
-373</pre>
+409
+410
+411
+412</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 370</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 409</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Wallet{wallet_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network_id'>network_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, </span><span class='tstring_end'>&quot;</span></span> \
@@ -2674,12 +2801,12 @@
       <pre class="lines">
 
 
-255
-256
-257</pre>
+294
+295
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 294</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_trade'>trade</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_from_asset_id'>from_asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_to_asset_id'>to_asset_id</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_default_address'>default_address</span><span class='period'>.</span><span class='id identifier rubyid_trade'>trade</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_from_asset_id'>from_asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_to_asset_id'>to_asset_id</span><span class='rparen'>)</span>
@@ -2753,7 +2880,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The destination of the transfer. If a Wallet, sends to the Wallet&#39;s default address. If a String, interprets it as the address ID.</p>
+<p>The destination of the transfer. If a Wallet, sends to the Wallet’s default address. If a String, interprets it as the address ID.</p>
 </div>
       
     </li>
@@ -2785,12 +2912,12 @@
       <pre class="lines">
 
 
-244
-245
-246</pre>
+283
+284
+285</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 244</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 283</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_destination'>destination</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_default_address'>default_address</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_destination'>destination</span><span class='rparen'>)</span>
