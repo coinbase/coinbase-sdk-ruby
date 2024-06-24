@@ -110,6 +110,12 @@ module Coinbase
       raw.hex
     end
 
+    # Returns whether the Transaction has been signed.
+    # @return [Boolean] Whether the Transaction has been signed
+    def signed?
+      Eth::Tx.signed?(raw)
+    end
+
     # Returns a String representation of the Transaction.
     # @return [String] a String representation of the Transaction
     def to_s
