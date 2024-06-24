@@ -13,7 +13,8 @@ module Coinbase
     # @param end_time [Time] The end time. Defaults to the current time.
     # @param format [Symbol] The format to return the rewards in. (:usd, :native) Defaults to :usd.
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
-    def self.list(network_id, asset_id, address_ids, start_time: DateTime.now.prev_month(1), end_time: DateTime.now, format: :usd)
+    def self.list(network_id, asset_id, address_ids, start_time: DateTime.now.prev_month(1), end_time: DateTime.now,
+                  format: :usd)
       Enumerator.new do |yielder|
         asset = Coinbase.call_api do
           Asset.fetch(network_id, asset_id)
