@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support external addresses for balance fetching and requesting faucet funds.
 - Add enumerator pattern for address.transfers and address.trades.
+- Support for building staking operations and transactions
+- Support for retrieving staking rewards information
 
 ## [0.0.8] - 2024-06-18
 
