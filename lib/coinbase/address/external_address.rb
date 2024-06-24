@@ -155,10 +155,10 @@ module Coinbase
     # Lists the staking rewards for the address.
     # @param asset_id [Symbol] The asset to retrieve staking rewards for
     # @param start_time [Time] The start time for the rewards
-    # @param end_time [Time] The end time for the rewards
+    # @param end_time [Time] The end time for the rewards. Defaults to the current time.
     # @param format [Symbol] The format to return the rewards in. Defaults to :usd.
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
-    def staking_rewards(asset_id, start_time, end_time, format: :usd)
+    def staking_rewards(asset_id, start_time, end_time = time.now, format: :usd)
       StakingReward.list(network_id, asset_id, [id], start_time, end_time, format: format)
     end
 

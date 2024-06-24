@@ -8,10 +8,10 @@ module Coinbase
     # @param asset_id [Symbol] The asset ID
     # @param address_ids [Array<String>] The address IDs
     # @param start_time [Time] The start time
-    # @param end_time [Time] The end time
+    # @param end_time [Time] The end time. Defaults to the current time.
     # @param format [Symbol] The format to return the rewards in. (:usd, :native) Defaults to :usd.
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
-    def self.list(network_id, asset_id, address_ids, start_time, end_time, format: :usd)
+    def self.list(network_id, asset_id, address_ids, start_time, end_time = Time.now, format: :usd)
       Enumerator.new do |yielder|
         asset = Coinbase.call_api do
           Asset.fetch(network_id, asset_id)
