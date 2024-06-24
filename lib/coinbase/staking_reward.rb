@@ -15,33 +15,13 @@ module Coinbase
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
     def self.list(network_id, asset_id, address_ids, start_time: DateTime.now.prev_month(1), end_time: DateTime.now,
                   format: :usd)
-      Enumerator.new do |yielder|
-        asset = Coinbase.call_api do
-          Asset.fetch(network_id, asset_id)
-        end
-
-        page = nil
-
-        loop do
-          resp = Coinbase.call_api do
-            req = {
-              network_id: Coinbase.normalize_network(network_id),
-              asset_id: asset_id,
-              address_ids: address_ids,
-              start_time: start_time.iso8601,
-              end_time: end_time.iso8601,
-              format: format,
-              next_page: page
-            }
-            stake_api.fetch_staking_rewards(req)
-          end
-
-          resp.data.each do |staking_reward|
-            yielder << new(staking_reward, asset, format)
-          end
-
-          break unless resp.has_more
-        end
+      asset = Coinbase.call_api do
+        Asset.fetch(network_id, asset_id)
+      end
+      Coinbase::Pagination.enumerate(
+        ->(page) { list_page(network_id, asset_id, address_ids, start_time, end_time, page, format) }
+      ) do |staking_reward|
+        new(staking_reward, asset, format)
       end
     end
 
@@ -81,6 +61,19 @@ module Coinbase
 
     def self.stake_api
       Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    def self.list_page(network_id, asset_id, address_ids, start_time, end_time, page, format)
+      req = {
+        network_id: Coinbase.normalize_network(network_id),
+        asset_id: asset_id,
+        address_ids: address_ids,
+        start_time: start_time.iso8601,
+        end_time: end_time.iso8601,
+        format: format,
+        next_page: page
+      }
+      stake_api.fetch_staking_rewards(req)
     end
   end
 end

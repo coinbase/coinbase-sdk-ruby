@@ -16,7 +16,8 @@ describe Coinbase::StakingReward do
     allow(Coinbase::Asset).to receive(:fetch).and_return(asset)
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:fetch_staking_rewards).and_return(
-      instance_double(Coinbase::Client::FetchStakingRewards200Response, data: [staking_reward_model], has_more: true),
+      instance_double(Coinbase::Client::FetchStakingRewards200Response, data: [staking_reward_model], has_more: true,
+                                                                        next_page: 'next_page'),
       instance_double(Coinbase::Client::FetchStakingRewards200Response, data: [], has_more: false)
     )
   end
@@ -48,8 +49,17 @@ describe Coinbase::StakingReward do
         start_time: start_time.iso8601,
         end_time: end_time.iso8601,
         format: format,
+        next_page: 'next_page'
+      )
+      expect(stake_api).to have_received(:fetch_staking_rewards).with(
+        network_id: 'network-id',
+        asset_id: asset_id,
+        address_ids: address_ids,
+        start_time: start_time.iso8601,
+        end_time: end_time.iso8601,
+        format: format,
         next_page: nil
-      ).twice
+      )
     end
 
     it 'returns an enumerator' do
