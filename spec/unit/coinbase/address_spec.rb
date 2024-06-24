@@ -2,48 +2,43 @@
 
 describe Coinbase::Address do
   let(:network_id) { :ethereum_mainnet }
-  let(:id) { '0x1234' }
-  let(:model) { described_class.new(network_id, id) }
+  let(:normalized_network_id) { 'ethereum-mainnet' }
+  let(:address_id) { '0x1234' }
+
+  subject(:address) { described_class.new(network_id, address_id) }
 
   describe '#id' do
-    subject { model.id }
+    subject { address.id }
 
-    it { is_expected.to eq(id) }
+    it { is_expected.to eq(address_id) }
   end
 
   describe '#network_id' do
-    subject { model.network_id }
+    subject { address.network_id }
 
     it { is_expected.to eq(network_id) }
   end
 
+  describe '#to_s' do
+    subject { address.to_s }
+
+    it 'includes the network ID and address ID' do
+      expect(subject).to include(network_id.to_s, address_id)
+    end
+  end
+
   describe '#inspect' do
     it 'matches to_s' do
-      expect(model.inspect).to eq(model.to_s)
+      expect(address.inspect).to eq(address.to_s)
     end
   end
 
   describe '#can_sign?' do
-    subject { model.can_sign? }
+    subject { address.can_sign? }
 
     it { is_expected.to be(false) }
   end
 
-  describe '#balances' do
-    it 'raises an error' do
-      expect { model.balances }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
-    end
-  end
-
-  describe '#balance' do
-    it 'raises an error' do
-      expect { model.balance(:eth) }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
-    end
-  end
-
-  describe '#faucet' do
-    it 'raises an error' do
-      expect { model.faucet }.to raise_error(NotImplementedError, 'Must be implemented by subclass')
-    end
-  end
+  it_behaves_like 'an address that supports balance queries'
+  it_behaves_like 'an address that supports requesting faucet funds'
 end
