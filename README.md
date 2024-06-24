@@ -325,8 +325,6 @@ can be signed by the owner of the address (e.g. your user's self-custodied walle
 
 See [External Addresses docs](./docs/external-addresses.md) for more information.
 
-```ruby
-
 ## Development
 
 ### Ruby Version

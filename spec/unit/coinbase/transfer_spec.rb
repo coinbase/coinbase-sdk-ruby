@@ -56,7 +56,6 @@ describe Coinbase::Transfer do
     )
   end
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
-  let(:client) { double('Jimson::Client') }
 
   subject(:transfer) { described_class.new(model) }
 
