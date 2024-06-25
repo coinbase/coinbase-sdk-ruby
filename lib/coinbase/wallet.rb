@@ -143,6 +143,8 @@ module Coinbase
     #   instantiated without a seed and its corresponding private keys.
     #   with the Wallet. If not provided, the Wallet will derive the first default address.
     def initialize(model, seed: nil)
+      raise ArgumentError, 'model must be a Wallet' unless model.is_a?(Coinbase::Client::Wallet)
+
       @model = model
 
       return if Coinbase.use_server_signer?
