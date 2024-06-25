@@ -45,6 +45,8 @@ module Coinbase
         uris: [uri]
       }
 
+      raise Coinbase::InvalidConfiguration, 'API key not configured' unless Coinbase.configured?
+
       private_key = OpenSSL::PKey.read(Coinbase.configuration.api_key_private_key)
       JWT.encode(claims, private_key, 'ES256', header)
     end

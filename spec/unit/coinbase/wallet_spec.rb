@@ -321,7 +321,15 @@ describe Coinbase::Wallet do
       expect(wallet.instance_variable_get(:@model)).to eq(model)
     end
 
-    describe 'when no seed is provided' do
+    context 'when the model is not a wallet' do
+      it 'raises an error' do
+        expect do
+          described_class.new(nil)
+        end.to raise_error(ArgumentError, 'model must be a Wallet')
+      end
+    end
+
+    context 'when no seed is provided' do
       before do
         allow(MoneyTree::Master).to receive(:new).and_call_original
       end
