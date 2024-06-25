@@ -29,11 +29,18 @@ describe Coinbase::Authenticator do
 
   describe '#build_jwt' do
     let(:uri) { 'https://cdp.api.coinbase.com/v1/users/me' }
+    subject(:jwt) { authenticator.build_jwt(uri) }
 
     it 'builds a JWT for the given endpoint URI' do
-      jwt = authenticator.build_jwt(uri)
-
       expect(jwt).to be_a(String)
+    end
+
+    context 'when an API key is not configured' do
+      let(:api_key_private_key) { nil }
+
+      it 'raises an exception' do
+        expect { jwt }.to raise_error(Coinbase::InvalidConfiguration, /API key not configured/)
+      end
     end
   end
 end

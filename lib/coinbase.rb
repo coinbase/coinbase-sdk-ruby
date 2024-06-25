@@ -134,4 +134,10 @@ module Coinbase
   def self.use_server_signer?
     Coinbase.configuration.use_server_signer
   end
+
+  # Returns whether the SDK is configured.
+  # @return [bool] whether the SDK is configured
+  def self.configured?
+    !Coinbase.configuration.api_key_name.nil? && !Coinbase.configuration.api_key_private_key.nil?
+  end
 end
