@@ -51,6 +51,7 @@ Coinbase::Client.autoload :StakingContext, 'coinbase/client/models/staking_conte
 Coinbase::Client.autoload :StakingContextContext, 'coinbase/client/models/staking_context_context'
 Coinbase::Client.autoload :StakingOperation, 'coinbase/client/models/staking_operation'
 Coinbase::Client.autoload :StakingReward, 'coinbase/client/models/staking_reward'
+Coinbase::Client.autoload :StakingRewardFormat, 'coinbase/client/models/staking_reward_format'
 Coinbase::Client.autoload :Trade, 'coinbase/client/models/trade'
 Coinbase::Client.autoload :TradeList, 'coinbase/client/models/trade_list'
 Coinbase::Client.autoload :Transaction, 'coinbase/client/models/transaction'

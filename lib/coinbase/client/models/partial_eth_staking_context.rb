@@ -16,13 +16,10 @@ require 'time'
 module Coinbase::Client
   # The partial eth staking context
   class PartialEthStakingContext
-    # The balance that can be staked. This is typically the wallet balance in atomic units.
     attr_accessor :stakeable_balance
 
-    # The total staked balance of the wallet that can be unstaked in atomic units.
     attr_accessor :unstakeable_balance
 
-    # The total unstaked balance that can be claimed in atomic units.
     attr_accessor :claimable_balance
 
     # Attribute mapping from ruby-style variable name to JSON key.
@@ -42,9 +39,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'stakeable_balance' => :'String',
-        :'unstakeable_balance' => :'String',
-        :'claimable_balance' => :'String'
+        :'stakeable_balance' => :'Balance',
+        :'unstakeable_balance' => :'Balance',
+        :'claimable_balance' => :'Balance'
       }
     end
 

@@ -28,6 +28,8 @@ module Coinbase::Client
     # The state of the reward
     attr_accessor :state
 
+    attr_accessor :format
+
     class EnumAttributeValidator
       attr_reader :datatype
       attr_reader :allowable_values
@@ -56,7 +58,8 @@ module Coinbase::Client
         :'address_id' => :'address_id',
         :'date' => :'date',
         :'amount' => :'amount',
-        :'state' => :'state'
+        :'state' => :'state',
+        :'format' => :'format'
       }
     end
 
@@ -71,7 +74,8 @@ module Coinbase::Client
         :'address_id' => :'String',
         :'date' => :'Date',
         :'amount' => :'String',
-        :'state' => :'String'
+        :'state' => :'String',
+        :'format' => :'StakingRewardFormat'
       }
     end
 
@@ -119,6 +123,12 @@ module Coinbase::Client
       else
         self.state = nil
       end
+
+      if attributes.key?(:'format')
+        self.format = attributes[:'format']
+      else
+        self.format = 'usd'
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -142,6 +152,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "state", state cannot be nil.')
       end
 
+      if @format.nil?
+        invalid_properties.push('invalid value for "format", format cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -155,6 +169,7 @@ module Coinbase::Client
       return false if @state.nil?
       state_validator = EnumAttributeValidator.new('String', ["pending", "distributed"])
       return false unless state_validator.valid?(@state)
+      return false if @format.nil?
       true
     end
 
@@ -176,7 +191,8 @@ module Coinbase::Client
           address_id == o.address_id &&
           date == o.date &&
           amount == o.amount &&
-          state == o.state
+          state == o.state &&
+          format == o.format
     end
 
     # @see the `==` method
@@ -188,7 +204,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [address_id, date, amount, state].hash
+      [address_id, date, amount, state, format].hash
     end
 
     # Builds the object from hash
