@@ -53,10 +53,6 @@ module Coinbase
     # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
     # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
     def staking_balances(asset_id, mode: :default, options: {})
-      asset = Coinbase.call_api do
-        Coinbase::Asset.fetch(network_id, asset_id)
-      end
-
       context_model = Coinbase.call_api do
         stake_api.get_staking_context(
           {
@@ -69,20 +65,20 @@ module Coinbase
           }
         )
       end.context
-      if context_model.stakeable_balance.empty? || context_model.stakeable_balance.nil?
-        context_model.stakeable_balance = '0'
-      end
-      if context_model.unstakeable_balance.empty? || context_model.unstakeable_balance.nil?
-        context_model.unstakeable_balance = '0'
-      end
-      if context_model.claimable_balance.empty? || context_model.claimable_balance.nil?
-        context_model.claimable_balance = '0'
-      end
 
       {
-        stakeable_balance: asset.from_atomic_amount(context_model.stakeable_balance.to_i),
-        unstakeable_balance: asset.from_atomic_amount(context_model.unstakeable_balance.to_i),
-        claimable_balance: asset.from_atomic_amount(context_model.claimable_balance.to_i)
+        stakeable_balance: Coinbase::Balance.from_model_and_asset_id(
+          context_model.stakeable_balance,
+          asset_id
+        ).amount,
+        unstakeable_balance: Coinbase::Balance.from_model_and_asset_id(
+          context_model.unstakeable_balance,
+          asset_id
+        ).amount,
+        claimable_balance: Coinbase::Balance.from_model_and_asset_id(
+          context_model.claimable_balance,
+          asset_id
+        ).amount
       }
     end
 

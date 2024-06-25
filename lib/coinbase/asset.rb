@@ -23,7 +23,7 @@ module Coinbase
 
         # Handle the non-primary denomination case at the asset level.
         # TODO: Push this logic down to the backend.
-        if asset_id && asset_id != Coinbase.to_sym(asset_model.asset_id)
+        if asset_id && Coinbase.to_sym(asset_id) != Coinbase.to_sym(asset_model.asset_id)
           case asset_id
           when :gwei
             decimals = GWEI_DECIMALS
