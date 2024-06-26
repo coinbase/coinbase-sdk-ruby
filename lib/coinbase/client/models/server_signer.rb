@@ -22,11 +22,15 @@ module Coinbase::Client
     # The IDs of the wallets that the server-signer can sign for
     attr_accessor :wallets
 
+    # Whether the Server-Signer uses MPC.
+    attr_accessor :is_mpc
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'server_signer_id' => :'server_signer_id',
-        :'wallets' => :'wallets'
+        :'wallets' => :'wallets',
+        :'is_mpc' => :'is_mpc'
       }
     end
 
@@ -39,7 +43,8 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'server_signer_id' => :'String',
-        :'wallets' => :'Array<String>'
+        :'wallets' => :'Array<String>',
+        :'is_mpc' => :'Boolean'
       }
     end
 
@@ -75,6 +80,12 @@ module Coinbase::Client
           self.wallets = value
         end
       end
+
+      if attributes.key?(:'is_mpc')
+        self.is_mpc = attributes[:'is_mpc']
+      else
+        self.is_mpc = nil
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -86,6 +97,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "server_signer_id", server_signer_id cannot be nil.')
       end
 
+      if @is_mpc.nil?
+        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,6 +109,7 @@ module Coinbase::Client
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @server_signer_id.nil?
+      return false if @is_mpc.nil?
       true
     end
 
@@ -103,7 +119,8 @@ module Coinbase::Client
       return true if self.equal?(o)
       self.class == o.class &&
           server_signer_id == o.server_signer_id &&
-          wallets == o.wallets
+          wallets == o.wallets &&
+          is_mpc == o.is_mpc
     end
 
     # @see the `==` method
@@ -115,7 +132,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, wallets].hash
+      [server_signer_id, wallets, is_mpc].hash
     end
 
     # Builds the object from hash

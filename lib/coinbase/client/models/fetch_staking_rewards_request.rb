@@ -30,7 +30,6 @@ module Coinbase::Client
     # The end time of this reward period
     attr_accessor :end_time
 
-    # The format in which the rewards are to be fetched i.e native or in equivalent USD
     attr_accessor :format
 
     class EnumAttributeValidator
@@ -80,7 +79,7 @@ module Coinbase::Client
         :'address_ids' => :'Array<String>',
         :'start_time' => :'Time',
         :'end_time' => :'Time',
-        :'format' => :'String'
+        :'format' => :'StakingRewardFormat'
       }
     end
 
@@ -186,19 +185,7 @@ module Coinbase::Client
       return false if @start_time.nil?
       return false if @end_time.nil?
       return false if @format.nil?
-      format_validator = EnumAttributeValidator.new('String', ["usd", "native"])
-      return false unless format_validator.valid?(@format)
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] format Object to be assigned
-    def format=(format)
-      validator = EnumAttributeValidator.new('String', ["usd", "native"])
-      unless validator.valid?(format)
-        fail ArgumentError, "invalid value for \"format\", must be one of #{validator.allowable_values}."
-      end
-      @format = format
     end
 
     # Checks equality by comparing each attribute.
