@@ -56,6 +56,13 @@ module Coinbase
     end
   end
 
+  # An error raised when an operation is attempted with insufficient funds.
+  class InsufficientFundsError < StandardError
+    def initialize(expected, exact, msg = 'Insufficient funds')
+      super("#{msg}: have #{exact}, need #{expected}.")
+    end
+  end
+
   class UnimplementedError < APIError; end
   class UnauthorizedError < APIError; end
   class InternalError < APIError; end

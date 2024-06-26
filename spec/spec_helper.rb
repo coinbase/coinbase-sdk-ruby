@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'simplecov'
+require 'pry'
 
 SimpleCov.start do
   enable_coverage :branch
@@ -10,3 +11,5 @@ SimpleCov.start do
 end
 
 require_relative '../lib/coinbase'
+require_relative 'support/shared_examples/address_balances'
+require_relative 'support/shared_examples/pagination'

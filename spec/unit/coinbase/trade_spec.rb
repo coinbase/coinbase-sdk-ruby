@@ -57,7 +57,6 @@ describe Coinbase::Trade do
     )
   end
   let(:trades_api) { double('Coinbase::Client::TradesApi') }
-  let(:client) { double('Jimson::Client') }
 
   before(:each) do
     allow(Coinbase::Client::TradesApi).to receive(:new).and_return(trades_api)

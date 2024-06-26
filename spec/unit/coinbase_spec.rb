@@ -1,9 +1,16 @@
 # frozen_string_literal: true
 
 describe Coinbase do
+  let(:config) { Coinbase::Configuration.new }
+
+  before do
+    allow(Coinbase).to receive(:configuration).and_return(config)
+  end
+
   describe '#configure' do
     let(:api_key_private_key) { 'some-key' }
     let(:api_key_name) { 'some-key-name' }
+    let(:server_signer) { false }
 
     subject do
       Coinbase.configure do |config|
@@ -27,7 +34,7 @@ describe Coinbase do
     end
   end
 
-  describe '#configure_from_json' do
+  describe '.configure_from_json' do
     let(:file_path) { 'spec/fixtures/cdp_api_key.json' }
 
     subject do
@@ -41,7 +48,7 @@ describe Coinbase do
     end
   end
 
-  describe '#to_sym' do
+  describe '.to_sym' do
     context 'when the value is a string' do
       it 'returns the symbolized version of the string' do
         expect(Coinbase.to_sym('base-mainnet')).to eq :base_mainnet
@@ -55,7 +62,7 @@ describe Coinbase do
     end
   end
 
-  describe '#normalize_network' do
+  describe '.normalize_network' do
     context 'when the value is a symbol' do
       it 'returns the normalized network string' do
         expect(Coinbase.normalize_network(:base_mainnet)).to eq 'base-mainnet'
@@ -69,7 +76,7 @@ describe Coinbase do
     end
   end
 
-  describe '#default_user' do
+  describe '.default_user' do
     let(:users_api) { double Coinbase::Client::UsersApi }
     let(:user_model) { double 'User Model' }
 
@@ -95,7 +102,7 @@ describe Coinbase do
     end
   end
 
-  describe '#call_api' do
+  describe '.call_api' do
     context 'when the API call is successful' do
       it 'does not raise an error' do
         expect do
@@ -124,6 +131,73 @@ describe Coinbase do
         expect do
           Coinbase.call_api { raise err }
         end.to raise_error(Coinbase::UnimplementedError)
+      end
+    end
+  end
+
+  describe '.use_server_signer?' do
+    let(:api_key_private_key) { 'some-key' }
+    let(:api_key_name) { 'some-key-name' }
+
+    before do
+      Coinbase.configure do |config|
+        config.api_key_private_key = api_key_private_key
+        config.api_key_name = api_key_name
+        config.use_server_signer = server_signer
+      end
+    end
+
+    [true, false].each do |use_server_signer|
+      context "when the configuration is set to #{use_server_signer}" do
+        let(:server_signer) { use_server_signer }
+
+        it 'returns the value of the configuration' do
+          expect(Coinbase.use_server_signer?).to eq(use_server_signer)
+        end
+      end
+    end
+  end
+
+  describe '.configured?' do
+    let(:api_key_private_key) { 'some-key' }
+    let(:api_key_name) { 'some-key-name' }
+
+    context 'when the configuration is set' do
+      before do
+        Coinbase.configure do |config|
+          config.api_key_name = api_key_name
+          config.api_key_private_key = api_key_private_key
+        end
+      end
+
+      it 'is configured' do
+        expect(Coinbase).to be_configured
+      end
+    end
+
+    context 'when the configuration is not set' do
+      it 'is not configured' do
+        expect(Coinbase).not_to be_configured
+      end
+    end
+
+    context 'when the private key is not set' do
+      before do
+        Coinbase.configuration.api_key_name = api_key_name
+      end
+
+      it 'is not configured' do
+        expect(Coinbase).not_to be_configured
+      end
+    end
+
+    context 'when the api key name is not set' do
+      before do
+        Coinbase.configuration.api_key_private_key = api_key_private_key
+      end
+
+      it 'is not configured' do
+        expect(Coinbase).not_to be_configured
       end
     end
   end

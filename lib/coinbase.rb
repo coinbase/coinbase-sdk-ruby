@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'coinbase/address'
+require_relative 'coinbase/address/wallet_address'
+require_relative 'coinbase/address/external_address'
 require_relative 'coinbase/asset'
 require_relative 'coinbase/authenticator'
 require_relative 'coinbase/balance'
@@ -11,12 +13,15 @@ require_relative 'coinbase/errors'
 require_relative 'coinbase/faucet_transaction'
 require_relative 'coinbase/middleware'
 require_relative 'coinbase/network'
+require_relative 'coinbase/pagination'
 require_relative 'coinbase/trade'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/transaction'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
 require_relative 'coinbase/server_signer'
+require_relative 'coinbase/staking_operation'
+require_relative 'coinbase/staking_reward'
 require 'json'
 
 # The Coinbase SDK.
@@ -128,5 +133,11 @@ module Coinbase
   # @return [bool] whether to use a server signer to manage private keys.
   def self.use_server_signer?
     Coinbase.configuration.use_server_signer
+  end
+
+  # Returns whether the SDK is configured.
+  # @return [bool] whether the SDK is configured
+  def self.configured?
+    !Coinbase.configuration.api_key_name.nil? && !Coinbase.configuration.api_key_private_key.nil?
   end
 end

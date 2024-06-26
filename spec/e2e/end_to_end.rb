@@ -20,7 +20,7 @@ describe Coinbase do
     end
   end
 
-  describe 'v0.0.8 SDK' do
+  describe 'v0.0.9 SDK' do
     it 'behaves as expected' do
       user = fetch_user_test
       new_address = create_new_address_test(user)
