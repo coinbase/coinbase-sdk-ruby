@@ -14,22 +14,26 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateServerSignerRequest
-    # The ID of the server signer for the 1 of 1 server signer.
-    attr_accessor :server_signer_id
+  # 
+  class SendList
+    attr_accessor :data
 
-    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id for the 1 of 1 server signer.
-    attr_accessor :enrollment_data
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # Whether the Server-Signer uses MPC.
-    attr_accessor :is_mpc
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
+
+    # The total number of sends for the address in the wallet.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'server_signer_id' => :'server_signer_id',
-        :'enrollment_data' => :'enrollment_data',
-        :'is_mpc' => :'is_mpc'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -41,9 +45,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'server_signer_id' => :'String',
-        :'enrollment_data' => :'String',
-        :'is_mpc' => :'Boolean'
+        :'data' => :'Array<ModelSend>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -57,31 +62,41 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SendList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SendList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'server_signer_id')
-        self.server_signer_id = attributes[:'server_signer_id']
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
+      else
+        self.data = nil
       end
 
-      if attributes.key?(:'enrollment_data')
-        self.enrollment_data = attributes[:'enrollment_data']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
       else
-        self.enrollment_data = nil
+        self.has_more = nil
       end
 
-      if attributes.key?(:'is_mpc')
-        self.is_mpc = attributes[:'is_mpc']
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
       else
-        self.is_mpc = nil
+        self.next_page = nil
+      end
+
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
+      else
+        self.total_count = nil
       end
     end
 
@@ -90,12 +105,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @enrollment_data.nil?
-        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
       end
 
-      if @is_mpc.nil?
-        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
+      end
+
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
+      end
+
+      if @total_count.nil?
+        invalid_properties.push('invalid value for "total_count", total_count cannot be nil.')
       end
 
       invalid_properties
@@ -105,8 +128,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @enrollment_data.nil?
-      return false if @is_mpc.nil?
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
+      return false if @total_count.nil?
       true
     end
 
@@ -115,9 +140,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          server_signer_id == o.server_signer_id &&
-          enrollment_data == o.enrollment_data &&
-          is_mpc == o.is_mpc
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -129,7 +155,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, enrollment_data, is_mpc].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash
