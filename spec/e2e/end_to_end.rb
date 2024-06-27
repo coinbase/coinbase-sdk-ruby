@@ -109,7 +109,8 @@ def transfer_test(imported_address, new_address)
   puts "Transferred 1 Gwei from #{imported_address} to #{new_address}"
 
   # Fund the new address with faucet.
-  puts(new_address.faucet)
+  faucet_tx = new_address.faucet
+  puts "Requested faucet funds: #{faucet_tx}"
 
   # Transfer eth back from new address to imported address.
   t = new_address.transfer(0.008, :eth, imported_address).wait!
