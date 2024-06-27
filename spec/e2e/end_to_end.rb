@@ -103,7 +103,7 @@ end
 
 def transfer_test(imported_address, new_address)
   # Transfer gwei from imported address to new address.
-  puts 'Transfering 1 Gwei from imported address to new address...'
+  puts 'Transferring 1 Gwei from imported address to new address...'
   t = imported_address.transfer(1, :gwei, new_address).wait!
   expect(t.status).to eq('complete')
   puts "Transferred 1 Gwei from #{imported_address} to #{new_address}"
