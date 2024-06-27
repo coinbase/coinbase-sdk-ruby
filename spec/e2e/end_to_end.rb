@@ -108,15 +108,13 @@ def transfer_test(imported_address, new_address)
   expect(t.status).to eq('complete')
   puts "Transferred 1 Gwei from #{imported_address} to #{new_address}"
 
-  # Transfer some eth for gas fee to new address.
-  t2 = imported_address.transfer(0.0001, :eth, new_address).wait!
-  expect(t2.status).to eq('complete')
-  puts "Transferred 0.00001 Eth from #{imported_address} to #{new_address}"
+  # Fund the new address with faucet.
+  new_address.faucet
 
-  # Transfer gwei back from new address to imported address.
-  t = new_address.transfer(1, :gwei, imported_address).wait!
+  # Transfer eth back from new address to imported address.
+  t = new_address.transfer(0.008, :eth, imported_address).wait!
   expect(t.status).to eq('complete')
-  puts "Transferred 1 Gwei from #{new_address} to #{imported_address}"
+  puts "Transferred 0.008 eth from #{new_address} to #{imported_address}"
 
   puts 'Fetching updated balances...'
   first_balance = imported_address.balances
