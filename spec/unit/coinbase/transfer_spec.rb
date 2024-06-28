@@ -40,8 +40,8 @@ describe Coinbase::Transfer do
   let(:usdc_asset) do
     Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
   end
-  let(:eth_amount) { Coinbase::Asset.from_model(asset).from_atomic_amount(amount) }
-  let(:asset) { eth_asset }
+  let(:asset_model) { eth_asset }
+  let(:eth_amount) { Coinbase::Asset.from_model(asset_model).from_atomic_amount(amount) }
   let(:model) do
     Coinbase::Client::Transfer.new(
       network_id: network_id,
@@ -49,8 +49,8 @@ describe Coinbase::Transfer do
       address_id: from_address_id,
       destination: to_address_id,
       amount: amount.to_s,
-      asset_id: asset.asset_id,
-      asset: asset,
+      asset_id: asset_model.asset_id,
+      asset: asset_model,
       transfer_id: transfer_id,
       transaction: transaction_model
     )
@@ -61,6 +61,91 @@ describe Coinbase::Transfer do
 
   before do
     allow(Coinbase::Client::TransfersApi).to receive(:new).and_return(transfers_api)
+  end
+
+  describe '.create' do
+    let(:asset_id) { :eth }
+    let(:normalized_asset_id) { 'eth' }
+    let(:asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :eth) }
+    let(:destination) { Coinbase::Destination.new(to_address_id, network_id: network_id) }
+    let(:create_transfer_request) do
+      {
+        amount: amount.to_i.to_s,
+        asset_id: normalized_asset_id,
+        destination: to_address_id
+      }
+    end
+
+    subject(:transfer) do
+      described_class.create(
+        address_id: from_address_id,
+        asset_id: asset_id,
+        amount: eth_amount,
+        destination: destination,
+        network_id: network_id,
+        wallet_id: wallet_id
+      )
+    end
+
+    before do
+      allow(Coinbase::Asset)
+        .to receive(:fetch)
+        .with(network_id, asset.asset_id)
+        .and_return(asset)
+
+      allow(transfers_api)
+        .to receive(:create_transfer)
+        .with(wallet_id, from_address_id, create_transfer_request)
+        .and_return(model)
+    end
+
+    it 'creates a new Transfer' do
+      expect(transfer).to be_a(Coinbase::Transfer)
+    end
+
+    it 'sets the transfer properties' do
+      expect(transfer.id).to eq(transfer_id)
+    end
+
+    context 'when the destination is not valid' do
+      let(:destination) { asset }
+
+      it 'raises an error' do
+        expect { transfer }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when the asset is not the primary denomination' do
+      let(:asset_id) { :wei }
+      let(:asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :wei) }
+      let(:amount) { BigDecimal(100) }
+      let(:eth_amount) { amount }
+
+      it 'creates a new Transfer' do
+        expect(transfer).to be_a(Coinbase::Transfer)
+      end
+
+      it 'constructs the transfer with the primary denomination from asset' do
+        expect(transfer.asset_id).to be(:eth)
+      end
+    end
+  end
+
+  describe '.list' do
+    let(:api) { transfers_api }
+    let(:fetch_params) { ->(page) { [wallet_id, from_address_id, { limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::TransferList }
+    let(:item_klass) { Coinbase::Transfer }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::Transfer.new(transfer_id: id, network_id: 'base-sepolia') }
+    end
+
+    subject(:enumerator) do
+      Coinbase::Transfer.list(wallet_id: wallet_id, address_id: from_address_id)
+    end
+
+    it_behaves_like 'it is a paginated enumerator', :transfers
   end
 
   describe '#initialize' do
@@ -111,7 +196,7 @@ describe Coinbase::Transfer do
     context 'when the asset is something else' do
       let(:amount) { BigDecimal(100_000) }
       let(:decimals) { 3 }
-      let(:asset) do
+      let(:asset_model) do
         Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
       end
 
@@ -157,6 +242,66 @@ describe Coinbase::Transfer do
     end
   end
 
+  describe '#broadcast!' do
+    let(:broadcasted_transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'broadcast',
+        unsigned_payload: unsigned_payload,
+        signed_payload: signed_payload
+      )
+    end
+    let(:broadcasted_transfer_model) do
+      instance_double(
+        Coinbase::Client::Transfer,
+        transaction: broadcasted_transaction_model,
+        address_id: from_address_id
+      )
+    end
+
+    subject(:broadcasted_transfer) { transfer.broadcast! }
+
+    context 'when the transaction is signed' do
+      let(:broadcast_transfer_request) do
+        { signed_payload: transfer.transaction.raw.hex }
+      end
+
+      before do
+        transfer.transaction.sign(from_key)
+
+        allow(transfers_api)
+          .to receive(:broadcast_transfer)
+          .with(wallet_id, from_address_id, transfer_id, broadcast_transfer_request)
+          .and_return(broadcasted_transfer_model)
+
+        broadcasted_transfer
+      end
+
+      it 'returns the updated Transfer' do
+        expect(broadcasted_transfer).to be_a(Coinbase::Transfer)
+      end
+
+      it 'broadcasts the transaction' do
+        expect(transfers_api)
+          .to have_received(:broadcast_transfer)
+          .with(wallet_id, from_address_id, transfer_id, broadcast_transfer_request)
+      end
+
+      it 'updates the transaction status' do
+        expect(broadcasted_transfer.transaction.status).to eq(Coinbase::Transaction::Status::BROADCAST)
+      end
+
+      it 'sets the transaction signed payload' do
+        expect(broadcasted_transfer.transaction.signed_payload).to eq(signed_payload)
+      end
+    end
+
+    context 'when the transaction is not signed' do
+      it 'raises an error' do
+        expect { broadcasted_transfer }.to raise_error(Coinbase::TransactionNotSignedError)
+      end
+    end
+  end
+
   describe '#reload' do
     let(:updated_transaction_model) do
       Coinbase::Client::Transaction.new(
@@ -167,7 +312,9 @@ describe Coinbase::Transfer do
     end
 
     let(:updated_amount) { BigDecimal(500_000_000) }
-    let(:updated_eth_amount) { Coinbase::Asset.from_model(asset).from_atomic_amount(updated_amount) }
+    let(:updated_eth_amount) do
+      Coinbase::Asset.from_model(asset_model).from_atomic_amount(updated_amount)
+    end
 
     let(:updated_model) do
       Coinbase::Client::Transfer.new(
@@ -209,8 +356,8 @@ describe Coinbase::Transfer do
         address_id: from_address_id,
         destination: to_address_id,
         amount: amount.to_s,
-        asset_id: asset.asset_id,
-        asset: asset,
+        asset_id: asset_model.asset_id,
+        asset: asset_model,
         transfer_id: transfer_id,
         transaction: updated_transaction_model
       )

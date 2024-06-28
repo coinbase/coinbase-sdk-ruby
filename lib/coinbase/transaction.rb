@@ -15,6 +15,9 @@ module Coinbase
       # At this point, transaction hashes may not yet be assigned.
       PENDING = 'pending'
 
+      # The Transaction has been signed, but has not been successfully broadcast yet.
+      SIGNED = 'signed'
+
       # The Transaction has been broadcast to the Network.
       # At this point, at least the transaction hash should be assigned.
       BROADCAST = 'broadcast'
@@ -84,6 +87,14 @@ module Coinbase
     def raw
       return @raw unless @raw.nil?
 
+      # If the transaction is signed, decode the signed payload.
+      unless signed_payload.nil?
+        @raw = Eth::Tx::Eip1559.decode(signed_payload)
+
+        return @raw
+      end
+
+      # If the transaction is unsigned, parse the unsigned payload into an EIP-1559 transaction.
       raw_payload = [unsigned_payload].pack('H*')
       parsed_payload = JSON.parse(raw_payload)
 
@@ -93,8 +104,8 @@ module Coinbase
         priority_fee: parsed_payload['maxPriorityFeePerGas'].to_i(16),
         max_gas_fee: parsed_payload['maxFeePerGas'].to_i(16),
         gas_limit: parsed_payload['gas'].to_i(16), # TODO: Handle multiple currencies.
-        from: Eth::Address.new(from_address_id),
-        to: Eth::Address.new(parsed_payload['to']),
+        from: from_address_id,
+        to: parsed_payload['to'],
         value: parsed_payload['value'].to_i(16),
         data: parsed_payload['input'] || ''
       }
