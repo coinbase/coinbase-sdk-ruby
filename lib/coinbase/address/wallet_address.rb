@@ -8,8 +8,6 @@ module Coinbase
   # Addresses are used to send and receive Assets, and should be created using
   # Wallet#create_address. Addresses require an Eth::Key to sign transaction data.
   class WalletAddress < Address
-    PAGE_LIMIT = 100
-
     # Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use
     # the Wallet's default_address.
     # @param model [Coinbase::Client::Address] The underlying Address object
@@ -43,18 +41,25 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination)
-      asset = Asset.fetch(network_id, asset_id)
+      ensure_can_sign!
+      ensure_sufficient_balance!(amount, asset_id)
 
-      destination_address, destination_network = destination_address_and_network(destination)
-
-      validate_can_transfer!(amount, asset, destination_network)
-
-      transfer = create_transfer(amount, asset, destination_address)
+      transfer = Transfer.create(
+        address_id: id,
+        amount: amount,
+        asset_id: asset_id,
+        destination: destination,
+        network_id: network_id,
+        wallet_id: wallet_id
+      )
 
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
 
-      broadcast_transfer(transfer, transfer.transaction.sign(@key))
+      transfer.transaction.sign(@key)
+
+      transfer.broadcast!
+      transfer
     end
 
     # Trades the given amount of the given Asset for another Asset.
@@ -105,9 +110,7 @@ module Coinbase
     # converted to an array, etc...
     # @return [Enumerable<Coinbase::Transfer>] Enumerator that returns the address's transfers
     def transfers
-      Coinbase::Pagination.enumerate(lambda(&method(:fetch_transfers_page))) do |transfer|
-        Coinbase::Transfer.new(transfer)
-      end
+      Transfer.list(wallet_id: wallet_id, address_id: id)
     end
 
     # Enumerates the trades associated with the address.
@@ -126,33 +129,6 @@ module Coinbase
 
     private
 
-    def fetch_transfers_page(page)
-      transfers_api.list_transfers(wallet_id, id, { limit: PAGE_LIMIT, page: page })
-    end
-
-    def transfers_api
-      @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
-    end
-
-    def destination_address_and_network(destination)
-      return [destination.default_address.id, destination.network_id] if destination.is_a?(Wallet)
-      return [destination.id, destination.network_id] if destination.is_a?(Address)
-
-      [destination, network_id]
-    end
-
-    def validate_can_transfer!(amount, asset, destination_network_id)
-      raise 'Cannot transfer from address without private key loaded' unless can_sign? || Coinbase.use_server_signer?
-
-      raise ArgumentError, 'Transfer must be on the same Network' unless destination_network_id == network_id
-
-      current_balance = balance(asset.asset_id)
-
-      return unless current_balance < amount
-
-      raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
-    end
-
     def ensure_can_sign!
       return if Coinbase.use_server_signer?
       return if can_sign?
@@ -166,29 +142,6 @@ module Coinbase
       return unless current_balance < amount
 
       raise InsufficientFundsError.new(amount, current_balance)
-    end
-
-    def create_transfer(amount, asset, destination)
-      create_transfer_request = {
-        amount: asset.to_atomic_amount(amount).to_i.to_s,
-        network_id: Coinbase.normalize_network(network_id),
-        asset_id: asset.primary_denomination.to_s,
-        destination: destination
-      }
-
-      transfer_model = Coinbase.call_api do
-        transfers_api.create_transfer(wallet_id, id, create_transfer_request)
-      end
-
-      Coinbase::Transfer.new(transfer_model)
-    end
-
-    def broadcast_transfer(transfer, signed_payload)
-      transfer_model = Coinbase.call_api do
-        transfers_api.broadcast_transfer(wallet_id, id, transfer.id, { signed_payload: signed_payload })
-      end
-
-      Coinbase::Transfer.new(transfer_model)
     end
   end
 end
