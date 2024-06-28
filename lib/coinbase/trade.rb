@@ -9,6 +9,57 @@ module Coinbase
   # The fee is assumed to be paid in the native Asset of the Network.
   # Trades should be created through Wallet#trade or # Address#trade.
   class Trade
+    class << self
+      # Creates a new Trade object.
+      # @param address_id [String] The Address ID of the sending Address
+      # @param from_asset_id [Symbol] The Asset ID of the Asset to trade from
+      # @param to_asset_id [Symbol] The Asset ID of the Asset to trade to
+      # @param amount [BigDecimal] The amount of the Asset to send
+      # @param network_id [Symbol] The Network ID of the Asset
+      # @param wallet_id [String] The Wallet ID of the sending Wallet
+      # @return [Send] The new pending Send object
+      def create(address_id:, from_asset_id:, to_asset_id:, amount:, network_id:, wallet_id:)
+        from_asset = Asset.fetch(network_id, from_asset_id)
+        to_asset = Asset.fetch(network_id, to_asset_id)
+
+        model = Coinbase.call_api do
+          trades_api.create_trade(
+            wallet_id,
+            address_id,
+            {
+              amount: from_asset.to_atomic_amount(amount).to_i.to_s,
+              from_asset_id: from_asset.primary_denomination.to_s,
+              to_asset_id: to_asset.primary_denomination.to_s
+            }
+          )
+        end
+
+        new(model)
+      end
+
+      # Enumerates the trades for a given address belonging to a wallet.
+      # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+      # converted to an array, etc...
+      # @return [Enumerable<Coinbase::Trade>] Enumerator that returns trades
+      def list(wallet_id:, address_id:)
+        Coinbase::Pagination.enumerate(
+          ->(page) { fetch_page(wallet_id, address_id, page) }
+        ) do |trade|
+          new(trade)
+        end
+      end
+
+      private
+
+      def trades_api
+        Coinbase::Client::TradesApi.new(Coinbase.configuration.api_client)
+      end
+
+      def fetch_page(wallet_id, address_id, page)
+        trades_api.list_trades(wallet_id, address_id, { limit: DEFAULT_PAGE_LIMIT, page: page })
+      end
+    end
+
     # Returns a new Trade object. Do not use this method directly. Instead, use Wallet#trade or
     # Address#trade.
     # @param model [Coinbase::Client::Trade] The underlying Trade object
@@ -76,10 +127,35 @@ module Coinbase
       @approve_transaction ||= @model.approve_transaction ? Coinbase::Transaction.new(@model.approve_transaction) : nil
     end
 
+    # Returns the list of Transactions for the Trade.
+    def transactions
+      [approve_transaction, transaction].compact
+    end
+
     # Returns the status of the Trade.
     # @return [Symbol] The status
     def status
       transaction.status
+    end
+
+    # Broadcasts the Trade to the Network.
+    # This raises an error if the Trade is not signed.
+    # @raise [RuntimeError] If the Trade is not signed
+    # @return [Trade] The Trade object
+    def broadcast!
+      raise TransactionNotSignedError unless transactions.all?(&:signed?)
+
+      payloads = { signed_payload: transaction.raw.hex }
+
+      payloads[:approve_tx_signed_payload] = approve_transaction.raw.hex unless approve_transaction.nil?
+
+      @model = Coinbase.call_api do
+        trades_api.broadcast_trade(wallet_id, address_id, id, payloads)
+      end
+
+      update_transactions(@model)
+
+      self
     end
 
     # Waits until the Trade is completed or failed by polling the Network at the given interval. Raises a
@@ -114,11 +190,7 @@ module Coinbase
         trades_api.get_trade(wallet_id, address_id, id)
       end
 
-      # Update the memoized transaction.
-      @transaction = Coinbase::Transaction.new(@model.transaction)
-
-      # Update the memoized approve transaction if it exists.
-      @approve_transaction = @model.approve_transaction ? Coinbase::Transaction.new(@model.approve_transaction) : nil
+      update_transactions(@model)
 
       self
     end
@@ -139,6 +211,16 @@ module Coinbase
     end
 
     private
+
+    def update_transactions(model)
+      # Update the memoized transaction.
+      @transaction = Coinbase::Transaction.new(model.transaction)
+
+      return if model.approve_transaction.nil?
+
+      # Update the memoized approve transaction if it exists.
+      @approve_transaction = Coinbase::Transaction.new(model.approve_transaction)
+    end
 
     def trades_api
       @trades_api ||= Coinbase::Client::TradesApi.new(Coinbase.configuration.api_client)
