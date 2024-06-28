@@ -11,6 +11,61 @@ module Coinbase
   # in the native Asset of the Network. Transfers should be created through Wallet#transfer or
   # Address#transfer.
   class Transfer
+    class << self
+      # Creates a new Transfer object.
+      # @param address_id [String] The Address ID of the sending Address
+      # @param amount [BigDecimal] The amount of the Asset to send
+      # @param asset_id [Symbol] The Asset ID of the Asset to send
+      # @param destination [Coinbase::Destination, Coinbase::Wallet, Coinbase::Address, String]
+      #   The destination of the transfer.
+      #   If the destination is a Wallet, it uses the default Address of the Wallet.
+      #   If the destination is an Address, it uses the Address's ID.
+      #   If the destination is a String, it uses it as the Address ID.
+      # @param network_id [Symbol] The Network ID of the Asset
+      # @param wallet_id [String] The Wallet ID of the sending Wallet
+      # @return [Transfer] The new pending Transfer object
+      # @raise [Coinbase::ApiError] If the Transfer fails
+      def create(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:)
+        asset = Asset.fetch(network_id, asset_id)
+
+        model = Coinbase.call_api do
+          transfers_api.create_transfer(
+            wallet_id,
+            address_id,
+            {
+              amount: asset.to_atomic_amount(amount).to_i.to_s,
+              asset_id: asset.primary_denomination.to_s,
+              destination: Coinbase::Destination.new(destination, network_id: network_id).address_id
+            }
+          )
+        end
+
+        new(model)
+      end
+
+      # Enumerates the transfers for a given address belonging to a wallet.
+      # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+      # converted to an array, etc...
+      # @return [Enumerable<Coinbase::Transfer>] Enumerator that returns transfers
+      def list(wallet_id:, address_id:)
+        Coinbase::Pagination.enumerate(
+          ->(page) { fetch_page(wallet_id, address_id, page) }
+        ) do |transfer|
+          new(transfer)
+        end
+      end
+
+      private
+
+      def transfers_api
+        Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+      end
+
+      def fetch_page(wallet_id, address_id, page)
+        transfers_api.list_transfers(wallet_id, address_id, { limit: DEFAULT_PAGE_LIMIT, page: page })
+      end
+    end
+
     # Returns a new Transfer object. Do not use this method directly. Instead, use Wallet#transfer or
     # Address#transfer.
     # @param model [Coinbase::Client::Transfer] The underlying Transfer object
@@ -103,6 +158,27 @@ module Coinbase
       transaction.status
     end
 
+    # Broadcasts the Transfer to the Network.
+    # This raises an error if the Transfer is not signed.
+    # @raise [RuntimeError] If the Transfer is not signed
+    # @return [Transfer] The Transfer object
+    def broadcast!
+      raise TransactionNotSignedError unless transaction.signed?
+
+      @model = Coinbase.call_api do
+        transfers_api.broadcast_transfer(
+          wallet_id,
+          from_address_id,
+          id,
+          { signed_payload: transaction.raw.hex }
+        )
+      end
+
+      update_transaction(@model)
+
+      self
+    end
+
     # Reload reloads the Transfer model with the latest version from the server side.
     # @return [Transfer] The most recent version of Transfer from the server.
     def reload
@@ -110,8 +186,7 @@ module Coinbase
         transfers_api.get_transfer(wallet_id, from_address_id, id)
       end
 
-      # Update memoized transaction.
-      @transaction = Coinbase::Transaction.new(@model.transaction)
+      update_transaction(@model)
 
       self
     end
@@ -156,6 +231,10 @@ module Coinbase
 
     def transfers_api
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
+    end
+
+    def update_transaction(model)
+      @transaction = Coinbase::Transaction.new(model.transaction)
     end
   end
 end
