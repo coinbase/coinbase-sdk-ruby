@@ -6,16 +6,33 @@ module Coinbase
   # @attr_reader [Array<Coinbase::Transaction>] transactions The list of current
   #   transactions associated with the operation
   class StakingOperation
-    attr_reader :transactions
+    attr_reader :transactions, :status, :error
+
+    # Returns all StakingOperations.
+    # @return [Enumerable<Coinbase::StakingOperation>] The staking operations
+    def self.list
+      Coinbase::Pagination.enumerate(
+        ->(page) { Coinbase.call_api { Coinbase::Client::StakingOperation.list(page: page) } }
+      ) do |staking_operation|
+        new(staking_operation)
+      end
+    end
+
+    # Returns the StakingOperation with the provided ID.
+    # @param id [String] The ID of the StakingOperation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def self.fetch(id)
+      new(load_from_sever(id))
+    end
+
+    def self.load_from_sever(id)
+      Coinbase.call_api { Coinbase::Client::StakingOperation.fetch(id) }
+    end
 
     # Returns a new StakingOperation object.
     # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
     def initialize(model)
-      @model = model
-
-      @transactions = model.transactions.map do |transaction_model|
-        Transaction.new(transaction_model)
-      end
+      from_model(model)
     end
 
     # Signs the Open Transactions with the provided key
@@ -23,6 +40,37 @@ module Coinbase
     def sign(key)
       transactions.each do |transaction|
         transaction.sign(key) unless transaction.signed?
+      end
+    end
+
+    # Reloads the staking_operation from the service
+    # @return [Coinbase::StakingOperation] The updated staking operation
+    def reload
+      from_model(self.class.load_from_sever(@model.id))
+    end
+
+    def initializing?
+      status == 'initializing'
+    end
+
+    def waiting_for_signing?
+      status == 'waiting_for_signing'
+    end
+
+    # Fetches the presigned exit transactions for the staking operation
+    # @return [Array<string>] The list of presigned exit transaction messages
+    def presigned_exit_transactions
+      Coinbase.call_api { Coinbase::Client::StakingOperation.presigned_exit_transactions(@model.id) }
+    end
+
+    private
+
+    def from_model(model)
+      @model = model
+
+      @status = model.status
+      @transactions = model.transactions.map do |transaction_model|
+        Transaction.new(transaction_model)
       end
     end
   end
