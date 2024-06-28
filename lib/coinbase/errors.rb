@@ -63,6 +63,20 @@ module Coinbase
     end
   end
 
+  # An error raised when a transaction is not signed.
+  class TransactionNotSignedError < StandardError
+    def initialize(msg = 'Transaction must be signed')
+      super(msg)
+    end
+  end
+
+  # An error raised when an address attempts to sign a transaction without a private key.
+  class AddressCannotSignError < StandardError
+    def initialize(msg = 'Address cannot sign transaction without private key loaded')
+      super(msg)
+    end
+  end
+
   class UnimplementedError < APIError; end
   class UnauthorizedError < APIError; end
   class InternalError < APIError; end
