@@ -57,6 +57,33 @@ module Coinbase
       broadcast_transfer(transfer, transfer.transaction.sign(@key))
     end
 
+    # Transfers the given amount of the given Asset to the specified address or wallet.
+    # Only same-network Transfers are supported.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
+    # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
+    #  default address. If a String, interprets it as the address ID.
+    # @return [Coinbase::Transfer] The Transfer object.
+    def send(amount, asset_id, destination)
+      ensure_can_sign!
+      ensure_sufficient_balance!(amount, asset_id)
+
+      send = Send.create(
+        address_id: id,
+        network_id: network_id,
+        wallet_id: wallet_id,
+        amount: amount,
+        asset_id: asset_id,
+        destination: Coinbase::Destination.new(destination, network_id: network_id)
+      )
+
+      return send if Coinbase.use_server_signer?
+
+      send.transaction.sign(@key)
+      send.broadcast!
+      send
+    end
+
     # Trades the given amount of the given Asset for another Asset.
     # Only same-network Trades are supported.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
@@ -130,6 +157,10 @@ module Coinbase
       trades_api.list_trades(wallet_id, id, { limit: PAGE_LIMIT, page: page })
     end
 
+    def sends_api
+      @sends_api ||= Coinbase::Client::SendsApi.new(Coinbase.configuration.api_client)
+    end
+
     def transfers_api
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
@@ -151,6 +182,21 @@ module Coinbase
       raise ArgumentError, 'Transfer must be on the same Network' unless destination_network_id == network_id
 
       current_balance = balance(asset.asset_id)
+
+      return unless current_balance < amount
+
+      raise ArgumentError, "Insufficient funds: #{amount} requested, but only #{current_balance} available"
+    end
+
+    def ensure_can_sign!
+      return if Coinbase.use_server_signer?
+      return if can_sign?
+
+      raise AddressCannotSignError
+    end
+
+    def ensure_sufficient_balance!(amount, asset_id)
+      current_balance = balance(asset_id)
 
       return unless current_balance < amount
 

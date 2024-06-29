@@ -63,6 +63,19 @@ module Coinbase
     end
   end
 
+  # An error raised when a transaction is not signed.
+  class TransactionNotSignedError < StandardError
+    def initialize(msg = 'Transaction must be signed')
+      super(msg)
+    end
+  end
+
+  class AddressCannotSignError < StandardError
+    def initialize(msg = 'Address cannot sign transaction without private key loaded')
+      super(msg)
+    end
+  end
+
   class UnimplementedError < APIError; end
   class UnauthorizedError < APIError; end
   class InternalError < APIError; end
@@ -84,6 +97,7 @@ module Coinbase
   class ResourceExhaustedError < APIError; end
   class FaucetLimitReachedError < APIError; end
   class InvalidSignedPayloadError < APIError; end
+  class InvalidSendStatusError < APIError; end
   class InvalidTransferStatusError < APIError; end
   class NetworkFeatureUnsupportedError < APIError; end
 
@@ -109,6 +123,7 @@ module Coinbase
     'resource_exhausted' => ResourceExhaustedError,
     'faucet_limit_reached' => FaucetLimitReachedError,
     'invalid_signed_payload' => InvalidSignedPayloadError,
+    'invalid_send_status' => InvalidSendStatusError,
     'invalid_transfer_status' => InvalidTransferStatusError,
     'network_feature_unsupported' => NetworkFeatureUnsupportedError
   }.freeze
