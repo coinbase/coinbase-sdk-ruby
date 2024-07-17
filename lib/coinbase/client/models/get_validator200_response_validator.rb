@@ -14,22 +14,13 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateServerSignerRequest
-    # The ID of the server signer for the 1 of 1 server signer.
-    attr_accessor :server_signer_id
-
-    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id for the 1 of 1 server signer.
-    attr_accessor :enrollment_data
-
-    # Whether the Server-Signer uses MPC.
-    attr_accessor :is_mpc
+  class GetValidator200ResponseValidator
+    attr_accessor :ethereum_validator
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'server_signer_id' => :'server_signer_id',
-        :'enrollment_data' => :'enrollment_data',
-        :'is_mpc' => :'is_mpc'
+        :'ethereum_validator' => :'ethereum_validator'
       }
     end
 
@@ -41,9 +32,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'server_signer_id' => :'String',
-        :'enrollment_data' => :'String',
-        :'is_mpc' => :'Boolean'
+        :'ethereum_validator' => :'EthereumValidator'
       }
     end
 
@@ -57,31 +46,19 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::GetValidator200ResponseValidator` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::GetValidator200ResponseValidator`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'server_signer_id')
-        self.server_signer_id = attributes[:'server_signer_id']
-      end
-
-      if attributes.key?(:'enrollment_data')
-        self.enrollment_data = attributes[:'enrollment_data']
-      else
-        self.enrollment_data = nil
-      end
-
-      if attributes.key?(:'is_mpc')
-        self.is_mpc = attributes[:'is_mpc']
-      else
-        self.is_mpc = nil
+      if attributes.key?(:'ethereum_validator')
+        self.ethereum_validator = attributes[:'ethereum_validator']
       end
     end
 
@@ -90,14 +67,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @enrollment_data.nil?
-        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
-      end
-
-      if @is_mpc.nil?
-        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -105,8 +74,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @enrollment_data.nil?
-      return false if @is_mpc.nil?
       true
     end
 
@@ -115,9 +82,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          server_signer_id == o.server_signer_id &&
-          enrollment_data == o.enrollment_data &&
-          is_mpc == o.is_mpc
+          ethereum_validator == o.ethereum_validator
     end
 
     # @see the `==` method
@@ -129,7 +94,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, enrollment_data, is_mpc].hash
+      [ethereum_validator].hash
     end
 
     # Builds the object from hash

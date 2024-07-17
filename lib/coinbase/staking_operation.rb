@@ -4,6 +4,8 @@ module Coinbase
   # A representation of a staking operation (stake, unstake, claim rewards, etc). It
   # may have multiple steps with some being transactions to sign, and others to wait.
   # @attr_reader [Array<Coinbase::Transaction>] transactions The list of current
+  # @attr_reader [Symbol] status The status of the operation
+  # @attr_reader [String] error The error message if the operation failed
   #   transactions associated with the operation
   class StakingOperation
     attr_reader :transactions, :status, :error
@@ -49,18 +51,12 @@ module Coinbase
       from_model(self.class.load_from_sever(@model.id))
     end
 
-    def initializing?
-      status == 'initializing'
-    end
-
-    def waiting_for_signing?
-      status == 'waiting_for_signing'
-    end
-
     # Fetches the presigned exit transactions for the staking operation
     # @return [Array<string>] The list of presigned exit transaction messages
     def presigned_exit_transactions
-      Coinbase.call_api { Coinbase::Client::StakingOperation.presigned_exit_transactions(@model.id) }
+      return [] unless @model.metadata
+
+      @model.metadata['presigned_exit_transactions']
     end
 
     private

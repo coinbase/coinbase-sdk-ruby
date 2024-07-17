@@ -14,7 +14,7 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The partial eth staking context
+  # The partial eth staking context.
   class PartialEthStakingContext
     attr_accessor :stakeable_balance
 

@@ -14,15 +14,56 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # An onchain transaction to help realize a staking action.
+  # A list of onchain transactions to help realize a staking action.
   class StakingOperation
+    # The unique ID of the staking operation.
+    attr_accessor :id
+
+    # The ID of the blockchain network.
+    attr_accessor :network_id
+
+    # The onchain address orchestrating the staking operation.
+    attr_accessor :address_id
+
+    # The status of the staking operation
+    attr_accessor :status
+
     # The transaction(s) that will execute the staking operation onchain
     attr_accessor :transactions
+
+    attr_accessor :metadata
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'transactions' => :'transactions'
+        :'id' => :'id',
+        :'network_id' => :'network_id',
+        :'address_id' => :'address_id',
+        :'status' => :'status',
+        :'transactions' => :'transactions',
+        :'metadata' => :'metadata'
       }
     end
 
@@ -34,7 +75,12 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'transactions' => :'Array<Transaction>'
+        :'id' => :'String',
+        :'network_id' => :'String',
+        :'address_id' => :'String',
+        :'status' => :'String',
+        :'transactions' => :'Array<Transaction>',
+        :'metadata' => :'StakingOperationMetadata'
       }
     end
 
@@ -59,12 +105,40 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
+      if attributes.key?(:'id')
+        self.id = attributes[:'id']
+      else
+        self.id = nil
+      end
+
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
+      else
+        self.network_id = nil
+      end
+
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
+      else
+        self.status = nil
+      end
+
       if attributes.key?(:'transactions')
         if (value = attributes[:'transactions']).is_a?(Array)
           self.transactions = value
         end
       else
         self.transactions = nil
+      end
+
+      if attributes.key?(:'metadata')
+        self.metadata = attributes[:'metadata']
       end
     end
 
@@ -73,6 +147,22 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @id.nil?
+        invalid_properties.push('invalid value for "id", id cannot be nil.')
+      end
+
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      end
+
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
+      if @status.nil?
+        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      end
+
       if @transactions.nil?
         invalid_properties.push('invalid value for "transactions", transactions cannot be nil.')
       end
@@ -84,8 +174,24 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @id.nil?
+      return false if @network_id.nil?
+      return false if @address_id.nil?
+      return false if @status.nil?
+      status_validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed"])
+      return false unless status_validator.valid?(@status)
       return false if @transactions.nil?
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] status Object to be assigned
+    def status=(status)
+      validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed"])
+      unless validator.valid?(status)
+        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
+      end
+      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -93,7 +199,12 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          transactions == o.transactions
+          id == o.id &&
+          network_id == o.network_id &&
+          address_id == o.address_id &&
+          status == o.status &&
+          transactions == o.transactions &&
+          metadata == o.metadata
     end
 
     # @see the `==` method
@@ -105,7 +216,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [transactions].hash
+      [id, network_id, address_id, status, transactions, metadata].hash
     end
 
     # Builds the object from hash

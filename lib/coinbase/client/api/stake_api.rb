@@ -165,6 +165,81 @@ module Coinbase::Client
       return data, status_code, headers
     end
 
+    # Get the latest state of a staking operation
+    # Get the latest state of a staking operation
+    # @param network_id [String] The ID of the blockchain network
+    # @param address_id [String] The ID of the address to fetch the staking operation for
+    # @param staking_operation_id [String] The ID of the staking operation
+    # @param [Hash] opts the optional parameters
+    # @return [StakingOperation]
+    def get_external_staking_operation(network_id, address_id, staking_operation_id, opts = {})
+      data, _status_code, _headers = get_external_staking_operation_with_http_info(network_id, address_id, staking_operation_id, opts)
+      data
+    end
+
+    # Get the latest state of a staking operation
+    # Get the latest state of a staking operation
+    # @param network_id [String] The ID of the blockchain network
+    # @param address_id [String] The ID of the address to fetch the staking operation for
+    # @param staking_operation_id [String] The ID of the staking operation
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(StakingOperation, Integer, Hash)>] StakingOperation data, response status code and response headers
+    def get_external_staking_operation_with_http_info(network_id, address_id, staking_operation_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: StakeApi.get_external_staking_operation ...'
+      end
+      # verify the required parameter 'network_id' is set
+      if @api_client.config.client_side_validation && network_id.nil?
+        fail ArgumentError, "Missing the required parameter 'network_id' when calling StakeApi.get_external_staking_operation"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling StakeApi.get_external_staking_operation"
+      end
+      # verify the required parameter 'staking_operation_id' is set
+      if @api_client.config.client_side_validation && staking_operation_id.nil?
+        fail ArgumentError, "Missing the required parameter 'staking_operation_id' when calling StakeApi.get_external_staking_operation"
+      end
+      # resource path
+      local_var_path = '/v1/networks/{network_id}/addresses/{address_id}/staking_operations/{staking_operation_id}'.sub('{' + 'network_id' + '}', CGI.escape(network_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s)).sub('{' + 'staking_operation_id' + '}', CGI.escape(staking_operation_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'StakingOperation'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"StakeApi.get_external_staking_operation",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: StakeApi#get_external_staking_operation\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Get staking context
     # Get staking context for an address
     # @param get_staking_context_request [GetStakingContextRequest] 
