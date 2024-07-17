@@ -23,12 +23,10 @@ module Coinbase
     # @return [Coinbase::Validator] The validator
     def self.fetch(network_id, asset_id, validator_id)
       validator = Coinbase.call_api do
-        stake_api.get_validator(
-          {
-            network_id: network_id,
-            asset_id: asset_id,
-            validator_id: validator_id
-          }
+        validators_api.get_validator(
+          network_id,
+          asset_id,
+          validator_id
         )
       end
       new(validator)
@@ -40,16 +38,10 @@ module Coinbase
       @model = model
     end
 
-    # Returns the ID of the Validator.
-    # @return [String] The ID
-    def id
-      @model.id
-    end
-
-    # Returns the name of the Validator.
-    # @return [String] The name
-    def name
-      @model.name
+    # Returns the public_key of the Validator.
+    # @return [String] The public_key
+    def public_key
+      @model.public_key
     end
 
     # Returns the status of the Validator.
@@ -61,7 +53,7 @@ module Coinbase
     # Returns a string representation of the Validator.
     # @return [String] a string representation of the Validator
     def to_s
-      "Coinbase::Validator{id: '#{id}', name: '#{name}', status: '#{status}'}"
+      "Coinbase::Validator{public_key: '#{public_key}', status: '#{status}'}"
     end
 
     # Same as to_s.
@@ -70,18 +62,21 @@ module Coinbase
       to_s
     end
 
-    private
-
     def self.list_page(network_id, asset_id, status, page)
       Coinbase.call_api do
-        stake_api.list_validators(
+        validators_api.list_validators(
+          network_id,
+          asset_id,
           {
-            network_id: network_id,
-            asset_id: asset_id,
             status: status,
             page: page
           }
         )
       end
+    end
+
+    def self.validators_api
+      Coinbase::Client::ValidatorsApi.new(Coinbase.configuration.api_client)
+    end
   end
 end

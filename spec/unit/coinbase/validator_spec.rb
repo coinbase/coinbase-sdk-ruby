@@ -4,13 +4,14 @@ describe Coinbase::Validator do
   let(:network_id) { :network_id }
   let(:asset_id) { :asset_id }
   let(:validator_id) { 'validator_id' }
-  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+  let(:stake_api) { instance_double(Coinbase::Client::ValidatorsApi) }
   let(:validator_model) do
-    instance_double(Coinbase::Client::Validator, id: validator_id, name: 'validator_name', status: 'validator_status')
+    instance_double(Coinbase::Client::EthereumValidator, public_key: 'validator_key',
+                                                         status: 'validator_status')
   end
 
   before do
-    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+    allow(Coinbase::Client::ValidatorsApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:get_validator).and_return(validator_model)
   end
 
@@ -21,18 +22,47 @@ describe Coinbase::Validator do
       fetch
 
       expect(stake_api).to have_received(:get_validator).with(
-        network_id: network_id,
-        asset_id: asset_id,
-        validator_id: validator_id
+        network_id,
+        asset_id,
+        validator_id
       )
     end
 
     it 'returns a validator' do
       expect(fetch).to have_attributes(
-        id: validator_id,
-        name: 'validator_name',
+        public_key: 'validator_key',
         status: 'validator_status'
       )
+    end
+  end
+
+  describe '.list' do
+    let(:status) { 'status' }
+    let(:page) { 1 }
+
+    subject(:list) { described_class.list(network_id, asset_id, status: status) }
+
+    before do
+      allow(stake_api).to receive(:list_validators).and_return(
+        instance_double(Coinbase::Client::ValidatorList, data: [validator_model], has_more: false)
+      )
+    end
+
+    it 'fetches the validators' do
+      list.first
+
+      expect(stake_api).to have_received(:list_validators).with(
+        network_id,
+        asset_id,
+        {
+          status: status,
+          page: nil
+        }
+      )
+    end
+
+    it 'returns a list of validators' do
+      expect(list).to all(be_a(Coinbase::Validator))
     end
   end
 end

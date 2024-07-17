@@ -14,10 +14,10 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The stake operation
-    def create_stake_operation(amount, asset_id, mode: :default, options: {})
+    def build_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_stake!(amount, asset_id, mode, options)
 
-      create_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
+      build_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
     end
 
     # Builds an unstake operation for the supplied asset.
@@ -26,10 +26,10 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the unstake operation
     # @return [Coinbase::StakingOperation] The unstake operation
-    def create_unstake_operation(amount, asset_id, mode: :default, options: {})
+    def build_unstake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_unstake!(amount, asset_id, mode, options)
 
-      create_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
+      build_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
     end
 
     # Builds an claim_stake operation for the supplied asset.
@@ -38,10 +38,10 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the claim_stake operation
     # @return [Coinbase::StakingOperation] The claim_stake operation
-    def create_claim_stake_operation(amount, asset_id, mode: :default, options: {})
+    def build_claim_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_claim_stake!(amount, asset_id, mode, options)
 
-      create_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
+      build_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
     end
 
     # Retreives the balances used for staking for the supplied asset.
@@ -146,10 +146,10 @@ module Coinbase
       raise InsufficientFundsError.new(amount, claimable_balance) unless claimable_balance >= amount
     end
 
-    def create_staking_operation(amount, asset_id, action, mode: :default, options: {})
+    def build_staking_operation(amount, asset_id, action, mode: :default, options: {})
       operation_model = Coinbase.call_api do
         asset = Coinbase::Asset.fetch(network_id, asset_id)
-        stake_api.create_staking_operation(
+        stake_api.build_staking_operation(
           {
             asset_id: asset.primary_denomination.to_s,
             address_id: id,

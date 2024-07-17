@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Coinbase::StakingOperation do
-  let(:staking_operation_model) { instance_double(Coinbase::Client::StakingOperation) }
+  let(:staking_operation_model) { instance_double(Coinbase::Client::StakingOperation, status: :initialized) }
   let(:staking_operation) { described_class.new(staking_operation_model) }
   let(:transaction_model) { instance_double(Coinbase::Client::Transaction) }
   let(:transaction) { instance_double(Coinbase::Transaction) }
