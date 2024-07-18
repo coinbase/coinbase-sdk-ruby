@@ -24,10 +24,10 @@ module Coinbase
     # @param id [String] The ID of the StakingOperation
     # @return [Coinbase::StakingOperation] The staking operation
     def self.fetch(id)
-      new(load_from_sever(id))
+      new(load_from_server(id))
     end
 
-    def self.load_from_sever(id)
+    def self.load_from_server(id)
       Coinbase.call_api { Coinbase::Client::StakingOperation.fetch(id) }
     end
 
@@ -48,7 +48,7 @@ module Coinbase
     # Reloads the staking_operation from the service
     # @return [Coinbase::StakingOperation] The updated staking operation
     def reload
-      from_model(self.class.load_from_sever(@model.id))
+      from_model(self.class.load_from_server(@model.id))
     end
 
     # Fetches the presigned exit transactions for the staking operation
