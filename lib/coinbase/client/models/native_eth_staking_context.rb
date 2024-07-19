@@ -14,22 +14,20 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateServerSignerRequest
-    # The ID of the server signer for the 1 of 1 server signer.
-    attr_accessor :server_signer_id
+  # The native eth staking context.
+  class NativeEthStakingContext
+    attr_accessor :stakeable_balance
 
-    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id for the 1 of 1 server signer.
-    attr_accessor :enrollment_data
+    attr_accessor :unstakeable_balance
 
-    # Whether the Server-Signer uses MPC.
-    attr_accessor :is_mpc
+    attr_accessor :claimable_balance
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'server_signer_id' => :'server_signer_id',
-        :'enrollment_data' => :'enrollment_data',
-        :'is_mpc' => :'is_mpc'
+        :'stakeable_balance' => :'stakeable_balance',
+        :'unstakeable_balance' => :'unstakeable_balance',
+        :'claimable_balance' => :'claimable_balance'
       }
     end
 
@@ -41,9 +39,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'server_signer_id' => :'String',
-        :'enrollment_data' => :'String',
-        :'is_mpc' => :'Boolean'
+        :'stakeable_balance' => :'Balance',
+        :'unstakeable_balance' => :'Balance',
+        :'claimable_balance' => :'Balance'
       }
     end
 
@@ -57,31 +55,33 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::NativeEthStakingContext` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::NativeEthStakingContext`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'server_signer_id')
-        self.server_signer_id = attributes[:'server_signer_id']
+      if attributes.key?(:'stakeable_balance')
+        self.stakeable_balance = attributes[:'stakeable_balance']
+      else
+        self.stakeable_balance = nil
       end
 
-      if attributes.key?(:'enrollment_data')
-        self.enrollment_data = attributes[:'enrollment_data']
+      if attributes.key?(:'unstakeable_balance')
+        self.unstakeable_balance = attributes[:'unstakeable_balance']
       else
-        self.enrollment_data = nil
+        self.unstakeable_balance = nil
       end
 
-      if attributes.key?(:'is_mpc')
-        self.is_mpc = attributes[:'is_mpc']
+      if attributes.key?(:'claimable_balance')
+        self.claimable_balance = attributes[:'claimable_balance']
       else
-        self.is_mpc = nil
+        self.claimable_balance = nil
       end
     end
 
@@ -90,12 +90,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @enrollment_data.nil?
-        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
+      if @stakeable_balance.nil?
+        invalid_properties.push('invalid value for "stakeable_balance", stakeable_balance cannot be nil.')
       end
 
-      if @is_mpc.nil?
-        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
+      if @unstakeable_balance.nil?
+        invalid_properties.push('invalid value for "unstakeable_balance", unstakeable_balance cannot be nil.')
+      end
+
+      if @claimable_balance.nil?
+        invalid_properties.push('invalid value for "claimable_balance", claimable_balance cannot be nil.')
       end
 
       invalid_properties
@@ -105,8 +109,9 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @enrollment_data.nil?
-      return false if @is_mpc.nil?
+      return false if @stakeable_balance.nil?
+      return false if @unstakeable_balance.nil?
+      return false if @claimable_balance.nil?
       true
     end
 
@@ -115,9 +120,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          server_signer_id == o.server_signer_id &&
-          enrollment_data == o.enrollment_data &&
-          is_mpc == o.is_mpc
+          stakeable_balance == o.stakeable_balance &&
+          unstakeable_balance == o.unstakeable_balance &&
+          claimable_balance == o.claimable_balance
     end
 
     # @see the `==` method
@@ -129,7 +134,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, enrollment_data, is_mpc].hash
+      [stakeable_balance, unstakeable_balance, claimable_balance].hash
     end
 
     # Builds the object from hash

@@ -22,6 +22,7 @@ require_relative 'coinbase/wallet'
 require_relative 'coinbase/server_signer'
 require_relative 'coinbase/staking_operation'
 require_relative 'coinbase/staking_reward'
+require_relative 'coinbase/validator'
 require 'json'
 
 # The Coinbase SDK.

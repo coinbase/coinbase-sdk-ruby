@@ -68,6 +68,7 @@ describe Coinbase::ExternalAddress do
     let(:staking_operation) do
       instance_double(
         Coinbase::Client::StakingOperation,
+        status: :initialized,
         transactions: [transaction]
       )
     end

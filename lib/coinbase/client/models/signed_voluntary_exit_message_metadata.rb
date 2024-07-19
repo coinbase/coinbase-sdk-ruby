@@ -14,22 +14,23 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateServerSignerRequest
-    # The ID of the server signer for the 1 of 1 server signer.
-    attr_accessor :server_signer_id
+  # Signed voluntary exit message metadata to be provided to beacon chain to exit a validator.
+  class SignedVoluntaryExitMessageMetadata
+    # The public key of the validator associated with the exit message.
+    attr_accessor :validator_pub_key
 
-    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id for the 1 of 1 server signer.
-    attr_accessor :enrollment_data
+    # The current fork version of the Ethereum beacon chain.
+    attr_accessor :fork
 
-    # Whether the Server-Signer uses MPC.
-    attr_accessor :is_mpc
+    # A base64 encoded version of a json string representing a voluntary exit message.
+    attr_accessor :signed_voluntary_exit
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'server_signer_id' => :'server_signer_id',
-        :'enrollment_data' => :'enrollment_data',
-        :'is_mpc' => :'is_mpc'
+        :'validator_pub_key' => :'validator_pub_key',
+        :'fork' => :'fork',
+        :'signed_voluntary_exit' => :'signed_voluntary_exit'
       }
     end
 
@@ -41,9 +42,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'server_signer_id' => :'String',
-        :'enrollment_data' => :'String',
-        :'is_mpc' => :'Boolean'
+        :'validator_pub_key' => :'String',
+        :'fork' => :'String',
+        :'signed_voluntary_exit' => :'String'
       }
     end
 
@@ -57,31 +58,33 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SignedVoluntaryExitMessageMetadata` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SignedVoluntaryExitMessageMetadata`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'server_signer_id')
-        self.server_signer_id = attributes[:'server_signer_id']
+      if attributes.key?(:'validator_pub_key')
+        self.validator_pub_key = attributes[:'validator_pub_key']
+      else
+        self.validator_pub_key = nil
       end
 
-      if attributes.key?(:'enrollment_data')
-        self.enrollment_data = attributes[:'enrollment_data']
+      if attributes.key?(:'fork')
+        self.fork = attributes[:'fork']
       else
-        self.enrollment_data = nil
+        self.fork = nil
       end
 
-      if attributes.key?(:'is_mpc')
-        self.is_mpc = attributes[:'is_mpc']
+      if attributes.key?(:'signed_voluntary_exit')
+        self.signed_voluntary_exit = attributes[:'signed_voluntary_exit']
       else
-        self.is_mpc = nil
+        self.signed_voluntary_exit = nil
       end
     end
 
@@ -90,12 +93,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @enrollment_data.nil?
-        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
+      if @validator_pub_key.nil?
+        invalid_properties.push('invalid value for "validator_pub_key", validator_pub_key cannot be nil.')
       end
 
-      if @is_mpc.nil?
-        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
+      if @fork.nil?
+        invalid_properties.push('invalid value for "fork", fork cannot be nil.')
+      end
+
+      if @signed_voluntary_exit.nil?
+        invalid_properties.push('invalid value for "signed_voluntary_exit", signed_voluntary_exit cannot be nil.')
       end
 
       invalid_properties
@@ -105,8 +112,9 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @enrollment_data.nil?
-      return false if @is_mpc.nil?
+      return false if @validator_pub_key.nil?
+      return false if @fork.nil?
+      return false if @signed_voluntary_exit.nil?
       true
     end
 
@@ -115,9 +123,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          server_signer_id == o.server_signer_id &&
-          enrollment_data == o.enrollment_data &&
-          is_mpc == o.is_mpc
+          validator_pub_key == o.validator_pub_key &&
+          fork == o.fork &&
+          signed_voluntary_exit == o.signed_voluntary_exit
     end
 
     # @see the `==` method
@@ -129,7 +137,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, enrollment_data, is_mpc].hash
+      [validator_pub_key, fork, signed_voluntary_exit].hash
     end
 
     # Builds the object from hash
