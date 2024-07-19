@@ -39,7 +39,7 @@ module Coinbase
     end
 
     # Returns the public identifiable id of the Validator.
-    # @return [String] The validator id
+    # @return [String] The validator ID
     def validator_id
       @model.validator_id
     end
