@@ -38,6 +38,12 @@ module Coinbase
       new(validator)
     end
 
+    # Returns the public identifiable id of the Validator.
+    # @return [String] The validator id
+    def validator_id
+      @model.validator_id
+    end
+
     # Returns the status of the Validator.
     # @return [Symbol] The status
     def status
@@ -47,7 +53,7 @@ module Coinbase
     # Returns a string representation of the Validator.
     # @return [String] a string representation of the Validator
     def to_s
-      "Coinbase::Validator{id: '#{@model.details.public_key}' status: '#{status}'}"
+      "Coinbase::Validator{id: '#{validator_id}' status: '#{status}'}"
     end
 
     # Same as to_s.

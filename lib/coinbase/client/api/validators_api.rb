@@ -20,25 +20,25 @@ module Coinbase::Client
       @api_client = api_client
     end
     # Get a validator belonging to the CDP project
-    # Get a validator belonging to the user for a given network, asset and address.
+    # Get a validator belonging to the user for a given network, asset and id.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validator for.
-    # @param validator_address [String] The address of the validator to fetch.
+    # @param validator_id [String] The unique id of the validator to fetch details for.
     # @param [Hash] opts the optional parameters
     # @return [Validator]
-    def get_validator(network_id, asset_id, validator_address, opts = {})
-      data, _status_code, _headers = get_validator_with_http_info(network_id, asset_id, validator_address, opts)
+    def get_validator(network_id, asset_id, validator_id, opts = {})
+      data, _status_code, _headers = get_validator_with_http_info(network_id, asset_id, validator_id, opts)
       data
     end
 
     # Get a validator belonging to the CDP project
-    # Get a validator belonging to the user for a given network, asset and address.
+    # Get a validator belonging to the user for a given network, asset and id.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validator for.
-    # @param validator_address [String] The address of the validator to fetch.
+    # @param validator_id [String] The unique id of the validator to fetch details for.
     # @param [Hash] opts the optional parameters
     # @return [Array<(Validator, Integer, Hash)>] Validator data, response status code and response headers
-    def get_validator_with_http_info(network_id, asset_id, validator_address, opts = {})
+    def get_validator_with_http_info(network_id, asset_id, validator_id, opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: ValidatorsApi.get_validator ...'
       end
@@ -50,12 +50,12 @@ module Coinbase::Client
       if @api_client.config.client_side_validation && asset_id.nil?
         fail ArgumentError, "Missing the required parameter 'asset_id' when calling ValidatorsApi.get_validator"
       end
-      # verify the required parameter 'validator_address' is set
-      if @api_client.config.client_side_validation && validator_address.nil?
-        fail ArgumentError, "Missing the required parameter 'validator_address' when calling ValidatorsApi.get_validator"
+      # verify the required parameter 'validator_id' is set
+      if @api_client.config.client_side_validation && validator_id.nil?
+        fail ArgumentError, "Missing the required parameter 'validator_id' when calling ValidatorsApi.get_validator"
       end
       # resource path
-      local_var_path = '/v1/networks/{network_id}/assets/{asset_id}/validators/{validator_address}'.sub('{' + 'network_id' + '}', CGI.escape(network_id.to_s)).sub('{' + 'asset_id' + '}', CGI.escape(asset_id.to_s)).sub('{' + 'validator_address' + '}', CGI.escape(validator_address.to_s))
+      local_var_path = '/v1/networks/{network_id}/assets/{asset_id}/validators/{validator_id}'.sub('{' + 'network_id' + '}', CGI.escape(network_id.to_s)).sub('{' + 'asset_id' + '}', CGI.escape(asset_id.to_s)).sub('{' + 'validator_id' + '}', CGI.escape(validator_id.to_s))
 
       # query parameters
       query_params = opts[:query_params] || {}

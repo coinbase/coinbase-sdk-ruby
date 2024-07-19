@@ -16,6 +16,15 @@ require 'time'
 module Coinbase::Client
   # A validator onchain.
   class Validator
+    # The publicly identifiable unique id of the validator. This can be the public key for Ethereum validators and maybe an address for some other network.
+    attr_accessor :validator_id
+
+    # The ID of the blockchain network to which the Validator belongs.
+    attr_accessor :network_id
+
+    # The ID of the asset that the validator helps stake.
+    attr_accessor :asset_id
+
     # The status of the validator.
     attr_accessor :status
 
@@ -24,6 +33,9 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'validator_id' => :'validator_id',
+        :'network_id' => :'network_id',
+        :'asset_id' => :'asset_id',
         :'status' => :'status',
         :'details' => :'details'
       }
@@ -37,6 +49,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'validator_id' => :'String',
+        :'network_id' => :'String',
+        :'asset_id' => :'String',
         :'status' => :'String',
         :'details' => :'ValidatorDetails'
       }
@@ -63,6 +78,24 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
+      if attributes.key?(:'validator_id')
+        self.validator_id = attributes[:'validator_id']
+      else
+        self.validator_id = nil
+      end
+
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
+      else
+        self.network_id = nil
+      end
+
+      if attributes.key?(:'asset_id')
+        self.asset_id = attributes[:'asset_id']
+      else
+        self.asset_id = nil
+      end
+
       if attributes.key?(:'status')
         self.status = attributes[:'status']
       else
@@ -79,6 +112,18 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @validator_id.nil?
+        invalid_properties.push('invalid value for "validator_id", validator_id cannot be nil.')
+      end
+
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      end
+
+      if @asset_id.nil?
+        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
+      end
+
       if @status.nil?
         invalid_properties.push('invalid value for "status", status cannot be nil.')
       end
@@ -90,6 +135,9 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @validator_id.nil?
+      return false if @network_id.nil?
+      return false if @asset_id.nil?
       return false if @status.nil?
       true
     end
@@ -99,6 +147,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          validator_id == o.validator_id &&
+          network_id == o.network_id &&
+          asset_id == o.asset_id &&
           status == o.status &&
           details == o.details
     end
@@ -112,7 +163,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [status, details].hash
+      [validator_id, network_id, asset_id, status, details].hash
     end
 
     # Builds the object from hash
