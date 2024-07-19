@@ -3,6 +3,12 @@
 module Coinbase
   # A representation of a staking validator.
   class Validator
+    # Returns a new Validator object.
+    # @param model [Coinbase::Client::Validator] The underlying Validator object
+    def initialize(model)
+      @model = model
+    end
+
     # Returns a list of Validators for the provided network and asset.
     # @param network_id [Symbol] The network ID
     # @param asset_id [Symbol] The asset ID
@@ -32,18 +38,6 @@ module Coinbase
       new(validator)
     end
 
-    # Returns a new Validator object.
-    # @param model [Coinbase::Client::Validator] The underlying Validator object
-    def initialize(model)
-      @model = model
-    end
-
-    # Returns the public_key of the Validator.
-    # @return [String] The public_key
-    def public_key
-      @model.public_key
-    end
-
     # Returns the status of the Validator.
     # @return [Symbol] The status
     def status
@@ -53,7 +47,7 @@ module Coinbase
     # Returns a string representation of the Validator.
     # @return [String] a string representation of the Validator
     def to_s
-      "Coinbase::Validator{public_key: '#{public_key}', status: '#{status}'}"
+      "Coinbase::Validator{id: '#{@model.details.public_key}' status: '#{status}'}"
     end
 
     # Same as to_s.

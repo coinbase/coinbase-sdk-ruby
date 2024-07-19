@@ -6,8 +6,8 @@ describe Coinbase::Validator do
   let(:validator_id) { 'validator_id' }
   let(:stake_api) { instance_double(Coinbase::Client::ValidatorsApi) }
   let(:validator_model) do
-    instance_double(Coinbase::Client::EthereumValidator, public_key: 'validator_key',
-                                                         status: 'validator_status')
+    instance_double(Coinbase::Client::Validator, status: 'validator_status',
+                                                 details: Coinbase::Client::EthereumValidatorMetadata)
   end
 
   before do
@@ -30,7 +30,6 @@ describe Coinbase::Validator do
 
     it 'returns a validator' do
       expect(fetch).to have_attributes(
-        public_key: 'validator_key',
         status: 'validator_status'
       )
     end

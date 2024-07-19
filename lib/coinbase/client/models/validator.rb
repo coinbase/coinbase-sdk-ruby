@@ -14,13 +14,18 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class GetValidator200ResponseValidator
-    attr_accessor :ethereum_validator
+  # A validator onchain.
+  class Validator
+    # The status of the validator.
+    attr_accessor :status
+
+    attr_accessor :details
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'ethereum_validator' => :'ethereum_validator'
+        :'status' => :'status',
+        :'details' => :'details'
       }
     end
 
@@ -32,7 +37,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'ethereum_validator' => :'EthereumValidator'
+        :'status' => :'String',
+        :'details' => :'ValidatorDetails'
       }
     end
 
@@ -46,19 +52,25 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::GetValidator200ResponseValidator` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Validator` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::GetValidator200ResponseValidator`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Validator`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'ethereum_validator')
-        self.ethereum_validator = attributes[:'ethereum_validator']
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
+      else
+        self.status = nil
+      end
+
+      if attributes.key?(:'details')
+        self.details = attributes[:'details']
       end
     end
 
@@ -67,6 +79,10 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @status.nil?
+        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -74,6 +90,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @status.nil?
       true
     end
 
@@ -82,7 +99,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          ethereum_validator == o.ethereum_validator
+          status == o.status &&
+          details == o.details
     end
 
     # @see the `==` method
@@ -94,7 +112,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [ethereum_validator].hash
+      [status, details].hash
     end
 
     # Builds the object from hash

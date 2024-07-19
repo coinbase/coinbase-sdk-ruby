@@ -25,7 +25,7 @@ module Coinbase::Client
     # @param asset_id [String] The symbol of the asset to get the validator for.
     # @param validator_address [String] The address of the validator to fetch.
     # @param [Hash] opts the optional parameters
-    # @return [GetValidator200Response]
+    # @return [Validator]
     def get_validator(network_id, asset_id, validator_address, opts = {})
       data, _status_code, _headers = get_validator_with_http_info(network_id, asset_id, validator_address, opts)
       data
@@ -37,7 +37,7 @@ module Coinbase::Client
     # @param asset_id [String] The symbol of the asset to get the validator for.
     # @param validator_address [String] The address of the validator to fetch.
     # @param [Hash] opts the optional parameters
-    # @return [Array<(GetValidator200Response, Integer, Hash)>] GetValidator200Response data, response status code and response headers
+    # @return [Array<(Validator, Integer, Hash)>] Validator data, response status code and response headers
     def get_validator_with_http_info(network_id, asset_id, validator_address, opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: ValidatorsApi.get_validator ...'
@@ -72,7 +72,7 @@ module Coinbase::Client
       post_body = opts[:debug_body]
 
       # return_type
-      return_type = opts[:debug_return_type] || 'GetValidator200Response'
+      return_type = opts[:debug_return_type] || 'Validator'
 
       # auth_names
       auth_names = opts[:debug_auth_names] || []

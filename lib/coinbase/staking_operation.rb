@@ -10,31 +10,17 @@ module Coinbase
   class StakingOperation
     attr_reader :transactions, :status, :error
 
-    # Returns all StakingOperations.
-    # @return [Enumerable<Coinbase::StakingOperation>] The staking operations
-    def self.list
-      Coinbase::Pagination.enumerate(
-        ->(page) { Coinbase.call_api { Coinbase::Client::StakingOperation.list(page: page) } }
-      ) do |staking_operation|
-        new(staking_operation)
-      end
+    # Returns a new StakingOperation object.
+    # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
+    def initialize(model)
+      from_model(model)
     end
 
     # Returns the StakingOperation with the provided ID.
     # @param id [String] The ID of the StakingOperation
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.fetch(id)
-      new(load_from_server(id))
-    end
-
-    def self.load_from_server(id)
-      Coinbase.call_api { Coinbase::Client::StakingOperation.fetch(id) }
-    end
-
-    # Returns a new StakingOperation object.
-    # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
-    def initialize(model)
-      from_model(model)
+    def self.fetch(network_id, address_id, staking_operation_id)
+      new(load_from_server(network_id, address_id, staking_operation_id))
     end
 
     # Signs the Open Transactions with the provided key
@@ -48,15 +34,30 @@ module Coinbase
     # Reloads the staking_operation from the service
     # @return [Coinbase::StakingOperation] The updated staking operation
     def reload
-      from_model(self.class.load_from_server(@model.id))
+      from_model(self.class.load_from_server(@model.network_id, @model.address_id, @model.id))
     end
 
-    # Fetches the presigned exit transactions for the staking operation
+    # Fetches the presigned_voluntary exit messages for the staking operation
     # @return [Array<string>] The list of presigned exit transaction messages
-    def presigned_exit_transactions
+    def signed_voluntary_exit_messages
       return [] unless @model.metadata
 
-      @model.metadata['presigned_exit_transactions']
+      signed_voluntary_exit_messages = []
+
+      @model.metadata.each do |metadata|
+        decoded_string = Base64.decode64(metadata.signed_voluntary_exit)
+        signed_voluntary_exit_messages.push(decoded_string)
+      end
+
+      signed_voluntary_exit_messages
+    end
+
+    def self.stake_api
+      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    private_class_method def self.load_from_server(network_id, address_id, staking_operation_id)
+      stake_api.get_external_staking_operation(network_id, address_id, staking_operation_id)
     end
 
     private

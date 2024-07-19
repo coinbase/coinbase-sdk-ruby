@@ -41,7 +41,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'data' => :'ValidatorListData',
+        :'data' => :'Array<Validator>',
         :'has_more' => :'Boolean',
         :'next_page' => :'String'
       }
@@ -69,7 +69,9 @@ module Coinbase::Client
       }
 
       if attributes.key?(:'data')
-        self.data = attributes[:'data']
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
       else
         self.data = nil
       end
