@@ -10,7 +10,9 @@ describe Coinbase::StakingReward do
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:format) { :usd }
   let(:has_more) { false }
-  let(:staking_reward_model) { instance_double(Coinbase::Client::StakingReward, amount: 100, date: '2024-07-17', address_id: 'some-address') }
+  let(:staking_reward_model) do
+    instance_double(Coinbase::Client::StakingReward, amount: 100, date: '2024-07-17', address_id: 'some-address')
+  end
 
   before do
     allow(Coinbase::Asset).to receive(:fetch).and_return(asset)
