@@ -47,6 +47,12 @@ module Coinbase
       @model.date
     end
 
+    # Returns the onchain address of the StakingReward.
+    # @return [Time] The onchain address
+    def address_id
+      @model.address_id
+    end
+
     # Returns a string representation of the StakingReward.
     # @return [String] a string representation of the StakingReward
     def to_s
