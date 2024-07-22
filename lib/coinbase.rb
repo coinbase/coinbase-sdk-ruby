@@ -61,13 +61,14 @@ module Coinbase
 
   # Configuration object for the Coinbase SDK.
   class Configuration
-    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :use_server_signer
+    attr_accessor :api_url, :api_key_name, :api_key_private_key, :debug_api, :use_server_signer, :max_network_tries
 
     # Initializes the configuration object.
     def initialize
       @api_url = 'https://api.cdp.coinbase.com'
       @debug_api = false
       @use_server_signer = false
+      @max_network_tries = 3
     end
 
     # Sets configuration values based on the provided CDP API Key JSON file.
