@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.0.10] - 2024-07-23
+
+### Added
+
+- Add support for Dedicated ETH Staking for external addresses
+- Add support for listing validator details and fetch details of a specific validator
+
+### Changed
+
+- Improved accessibility for `StakingReward` and `StakingOperation` classes
+
 ## [0.0.9] - 2024-06-26
 
 ### Added

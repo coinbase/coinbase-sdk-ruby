@@ -14,22 +14,45 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateServerSignerRequest
-    # The ID of the server signer for the 1 of 1 server signer.
-    attr_accessor :server_signer_id
+  # An Ethereum validator.
+  class EthereumValidatorMetadata
+    # The index of the validator in the validator set.
+    attr_accessor :index
 
-    # The enrollment data of the server signer. This will be the base64 encoded server-signer-id for the 1 of 1 server signer.
-    attr_accessor :enrollment_data
+    # The public key of the validator.
+    attr_accessor :public_key
 
-    # Whether the Server-Signer uses MPC.
-    attr_accessor :is_mpc
+    # The address to which the validator's rewards are sent.
+    attr_accessor :withdrawl_address
+
+    # Whether the validator has been slashed.
+    attr_accessor :slashed
+
+    # The epoch at which the validator was activated.
+    attr_accessor :activation_epoch
+
+    # The epoch at which the validator exited.
+    attr_accessor :exit_epoch
+
+    # The epoch at which the validator can withdraw.
+    attr_accessor :withdrawable_epoch
+
+    attr_accessor :balance
+
+    attr_accessor :effective_balance
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'server_signer_id' => :'server_signer_id',
-        :'enrollment_data' => :'enrollment_data',
-        :'is_mpc' => :'is_mpc'
+        :'index' => :'index',
+        :'public_key' => :'public_key',
+        :'withdrawl_address' => :'withdrawl_address',
+        :'slashed' => :'slashed',
+        :'activation_epoch' => :'activationEpoch',
+        :'exit_epoch' => :'exitEpoch',
+        :'withdrawable_epoch' => :'withdrawableEpoch',
+        :'balance' => :'balance',
+        :'effective_balance' => :'effective_balance'
       }
     end
 
@@ -41,9 +64,15 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'server_signer_id' => :'String',
-        :'enrollment_data' => :'String',
-        :'is_mpc' => :'Boolean'
+        :'index' => :'String',
+        :'public_key' => :'String',
+        :'withdrawl_address' => :'String',
+        :'slashed' => :'Boolean',
+        :'activation_epoch' => :'String',
+        :'exit_epoch' => :'String',
+        :'withdrawable_epoch' => :'String',
+        :'balance' => :'Balance',
+        :'effective_balance' => :'Balance'
       }
     end
 
@@ -57,31 +86,69 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateServerSignerRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumValidatorMetadata` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateServerSignerRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumValidatorMetadata`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'server_signer_id')
-        self.server_signer_id = attributes[:'server_signer_id']
+      if attributes.key?(:'index')
+        self.index = attributes[:'index']
+      else
+        self.index = nil
       end
 
-      if attributes.key?(:'enrollment_data')
-        self.enrollment_data = attributes[:'enrollment_data']
+      if attributes.key?(:'public_key')
+        self.public_key = attributes[:'public_key']
       else
-        self.enrollment_data = nil
+        self.public_key = nil
       end
 
-      if attributes.key?(:'is_mpc')
-        self.is_mpc = attributes[:'is_mpc']
+      if attributes.key?(:'withdrawl_address')
+        self.withdrawl_address = attributes[:'withdrawl_address']
       else
-        self.is_mpc = nil
+        self.withdrawl_address = nil
+      end
+
+      if attributes.key?(:'slashed')
+        self.slashed = attributes[:'slashed']
+      else
+        self.slashed = nil
+      end
+
+      if attributes.key?(:'activation_epoch')
+        self.activation_epoch = attributes[:'activation_epoch']
+      else
+        self.activation_epoch = nil
+      end
+
+      if attributes.key?(:'exit_epoch')
+        self.exit_epoch = attributes[:'exit_epoch']
+      else
+        self.exit_epoch = nil
+      end
+
+      if attributes.key?(:'withdrawable_epoch')
+        self.withdrawable_epoch = attributes[:'withdrawable_epoch']
+      else
+        self.withdrawable_epoch = nil
+      end
+
+      if attributes.key?(:'balance')
+        self.balance = attributes[:'balance']
+      else
+        self.balance = nil
+      end
+
+      if attributes.key?(:'effective_balance')
+        self.effective_balance = attributes[:'effective_balance']
+      else
+        self.effective_balance = nil
       end
     end
 
@@ -90,12 +157,40 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @enrollment_data.nil?
-        invalid_properties.push('invalid value for "enrollment_data", enrollment_data cannot be nil.')
+      if @index.nil?
+        invalid_properties.push('invalid value for "index", index cannot be nil.')
       end
 
-      if @is_mpc.nil?
-        invalid_properties.push('invalid value for "is_mpc", is_mpc cannot be nil.')
+      if @public_key.nil?
+        invalid_properties.push('invalid value for "public_key", public_key cannot be nil.')
+      end
+
+      if @withdrawl_address.nil?
+        invalid_properties.push('invalid value for "withdrawl_address", withdrawl_address cannot be nil.')
+      end
+
+      if @slashed.nil?
+        invalid_properties.push('invalid value for "slashed", slashed cannot be nil.')
+      end
+
+      if @activation_epoch.nil?
+        invalid_properties.push('invalid value for "activation_epoch", activation_epoch cannot be nil.')
+      end
+
+      if @exit_epoch.nil?
+        invalid_properties.push('invalid value for "exit_epoch", exit_epoch cannot be nil.')
+      end
+
+      if @withdrawable_epoch.nil?
+        invalid_properties.push('invalid value for "withdrawable_epoch", withdrawable_epoch cannot be nil.')
+      end
+
+      if @balance.nil?
+        invalid_properties.push('invalid value for "balance", balance cannot be nil.')
+      end
+
+      if @effective_balance.nil?
+        invalid_properties.push('invalid value for "effective_balance", effective_balance cannot be nil.')
       end
 
       invalid_properties
@@ -105,8 +200,15 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @enrollment_data.nil?
-      return false if @is_mpc.nil?
+      return false if @index.nil?
+      return false if @public_key.nil?
+      return false if @withdrawl_address.nil?
+      return false if @slashed.nil?
+      return false if @activation_epoch.nil?
+      return false if @exit_epoch.nil?
+      return false if @withdrawable_epoch.nil?
+      return false if @balance.nil?
+      return false if @effective_balance.nil?
       true
     end
 
@@ -115,9 +217,15 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          server_signer_id == o.server_signer_id &&
-          enrollment_data == o.enrollment_data &&
-          is_mpc == o.is_mpc
+          index == o.index &&
+          public_key == o.public_key &&
+          withdrawl_address == o.withdrawl_address &&
+          slashed == o.slashed &&
+          activation_epoch == o.activation_epoch &&
+          exit_epoch == o.exit_epoch &&
+          withdrawable_epoch == o.withdrawable_epoch &&
+          balance == o.balance &&
+          effective_balance == o.effective_balance
     end
 
     # @see the `==` method
@@ -129,7 +237,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [server_signer_id, enrollment_data, is_mpc].hash
+      [index, public_key, withdrawl_address, slashed, activation_epoch, exit_epoch, withdrawable_epoch, balance, effective_balance].hash
     end
 
     # Builds the object from hash

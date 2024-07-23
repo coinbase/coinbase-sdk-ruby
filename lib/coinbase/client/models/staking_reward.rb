@@ -14,9 +14,9 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The staking rewards for an address
+  # The staking rewards for an address.
   class StakingReward
-    # The onchain address for which the staking rewards are being fetched
+    # The onchain address for which the staking rewards are being fetched.
     attr_accessor :address_id
 
     # The date of the reward in format 'YYYY-MM-DD' in UTC.
@@ -25,7 +25,7 @@ module Coinbase::Client
     # The reward amount in requested \"format\". Default is USD.
     attr_accessor :amount
 
-    # The state of the reward
+    # The state of the reward.
     attr_accessor :state
 
     attr_accessor :format

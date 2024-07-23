@@ -44,7 +44,7 @@ module Coinbase
       build_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
     end
 
-    # Retreives the balances used for staking for the supplied asset.
+    # Retrieves the balances used for staking for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve staking balances for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
@@ -82,7 +82,7 @@ module Coinbase
       }
     end
 
-    # Retreives the stakeable balance for the supplied asset.
+    # Retrieves the stakeable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
@@ -91,7 +91,7 @@ module Coinbase
       staking_balances(asset_id, mode: mode, options: options)[:stakeable_balance]
     end
 
-    # Retreives the unstakeable balance for the supplied asset.
+    # Retrieves the unstakeable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
@@ -100,7 +100,7 @@ module Coinbase
       staking_balances(asset_id, mode: mode, options: options)[:unstakeable_balance]
     end
 
-    # Retreives the claimable balance for the supplied asset.
+    # Retrieves the claimable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the claimable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
