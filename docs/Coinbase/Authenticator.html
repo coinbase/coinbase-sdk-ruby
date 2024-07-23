@@ -335,6 +335,19 @@
     </li>
   
 </ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">Coinbase::InvalidConfiguration</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -360,7 +373,9 @@
 47
 48
 49
-50</pre>
+50
+51
+52</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/authenticator.rb', line 32</span>
@@ -380,6 +395,8 @@
     <span class='label'>exp:</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>+</span> <span class='int'>60</span><span class='comma'>,</span> <span class='comment'># Expiration time: 1 minute from now.
 </span>    <span class='label'>uris:</span> <span class='lbracket'>[</span><span class='id identifier rubyid_uri'>uri</span><span class='rbracket'>]</span>
   <span class='rbrace'>}</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="InvalidConfiguration.html" title="Coinbase::InvalidConfiguration (class)">InvalidConfiguration</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>API key not configured</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configured?'><span class='object_link'><a href="../Coinbase.html#configured%3F-class_method" title="Coinbase.configured? (method)">configured?</a></span></span>
 
   <span class='id identifier rubyid_private_key'>private_key</span> <span class='op'>=</span> <span class='const'>OpenSSL</span><span class='op'>::</span><span class='const'>PKey</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'><span class='object_link'><a href="Configuration.html#api_key_private_key-instance_method" title="Coinbase::Configuration#api_key_private_key (method)">api_key_private_key</a></span></span><span class='rparen'>)</span>
   <span class='const'>JWT</span><span class='period'>.</span><span class='id identifier rubyid_encode'>encode</span><span class='lparen'>(</span><span class='id identifier rubyid_claims'>claims</span><span class='comma'>,</span> <span class='id identifier rubyid_private_key'>private_key</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ES256</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_header'>header</span><span class='rparen'>)</span>
