@@ -35,7 +35,8 @@ module Coinbase
             {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               asset_id: asset.primary_denomination.to_s,
-              destination: Coinbase::Destination.new(destination, network_id: network_id).address_id
+              destination: Coinbase::Destination.new(destination, network_id: network_id).address_id,
+              network_id: Coinbase.normalize_network(network_id)
             }
           )
         end

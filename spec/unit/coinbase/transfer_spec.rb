@@ -72,7 +72,8 @@ describe Coinbase::Transfer do
       {
         amount: amount.to_i.to_s,
         asset_id: normalized_asset_id,
-        destination: to_address_id
+        destination: to_address_id,
+        network_id: Coinbase.normalize_network(network_id)
       }
     end
 
