@@ -92,6 +92,36 @@ module Coinbase
       trade
     end
 
+    # Stakes the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def stake(amount, asset_id, mode: :default, options: {})
+      complete_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
+    end
+
+    # Unstakes the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def unstake(amount, asset_id, mode: :default, options: {})
+      complete_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
+    end
+
+    # Claims the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def claim(amount, asset_id, mode: :default, options: {})
+      complete_staking_operation(amount, asset_id, 'claim', mode: mode, options: options)
+    end
+
     # Returns whether the Address has a private key backing it to sign transactions.
     # @return [Boolean] Whether the Address has a private key backing it to sign transactions.
     def can_sign?
@@ -143,6 +173,45 @@ module Coinbase
       return unless current_balance < amount
 
       raise InsufficientFundsError.new(amount, current_balance)
+    end
+
+    def create_staking_operation(amount, asset_id, action, mode: :default, options: {})
+      operation_model = Coinbase.call_api do
+        asset = Coinbase::Asset.fetch(network_id, asset_id)
+        stake_api.create_staking_operation(
+          wallet_id,
+          id,
+          {
+            asset_id: asset.primary_denomination.to_s,
+            address_id: id,
+            action: action,
+            network_id: Coinbase.normalize_network(network_id),
+            options: {
+              amount: asset.to_atomic_amount(amount).to_i.to_s,
+              mode: mode
+            }.merge(options)
+          }
+        )
+      end
+
+      StakingOperation.new(operation_model)
+    end
+
+    def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
+      validate_staking_operation!(amount, asset_id, action, mode: mode, options: options)
+      op = create_staking_operation(amount, asset_id, action, mode: mode, options: options)
+      op.transactions.each_with_index do |transaction, i|
+        signed_payload = transaction.sign(@key)
+        Coinbase.call_api do
+          stake_api.broadcast_staking_operation(
+            wallet_id,
+            id,
+            op.id,
+            { signed_payload: signed_payload, transaction_index: i }
+          )
+        end
+      end
+      op
     end
   end
 end

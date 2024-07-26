@@ -39,6 +39,12 @@ module Coinbase
       @model.status
     end
 
+    # Returns the Wallet ID of the Staking Operation.
+    # @return [String] The Wallet ID
+    def wallet_id
+      @model.wallet_id
+    end
+
     # Waits until the Staking Operation is completed or failed by polling its status at the given interval. Raises a
     # Timeout::Error if the Staking Operation takes longer than the given timeout.
     # @param interval_seconds [Integer] The interval at which to poll, in seconds

@@ -14,60 +14,25 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # A list of onchain transactions to help realize a staking action.
-  class StakingOperation
-    # The unique ID of the staking operation.
-    attr_accessor :id
-
-    # The ID of the wallet that owns the address.
-    attr_accessor :wallet_id
-
+  class CreateStakingOperationRequest
     # The ID of the blockchain network.
     attr_accessor :network_id
 
-    # The onchain address orchestrating the staking operation.
-    attr_accessor :address_id
+    # The ID of the asset being staked.
+    attr_accessor :asset_id
 
-    # The status of the staking operation.
-    attr_accessor :status
+    # The type of staking operation.
+    attr_accessor :action
 
-    # The transaction(s) that will execute the staking operation onchain.
-    attr_accessor :transactions
-
-    attr_accessor :metadata
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    attr_accessor :options
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'wallet_id' => :'wallet_id',
         :'network_id' => :'network_id',
-        :'address_id' => :'address_id',
-        :'status' => :'status',
-        :'transactions' => :'transactions',
-        :'metadata' => :'metadata'
+        :'asset_id' => :'asset_id',
+        :'action' => :'action',
+        :'options' => :'options'
       }
     end
 
@@ -79,13 +44,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'id' => :'String',
-        :'wallet_id' => :'String',
         :'network_id' => :'String',
-        :'address_id' => :'String',
-        :'status' => :'String',
-        :'transactions' => :'Array<Transaction>',
-        :'metadata' => :'StakingOperationMetadata'
+        :'asset_id' => :'String',
+        :'action' => :'String',
+        :'options' => :'Hash<String, String>'
       }
     end
 
@@ -99,26 +61,16 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingOperation` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateStakingOperationRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingOperation`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateStakingOperationRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
-
-      if attributes.key?(:'id')
-        self.id = attributes[:'id']
-      else
-        self.id = nil
-      end
-
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
-      end
 
       if attributes.key?(:'network_id')
         self.network_id = attributes[:'network_id']
@@ -126,28 +78,24 @@ module Coinbase::Client
         self.network_id = nil
       end
 
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
+      if attributes.key?(:'asset_id')
+        self.asset_id = attributes[:'asset_id']
       else
-        self.address_id = nil
+        self.asset_id = nil
       end
 
-      if attributes.key?(:'status')
-        self.status = attributes[:'status']
+      if attributes.key?(:'action')
+        self.action = attributes[:'action']
       else
-        self.status = nil
+        self.action = nil
       end
 
-      if attributes.key?(:'transactions')
-        if (value = attributes[:'transactions']).is_a?(Array)
-          self.transactions = value
+      if attributes.key?(:'options')
+        if (value = attributes[:'options']).is_a?(Hash)
+          self.options = value
         end
       else
-        self.transactions = nil
-      end
-
-      if attributes.key?(:'metadata')
-        self.metadata = attributes[:'metadata']
+        self.options = nil
       end
     end
 
@@ -156,24 +104,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @id.nil?
-        invalid_properties.push('invalid value for "id", id cannot be nil.')
-      end
-
       if @network_id.nil?
         invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      if @asset_id.nil?
+        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
       end
 
-      if @status.nil?
-        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      if @action.nil?
+        invalid_properties.push('invalid value for "action", action cannot be nil.')
       end
 
-      if @transactions.nil?
-        invalid_properties.push('invalid value for "transactions", transactions cannot be nil.')
+      if @options.nil?
+        invalid_properties.push('invalid value for "options", options cannot be nil.')
       end
 
       invalid_properties
@@ -183,24 +127,11 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @id.nil?
       return false if @network_id.nil?
-      return false if @address_id.nil?
-      return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified"])
-      return false unless status_validator.valid?(@status)
-      return false if @transactions.nil?
+      return false if @asset_id.nil?
+      return false if @action.nil?
+      return false if @options.nil?
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] status Object to be assigned
-    def status=(status)
-      validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified"])
-      unless validator.valid?(status)
-        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
-      end
-      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -208,13 +139,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          wallet_id == o.wallet_id &&
           network_id == o.network_id &&
-          address_id == o.address_id &&
-          status == o.status &&
-          transactions == o.transactions &&
-          metadata == o.metadata
+          asset_id == o.asset_id &&
+          action == o.action &&
+          options == o.options
     end
 
     # @see the `==` method
@@ -226,7 +154,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, wallet_id, network_id, address_id, status, transactions, metadata].hash
+      [network_id, asset_id, action, options].hash
     end
 
     # Builds the object from hash

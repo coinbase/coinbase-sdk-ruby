@@ -294,6 +294,11 @@ module Coinbase
       default_address.trade(amount, from_asset_id, to_asset_id)
     end
 
+    # Stakes the given amount of the given Asset.
+    def stake(amount, asset_id)
+      default_address.stake(amount, asset_id)
+    end
+
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
