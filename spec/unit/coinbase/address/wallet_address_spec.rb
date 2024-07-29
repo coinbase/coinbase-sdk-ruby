@@ -348,37 +348,28 @@ describe Coinbase::WalletAddress do
     let(:amount) { 1 }
     let(:mode) { :default }
     let(:asset_id) { :eth }
-    let(:staking_operation_model) { instance_double(Coinbase::Client::StakingOperation) }
     let(:staking_operation) { instance_double(Coinbase::StakingOperation, id: 'test-id') }
     let(:transaction) { instance_double(Coinbase::Transaction) }
     subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
 
     before do
-      allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
-      allow(stake_api).to receive(:create_staking_operation).and_return(staking_operation_model)
-      allow(stake_api).to receive(:broadcast_staking_operation)
-      allow(Coinbase::StakingOperation).to receive(:new).and_return(staking_operation)
+      allow(Coinbase::StakingOperation).to receive(:create).and_return(staking_operation)
       allow(staking_operation).to receive(:transactions).and_return([transaction])
       allow(transaction).to receive(:sign).and_return('signed_payload')
-    end
-
-    it 'fetches the asset' do
-      subject
-      expect(Coinbase::Asset).to have_received(:fetch).with(network_id, asset_id)
+      allow(staking_operation).to receive(:broadcast!)
     end
 
     it 'creates a staking operation' do
       subject
-      expect(stake_api).to have_received(:create_staking_operation).with(
-        wallet_id,
+      expect(Coinbase::StakingOperation).to have_received(:create).with(
+        amount,
+        network_id,
+        asset_id,
         address_id,
-        {
-          asset_id: eth_asset.asset_id.to_s,
-          address_id: address_id,
-          action: operation,
-          network_id: normalized_network_id,
-          options: { amount: (10**18).to_s, mode: mode }
-        }
+        wallet_id,
+        operation,
+        mode,
+        {}
       )
     end
 
@@ -389,12 +380,7 @@ describe Coinbase::WalletAddress do
 
     it 'braodcasts the transaciton' do
       subject
-      expect(stake_api).to have_received(:broadcast_staking_operation).with(
-        wallet_id,
-        address_id,
-        'test-id',
-        { signed_payload: 'signed_payload', transaction_index: 0 }
-      )
+      expect(staking_operation).to have_received(:broadcast!)
     end
   end
 
@@ -407,7 +393,7 @@ describe Coinbase::WalletAddress do
   end
 
   describe '#claim_stake' do
-    # it_behaves_like 'an address that can do a staking_action', 'claim_stake'
+    it_behaves_like 'an address that can do a staking_action', 'claim_stake'
   end
 
   describe '#transfers' do

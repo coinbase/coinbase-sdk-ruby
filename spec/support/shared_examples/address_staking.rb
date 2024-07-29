@@ -37,6 +37,7 @@ shared_context 'with mocked staking_balances' do
 end
 
 shared_examples 'an address that supports staking' do
+  let(:amount) { 1 }
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:mode) { :partial }
@@ -62,39 +63,20 @@ shared_examples 'an address that supports staking' do
     end
 
     before do
-      allow(stake_api).to receive(:build_staking_operation).and_return(staking_operation)
-      allow(Coinbase::StakingOperation).to receive(:new)
-      allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
-      allow(stake_api).to receive(:get_staking_context).and_return(staking_context)
-    end
-
-    it 'creates a new staking_api_client' do
-      subject
-      expect(Coinbase::Client::StakeApi).to have_received(:new)
+      allow(Coinbase::StakingOperation).to receive(:build).and_return(staking_operation)
     end
 
     it 'calls build_staking_operation' do
       subject
-      expect(stake_api).to have_received(:build_staking_operation).with(
-        asset_id: eth_asset_model.asset_id,
-        address_id: address_id,
-        action: operation,
-        network_id: 'ethereum-mainnet',
-        options: { amount: (10**18).to_s, mode: mode }
+      expect(Coinbase::StakingOperation).to have_received(:build).with(
+        amount,
+        network_id,
+        eth_asset_model.asset_id,
+        address_id,
+        operation,
+        mode,
+        {}
       )
-    end
-
-    it 'fetches the asset' do
-      subject
-
-      expect(Coinbase::Asset)
-        .to have_received(:fetch)
-        .with(:ethereum_mainnet, eth_asset_model.asset_id)
-    end
-
-    it 'creates a new StakingOperation' do
-      subject
-      expect(Coinbase::StakingOperation).to have_received(:new).with(staking_operation)
     end
 
     context "when the amount is less than the #{operation} minimum" do

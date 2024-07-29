@@ -99,6 +99,8 @@ module Coinbase
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The staking operation
     def stake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
+
       complete_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
     end
 
@@ -109,6 +111,8 @@ module Coinbase
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The staking operation
     def unstake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
+
       complete_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
     end
 
@@ -119,6 +123,8 @@ module Coinbase
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The staking operation
     def claim_stake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
+
       complete_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
     end
 
@@ -175,43 +181,12 @@ module Coinbase
       raise InsufficientFundsError.new(amount, current_balance)
     end
 
-    def create_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      operation_model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
-        stake_api.create_staking_operation(
-          wallet_id,
-          id,
-          {
-            asset_id: asset.primary_denomination.to_s,
-            address_id: id,
-            action: action,
-            network_id: Coinbase.normalize_network(network_id),
-            options: {
-              amount: asset.to_atomic_amount(amount).to_i.to_s,
-              mode: mode
-            }.merge(options)
-          }
-        )
-      end
-
-      StakingOperation.new(operation_model)
-    end
-
     def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      validate_staking_operation!(amount, asset_id, action, mode: mode, options: options)
-      op = create_staking_operation(amount, asset_id, action, mode: mode, options: options)
-      op.transactions.each_with_index do |transaction, i|
-        signed_payload = transaction.sign(@key)
-        Coinbase.call_api do
-          stake_api.broadcast_staking_operation(
-            wallet_id,
-            id,
-            op.id,
-            { signed_payload: signed_payload, transaction_index: i }
-          )
-        end
+      op = StakingOperation.create(amount, network_id, asset_id, id, wallet_id, action, mode, options)
+      op.transactions.each do |transaction|
+        transaction.sign(@key)
       end
-      op
+      op.broadcast!
     end
   end
 end

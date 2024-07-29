@@ -9,6 +9,67 @@ module Coinbase
   class StakingOperation
     attr_reader :transactions
 
+    # Builds an ephemeral staking operation this is intended to be called via an Address or Wallet.
+    # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
+    # @param network_id [Symbol] The Network ID
+    # @param asset_id [Symbol] The Asset ID
+    # @param address_id [String] The Address ID
+    # @param action [Symbol] The action to perform
+    # @param mode [Symbol] The staking mode
+    # @param options [Hash] Additional options
+    # @return [Coinbase::StakingOperation] The staking operation
+    def self.build(amount, network_id, asset_id, address_id, action, mode, options)
+      model = Coinbase.call_api do
+        asset = Coinbase::Asset.fetch(network_id, asset_id)
+        stake_api.build_staking_operation(
+          {
+            asset_id: asset.primary_denomination.to_s,
+            address_id: address_id,
+            action: action,
+            network_id: Coinbase.normalize_network(network_id),
+            options: {
+              amount: asset.to_atomic_amount(amount).to_i.to_s,
+              mode: mode
+            }.merge(options)
+          }
+        )
+      end
+
+      new(model)
+    end
+
+    # Creates a persisted staking operation this is intended to be called via an Address or Wallet.
+    # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
+    # @param network_id [Symbol] The Network ID
+    # @param asset_id [Symbol] The Asset ID
+    # @param address_id [String] The Address ID
+    # @param wallet_id [String] The Wallet ID
+    # @param action [Symbol] The action to perform
+    # @param mode [Symbol] The staking mode
+    # @param options [Hash] Additional options
+    # @return [Coinbase::StakingOperation] The staking operation
+    def self.create(amount, network_id, asset_id, address_id, wallet_id, action, mode, options)
+      model = Coinbase.call_api do
+        asset = Coinbase::Asset.fetch(network_id, asset_id)
+        stake_api.create_staking_operation(
+          wallet_id,
+          address_id,
+          {
+            asset_id: asset.primary_denomination.to_s,
+            address_id: address_id,
+            action: action,
+            network_id: Coinbase.normalize_network(network_id),
+            options: {
+              amount: asset.to_atomic_amount(amount).to_i.to_s,
+              mode: mode
+            }.merge(options)
+          }
+        )
+      end
+
+      new(model)
+    end
+
     # Returns a new StakingOperation object.
     # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
     def initialize(model)
@@ -114,10 +175,31 @@ module Coinbase
       signed_voluntary_exit_messages
     end
 
+    # Broadcasts the Staking Operation transactions to the network
+    # @return [Coinbase::StakingOperation]
+    def broadcast!
+      transactions.each_with_index do |tx, i|
+        Coinbase.call_api do
+          stake_api.broadcast_staking_operation(
+            wallet_id,
+            address_id,
+            id,
+            { signed_payload: tx.raw.hex, transaction_index: i }
+          )
+        end
+      end
+
+      self
+    end
+
     private
 
+    def self.stake_api
+      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
     def stake_api
-      @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+      @stake_api ||= self.class.stake_api
     end
 
     def from_model(model)

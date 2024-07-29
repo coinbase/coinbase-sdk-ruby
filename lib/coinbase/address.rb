@@ -83,7 +83,9 @@ module Coinbase
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The stake operation
     def build_stake_operation(amount, asset_id, mode: :default, options: {})
-      build_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
+      validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
+
+      StakingOperation.build(amount, network_id, asset_id, id, 'stake', mode, options)
     end
 
     # Builds an unstake operation for the supplied asset.
@@ -93,7 +95,9 @@ module Coinbase
     # @param options [Hash] Additional options for the unstake operation
     # @return [Coinbase::StakingOperation] The unstake operation
     def build_unstake_operation(amount, asset_id, mode: :default, options: {})
-      build_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
+      validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
+
+      StakingOperation.build(amount, network_id, asset_id, id, 'unstake', mode, options)
     end
 
     # Builds an claim_stake operation for the supplied asset.
@@ -103,7 +107,9 @@ module Coinbase
     # @param options [Hash] Additional options for the claim_stake operation
     # @return [Coinbase::StakingOperation] The claim_stake operation
     def build_claim_stake_operation(amount, asset_id, mode: :default, options: {})
-      build_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
+      validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
+
+      StakingOperation.build(amount, network_id, asset_id, id, 'claim_stake', mode, options)
     end
 
     # Retrieves the balances used for staking for the supplied asset.
@@ -190,38 +196,13 @@ module Coinbase
 
     private
 
+    def validate_can_perform_staking_action!(amount, asset_id, balance_type, mode, options)
+      current_staking_balance = staking_balances(asset_id, mode: mode, options: options)[balance_type.to_sym]
+      raise InsufficientFundsError.new(amount, current_staking_balance) unless current_staking_balance >= amount
+    end
+
     def addresses_api
       @addresses_api ||= Coinbase::Client::ExternalAddressesApi.new(Coinbase.configuration.api_client)
-    end
-
-    def validate_staking_operation!(amount, asset_id, action, mode: :default, options: {})
-      action_balance_name = "#{action}able_balance"
-      action_balance_name = 'claimable_balance' if action == 'claim_stake'
-
-      staking_balance = staking_balances(asset_id, mode: mode, options: options)[action_balance_name.to_sym]
-      raise InsufficientFundsError.new(amount, staking_balance) unless staking_balance >= amount
-    end
-
-    def build_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      validate_staking_operation!(amount, asset_id, action, mode: mode, options: options)
-
-      operation_model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
-        stake_api.build_staking_operation(
-          {
-            asset_id: asset.primary_denomination.to_s,
-            address_id: id,
-            action: action,
-            network_id: Coinbase.normalize_network(network_id),
-            options: {
-              amount: asset.to_atomic_amount(amount).to_i.to_s,
-              mode: mode
-            }.merge(options)
-          }
-        )
-      end
-
-      StakingOperation.new(operation_model)
     end
 
     def stake_api
