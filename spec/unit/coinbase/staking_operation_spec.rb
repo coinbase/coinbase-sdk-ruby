@@ -187,6 +187,35 @@ describe Coinbase::StakingOperation do
       )
     end
 
+    context 'with multiple transactions' do
+      let(:other_hex_encoded_transaction) { '0xdeadbeef' }
+      let(:other_transaction) { instance_double(Coinbase::Transaction) }
+      before do
+        allow(staking_operation).to receive(:transactions).and_return([transaction, other_transaction])
+        allow(other_transaction).to receive(:signed?).and_return(transaction_signed)
+        raw_tx = double 'EthereumTransaction'
+        allow(other_transaction).to receive(:raw).and_return(raw_tx)
+        allow(raw_tx).to receive(:hex).and_return(other_hex_encoded_transaction)
+      end
+
+      it 'calls broadcast with the transaction twice' do
+        staking_operation.broadcast!
+
+        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+          wallet_id,
+          address_id,
+          staking_operation.id,
+          { signed_payload: hex_encoded_transaction, transaction_index: 0 }
+        )
+        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+          wallet_id,
+          address_id,
+          staking_operation.id,
+          { signed_payload: other_hex_encoded_transaction, transaction_index: 1 }
+        )
+      end
+    end
+
     context 'when the transaction is not signed' do
       let(:transaction_signed) { false }
 
