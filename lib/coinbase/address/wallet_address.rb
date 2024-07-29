@@ -118,8 +118,8 @@ module Coinbase
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the stake operation
     # @return [Coinbase::StakingOperation] The staking operation
-    def claim(amount, asset_id, mode: :default, options: {})
-      complete_staking_operation(amount, asset_id, 'claim', mode: mode, options: options)
+    def claim_stake(amount, asset_id, mode: :default, options: {})
+      complete_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.

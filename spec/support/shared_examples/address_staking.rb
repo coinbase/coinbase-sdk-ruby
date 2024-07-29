@@ -1,13 +1,10 @@
 # frozen_string_literal: true
 
-shared_examples 'an address that supports staking' do
-  let(:network_id) { :ethereum_mainnet }
-  let(:normalized_network_id) { 'ethereum-mainnet' }
+shared_context 'with mocked staking_balances' do
+  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:stake_balance) { 100 }
   let(:unstake_balance) { 100 }
   let(:claim_stake_balance) { 100 }
-  let(:mode) { :partial }
-  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:eth_asset_model) do
     Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
   end
@@ -37,6 +34,22 @@ shared_examples 'an address that supports staking' do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:get_staking_context).and_return(staking_context)
   end
+end
+
+shared_examples 'an address that supports staking' do
+  let(:network_id) { :ethereum_mainnet }
+  let(:normalized_network_id) { 'ethereum-mainnet' }
+  let(:mode) { :partial }
+  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+  let(:eth_asset_model) do
+    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
+  end
+  let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
+
+  before do
+    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+  end
+  include_context 'with mocked staking_balances'
 
   shared_examples 'it builds a staking operation' do |operation|
     let(:transaction) { instance_double(Coinbase::Client::Transaction) }
