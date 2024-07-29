@@ -192,11 +192,11 @@ module Coinbase
       self
     end
 
-    private
-
     def self.stake_api
       Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
+
+    private
 
     def stake_api
       @stake_api ||= self.class.stake_api
