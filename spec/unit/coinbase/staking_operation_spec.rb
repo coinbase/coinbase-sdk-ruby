@@ -170,6 +170,12 @@ describe Coinbase::StakingOperation do
   end
 
   describe '#broadcast!' do
+    let(:transaction_signed) { true }
+
+    before do
+      allow(transaction).to receive(:signed?).and_return(transaction_signed)
+    end
+
     it 'calls broadcast with the transaction' do
       staking_operation.broadcast!
 
@@ -179,6 +185,14 @@ describe Coinbase::StakingOperation do
         staking_operation.id,
         { signed_payload: hex_encoded_transaction, transaction_index: 0 }
       )
+    end
+
+    context 'when the transaction is not signed' do
+      let(:transaction_signed) { false }
+
+      it 'raises a transaction not signed exception' do
+        expect { staking_operation.broadcast! }.to raise_error Coinbase::TransactionNotSignedError
+      end
     end
   end
 end

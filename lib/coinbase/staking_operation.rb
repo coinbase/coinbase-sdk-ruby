@@ -178,13 +178,15 @@ module Coinbase
     # Broadcasts the Staking Operation transactions to the network
     # @return [Coinbase::StakingOperation]
     def broadcast!
-      transactions.each_with_index do |tx, i|
+      transactions.each_with_index do |transaction, i|
+        raise TransactionNotSignedError unless transaction.signed?
+
         Coinbase.call_api do
           stake_api.broadcast_staking_operation(
             wallet_id,
             address_id,
             id,
-            { signed_payload: tx.raw.hex, transaction_index: i }
+            { signed_payload: transaction.raw.hex, transaction_index: i }
           )
         end
       end
