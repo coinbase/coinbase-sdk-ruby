@@ -41,29 +41,124 @@ describe Coinbase::Trade do
       unsigned_payload: unsigned_payload
     )
   end
-  let(:from_asset) { eth_asset }
-  let(:to_asset) { usdc_asset }
+  let(:approve_transaction_model) { nil }
+  let(:from_asset_model) { eth_asset }
+  let(:from_asset) { Coinbase::Asset.from_model(from_asset_model) }
+  let(:to_asset_model) { usdc_asset }
+  let(:to_asset) { Coinbase::Asset.from_model(to_asset_model) }
   let(:model) do
     Coinbase::Client::Trade.new(
       network_id: network_id,
       wallet_id: wallet_id,
       address_id: address_id,
-      from_asset: from_asset,
-      to_asset: to_asset,
+      from_asset: from_asset_model,
+      to_asset: to_asset_model,
       from_amount: from_amount.to_s,
       to_amount: to_amount.to_s,
       trade_id: trade_id,
-      transaction: transaction_model
+      transaction: transaction_model,
+      approve_transaction: approve_transaction_model
     )
   end
   let(:trades_api) { double('Coinbase::Client::TradesApi') }
 
-  before(:each) do
+  before do
     allow(Coinbase::Client::TradesApi).to receive(:new).and_return(trades_api)
   end
 
   subject(:trade) do
     described_class.new(model)
+  end
+
+  describe '.create' do
+    let(:from_asset_id) { :eth }
+    let(:normalized_from_asset_id) { 'eth' }
+    let(:to_asset_id) { :usdc }
+    let(:normalized_to_asset_id) { 'usdc' }
+
+    let(:create_trade_request) do
+      {
+        amount: from_amount.to_i.to_s,
+        from_asset_id: normalized_from_asset_id,
+        to_asset_id: normalized_to_asset_id
+      }
+    end
+
+    subject(:trade) do
+      described_class.create(
+        address_id: address_id,
+        from_asset_id: from_asset_id,
+        to_asset_id: to_asset_id,
+        amount: eth_amount,
+        network_id: network_id,
+        wallet_id: wallet_id
+      )
+    end
+
+    before do
+      allow(Coinbase::Asset).to receive(:fetch).with(network_id, from_asset.asset_id).and_return(from_asset)
+      allow(Coinbase::Asset).to receive(:fetch).with(network_id, to_asset.asset_id).and_return(to_asset)
+
+      allow(trades_api)
+        .to receive(:create_trade)
+        .with(wallet_id, address_id, create_trade_request)
+        .and_return(model)
+    end
+
+    it 'creates a new Trade' do
+      expect(trade).to be_a(Coinbase::Trade)
+    end
+
+    it 'sets the trade properties' do
+      expect(trade.id).to eq(trade_id)
+    end
+
+    context 'when the from asset is not the primary denomination' do
+      let(:from_asset_id) { :wei }
+      let(:from_asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :wei) }
+      let(:from_amount) { BigDecimal(100) }
+      let(:eth_amount) { from_amount }
+
+      it 'creates a new Trade' do
+        expect(trade).to be_a(Coinbase::Trade)
+      end
+
+      it 'constructs the trade with the primary denomination from asset' do
+        expect(trade.from_asset_id).to be(:eth)
+      end
+    end
+
+    context 'when the to asset is not the primary denomination' do
+      let(:to_asset_id) { :gwei }
+      let(:to_asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :gwei) }
+      let(:to_asset_model) { eth_asset }
+      let(:normalized_to_asset_id) { 'eth' }
+
+      it 'creates a new Trade' do
+        expect(trade).to be_a(Coinbase::Trade)
+      end
+
+      it 'constructs the trade with the primary denomination to asset' do
+        expect(trade.to_asset_id).to be(:eth)
+      end
+    end
+  end
+
+  describe '.list' do
+    let(:api) { trades_api }
+    let(:fetch_params) { ->(page) { [wallet_id, address_id, { limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::TradeList }
+    let(:item_klass) { Coinbase::Trade }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::Trade.new(trade_id: id, network_id: 'base-sepolia') }
+    end
+
+    subject(:enumerator) do
+      Coinbase::Trade.list(wallet_id: wallet_id, address_id: address_id)
+    end
+
+    it_behaves_like 'it is a paginated enumerator', :trades
   end
 
   describe '#initialize' do
@@ -114,7 +209,7 @@ describe Coinbase::Trade do
     context 'when the from asset is something else' do
       let(:from_amount) { BigDecimal(100_000) }
       let(:decimals) { 3 }
-      let(:from_asset) do
+      let(:from_asset_model) do
         Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
       end
 
@@ -140,7 +235,7 @@ describe Coinbase::Trade do
     context 'when the to asset is something else' do
       let(:to_amount) { BigDecimal(42_000_000) }
       let(:decimals) { 6 }
-      let(:to_asset) do
+      let(:to_asset_model) do
         Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
       end
 
@@ -153,6 +248,26 @@ describe Coinbase::Trade do
   describe '#to_asset_id' do
     it 'returns the to asset ID' do
       expect(trade.to_asset_id).to eq(:usdc)
+    end
+  end
+
+  describe '#transactions' do
+    it 'returns a list containing the trade transaction' do
+      expect(trade.transactions).to contain_exactly(trade.transaction)
+    end
+
+    context 'when there is an approve transaction' do
+      let(:approve_transaction_model) do
+        Coinbase::Client::Transaction.new(
+          status: 'pending',
+          from_address_id: address_id,
+          unsigned_payload: unsigned_payload
+        )
+      end
+
+      it 'returns a list containing both transactions' do
+        expect(trade.transactions).to contain_exactly(trade.transaction, trade.approve_transaction)
+      end
     end
   end
 
@@ -169,6 +284,149 @@ describe Coinbase::Trade do
   describe '#status' do
     it 'returns the transaction status' do
       expect(trade.status).to eq(Coinbase::Transaction::Status::PENDING)
+    end
+  end
+
+  describe '#broadcast!' do
+    let(:broadcasted_approve_transaction_model) { nil }
+    let(:broadcasted_transaction_model) do
+      Coinbase::Client::Transaction.new(
+        status: 'broadcast',
+        unsigned_payload: unsigned_payload,
+        signed_payload: signed_payload
+      )
+    end
+    let(:broadcasted_trade_model) do
+      instance_double(
+        Coinbase::Client::Trade,
+        transaction: broadcasted_transaction_model,
+        approve_transaction: broadcasted_approve_transaction_model,
+        address_id: address_id
+      )
+    end
+
+    subject(:broadcasted_trade) { trade.broadcast! }
+
+    context 'when the transaction is signed' do
+      let(:broadcast_trade_request) do
+        { signed_payload: trade.transaction.raw.hex }
+      end
+
+      before do
+        trade.transaction.sign(from_key)
+
+        allow(trades_api)
+          .to receive(:broadcast_trade)
+          .with(wallet_id, address_id, trade_id, broadcast_trade_request)
+          .and_return(broadcasted_trade_model)
+
+        broadcasted_trade
+      end
+
+      it 'returns the updated Trade' do
+        expect(broadcasted_trade).to be_a(Coinbase::Trade)
+      end
+
+      it 'broadcasts the transaction' do
+        expect(trades_api)
+          .to have_received(:broadcast_trade)
+          .with(wallet_id, address_id, trade_id, broadcast_trade_request)
+      end
+
+      it 'updates the transaction status' do
+        expect(broadcasted_trade.transaction.status).to eq(Coinbase::Transaction::Status::BROADCAST)
+      end
+
+      it 'sets the transaction signed payload' do
+        expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+      end
+    end
+
+    context 'when the transaction is not signed' do
+      it 'raises an error' do
+        expect { broadcasted_trade }.to raise_error(Coinbase::TransactionNotSignedError)
+      end
+    end
+
+    context 'when there is an approve transaction' do
+      let(:approve_transaction_model) do
+        Coinbase::Client::Transaction.new(
+          status: 'pending',
+          from_address_id: address_id,
+          unsigned_payload: unsigned_payload
+        )
+      end
+      let(:broadcasted_approve_transaction_model) do
+        Coinbase::Client::Transaction.new(
+          status: 'broadcast',
+          from_address_id: address_id,
+          unsigned_payload: unsigned_payload,
+          signed_payload: signed_payload
+        )
+      end
+
+      context 'and both transactions are signed' do
+        let(:broadcast_trade_request) do
+          {
+            signed_payload: trade.transaction.raw.hex,
+            approve_tx_signed_payload: trade.approve_transaction.raw.hex
+          }
+        end
+
+        before do
+          trade.transaction.sign(from_key)
+          trade.approve_transaction.sign(from_key)
+
+          allow(trades_api)
+            .to receive(:broadcast_trade)
+            .with(wallet_id, address_id, trade_id, broadcast_trade_request)
+            .and_return(broadcasted_trade_model)
+
+          broadcasted_trade
+        end
+
+        it 'returns the updated Trade' do
+          expect(broadcasted_trade).to be_a(Coinbase::Trade)
+        end
+
+        it 'broadcasts the transaction with both signed payloads' do
+          expect(trades_api)
+            .to have_received(:broadcast_trade)
+            .with(wallet_id, address_id, trade_id, broadcast_trade_request)
+        end
+
+        it 'updates the transaction status' do
+          expect(broadcasted_trade.transaction.status).to eq(Coinbase::Transaction::Status::BROADCAST)
+        end
+
+        it 'sets the transaction signed payload' do
+          expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+        end
+
+        it 'updates the approve transaction status' do
+          expect(broadcasted_trade.transaction.status).to eq(Coinbase::Transaction::Status::BROADCAST)
+        end
+
+        it 'sets the approve transaction signed payload' do
+          expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+        end
+      end
+
+      context 'and the approve transaction is not signed' do
+        before { trade.transaction.sign(from_key) }
+
+        it 'raises an error' do
+          expect { broadcasted_trade }.to raise_error(Coinbase::TransactionNotSignedError)
+        end
+      end
+
+      context 'and the transaction is not signed' do
+        before { trade.approve_transaction.sign(from_key) }
+
+        it 'raises an error' do
+          expect { broadcasted_trade }.to raise_error(Coinbase::TransactionNotSignedError)
+        end
+      end
     end
   end
 
@@ -191,8 +449,8 @@ describe Coinbase::Trade do
         network_id: network_id,
         wallet_id: wallet_id,
         address_id: address_id,
-        from_asset: from_asset,
-        to_asset: to_asset,
+        from_asset: from_asset_model,
+        to_asset: to_asset_model,
         from_amount: from_amount.to_s,
         to_amount: updated_to_amount.to_s,
         trade_id: trade_id,
@@ -224,8 +482,8 @@ describe Coinbase::Trade do
         network_id: network_id,
         wallet_id: wallet_id,
         address_id: address_id,
-        from_asset: from_asset,
-        to_asset: to_asset,
+        from_asset: from_asset_model,
+        to_asset: to_asset_model,
         from_amount: from_amount.to_s,
         to_amount: to_amount.to_s,
         trade_id: trade_id,
@@ -294,9 +552,9 @@ describe Coinbase::Trade do
         trade_id,
         Coinbase.to_sym(network_id).to_s,
         address_id,
-        from_asset.asset_id,
+        from_asset_model.asset_id,
         eth_amount.to_s,
-        to_asset.asset_id,
+        to_asset_model.asset_id,
         usdc_amount.to_s,
         trade.status.to_s
       )

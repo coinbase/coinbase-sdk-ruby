@@ -13,9 +13,6 @@ module Coinbase
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
-    # The maximum number of wallets to fetch in a single page.
-    PAGE_LIMIT = 100
-
     # A representation of ServerSigner status in a Wallet.
     module ServerSignerStatus
       # The Wallet is awaiting seed creation by the ServerSigner. At this point,
@@ -131,7 +128,7 @@ module Coinbase
       end
 
       def fetch_wallets_page(page)
-        wallets_api.list_wallets({ limit: PAGE_LIMIT, page: page })
+        wallets_api.list_wallets({ limit: DEFAULT_PAGE_LIMIT, page: page })
       end
     end
 
