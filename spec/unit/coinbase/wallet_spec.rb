@@ -790,6 +790,55 @@ describe Coinbase::Wallet do
     end
   end
 
+  context 'with a default address' do
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [address_model1], total_count: 1))
+    end
+    subject(:wallet) { described_class.new(model_with_default_address, seed: '') }
+
+    describe '#stake' do
+      before do
+        allow(wallet.default_address).to receive(:stake)
+      end
+
+      subject(:stake) { wallet.stake(5, :eth) }
+
+      it 'calls stake' do
+        subject
+        expect(wallet.default_address).to have_received(:stake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#unstake' do
+      before do
+        allow(wallet.default_address).to receive(:unstake)
+      end
+
+      subject(:unstake) { wallet.unstake(5, :eth) }
+
+      it 'calls unstake' do
+        subject
+        expect(wallet.default_address).to have_received(:unstake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#claim_stake' do
+      before do
+        allow(wallet.default_address).to receive(:claim_stake)
+      end
+
+      subject(:claim_stake) { wallet.claim_stake(5, :eth) }
+
+      it 'calls claim_stake' do
+        subject
+        expect(wallet.default_address).to have_received(:claim_stake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+  end
+
   describe '#transfer' do
     let(:transfer) { double('Coinbase::Transfer') }
     let(:amount) { 5 }
