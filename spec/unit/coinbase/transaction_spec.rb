@@ -30,13 +30,7 @@ describe Coinbase::Transaction do
   end
   let(:transaction_hash) { '0xdea671372a8fff080950d09ad5994145a661c8e95a9216ef34772a19191b5690' }
   let(:transaction_link) { "https://sepolia.basescan.org/tx/#{transaction_hash}" }
-  let(:model) do
-    Coinbase::Client::Transaction.new(
-      status: 'pending',
-      from_address_id: from_address_id,
-      unsigned_payload: unsigned_payload
-    )
-  end
+  let(:model) { build(:transaction_model, from_address_id: from_address_id, unsigned_payload: unsigned_payload) }
 
   let(:signed_model) do
     Coinbase::Client::Transaction.new(
