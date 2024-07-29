@@ -797,6 +797,7 @@ describe Coinbase::Wallet do
         .with(wallet_id, { limit: 20 })
         .and_return(Coinbase::Client::AddressList.new(data: [address_model1], total_count: 1))
     end
+
     subject(:wallet) { described_class.new(model_with_default_address, seed: '') }
 
     describe '#stake' do
