@@ -100,7 +100,7 @@ module Coinbase
       StakingOperation.build(amount, network_id, asset_id, id, 'unstake', mode, options)
     end
 
-    # Builds an claim_stake operation for the supplied asset.
+    # Builds a claim_stake operation for the supplied asset.
     # @param amount [Integer,String,BigDecimal] The amount of the asset to claim
     # @param asset_id [Symbol] The asset to claim
     # @param mode [Symbol] The staking mode. Defaults to :default.
@@ -179,11 +179,11 @@ module Coinbase
 
     # Lists the staking rewards for the address.
     # @param asset_id [Symbol] The asset to retrieve staking rewards for
-    # @param start_time [Time] The start time for the rewards. Defaults to 1 month ago.
+    # @param start_time [Time] The start time for the rewards. Defaults to 1 week ago.
     # @param end_time [Time] The end time for the rewards. Defaults to the current time.
     # @param format [Symbol] The format to return the rewards in. Defaults to :usd.
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
-    def staking_rewards(asset_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now, format: :usd)
+    def staking_rewards(asset_id, start_time: DateTime.now.prev_week(1), end_time: DateTime.now, format: :usd)
       StakingReward.list(
         network_id,
         asset_id,
