@@ -501,14 +501,14 @@
       <pre class="lines">
 
 
-34
-35
-36
 37
-38</pre>
+38
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='kw'>unless</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Transaction.html" title="Coinbase::Client::Transaction (class)">Transaction</a></span></span><span class='rparen'>)</span>
@@ -571,12 +571,12 @@
       <pre class="lines">
 
 
-66
-67
-68</pre>
+69
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 66</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_address_id'>from_address_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_from_address_id'>from_address_id</span>
@@ -630,12 +630,12 @@
       <pre class="lines">
 
 
-127
-128
-129</pre>
+138
+139
+140</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 127</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 138</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -689,9 +689,6 @@
       <pre class="lines">
 
 
-84
-85
-86
 87
 88
 89
@@ -708,15 +705,34 @@
 100
 101
 102
-103</pre>
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_raw'>raw</span>
   <span class='kw'>return</span> <span class='ivar'>@raw</span> <span class='kw'>unless</span> <span class='ivar'>@raw</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
-  <span class='id identifier rubyid_raw_payload'>raw_payload</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_pack'>pack</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>H*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># If the transaction is signed, decode the signed payload.
+</span>  <span class='kw'>unless</span> <span class='id identifier rubyid_signed_payload'>signed_payload</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='ivar'>@raw</span> <span class='op'>=</span> <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Tx</span><span class='op'>::</span><span class='const'>Eip1559</span><span class='period'>.</span><span class='id identifier rubyid_decode'>decode</span><span class='lparen'>(</span><span class='id identifier rubyid_signed_payload'>signed_payload</span><span class='rparen'>)</span>
+
+    <span class='kw'>return</span> <span class='ivar'>@raw</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># If the transaction is unsigned, parse the unsigned payload into an EIP-1559 transaction.
+</span>  <span class='id identifier rubyid_raw_payload'>raw_payload</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_pack'>pack</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>H*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_parsed_payload'>parsed_payload</span> <span class='op'>=</span> <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_raw_payload'>raw_payload</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='lbrace'>{</span>
@@ -725,8 +741,8 @@
     <span class='label'>priority_fee:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>maxPriorityFeePerGas</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='label'>max_gas_fee:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>maxFeePerGas</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='label'>gas_limit:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>gas</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='comment'># TODO: Handle multiple currencies.
-</span>    <span class='label'>from:</span> <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Address</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_from_address_id'>from_address_id</span><span class='rparen'>)</span><span class='comma'>,</span>
-    <span class='label'>to:</span> <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Address</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>to</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+</span>    <span class='label'>from:</span> <span class='id identifier rubyid_from_address_id'>from_address_id</span><span class='comma'>,</span>
+    <span class='label'>to:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>to</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span>
     <span class='label'>value:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>value</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='lparen'>(</span><span class='int'>16</span><span class='rparen'>)</span><span class='comma'>,</span>
     <span class='label'>data:</span> <span class='id identifier rubyid_parsed_payload'>parsed_payload</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>input</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
   <span class='rbrace'>}</span>
@@ -782,14 +798,14 @@
       <pre class="lines">
 
 
-107
-108
-109
-110
-111</pre>
+118
+119
+120
+121
+122</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 107</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 118</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raw'>raw</span><span class='period'>.</span><span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -845,12 +861,12 @@
       <pre class="lines">
 
 
-115
-116
-117</pre>
+126
+127
+128</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 115</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 126</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_signed?'>signed?</span>
   <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Tx</span><span class='period'>.</span><span class='id identifier rubyid_signed?'>signed?</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
@@ -904,12 +920,12 @@
       <pre class="lines">
 
 
-48
-49
-50</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 48</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_signed_payload'>signed_payload</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_signed_payload'>signed_payload</span>
@@ -963,12 +979,12 @@
       <pre class="lines">
 
 
-60
-61
-62</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 60</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
@@ -1022,12 +1038,12 @@
       <pre class="lines">
 
 
-72
-73
-74</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_terminal_state?'>terminal_state?</span>
   <span class='const'><span class='object_link'><a href="Transaction/Status.html" title="Coinbase::Transaction::Status (module)">Status</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction/Status.html#TERMINAL_STATES-constant" title="Coinbase::Transaction::Status::TERMINAL_STATES (constant)">TERMINAL_STATES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_status'>status</span><span class='rparen'>)</span>
@@ -1081,12 +1097,12 @@
       <pre class="lines">
 
 
-121
-122
-123</pre>
+132
+133
+134</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 121</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 132</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Transaction{transaction_hash: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, status: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_status'>status</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
@@ -1140,12 +1156,12 @@
       <pre class="lines">
 
 
-54
-55
-56</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
@@ -1199,12 +1215,12 @@
       <pre class="lines">
 
 
-78
-79
-80</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 78</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_link'>transaction_link</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_link'>transaction_link</span>
@@ -1258,12 +1274,12 @@
       <pre class="lines">
 
 
-42
-43
-44</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>

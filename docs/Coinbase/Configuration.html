@@ -371,14 +371,14 @@
       <pre class="lines">
 
 
-67
 68
 69
 70
-71</pre>
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 68</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span>
   <span class='ivar'>@api_url</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://api.cdp.coinbase.com</span><span class='tstring_end'>&#39;</span></span>
@@ -423,12 +423,12 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_key_name'>api_key_name</span>
   <span class='ivar'>@api_key_name</span>
@@ -466,12 +466,12 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_key_private_key'>api_key_private_key</span>
   <span class='ivar'>@api_key_private_key</span>
@@ -509,12 +509,12 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_url'>api_url</span>
   <span class='ivar'>@api_url</span>
@@ -552,12 +552,12 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_debug_api'>debug_api</span>
   <span class='ivar'>@debug_api</span>
@@ -595,12 +595,12 @@
       <pre class="lines">
 
 
-64
 65
-66</pre>
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_use_server_signer'>use_server_signer</span>
   <span class='ivar'>@use_server_signer</span>
@@ -661,12 +661,12 @@
       <pre class="lines">
 
 
-90
 91
-92</pre>
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_api_client'>api_client</span>
   <span class='ivar'>@api_client</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/ApiClient.html" title="Coinbase::Client::ApiClient (class)">ApiClient</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Client/ApiClient.html#initialize-instance_method" title="Coinbase::Client::ApiClient#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Middleware.html" title="Coinbase::Middleware (module)">Middleware</a></span></span><span class='period'>.</span><span class='id identifier rubyid_config'><span class='object_link'><a href="Middleware.html#config-class_method" title="Coinbase::Middleware.config (method)">config</a></span></span><span class='rparen'>)</span>
@@ -737,7 +737,6 @@
       <pre class="lines">
 
 
-76
 77
 78
 79
@@ -747,10 +746,11 @@
 83
 84
 85
-86</pre>
+86
+87</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_json'>from_json</span><span class='lparen'>(</span><span class='id identifier rubyid_file_path'>file_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>cdp_api_key.json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='comment'># Expand paths to respect shortcuts like ~.
