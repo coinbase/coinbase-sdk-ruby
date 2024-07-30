@@ -236,6 +236,8 @@ describe Coinbase::WalletAddress do
             asset: eth_asset_model
           )
         )
+
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end
 
     context 'when the trade is successful' do
@@ -244,14 +246,14 @@ describe Coinbase::WalletAddress do
 
       before do
         allow(Coinbase::Trade).to receive(:create).and_return(created_trade)
+
+        allow(created_trade).to receive(:broadcast!)
+
+        trade
       end
 
       context 'when not using server signer' do
-        before do
-          allow(created_trade).to receive(:broadcast!)
-
-          trade
-        end
+        let(:use_server_signer) { false }
 
         it 'returns the created trade' do
           expect(trade).to eq(created_trade)
@@ -274,6 +276,35 @@ describe Coinbase::WalletAddress do
 
         it 'broadcasts the trade' do
           expect(created_trade).to have_received(:broadcast!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'returns the created trade' do
+          expect(trade).to eq(created_trade)
+        end
+
+        it 'creates the trade' do
+          expect(Coinbase::Trade).to have_received(:create).with(
+            address_id: address_id,
+            amount: amount,
+            from_asset_id: from_asset_id,
+            to_asset_id: to_asset_id,
+            network_id: network_id,
+            wallet_id: wallet_id
+          )
+        end
+
+        it 'does not broadcast the trade' do
+          expect(created_trade).not_to have_received(:broadcast!)
+        end
+
+        it 'signs none of the transactions with the address key' do
+          transactions.each do |transaction|
+            expect(transaction).not_to have_received(:sign)
+          end
         end
       end
     end

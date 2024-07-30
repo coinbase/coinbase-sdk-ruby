@@ -81,7 +81,8 @@ module Coinbase
         wallet_id: wallet_id
       )
 
-      # NOTE: Trading does not yet support server signers at this point.
+      # If a server signer is managing keys, it will sign and broadcast the underlying trade transaction out of band.
+      return trade if Coinbase.use_server_signer?
 
       trade.transactions.each do |tx|
         tx.sign(@key)
