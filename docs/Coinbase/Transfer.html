@@ -119,6 +119,63 @@
 
   
     <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#create-class_method" title="create (class method)">.<strong>create</strong>(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:)  &#x21d2; Transfer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Creates a new Transfer object.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(wallet_id:, address_id:)  &#x21d2; Enumerable&lt;Coinbase::Transfer&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Enumerates the transfers for a given address belonging to a wallet.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
       Instance Method Summary
       <small><a href="#" class="summary_toggle">collapse</a></small>
     </h2>
@@ -190,6 +247,30 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Returns the Asset ID of the Transfer.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#broadcast!-instance_method" title="#broadcast! (instance method)">#<strong>broadcast!</strong>  &#x21d2; Transfer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Broadcasts the Transfer to the Network.</p>
 </div></span>
   
 </li>
@@ -633,14 +714,14 @@
       <pre class="lines">
 
 
-17
-18
-19
-20
-21</pre>
+73
+74
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 17</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='kw'>unless</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Transfer.html" title="Coinbase::Client::Transfer (class)">Transfer</a></span></span><span class='rparen'>)</span>
@@ -654,6 +735,286 @@
   
 </div>
 
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="create-class_method">
+  
+    .<strong>create</strong>(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Creates a new Transfer object.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>address_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Address ID of the sending Address</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>amount</span>
+      
+      
+        <span class='type'>(<tt>BigDecimal</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The amount of the Asset to send</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>asset_id</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Asset ID of the Asset to send</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>destination</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Destination.html" title="Coinbase::Destination (class)">Coinbase::Destination</a></span></tt>, <tt><span class='object_link'><a href="Wallet.html" title="Coinbase::Wallet (class)">Coinbase::Wallet</a></span></tt>, <tt><span class='object_link'><a href="Address.html" title="Coinbase::Address (class)">Coinbase::Address</a></span></tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The destination of the transfer. If the destination is a Wallet, it uses the default Address of the Wallet. If the destination is an Address, it uses the Address&#39;s ID. If the destination is a String, it uses it as the Address ID.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>network_id</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Network ID of the Asset</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>wallet_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Wallet ID of the sending Wallet</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The new pending Transfer object</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Coinbase::ApiError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the Transfer fails</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 28</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span><span class='lparen'>(</span><span class='label'>address_id:</span><span class='comma'>,</span> <span class='label'>amount:</span><span class='comma'>,</span> <span class='label'>asset_id:</span><span class='comma'>,</span> <span class='label'>destination:</span><span class='comma'>,</span> <span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>wallet_id:</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_asset'>asset</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></span><span class='period'>.</span><span class='id identifier rubyid_fetch'><span class='object_link'><a href="Asset.html#fetch-class_method" title="Coinbase::Asset.fetch (method)">fetch</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_create_transfer'>create_transfer</span><span class='lparen'>(</span>
+      <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span>
+      <span class='lbrace'>{</span>
+        <span class='label'>amount:</span> <span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_to_atomic_amount'>to_atomic_amount</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span>
+        <span class='label'>asset_id:</span> <span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_primary_denomination'>primary_denomination</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='comma'>,</span>
+        <span class='label'>destination:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Destination.html" title="Coinbase::Destination (class)">Destination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Destination.html#initialize-instance_method" title="Coinbase::Destination#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_destination'>destination</span><span class='comma'>,</span> <span class='label'>network_id:</span> <span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_address_id'><span class='object_link'><a href="Destination.html#address_id-instance_method" title="Coinbase::Destination#address_id (method)">address_id</a></span></span><span class='comma'>,</span>
+        <span class='label'>network_id:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalize_network'><span class='object_link'><a href="../Coinbase.html#normalize_network-class_method" title="Coinbase.normalize_network (method)">normalize_network</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
+      <span class='rbrace'>}</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list-class_method">
+  
+    .<strong>list</strong>(wallet_id:, address_id:)  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Transfer (class)">Coinbase::Transfer</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Enumerates the transfers for a given address belonging to a wallet. The result is an enumerator that lazily fetches from the server, and can be iterated over, converted to an array, etc…</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Transfer (class)">Coinbase::Transfer</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enumerator that returns transfers</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+51
+52
+53
+54
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 51</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='label'>wallet_id:</span><span class='comma'>,</span> <span class='label'>address_id:</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span>
+    <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_fetch_page'>fetch_page</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_transfer'>transfer</span><span class='op'>|</span>
+    <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_transfer'>transfer</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
@@ -703,12 +1064,12 @@
       <pre class="lines">
 
 
-65
-66
-67</pre>
+121
+122
+123</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 121</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_amount'>amount</span>
   <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span><span class='rparen'>)</span> <span class='op'>/</span> <span class='const'>BigDecimal</span><span class='lparen'>(</span><span class='int'>10</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_power'>power</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_asset'>asset</span><span class='period'>.</span><span class='id identifier rubyid_decimals'>decimals</span><span class='rparen'>)</span>
@@ -733,12 +1094,12 @@
       <pre class="lines">
 
 
-53
-54
-55</pre>
+109
+110
+111</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 109</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_asset'>asset</span>
   <span class='ivar'>@asset</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Asset.html" title="Coinbase::Asset (class)">Asset</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_model'><span class='object_link'><a href="Asset.html#from_model-class_method" title="Coinbase::Asset.from_model (method)">from_model</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_asset'>asset</span><span class='rparen'>)</span>
@@ -792,15 +1153,118 @@
       <pre class="lines">
 
 
-59
-60
-61</pre>
+115
+116
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_asset_id'>asset_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_asset_id'>asset_id</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="broadcast!-instance_method">
+  
+    #<strong>broadcast!</strong>  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Broadcasts the Transfer to the Network. This raises an error if the Transfer is not signed.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::Transfer (class)">Transfer</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Transfer object</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>RuntimeError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the Transfer is not signed</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 166</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_broadcast!'>broadcast!</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="TransactionNotSignedError.html" title="Coinbase::TransactionNotSignedError (class)">TransactionNotSignedError</a></span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_signed?'>signed?</span>
+
+  <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_broadcast_transfer'>broadcast_transfer</span><span class='lparen'>(</span>
+      <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_from_address_id'>from_address_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+      <span class='lbrace'>{</span> <span class='label'>signed_payload:</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_raw'>raw</span><span class='period'>.</span><span class='id identifier rubyid_hex'>hex</span> <span class='rbrace'>}</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_update_transaction'>update_transaction</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -851,12 +1315,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 105</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destination_address_id'>destination_address_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_destination'>destination</span>
@@ -910,12 +1374,12 @@
       <pre class="lines">
 
 
-43
-44
-45</pre>
+99
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 99</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_from_address_id'>from_address_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_address_id'>address_id</span>
@@ -969,12 +1433,12 @@
       <pre class="lines">
 
 
-25
-26
-27</pre>
+81
+82
+83</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transfer_id'>transfer_id</span>
@@ -1028,12 +1492,12 @@
       <pre class="lines">
 
 
-151
-152
-153</pre>
+227
+228
+229</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 151</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 227</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1087,12 +1551,12 @@
       <pre class="lines">
 
 
-31
-32
-33</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
@@ -1146,27 +1610,25 @@
       <pre class="lines">
 
 
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117</pre>
+185
+186
+187
+188
+189
+190
+191
+192
+193</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 185</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_transfers_api'>transfers_api</span><span class='period'>.</span><span class='id identifier rubyid_get_transfer'>get_transfer</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_from_address_id'>from_address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='comment'># Update memoized transaction.
-</span>  <span class='ivar'>@transaction</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_update_transaction'>update_transaction</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='rparen'>)</span>
 
   <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
@@ -1219,12 +1681,12 @@
       <pre class="lines">
 
 
-84
-85
-86</pre>
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 140</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_signed_payload'>signed_payload</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_signed_payload'>signed_payload</span>
@@ -1278,12 +1740,12 @@
       <pre class="lines">
 
 
-102
-103
-104</pre>
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 102</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 158</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
   <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
@@ -1337,15 +1799,15 @@
       <pre class="lines">
 
 
-142
-143
-144
-145
-146
-147</pre>
+218
+219
+220
+221
+222
+223</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 142</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 218</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Transfer{transfer_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network_id'>network_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, </span><span class='tstring_end'>&quot;</span></span> \
@@ -1402,12 +1864,12 @@
       <pre class="lines">
 
 
-90
-91
-92</pre>
+146
+147
+148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction'>transaction</span>
   <span class='ivar'>@transaction</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
@@ -1461,12 +1923,12 @@
       <pre class="lines">
 
 
-96
-97
-98</pre>
+152
+153
+154</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 96</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 152</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
@@ -1520,13 +1982,13 @@
       <pre class="lines">
 
 
-71
-72
-73
-74</pre>
+127
+128
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 71</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_link'>transaction_link</span>
   <span class='comment'># TODO: Parameterize this by Network.
@@ -1581,12 +2043,12 @@
       <pre class="lines">
 
 
-78
-79
-80</pre>
+134
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 78</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
@@ -1680,24 +2142,24 @@
       <pre class="lines">
 
 
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138</pre>
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 124</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 200</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wait!'>wait!</span><span class='lparen'>(</span><span class='id identifier rubyid_interval_seconds'>interval_seconds</span> <span class='op'>=</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span> <span class='op'>=</span> <span class='int'>20</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
@@ -1763,12 +2225,12 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+93
+94
+95</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 93</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span>

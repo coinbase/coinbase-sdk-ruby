@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.0.13] - 2024-07-30
+
+### Added
+
+- Add support for trade with MPC Server-Signer
+
 ## [0.0.10] - 2024-07-23
 
 ### Added
