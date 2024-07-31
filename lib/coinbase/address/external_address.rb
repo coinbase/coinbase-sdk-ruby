@@ -3,8 +3,8 @@
 require 'date'
 
 module Coinbase
-  # A representation of a blockchain Address that do not belong to a Coinbase::Wallet.
-  # External addresses can be used to fetch balances, request funds from the faucet, etc...,
+  # A representation of a blockchain Address that does not belong to a Coinbase::Wallet.
+  # External addresses can be used to fetch balances, request funds from the faucet, etc.,
   # but cannot be used to sign transactions.
   class ExternalAddress < Address
     # Builds a stake operation for the supplied asset. The stake operation
