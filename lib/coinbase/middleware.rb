@@ -25,7 +25,7 @@ module Coinbase
           interval_randomness: 0.5,
           backoff_factor: 2,
           methods: %i[get],
-          retry_statuses: [500, 501, 502, 503, 504]
+          retry_statuses: [500, 502, 503, 504]
         }
         config.configure_faraday_connection do |conn|
           conn.request :retry, retry_options
