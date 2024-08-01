@@ -23,7 +23,7 @@ module Coinbase
     chain_id: 8453
   )
 
-  ETHERUM_HOLESKY = Network.new(
+  ETHEREUM_HOLESKY = Network.new(
     network_id: :ethereum_holesky,
     display_name: 'Ethereum Holesky',
     protocol_family: :evm,
