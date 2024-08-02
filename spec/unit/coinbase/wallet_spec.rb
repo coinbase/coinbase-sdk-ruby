@@ -838,6 +838,58 @@ describe Coinbase::Wallet do
         expect(wallet.default_address).to have_received(:claim_stake).with(5, :eth, mode: :default, options: {})
       end
     end
+
+    describe '#staking_balances' do
+      before do
+        allow(wallet.default_address).to receive(:staking_balances)
+      end
+
+      subject(:staking_balances) { wallet.staking_balances(:eth) }
+
+      it 'calls staking_balances' do
+        subject
+        expect(wallet.default_address).to have_received(:staking_balances).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#stakeable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:stakeable_balance)
+      end
+
+      subject(:stakeable_balance) { wallet.stakeable_balance(:eth) }
+
+      it 'calls stakeable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:stakeable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#unstakeable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:unstakeable_balance)
+      end
+
+      subject(:unstakeable_balance) { wallet.unstakeable_balance(:eth) }
+
+      it 'calls unstakeable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:unstakeable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#claimable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:claimable_balance)
+      end
+
+      subject(:claimable_balance) { wallet.claimable_balance(:eth) }
+
+      it 'calls claimable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:claimable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
   end
 
   describe '#transfer' do
