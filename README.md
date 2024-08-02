@@ -1,4 +1,4 @@
-# Coinbase Ruby SDK
+# Coinbase Ruby SD
 
 The Coinbase Ruby SDK enables the simple integration of crypto into your app.
 By calling Coinbase's Platform APIs, the SDK allows you to provision crypto wallets,
