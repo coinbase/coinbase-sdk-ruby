@@ -369,7 +369,7 @@ describe Coinbase::Trade do
         let(:broadcast_trade_request) do
           {
             signed_payload: trade.transaction.raw.hex,
-            approve_tx_signed_payload: trade.approve_transaction.raw.hex
+            approve_transaction_signed_payload: trade.approve_transaction.raw.hex
           }
         end
 
