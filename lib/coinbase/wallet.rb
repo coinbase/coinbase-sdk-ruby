@@ -327,6 +327,49 @@ module Coinbase
       default_address.claim_stake(amount, asset_id, mode: mode, options: options)
     end
 
+    # Retrieves the balances used for staking for the supplied asset.
+    # Currently only the default_address is used to source the staking balances.
+    # @param asset_id [Symbol] The asset to retrieve staking balances for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [Hash] The staking balances
+    # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
+    # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
+    # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
+    def staking_balances(asset_id, mode: :default, options: {})
+      default_address.staking_balances(asset_id, mode: mode, options: options)
+    end
+
+    # Retrieves the stakeable balance for the supplied asset.
+    # Currently only the default_address is used to source the stakeable balance.
+    # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The stakeable balance
+    def stakeable_balance(asset_id, mode: :default, options: {})
+      default_address.stakeable_balance(asset_id, mode: mode, options: options)
+    end
+
+    # Retrieves the unstakeable balance for the supplied asset.
+    # Currently only the default_address is used to source the unstakeable balance.
+    # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The unstakeable balance
+    def unstakeable_balance(asset_id, mode: :default, options: {})
+      default_address.unstakeable_balance(asset_id, mode: mode, options: options)
+    end
+
+    # Retrieves the claimable balance for the supplied asset.
+    # Currently only the default_address is used to source the claimable balance.
+    # @param asset_id [Symbol] The asset to retrieve the claimable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The claimable balance
+    def claimable_balance(asset_id, mode: :default, options: {})
+      default_address.claimable_balance(asset_id, mode: mode, options: options)
+    end
+
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export
