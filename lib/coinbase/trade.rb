@@ -147,7 +147,7 @@ module Coinbase
 
       payloads = { signed_payload: transaction.raw.hex }
 
-      payloads[:approve_tx_signed_payload] = approve_transaction.raw.hex unless approve_transaction.nil?
+      payloads[:approve_transaction_signed_payload] = approve_transaction.raw.hex unless approve_transaction.nil?
 
       @model = Coinbase.call_api do
         trades_api.broadcast_trade(wallet_id, address_id, id, payloads)
