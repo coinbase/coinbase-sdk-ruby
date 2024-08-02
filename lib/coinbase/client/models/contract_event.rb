@@ -14,64 +14,63 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # An event representing a signature creation.
-  class SignatureCreationEvent
-    # The ID of the seed that the server-signer should create the signature for
-    attr_accessor :seed_id
+  # Represents a single decoded event emitted by a smart contract
+  class ContractEvent
+    # The name of the blockchain network
+    attr_accessor :network_name
 
-    # The ID of the wallet the signature is for
-    attr_accessor :wallet_id
+    # The name of the blockchain project or protocol
+    attr_accessor :protocol_name
 
-    # The ID of the user that the wallet belongs to
-    attr_accessor :wallet_user_id
+    # The name of the specific contract within the project
+    attr_accessor :contract_name
 
-    # The ID of the address the transfer belongs to
-    attr_accessor :address_id
+    # The name of the event emitted by the contract
+    attr_accessor :event_name
 
-    # The index of the address that the server-signer should sign with
-    attr_accessor :address_index
+    # The signature of the event, including parameter types
+    attr_accessor :sig
 
-    # The payload that the server-signer should sign
-    attr_accessor :signing_payload
+    # The first four bytes of the Keccak hash of the event signature
+    attr_accessor :four_bytes
 
-    attr_accessor :transaction_type
+    # The EVM address of the smart contract
+    attr_accessor :contract_address
 
-    # The ID of the transaction that the server-signer should sign
-    attr_accessor :transaction_id
+    # The timestamp of the block in which the event was emitted
+    attr_accessor :block_time
 
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
+    # The block number in which the event was emitted
+    attr_accessor :block_height
 
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
+    # The transaction hash in which the event was emitted
+    attr_accessor :tx_hash
 
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The index of the transaction within the block
+    attr_accessor :tx_index
+
+    # The index of the event within the transaction
+    attr_accessor :event_index
+
+    # The event data in a stringified format
+    attr_accessor :data
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'seed_id' => :'seed_id',
-        :'wallet_id' => :'wallet_id',
-        :'wallet_user_id' => :'wallet_user_id',
-        :'address_id' => :'address_id',
-        :'address_index' => :'address_index',
-        :'signing_payload' => :'signing_payload',
-        :'transaction_type' => :'transaction_type',
-        :'transaction_id' => :'transaction_id'
+        :'network_name' => :'network_name',
+        :'protocol_name' => :'protocol_name',
+        :'contract_name' => :'contract_name',
+        :'event_name' => :'event_name',
+        :'sig' => :'sig',
+        :'four_bytes' => :'fourBytes',
+        :'contract_address' => :'contract_address',
+        :'block_time' => :'block_time',
+        :'block_height' => :'block_height',
+        :'tx_hash' => :'tx_hash',
+        :'tx_index' => :'tx_index',
+        :'event_index' => :'event_index',
+        :'data' => :'data'
       }
     end
 
@@ -83,14 +82,19 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'seed_id' => :'String',
-        :'wallet_id' => :'String',
-        :'wallet_user_id' => :'String',
-        :'address_id' => :'String',
-        :'address_index' => :'Integer',
-        :'signing_payload' => :'String',
-        :'transaction_type' => :'TransactionType',
-        :'transaction_id' => :'String'
+        :'network_name' => :'String',
+        :'protocol_name' => :'String',
+        :'contract_name' => :'String',
+        :'event_name' => :'String',
+        :'sig' => :'String',
+        :'four_bytes' => :'String',
+        :'contract_address' => :'String',
+        :'block_time' => :'Time',
+        :'block_height' => :'Integer',
+        :'tx_hash' => :'String',
+        :'tx_index' => :'Integer',
+        :'event_index' => :'Integer',
+        :'data' => :'String'
       }
     end
 
@@ -104,63 +108,67 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SignatureCreationEvent` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ContractEvent` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SignatureCreationEvent`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ContractEvent`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'seed_id')
-        self.seed_id = attributes[:'seed_id']
-      else
-        self.seed_id = nil
+      if attributes.key?(:'network_name')
+        self.network_name = attributes[:'network_name']
       end
 
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
-      else
-        self.wallet_id = nil
+      if attributes.key?(:'protocol_name')
+        self.protocol_name = attributes[:'protocol_name']
       end
 
-      if attributes.key?(:'wallet_user_id')
-        self.wallet_user_id = attributes[:'wallet_user_id']
-      else
-        self.wallet_user_id = nil
+      if attributes.key?(:'contract_name')
+        self.contract_name = attributes[:'contract_name']
       end
 
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
-      else
-        self.address_id = nil
+      if attributes.key?(:'event_name')
+        self.event_name = attributes[:'event_name']
       end
 
-      if attributes.key?(:'address_index')
-        self.address_index = attributes[:'address_index']
-      else
-        self.address_index = nil
+      if attributes.key?(:'sig')
+        self.sig = attributes[:'sig']
       end
 
-      if attributes.key?(:'signing_payload')
-        self.signing_payload = attributes[:'signing_payload']
-      else
-        self.signing_payload = nil
+      if attributes.key?(:'four_bytes')
+        self.four_bytes = attributes[:'four_bytes']
       end
 
-      if attributes.key?(:'transaction_type')
-        self.transaction_type = attributes[:'transaction_type']
-      else
-        self.transaction_type = nil
+      if attributes.key?(:'contract_address')
+        self.contract_address = attributes[:'contract_address']
       end
 
-      if attributes.key?(:'transaction_id')
-        self.transaction_id = attributes[:'transaction_id']
-      else
-        self.transaction_id = nil
+      if attributes.key?(:'block_time')
+        self.block_time = attributes[:'block_time']
+      end
+
+      if attributes.key?(:'block_height')
+        self.block_height = attributes[:'block_height']
+      end
+
+      if attributes.key?(:'tx_hash')
+        self.tx_hash = attributes[:'tx_hash']
+      end
+
+      if attributes.key?(:'tx_index')
+        self.tx_index = attributes[:'tx_index']
+      end
+
+      if attributes.key?(:'event_index')
+        self.event_index = attributes[:'event_index']
+      end
+
+      if attributes.key?(:'data')
+        self.data = attributes[:'data']
       end
     end
 
@@ -169,38 +177,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @seed_id.nil?
-        invalid_properties.push('invalid value for "seed_id", seed_id cannot be nil.')
-      end
-
-      if @wallet_id.nil?
-        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
-      end
-
-      if @wallet_user_id.nil?
-        invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
-      end
-
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
-      end
-
-      if @address_index.nil?
-        invalid_properties.push('invalid value for "address_index", address_index cannot be nil.')
-      end
-
-      if @signing_payload.nil?
-        invalid_properties.push('invalid value for "signing_payload", signing_payload cannot be nil.')
-      end
-
-      if @transaction_type.nil?
-        invalid_properties.push('invalid value for "transaction_type", transaction_type cannot be nil.')
-      end
-
-      if @transaction_id.nil?
-        invalid_properties.push('invalid value for "transaction_id", transaction_id cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -208,14 +184,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @seed_id.nil?
-      return false if @wallet_id.nil?
-      return false if @wallet_user_id.nil?
-      return false if @address_id.nil?
-      return false if @address_index.nil?
-      return false if @signing_payload.nil?
-      return false if @transaction_type.nil?
-      return false if @transaction_id.nil?
       true
     end
 
@@ -224,14 +192,19 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          seed_id == o.seed_id &&
-          wallet_id == o.wallet_id &&
-          wallet_user_id == o.wallet_user_id &&
-          address_id == o.address_id &&
-          address_index == o.address_index &&
-          signing_payload == o.signing_payload &&
-          transaction_type == o.transaction_type &&
-          transaction_id == o.transaction_id
+          network_name == o.network_name &&
+          protocol_name == o.protocol_name &&
+          contract_name == o.contract_name &&
+          event_name == o.event_name &&
+          sig == o.sig &&
+          four_bytes == o.four_bytes &&
+          contract_address == o.contract_address &&
+          block_time == o.block_time &&
+          block_height == o.block_height &&
+          tx_hash == o.tx_hash &&
+          tx_index == o.tx_index &&
+          event_index == o.event_index &&
+          data == o.data
     end
 
     # @see the `==` method
@@ -243,7 +216,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [seed_id, wallet_id, wallet_user_id, address_id, address_index, signing_payload, transaction_type, transaction_id].hash
+      [network_name, protocol_name, contract_name, event_name, sig, four_bytes, contract_address, block_time, block_height, tx_hash, tx_index, event_index, data].hash
     end
 
     # Builds the object from hash
