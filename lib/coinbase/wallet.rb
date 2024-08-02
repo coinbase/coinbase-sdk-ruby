@@ -294,6 +294,39 @@ module Coinbase
       default_address.trade(amount, from_asset_id, to_asset_id)
     end
 
+    # Stakes the given amount of the given Asset.
+    # Currently only the default_address is used to source the Stake.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
+    # @param asset_id [Symbol] The ID of the Asset to stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the staking operation.
+    # @return [Coinbase::StakingOperation] The stake operation
+    def stake(amount, asset_id, mode: :default, options: {})
+      default_address.stake(amount, asset_id, mode: mode, options: options)
+    end
+
+    # Unstakes the given amount of the given Asset.
+    # Currently only the default_address is used to source the Unstake.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
+    # @param asset_id [Symbol] The ID of the Asset to unstake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The unstake operation
+    def unstake(amount, asset_id, mode: :default, options: {})
+      default_address.unstake(amount, asset_id, mode: mode, options: options)
+    end
+
+    # Claims stake of the given amount of the given Asset.
+    # Currently only the default_address is used as the source for claim_stake.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim_stake.
+    # @param asset_id [Symbol] The ID of the Asset to claim_stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The claim_stake operation
+    def claim_stake(amount, asset_id, mode: :default, options: {})
+      default_address.claim_stake(amount, asset_id, mode: mode, options: options)
+    end
+
     # Exports the Wallet's data to a Data object.
     # @return [Data] The Wallet data
     def export

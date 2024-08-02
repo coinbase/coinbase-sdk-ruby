@@ -12,4 +12,5 @@ end
 
 require_relative '../lib/coinbase'
 require_relative 'support/shared_examples/address_balances'
+require_relative 'support/shared_examples/address_staking'
 require_relative 'support/shared_examples/pagination'

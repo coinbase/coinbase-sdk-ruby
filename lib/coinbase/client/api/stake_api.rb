@@ -19,6 +19,92 @@ module Coinbase::Client
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
+    # Broadcast a staking operation
+    # Broadcast a staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The ID of the address the staking operation belongs to.
+    # @param staking_operation_id [String] The ID of the staking operation to broadcast.
+    # @param broadcast_staking_operation_request [BroadcastStakingOperationRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [StakingOperation]
+    def broadcast_staking_operation(wallet_id, address_id, staking_operation_id, broadcast_staking_operation_request, opts = {})
+      data, _status_code, _headers = broadcast_staking_operation_with_http_info(wallet_id, address_id, staking_operation_id, broadcast_staking_operation_request, opts)
+      data
+    end
+
+    # Broadcast a staking operation
+    # Broadcast a staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The ID of the address the staking operation belongs to.
+    # @param staking_operation_id [String] The ID of the staking operation to broadcast.
+    # @param broadcast_staking_operation_request [BroadcastStakingOperationRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(StakingOperation, Integer, Hash)>] StakingOperation data, response status code and response headers
+    def broadcast_staking_operation_with_http_info(wallet_id, address_id, staking_operation_id, broadcast_staking_operation_request, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: StakeApi.broadcast_staking_operation ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling StakeApi.broadcast_staking_operation"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling StakeApi.broadcast_staking_operation"
+      end
+      # verify the required parameter 'staking_operation_id' is set
+      if @api_client.config.client_side_validation && staking_operation_id.nil?
+        fail ArgumentError, "Missing the required parameter 'staking_operation_id' when calling StakeApi.broadcast_staking_operation"
+      end
+      # verify the required parameter 'broadcast_staking_operation_request' is set
+      if @api_client.config.client_side_validation && broadcast_staking_operation_request.nil?
+        fail ArgumentError, "Missing the required parameter 'broadcast_staking_operation_request' when calling StakeApi.broadcast_staking_operation"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}/broadcast'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s)).sub('{' + 'staking_operation_id' + '}', CGI.escape(staking_operation_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(broadcast_staking_operation_request)
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'StakingOperation'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"StakeApi.broadcast_staking_operation",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: StakeApi#broadcast_staking_operation\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Build a new staking operation
     # Build a new staking operation
     # @param build_staking_operation_request [BuildStakingOperationRequest] 
@@ -83,6 +169,86 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: StakeApi#build_staking_operation\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Create a new staking operation for an address
+    # Create a new staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The ID of the address to create the staking operation for.
+    # @param create_staking_operation_request [CreateStakingOperationRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [StakingOperation]
+    def create_staking_operation(wallet_id, address_id, create_staking_operation_request, opts = {})
+      data, _status_code, _headers = create_staking_operation_with_http_info(wallet_id, address_id, create_staking_operation_request, opts)
+      data
+    end
+
+    # Create a new staking operation for an address
+    # Create a new staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The ID of the address to create the staking operation for.
+    # @param create_staking_operation_request [CreateStakingOperationRequest] 
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(StakingOperation, Integer, Hash)>] StakingOperation data, response status code and response headers
+    def create_staking_operation_with_http_info(wallet_id, address_id, create_staking_operation_request, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: StakeApi.create_staking_operation ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling StakeApi.create_staking_operation"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling StakeApi.create_staking_operation"
+      end
+      # verify the required parameter 'create_staking_operation_request' is set
+      if @api_client.config.client_side_validation && create_staking_operation_request.nil?
+        fail ArgumentError, "Missing the required parameter 'create_staking_operation_request' when calling StakeApi.create_staking_operation"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(create_staking_operation_request)
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'StakingOperation'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"StakeApi.create_staking_operation",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: StakeApi#create_staking_operation\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end
@@ -304,6 +470,81 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: StakeApi#get_staking_context\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Get the latest state of a staking operation
+    # Get the latest state of a staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to
+    # @param address_id [String] The ID of the address to fetch the staking operation for.
+    # @param staking_operation_id [String] The ID of the staking operation.
+    # @param [Hash] opts the optional parameters
+    # @return [StakingOperation]
+    def get_staking_operation(wallet_id, address_id, staking_operation_id, opts = {})
+      data, _status_code, _headers = get_staking_operation_with_http_info(wallet_id, address_id, staking_operation_id, opts)
+      data
+    end
+
+    # Get the latest state of a staking operation
+    # Get the latest state of a staking operation.
+    # @param wallet_id [String] The ID of the wallet the address belongs to
+    # @param address_id [String] The ID of the address to fetch the staking operation for.
+    # @param staking_operation_id [String] The ID of the staking operation.
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(StakingOperation, Integer, Hash)>] StakingOperation data, response status code and response headers
+    def get_staking_operation_with_http_info(wallet_id, address_id, staking_operation_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: StakeApi.get_staking_operation ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling StakeApi.get_staking_operation"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling StakeApi.get_staking_operation"
+      end
+      # verify the required parameter 'staking_operation_id' is set
+      if @api_client.config.client_side_validation && staking_operation_id.nil?
+        fail ArgumentError, "Missing the required parameter 'staking_operation_id' when calling StakeApi.get_staking_operation"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s)).sub('{' + 'staking_operation_id' + '}', CGI.escape(staking_operation_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'StakingOperation'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"StakeApi.get_staking_operation",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: StakeApi#get_staking_operation\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end

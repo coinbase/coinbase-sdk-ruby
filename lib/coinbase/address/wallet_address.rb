@@ -92,6 +92,42 @@ module Coinbase
       trade
     end
 
+    # Stakes the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def stake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
+
+      complete_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
+    end
+
+    # Unstakes the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def unstake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
+
+      complete_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
+    end
+
+    # Claims the given amount of the given Asset
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim.
+    # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the stake operation
+    # @return [Coinbase::StakingOperation] The staking operation
+    def claim_stake(amount, asset_id, mode: :default, options: {})
+      validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
+
+      complete_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
+    end
+
     # Returns whether the Address has a private key backing it to sign transactions.
     # @return [Boolean] Whether the Address has a private key backing it to sign transactions.
     def can_sign?
@@ -143,6 +179,14 @@ module Coinbase
       return unless current_balance < amount
 
       raise InsufficientFundsError.new(amount, current_balance)
+    end
+
+    def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
+      op = StakingOperation.create(amount, network_id, asset_id, id, wallet_id, action, mode, options)
+      op.transactions.each do |transaction|
+        transaction.sign(@key)
+      end
+      op.broadcast!
     end
   end
 end

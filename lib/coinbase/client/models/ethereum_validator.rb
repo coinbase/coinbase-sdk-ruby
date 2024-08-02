@@ -14,60 +14,49 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # A list of onchain transactions to help realize a staking action.
-  class StakingOperation
-    # The unique ID of the staking operation.
-    attr_accessor :id
+  # An Ethereum validator.
+  class EthereumValidator
+    # The index of the validator in the validator set.
+    attr_accessor :index
 
-    # The ID of the wallet that owns the address.
-    attr_accessor :wallet_id
-
-    # The ID of the blockchain network.
-    attr_accessor :network_id
-
-    # The onchain address orchestrating the staking operation.
-    attr_accessor :address_id
-
-    # The status of the staking operation.
+    # The status of the validator.
     attr_accessor :status
 
-    # The transaction(s) that will execute the staking operation onchain.
-    attr_accessor :transactions
+    # The public key of the validator.
+    attr_accessor :public_key
 
-    attr_accessor :metadata
+    # The address to which the validator's rewards are sent.
+    attr_accessor :withdrawl_address
 
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
+    # Whether the validator has been slashed.
+    attr_accessor :slashed
 
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
+    # The epoch at which the validator was activated.
+    attr_accessor :activation_epoch
 
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The epoch at which the validator exited.
+    attr_accessor :exit_epoch
+
+    # The epoch at which the validator can withdraw.
+    attr_accessor :withdrawable_epoch
+
+    attr_accessor :balance
+
+    attr_accessor :effective_balance
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'wallet_id' => :'wallet_id',
-        :'network_id' => :'network_id',
-        :'address_id' => :'address_id',
+        :'index' => :'index',
         :'status' => :'status',
-        :'transactions' => :'transactions',
-        :'metadata' => :'metadata'
+        :'public_key' => :'public_key',
+        :'withdrawl_address' => :'withdrawl_address',
+        :'slashed' => :'slashed',
+        :'activation_epoch' => :'activationEpoch',
+        :'exit_epoch' => :'exitEpoch',
+        :'withdrawable_epoch' => :'withdrawableEpoch',
+        :'balance' => :'balance',
+        :'effective_balance' => :'effective_balance'
       }
     end
 
@@ -79,13 +68,16 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'id' => :'String',
-        :'wallet_id' => :'String',
-        :'network_id' => :'String',
-        :'address_id' => :'String',
+        :'index' => :'String',
         :'status' => :'String',
-        :'transactions' => :'Array<Transaction>',
-        :'metadata' => :'StakingOperationMetadata'
+        :'public_key' => :'String',
+        :'withdrawl_address' => :'String',
+        :'slashed' => :'Boolean',
+        :'activation_epoch' => :'String',
+        :'exit_epoch' => :'String',
+        :'withdrawable_epoch' => :'String',
+        :'balance' => :'Balance',
+        :'effective_balance' => :'Balance'
       }
     end
 
@@ -99,37 +91,21 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingOperation` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumValidator` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingOperation`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumValidator`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'id')
-        self.id = attributes[:'id']
+      if attributes.key?(:'index')
+        self.index = attributes[:'index']
       else
-        self.id = nil
-      end
-
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
-      end
-
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
-      else
-        self.network_id = nil
-      end
-
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
-      else
-        self.address_id = nil
+        self.index = nil
       end
 
       if attributes.key?(:'status')
@@ -138,16 +114,52 @@ module Coinbase::Client
         self.status = nil
       end
 
-      if attributes.key?(:'transactions')
-        if (value = attributes[:'transactions']).is_a?(Array)
-          self.transactions = value
-        end
+      if attributes.key?(:'public_key')
+        self.public_key = attributes[:'public_key']
       else
-        self.transactions = nil
+        self.public_key = nil
       end
 
-      if attributes.key?(:'metadata')
-        self.metadata = attributes[:'metadata']
+      if attributes.key?(:'withdrawl_address')
+        self.withdrawl_address = attributes[:'withdrawl_address']
+      else
+        self.withdrawl_address = nil
+      end
+
+      if attributes.key?(:'slashed')
+        self.slashed = attributes[:'slashed']
+      else
+        self.slashed = nil
+      end
+
+      if attributes.key?(:'activation_epoch')
+        self.activation_epoch = attributes[:'activation_epoch']
+      else
+        self.activation_epoch = nil
+      end
+
+      if attributes.key?(:'exit_epoch')
+        self.exit_epoch = attributes[:'exit_epoch']
+      else
+        self.exit_epoch = nil
+      end
+
+      if attributes.key?(:'withdrawable_epoch')
+        self.withdrawable_epoch = attributes[:'withdrawable_epoch']
+      else
+        self.withdrawable_epoch = nil
+      end
+
+      if attributes.key?(:'balance')
+        self.balance = attributes[:'balance']
+      else
+        self.balance = nil
+      end
+
+      if attributes.key?(:'effective_balance')
+        self.effective_balance = attributes[:'effective_balance']
+      else
+        self.effective_balance = nil
       end
     end
 
@@ -156,24 +168,44 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @id.nil?
-        invalid_properties.push('invalid value for "id", id cannot be nil.')
-      end
-
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
-      end
-
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      if @index.nil?
+        invalid_properties.push('invalid value for "index", index cannot be nil.')
       end
 
       if @status.nil?
         invalid_properties.push('invalid value for "status", status cannot be nil.')
       end
 
-      if @transactions.nil?
-        invalid_properties.push('invalid value for "transactions", transactions cannot be nil.')
+      if @public_key.nil?
+        invalid_properties.push('invalid value for "public_key", public_key cannot be nil.')
+      end
+
+      if @withdrawl_address.nil?
+        invalid_properties.push('invalid value for "withdrawl_address", withdrawl_address cannot be nil.')
+      end
+
+      if @slashed.nil?
+        invalid_properties.push('invalid value for "slashed", slashed cannot be nil.')
+      end
+
+      if @activation_epoch.nil?
+        invalid_properties.push('invalid value for "activation_epoch", activation_epoch cannot be nil.')
+      end
+
+      if @exit_epoch.nil?
+        invalid_properties.push('invalid value for "exit_epoch", exit_epoch cannot be nil.')
+      end
+
+      if @withdrawable_epoch.nil?
+        invalid_properties.push('invalid value for "withdrawable_epoch", withdrawable_epoch cannot be nil.')
+      end
+
+      if @balance.nil?
+        invalid_properties.push('invalid value for "balance", balance cannot be nil.')
+      end
+
+      if @effective_balance.nil?
+        invalid_properties.push('invalid value for "effective_balance", effective_balance cannot be nil.')
       end
 
       invalid_properties
@@ -183,24 +215,17 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @id.nil?
-      return false if @network_id.nil?
-      return false if @address_id.nil?
+      return false if @index.nil?
       return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified"])
-      return false unless status_validator.valid?(@status)
-      return false if @transactions.nil?
+      return false if @public_key.nil?
+      return false if @withdrawl_address.nil?
+      return false if @slashed.nil?
+      return false if @activation_epoch.nil?
+      return false if @exit_epoch.nil?
+      return false if @withdrawable_epoch.nil?
+      return false if @balance.nil?
+      return false if @effective_balance.nil?
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] status Object to be assigned
-    def status=(status)
-      validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified"])
-      unless validator.valid?(status)
-        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
-      end
-      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -208,13 +233,16 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          wallet_id == o.wallet_id &&
-          network_id == o.network_id &&
-          address_id == o.address_id &&
+          index == o.index &&
           status == o.status &&
-          transactions == o.transactions &&
-          metadata == o.metadata
+          public_key == o.public_key &&
+          withdrawl_address == o.withdrawl_address &&
+          slashed == o.slashed &&
+          activation_epoch == o.activation_epoch &&
+          exit_epoch == o.exit_epoch &&
+          withdrawable_epoch == o.withdrawable_epoch &&
+          balance == o.balance &&
+          effective_balance == o.effective_balance
     end
 
     # @see the `==` method
@@ -226,7 +254,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, wallet_id, network_id, address_id, status, transactions, metadata].hash
+      [index, status, public_key, withdrawl_address, slashed, activation_epoch, exit_epoch, withdrawable_epoch, balance, effective_balance].hash
     end
 
     # Builds the object from hash
