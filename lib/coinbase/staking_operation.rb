@@ -133,13 +133,18 @@ module Coinbase
     # @param network_id [Symbol] The Network ID
     # @param address_id [Symbol] The Address ID
     # @param id [String] The ID of the StakingOperation
+    # @param wallet_id [String] The optional Wallet ID
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.fetch(network_id, address_id, id)
+    def self.fetch(network_id, address_id, id, wallet_id: nil)
       staking_operation_model = Coinbase.call_api do
-        stake_api.get_external_staking_operation(network_id, address_id, id)
+        if wallet_id.nil?
+          stake_api.get_external_staking_operation(network_id, address_id, id)
+        else
+          stake_api.get_staking_operation(wallet_id, address_id, id)
+        end
       end
 
-      from_model(staking_operation_model)
+      new(staking_operation_model)
     end
 
     # Signs the Open Transactions with the provided key
@@ -154,7 +159,11 @@ module Coinbase
     # @return [Coinbase::StakingOperation] The updated staking operation
     def reload
       @model = Coinbase.call_api do
-        stake_api.get_external_staking_operation(network_id, address_id, id)
+        if wallet_id.nil?
+          stake_api.get_external_staking_operation(network_id, address_id, id)
+        else
+          stake_api.get_staking_operation(wallet_id, address_id, id)
+        end
       end
 
       from_model(@model)
@@ -210,6 +219,8 @@ module Coinbase
       @transactions = model.transactions.map do |transaction_model|
         Transaction.new(transaction_model)
       end
+
+      self
     end
   end
 end
