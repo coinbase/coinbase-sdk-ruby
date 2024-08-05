@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'eth'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'faraday-multipart'
+  spec.add_runtime_dependency 'faraday-retry'
   spec.add_runtime_dependency 'jwt'
   spec.add_runtime_dependency 'marcel'
   spec.add_runtime_dependency 'money-tree'
