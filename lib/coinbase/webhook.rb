@@ -25,11 +25,11 @@ module Coinbase
         end
       end
 
-      private
-
       def webhooks_api
         @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
       end
+
+      private
 
       def fetch_webhooks_page(page)
         webhooks_api.list_webhooks({ limit: DEFAULT_PAGE_LIMIT, page: page })
@@ -48,12 +48,28 @@ module Coinbase
       @model.id
     end
 
-    def update(network_id:, notification_uri:, event_type:, event_filters:)
+    def network_id
+      @model.network_id
+    end
+
+    def notification_uri
+      @model.notification_uri
+    end
+
+    def event_type
+      @model.event_type
+    end
+
+    def event_filters
+      @model.event_filters
+    end
+
+    def update(notification_uri:)
       model = Coinbase.call_api do
-        webhooks_api.update_webhook(
+        self.class.webhooks_api.update_webhook(
           id,
           update_webhook_request: {
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: network_id,
             notification_uri: notification_uri,
             event_type: event_type,
             event_filters: event_filters
