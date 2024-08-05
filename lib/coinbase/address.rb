@@ -80,16 +80,16 @@ module Coinbase
     # @param amount [Integer,String,BigDecimal] The amount of the asset to stake
     # @param asset_id [Symbol] The asset to stake
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the stake operation
-    # Available options:
-    # A. Shared ETH Staking: None
-    # B. Dedicated ETH Staking:
-    #    1. funding_address (optional): Ethereum address for funding the stake operation.
-    #                                   Defaults to the address initiating the stake operation.
-    #    2. withdrawal_address (optional): Ethereum address for receiving rewards and withdrawal funds.
-    #                                      Defaults to the address initiating the stake operation.
-    #    3. fee_recipient_address (optional): Ethereum address for receiving transaction fees.
-    #                                         Defaults to the address initiating the stake operation.
+    # @param options [Hash] Additional options for the stake operation.
+    #   Available options:
+    #     A. Shared ETH Staking: None
+    #     B. Dedicated ETH Staking:
+    #        1. funding_address (optional): Ethereum address for funding the stake operation.
+    #                                       Defaults to the address initiating the stake operation.
+    #        2. withdrawal_address (optional): Ethereum address for receiving rewards and withdrawal funds.
+    #                                          Defaults to the address initiating the stake operation.
+    #        3. fee_recipient_address (optional): Ethereum address for receiving transaction fees.
+    #                                             Defaults to the address initiating the stake operation.
     #
     # @return [Coinbase::StakingOperation] The stake operation
     def build_stake_operation(amount, asset_id, mode: :default, options: {})
@@ -102,14 +102,14 @@ module Coinbase
     # @param amount [Integer,String,BigDecimal] The amount of the asset to unstake
     # @param asset_id [Symbol] The asset to unstake
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the unstake operation
-    # Available options:
-    # A. Shared ETH Staking: None
-    # B. Dedicated ETH Staking:
-    #    1. immediate (optional): Set this to "true" to unstake immediately i.e. leverage "Coinbase managed unstake"
-    #                             process. Defaults to "false" i.e. "User managed unstake" process.
-    #    2. validator_pub_keys (optional): List of validator public keys to unstake. Defaults to validators being
-    #                                      picked up on your behalf corresponding to the unstake amount.
+    # @param options [Hash] Additional options for the unstake operation.
+    #   Available options:
+    #     A. Shared ETH Staking: None
+    #     B. Dedicated ETH Staking:
+    #        1. immediate (optional): Set this to "true" to unstake immediately i.e. leverage "Coinbase managed unstake"
+    #                                 process. Defaults to "false" i.e. "User managed unstake" process.
+    #        2. validator_pub_keys (optional): List of validator public keys to unstake. Defaults to validators being
+    #                                          picked up on your behalf corresponding to the unstake amount.
     #
     # @return [Coinbase::StakingOperation] The unstake operation
     def build_unstake_operation(amount, asset_id, mode: :default, options: {})
@@ -134,6 +134,11 @@ module Coinbase
     # @param asset_id [Symbol] The asset to retrieve staking balances for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
+    #   Available options:
+    #     A. Shared ETH Staking: None
+    #     B. Dedicated ETH Staking:
+    #        1. validator_pub_keys (optional): List of validator public keys to retrieve staking balances for.
+    #                                          Defaults to all validators.
     # @return [Hash] The staking balances
     # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
     # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
@@ -172,6 +177,11 @@ module Coinbase
     # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the staking operation
+    #   Available options:
+    #     A. Shared ETH Staking: None
+    #     B. Dedicated ETH Staking:
+    #        1. validator_pub_keys (optional): List of validator public keys to unstake. Defaults to validators being
+    #                                          picked up on your behalf corresponding to the unstake amount.
     # @return [BigDecimal] The stakeable balance
     def stakeable_balance(asset_id, mode: :default, options: {})
       staking_balances(asset_id, mode: mode, options: options)[:stakeable_balance]
