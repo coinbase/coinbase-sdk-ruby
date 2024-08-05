@@ -790,6 +790,108 @@ describe Coinbase::Wallet do
     end
   end
 
+  context 'with a default address' do
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [address_model1], total_count: 1))
+    end
+
+    subject(:wallet) { described_class.new(model_with_default_address, seed: '') }
+
+    describe '#stake' do
+      before do
+        allow(wallet.default_address).to receive(:stake)
+      end
+
+      subject(:stake) { wallet.stake(5, :eth) }
+
+      it 'calls stake' do
+        subject
+        expect(wallet.default_address).to have_received(:stake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#unstake' do
+      before do
+        allow(wallet.default_address).to receive(:unstake)
+      end
+
+      subject(:unstake) { wallet.unstake(5, :eth) }
+
+      it 'calls unstake' do
+        subject
+        expect(wallet.default_address).to have_received(:unstake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#claim_stake' do
+      before do
+        allow(wallet.default_address).to receive(:claim_stake)
+      end
+
+      subject(:claim_stake) { wallet.claim_stake(5, :eth) }
+
+      it 'calls claim_stake' do
+        subject
+        expect(wallet.default_address).to have_received(:claim_stake).with(5, :eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#staking_balances' do
+      before do
+        allow(wallet.default_address).to receive(:staking_balances)
+      end
+
+      subject(:staking_balances) { wallet.staking_balances(:eth) }
+
+      it 'calls staking_balances' do
+        subject
+        expect(wallet.default_address).to have_received(:staking_balances).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#stakeable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:stakeable_balance)
+      end
+
+      subject(:stakeable_balance) { wallet.stakeable_balance(:eth) }
+
+      it 'calls stakeable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:stakeable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#unstakeable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:unstakeable_balance)
+      end
+
+      subject(:unstakeable_balance) { wallet.unstakeable_balance(:eth) }
+
+      it 'calls unstakeable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:unstakeable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
+
+    describe '#claimable_balance' do
+      before do
+        allow(wallet.default_address).to receive(:claimable_balance)
+      end
+
+      subject(:claimable_balance) { wallet.claimable_balance(:eth) }
+
+      it 'calls claimable_balance' do
+        subject
+        expect(wallet.default_address).to have_received(:claimable_balance).with(:eth, mode: :default, options: {})
+      end
+    end
+  end
+
   describe '#transfer' do
     let(:transfer) { double('Coinbase::Transfer') }
     let(:amount) { 5 }

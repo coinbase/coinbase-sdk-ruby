@@ -105,6 +105,7 @@ describe Coinbase::WalletAddress do
   it_behaves_like 'an address that supports balance queries'
 
   it_behaves_like 'an address that supports requesting faucet funds'
+  it_behaves_like 'an address that supports staking'
 
   describe '#transfer' do
     let(:balance) { 1_000 }
@@ -340,6 +341,59 @@ describe Coinbase::WalletAddress do
         end
       end
     end
+  end
+
+  shared_examples 'an address that can do a staking_action' do |operation|
+    include_context 'with mocked staking_balances'
+    let(:amount) { 1 }
+    let(:mode) { :default }
+    let(:asset_id) { :eth }
+    let(:staking_operation) { instance_double(Coinbase::StakingOperation, id: 'test-id') }
+    let(:transaction) { instance_double(Coinbase::Transaction) }
+    subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
+
+    before do
+      allow(Coinbase::StakingOperation).to receive(:create).and_return(staking_operation)
+      allow(staking_operation).to receive(:transactions).and_return([transaction])
+      allow(transaction).to receive(:sign).and_return('signed_payload')
+      allow(staking_operation).to receive(:broadcast!)
+    end
+
+    it 'creates a staking operation' do
+      subject
+      expect(Coinbase::StakingOperation).to have_received(:create).with(
+        amount,
+        network_id,
+        asset_id,
+        address_id,
+        wallet_id,
+        operation,
+        mode,
+        {}
+      )
+    end
+
+    it 'signs the transaction' do
+      subject
+      expect(transaction).to have_received(:sign).with(key)
+    end
+
+    it 'braodcasts the transaciton' do
+      subject
+      expect(staking_operation).to have_received(:broadcast!)
+    end
+  end
+
+  describe '#stake' do
+    it_behaves_like 'an address that can do a staking_action', 'stake'
+  end
+
+  describe '#unstake' do
+    it_behaves_like 'an address that can do a staking_action', 'unstake'
+  end
+
+  describe '#claim_stake' do
+    it_behaves_like 'an address that can do a staking_action', 'claim_stake'
   end
 
   describe '#transfers' do

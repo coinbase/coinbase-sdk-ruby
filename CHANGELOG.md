@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.0.14] - 2024-08-05
+
+### Added
+
+- Support for Shared ETH Staking for Wallet Addresses
+
+### Changed
+
+- `unsigned_payload`, `signed_payload`, `status`, and `transaction_hash` in-line fields on `Transfer` are deprecated in
+  favor of those on `Transaction`
 
 ## [0.0.13] - 2024-07-30
 
@@ -49,10 +58,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Ability to trade assets from wallet and addresses
-  - Note: Only supported on `base-mainnet`, not on `base-sepolia`.
+    - Note: Only supported on `base-mainnet`, not on `base-sepolia`.
 - `base-mainnet` network support
-  - Note: Faucet functionality is not supported.
-  - Note: Server signer functionality is not yet supported.
+    - Note: Faucet functionality is not supported.
+    - Note: Server signer functionality is not yet supported.
 - ServerSigner object
 - Ability to get default Server-Signer
 

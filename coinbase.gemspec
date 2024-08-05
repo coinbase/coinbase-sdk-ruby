@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 Gem::Specification.new do |spec|
-  spec.name          = 'coinbase-sdk'
-  spec.version       = '0.0.13'
-  spec.authors       = ['Yuga Cohler']
-  spec.files         = Dir['lib/**/*.rb']
-  spec.summary       = 'Coinbase Ruby SDK'
+  spec.name = 'coinbase-sdk'
+  spec.version = '0.0.14'
+  spec.authors = ['Yuga Cohler']
+  spec.files = Dir['lib/**/*.rb']
+  spec.summary = 'Coinbase Ruby SDK'
 
-  spec.description   = 'Coinbase Ruby SDK for accessing Coinbase Platform APIs'
-  spec.email         = 'yuga.cohler@coinbase.com'
-  spec.homepage      = 'https://github.com/coinbase/coinbase-sdk-ruby'
-  spec.license       = 'Apache-2.0'
+  spec.description = 'Coinbase Ruby SDK for accessing Coinbase Platform APIs'
+  spec.email = 'yuga.cohler@coinbase.com'
+  spec.homepage = 'https://github.com/coinbase/coinbase-sdk-ruby'
+  spec.license = 'Apache-2.0'
   spec.required_ruby_version = Gem::Requirement.new('>= 2.7.0')
 
   spec.metadata['rubygems_mfa_required'] = 'true'
@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'eth'
   spec.add_runtime_dependency 'faraday'
   spec.add_runtime_dependency 'faraday-multipart'
+  spec.add_runtime_dependency 'faraday-retry'
   spec.add_runtime_dependency 'jwt'
   spec.add_runtime_dependency 'marcel'
   spec.add_runtime_dependency 'money-tree'

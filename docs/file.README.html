@@ -60,7 +60,7 @@
       <div id="content"><div id='filecontents'>
 <h1 id="label-Coinbase+Ruby+SDK">Coinbase Ruby SDK</h1>
 
-<p>The Coinbase Ruby SDK enables the simple integration of crypto into your app. By calling Coinbase&#39;s Platform APIs, the SDK allows you to provision crypto wallets, send crypto into/out of those wallets, track wallet balances, and trade crypto from one asset into another.</p>
+<p>The Coinbase Ruby SDK enables the simple integration of crypto into your app. By calling Coinbase’s Platform APIs, the SDK allows you to provision crypto wallets, send crypto into/out of those wallets, track wallet balances, and trade crypto from one asset into another.</p>
 
 <p>The SDK currently supports Customer-custodied Wallets on the Base Sepolia test network.</p>
 
@@ -174,7 +174,7 @@ rbenv global 2.7.0
 
 <h2 id="label-Creating+a+Wallet">Creating a Wallet</h2>
 
-<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API key</a>. Then, initialize the Platform SDK by passing your API key name and API key&#39;s private key via the <code>configure</code> method:</p>
+<p>To start, <a href="https://portal.cdp.coinbase.com/access/api">create a CDP API key</a>. Then, initialize the Platform SDK by passing your API key name and API key’s private key via the <code>configure</code> method:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_api_key_name'>api_key_name</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Copy your API key name here.</span><span class='tstring_end'>&quot;</span></span>
 <span class='comment'># Ensure that you are using double-quotes here.
@@ -195,7 +195,7 @@ rbenv global 2.7.0
 <span class='id identifier rubyid_puts'>puts</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase SDK has been successfully configured from JSON file.</span><span class='tstring_end'>&quot;</span></span>
 </code></pre>
 
-<p>This will allow you to <a href="./authentication.md">authenticate</a> with the Platform APIs and get access to the <a href="./users.md">default_user</a>:</p>
+<p>This will allow you to <a href="./authentication_md.html">authenticate</a> with the Platform APIs and get access to the href="./users_md.html"></a>:</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_user'><span class='object_link'><a href="Coinbase.html#default_user-class_method" title="Coinbase.default_user (method)">default_user</a></span></span>
 </code></pre>
@@ -302,9 +302,9 @@ rbenv global 2.7.0
 </span><span class='id identifier rubyid_store'>store</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_to_hash'>to_hash</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>For more information on wallet persistence, see <a href="./wallets.md#persisting-a-wallet">the documentation on wallets</a>.</p>
+<p>For more information on wallet persistence, see <a href="./wallets_md.html#persisting-a-wallet">the documentation on wallets</a>.</p>
 
-<p>Alternatively, you can use the <code>save_seed!</code> function to persist a wallet&#39;s seed to a local file. This is a convenience function purely for testing purposes, and should not be considered a secure method of persisting wallets.</p>
+<p>Alternatively, you can use the <code>save_seed!</code> function to persist a wallet’s seed to a local file. This is a convenience function purely for testing purposes, and should not be considered a secure method of persisting wallets.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Pick a file to which to save your wallet seed.
 </span><span class='id identifier rubyid_file_path'>file_path</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>my_seed.json</span><span class='tstring_end'>&#39;</span></span>
@@ -327,7 +327,7 @@ rbenv global 2.7.0
 </span><span class='id identifier rubyid_w3'>w3</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_import_wallet'>import_wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_fetched_data'>fetched_data</span><span class='rparen'>)</span>
 </code></pre>
 
-<p>If you used the <code>save_seed!</code> function to persist a wallet&#39;s seed to a local file, then you can first fetch the unhydrated wallet from the server, and then use the <code>load_seed</code> method to re-instantiate the wallet.</p>
+<p>If you used the <code>save_seed!</code> function to persist a wallet’s seed to a local file, then you can first fetch the unhydrated wallet from the server, and then use the <code>load_seed</code> method to re-instantiate the wallet.</p>
 
 <pre class="code ruby"><code class="ruby"><span class='comment'># Get the unhydrated wallet from the server.
 </span><span class='id identifier rubyid_w4'>w4</span> <span class='op'>=</span> <span class='id identifier rubyid_u'>u</span><span class='period'>.</span><span class='id identifier rubyid_wallet'>wallet</span><span class='lparen'>(</span><span class='id identifier rubyid_w1'>w1</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
@@ -341,9 +341,9 @@ rbenv global 2.7.0
 
 <p>Addresses that do not belong CDP wallets can still be interacted with via the Platform SDK.</p>
 
-<p>You can fetch balances, request faucet funds, and eventually construct unsigned transactions that can be signed by the owner of the address (e.g. your user&#39;s self-custodied wallet).</p>
+<p>You can fetch balances, request faucet funds, and eventually construct unsigned transactions that can be signed by the owner of the address (e.g. your user’s self-custodied wallet).</p>
 
-<p>See <a href="./docs/external-addresses.md">External Addresses docs</a> for more information.</p>
+<p>See <a href="./docs/external-addresses_md.html">External Addresses docs</a> for more information.</p>
 
 <h2 id="label-Development">Development</h2>
 
