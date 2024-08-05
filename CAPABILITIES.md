@@ -14,7 +14,7 @@ those capabilities for the Ruby SDK:
 | Server-Signer |      ✅      |      ✅      |        ❌        |        ❌        |
 | Stake [^1]    |      ❌      |      ❌      |        ✅        |        ✅        |
 
-[^1]: Dedicated ETH Staking is currently only available on Testnet (Ethereum-Holesky).
+[^1]: Currently only available for Shared ETH Staking.
 
 ## End-User Wallets
 
