@@ -30,6 +30,7 @@ module Coinbase
       def webhooks_api
         @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
       end
+
       def fetch_webhooks_page(page)
         webhooks_api.list_webhooks({ limit: DEFAULT_PAGE_LIMIT, page: page })
       end
