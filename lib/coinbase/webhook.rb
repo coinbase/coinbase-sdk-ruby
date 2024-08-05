@@ -66,7 +66,7 @@ module Coinbase
 
     def update(notification_uri:)
       model = Coinbase.call_api do
-        self.class.webhooks_api.update_webhook(
+        webhooks_api.update_webhook(
           id,
           update_webhook_request: {
             network_id: network_id,
