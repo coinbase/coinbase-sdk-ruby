@@ -41,7 +41,6 @@ module Coinbase
     def initialize(model)
       raise ArgumentError, 'model must be a Webhook' unless model.is_a?(Coinbase::Client::Webhook)
 
-      @webhook_id = model.id
       @model = model
     end
 
