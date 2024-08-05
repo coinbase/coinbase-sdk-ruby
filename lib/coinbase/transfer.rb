@@ -132,13 +132,13 @@ module Coinbase
     # Returns the Unsigned Payload of the Transfer.
     # @return [String] The Unsigned Payload
     def unsigned_payload
-      @model.unsigned_payload
+      transaction.unsigned_payload
     end
 
     # Returns the Signed Payload of the Transfer.
     # @return [String] The Signed Payload
     def signed_payload
-      @model.signed_payload
+      transaction.signed_payload
     end
 
     # Returns the Transfer transaction.
@@ -150,7 +150,7 @@ module Coinbase
     # Returns the Transaction Hash of the Transfer.
     # @return [String] The Transaction Hash
     def transaction_hash
-      @model.transaction_hash
+      transaction.transaction_hash
     end
 
     # Returns the status of the Transfer.

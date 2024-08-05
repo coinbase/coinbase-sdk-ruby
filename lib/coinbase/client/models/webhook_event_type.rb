@@ -14,11 +14,13 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class TransactionType
-    TRANSFER = "transfer".freeze
+  class WebhookEventType
+    UNSPECIFIED = "unspecified".freeze
+    ERC20_TRANSFER = "erc20_transfer".freeze
+    ERC721_TRANSFER = "erc721_transfer".freeze
 
     def self.all_vars
-      @all_vars ||= [TRANSFER].freeze
+      @all_vars ||= [UNSPECIFIED, ERC20_TRANSFER, ERC721_TRANSFER].freeze
     end
 
     # Builds the enum from string
@@ -32,8 +34,8 @@ module Coinbase::Client
     # @param [String] The enum value in the form of the string
     # @return [String] The enum value
     def build_from_hash(value)
-      return value if TransactionType.all_vars.include?(value)
-      raise "Invalid ENUM value #{value} for class #TransactionType"
+      return value if WebhookEventType.all_vars.include?(value)
+      raise "Invalid ENUM value #{value} for class #WebhookEventType"
     end
   end
 end
