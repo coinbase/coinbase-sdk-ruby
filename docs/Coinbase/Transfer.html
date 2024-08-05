@@ -820,7 +820,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The destination of the transfer. If the destination is a Wallet, it uses the default Address of the Wallet. If the destination is an Address, it uses the Address&#39;s ID. If the destination is a String, it uses it as the Address ID.</p>
+<p>The destination of the transfer. If the destination is a Wallet, it uses the default Address of the Wallet. If the destination is an Address, it uses the Address’s ID. If the destination is a String, it uses it as the Address ID.</p>
 </div>
       
     </li>
@@ -1230,6 +1230,7 @@
       <pre class="lines">
 
 
+165
 166
 167
 168
@@ -1244,11 +1245,10 @@
 177
 178
 179
-180
-181</pre>
+180</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 166</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 165</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_broadcast!'>broadcast!</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="TransactionNotSignedError.html" title="Coinbase::TransactionNotSignedError (class)">TransactionNotSignedError</a></span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_signed?'>signed?</span>
@@ -1492,12 +1492,12 @@
       <pre class="lines">
 
 
+226
 227
-228
-229</pre>
+228</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 227</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 226</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1610,6 +1610,7 @@
       <pre class="lines">
 
 
+184
 185
 186
 187
@@ -1617,11 +1618,10 @@
 189
 190
 191
-192
-193</pre>
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 185</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 184</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -1681,15 +1681,15 @@
       <pre class="lines">
 
 
+139
 140
-141
-142</pre>
+141</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 140</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 139</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_signed_payload'>signed_payload</span>
-  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_signed_payload'>signed_payload</span>
+  <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_signed_payload'>signed_payload</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1740,12 +1740,12 @@
       <pre class="lines">
 
 
+157
 158
-159
-160</pre>
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 158</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
   <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
@@ -1799,15 +1799,15 @@
       <pre class="lines">
 
 
+217
 218
 219
 220
 221
-222
-223</pre>
+222</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 218</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 217</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Transfer{transfer_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network_id'>network_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, </span><span class='tstring_end'>&quot;</span></span> \
@@ -1864,12 +1864,12 @@
       <pre class="lines">
 
 
+145
 146
-147
-148</pre>
+147</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 146</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 145</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction'>transaction</span>
   <span class='ivar'>@transaction</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
@@ -1923,15 +1923,15 @@
       <pre class="lines">
 
 
+151
 152
-153
-154</pre>
+153</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 152</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
-  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
+  <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1984,15 +1984,13 @@
 
 127
 128
-129
-130</pre>
+129</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction_link'>transaction_link</span>
-  <span class='comment'># TODO: Parameterize this by Network.
-</span>  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>https://sepolia.basescan.org/tx/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_transaction_link'>transaction_link</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2043,15 +2041,15 @@
       <pre class="lines">
 
 
+133
 134
-135
-136</pre>
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 133</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
-  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
+  <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2142,6 +2140,7 @@
       <pre class="lines">
 
 
+199
 200
 201
 202
@@ -2155,11 +2154,10 @@
 210
 211
 212
-213
-214</pre>
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 200</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transfer.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wait!'>wait!</span><span class='lparen'>(</span><span class='id identifier rubyid_interval_seconds'>interval_seconds</span> <span class='op'>=</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span> <span class='op'>=</span> <span class='int'>20</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
