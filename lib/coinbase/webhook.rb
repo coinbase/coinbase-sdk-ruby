@@ -45,7 +45,7 @@ module Coinbase
     end
 
     def id
-      @webhook_id
+      @model.id
     end
 
     def update(network_id:, notification_uri:, event_type:, event_filters:)
