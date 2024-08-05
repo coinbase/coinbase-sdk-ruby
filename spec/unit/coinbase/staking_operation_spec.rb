@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Coinbase::StakingOperation do
-  let(:wallet_id) { 'wallet-id' }
+  let(:wallet_id) { 'wallet_id' }
   let(:network_id) { :ethereum_holesky }
   let(:address_id) { 'address_id' }
   let(:staking_operation_model) do
@@ -107,6 +107,71 @@ describe Coinbase::StakingOperation do
     end
   end
 
+  describe '.fetch' do
+    before do
+      allow(stake_api).to receive(:get_external_staking_operation).and_return(staking_operation_model)
+      allow(stake_api).to receive(:get_staking_operation).and_return(staking_operation_model)
+    end
+
+    subject(:fetch) { described_class.fetch(network_id, address_id, 'some_id') }
+
+    it 'calls StakeApi.get_external_staking_operation' do
+      subject
+
+      expect(stake_api).to have_received(:get_external_staking_operation).with(network_id, address_id, 'some_id')
+    end
+
+    it { is_expected.to be_a described_class }
+
+    it 'has the correct id' do
+      expect(subject.id).to eq(staking_operation_model.id)
+    end
+
+    context 'when a wallet_id is provided' do
+      subject(:fetch) { described_class.fetch(network_id, address_id, 'some_id', wallet_id: wallet_id) }
+
+      it 'calls StakeApi.get_staking_operation' do
+        subject
+
+        expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
+      end
+    end
+  end
+
+  describe '.reload' do
+    before do
+      allow(stake_api).to receive(:get_external_staking_operation).and_return(staking_operation_model)
+      allow(stake_api).to receive(:get_staking_operation).and_return(staking_operation_model)
+    end
+
+    subject(:reload) { staking_operation.reload }
+
+    it 'calls StakeApi.get_staking_operation' do
+      subject
+
+      expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
+    end
+
+    it { is_expected.to be_a described_class }
+
+    it 'has the correct id' do
+      expect(subject.id).to eq(staking_operation_model.id)
+    end
+
+    context 'when a wallet_id is not provided' do
+      let(:staking_operation_model) do
+        instance_double(Coinbase::Client::StakingOperation, status: :initialized, id: 'some_id', wallet_id: nil,
+                                                            network_id: 'ethereum-holesky', address_id: 'address_id')
+      end
+
+      it 'calls StakeApi.get_external_staking_operation' do
+        subject
+
+        expect(stake_api).to have_received(:get_external_staking_operation).with(network_id, address_id, 'some_id')
+      end
+    end
+  end
+
   describe '#initialize' do
     it 'creates a transaction for each transaction model' do
       expect(Coinbase::Transaction).to receive(:new).with(transaction_model)
@@ -143,8 +208,8 @@ describe Coinbase::StakingOperation do
       allow(staking_operation).to receive(:sleep)
 
       allow(stake_api)
-        .to receive(:get_external_staking_operation)
-        .with(network_id, address_id, staking_operation.id)
+        .to receive(:get_staking_operation)
+        .with(wallet_id, address_id, staking_operation.id)
         .and_return(staking_operation_model, staking_operation_model, updated_staking_operation_model)
     end
 
