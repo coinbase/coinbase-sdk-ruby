@@ -4,6 +4,21 @@ module Coinbase
   # A representation of a Webhook.
   class Webhook
     class << self
+      def create(network_id:, notification_uri:, event_type:, event_filters:)
+        model = Coinbase.call_api do
+          webhooks_api.create_webhook(
+            create_webhook_request: {
+              network_id: Coinbase.normalize_network(network_id),
+              notification_uri: notification_uri,
+              event_type: event_type,
+              event_filters: event_filters
+            }
+          )
+        end
+
+        new(model)
+      end
+
       def list
         Coinbase::Pagination.enumerate(lambda(&method(:fetch_webhooks_page))) do |webhook|
           Coinbase::Webhook.new(webhook)
@@ -26,28 +41,12 @@ module Coinbase
     def initialize(model)
       raise ArgumentError, 'model must be a Webhook' unless model.is_a?(Coinbase::Client::Webhook)
 
+      @webhook_id = model.id
       @model = model
     end
 
     def id
       @webhook_id
-    end
-
-    def create(network_id:, notification_uri:, event_type:, event_filters:)
-      model = Coinbase.call_api do
-        webhooks_api.create_webhook(
-          create_webhook_request: {
-            network_id: Coinbase.normalize_network(network_id),
-            notification_uri: notification_uri,
-            event_type: event_type,
-            event_filters: event_filters
-          }
-        )
-      end
-
-      @webhook_id = model.id
-
-      new(model)
     end
 
     def update(network_id:, notification_uri:, event_type:, event_filters:)
