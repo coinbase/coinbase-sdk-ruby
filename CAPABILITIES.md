@@ -7,20 +7,23 @@ those capabilities for the Ruby SDK:
 
 | Concept       | Base-Sepolia | Base-Mainnet | Ethereum-Holesky | Ethereum-Mainnet |
 | ------------- | :----------: | :----------: | :--------------: | :--------------: |
-| Addresses     |      ✅      |      ✅      |        ❌        |        ❌        |
-| Send          |      ✅      |      ✅      |        ❌        |        ❌        |
+| Addresses     |      ✅      |      ✅      |        ✅        |        ✅        |
+| Send          |      ✅      |      ✅      |        ✅        |        ❌        |
 | Trade         |      ❌      |      ✅      |        ❌        |        ❌        |
 | Faucet        |      ✅      |      ❌      |        ✅        |        ❌        |
 | Server-Signer |      ✅      |      ✅      |        ❌        |        ❌        |
+| Stake [^1]    |      ❌      |      ❌      |        ✅        |        ✅        |
+
+[^1]: Dedicated ETH Staking is currently only available on Testnet (Ethereum-Holesky).
 
 ## End-User Wallets
 
 | Concept            | Base-Sepolia | Base-Mainnet | Ethereum-Holesky | Ethereum-Mainnet |
 | ------------------ | :----------: | :----------: | :--------------: | :--------------: |
 | External Addresses |      ✅      |      ✅      |        ✅        |        ✅        |
-| Stake [^1]         |      ❌      |      ❌      |        ✅        |        ✅        |
+| Stake [^2]         |      ❌      |      ❌      |        ✅        |        ✅        |
 
-[^1]: Dedicated ETH Staking is currently only available on Testnet (Ethereum-Holesky).
+[^2]: Dedicated ETH Staking is currently only available on Testnet (Ethereum-Holesky).
 
 ## Testnet vs. Mainnet
 
