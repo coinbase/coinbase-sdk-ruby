@@ -28,7 +28,7 @@ module Coinbase
       private
 
       def webhooks_api
-        @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
+        Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
       end
 
       def fetch_webhooks_page(page)
