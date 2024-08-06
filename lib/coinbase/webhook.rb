@@ -65,6 +65,14 @@ module Coinbase
     end
 
     def update(notification_uri:)
+      serialized_event_filters = event_filters.map do |filter|
+        {
+          contract_address: filter.contract_address,
+          from_address: filter.from_address,
+          to_address: filter.to_address
+        }.compact
+      end
+
       model = Coinbase.call_api do
         webhooks_api.update_webhook(
           id,
@@ -72,7 +80,7 @@ module Coinbase
             network_id: network_id,
             notification_uri: notification_uri,
             event_type: event_type,
-            event_filters: event_filters
+            event_filters: serialized_event_filters
           }
         )
       end
