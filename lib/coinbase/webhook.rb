@@ -67,9 +67,9 @@ module Coinbase
     def update(notification_uri:)
       serialized_event_filters = event_filters.map do |filter|
         {
-          contract_address: filter.contract_address,
-          from_address: filter.from_address,
-          to_address: filter.to_address
+          contract_address: filter['contract_address'],
+          from_address: filter['from_address'],
+          to_address: filter['to_address']
         }.compact
       end
 
