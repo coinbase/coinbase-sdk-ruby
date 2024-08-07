@@ -51,13 +51,7 @@ describe Coinbase::Webhook do
     let(:item_klass) { Coinbase::Webhook }
     let(:item_initialize_args) { nil }
     let(:create_model) do
-      Coinbase::Client::Webhook.new(
-        id: 'webhook_id',
-        network_id: 'base-mainnet',
-        event_type: 'erc20_transfer',
-        event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
-        notification_uri: 'https://example.com/notify'
-      )
+      ->(id) { Coinbase::Client::Webhook.new(id: id, network_id: 'base-mainnet') }
     end
 
     subject(:enumerator) do
