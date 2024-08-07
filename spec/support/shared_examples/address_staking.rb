@@ -12,6 +12,7 @@ shared_context 'with mocked staking_balances' do
         Coinbase::Client::StakingContextContext,
         stakeable_balance: build(:balance_model, whole_amount: stake_balance),
         unstakeable_balance: build(:balance_model, whole_amount: unstake_balance),
+        claimable_balance: build(:balance_model, whole_amount: claim_stake_balance)
       )
     )
   end

@@ -278,9 +278,14 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
+    # @param gasless [Boolean] Whether the transfer should be gasless. Defaults to false.
     # @return [Coinbase::Transfer] The Transfer object.
-    def transfer(amount, asset_id, destination)
-      default_address.transfer(amount, asset_id, destination)
+    def transfer(amount, asset_id, destination, options = {})
+      # For ruby 2.7 compatibility we cannot pass in keyword args when the create wallet
+      # options is empty
+      return default_address.transfer(amount, asset_id, destination) if options.empty?
+
+      default_address.transfer(amount, asset_id, destination, **options)
     end
 
     # Trades the given amount of the given Asset for another Asset.

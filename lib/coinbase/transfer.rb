@@ -3,7 +3,6 @@
 require_relative 'constants'
 require 'bigdecimal'
 require 'eth'
-require 'json'
 
 module Coinbase
   # A representation of a Transfer, which moves an amount of an Asset from
@@ -25,7 +24,7 @@ module Coinbase
       # @param wallet_id [String] The Wallet ID of the sending Wallet
       # @return [Transfer] The new pending Transfer object
       # @raise [Coinbase::ApiError] If the Transfer fails
-      def create(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:)
+      def create(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:, gasless: false)
         asset = Asset.fetch(network_id, asset_id)
 
         model = Coinbase.call_api do
@@ -36,7 +35,8 @@ module Coinbase
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               asset_id: asset.primary_denomination.to_s,
               destination: Coinbase::Destination.new(destination, network_id: network_id).address_id,
-              network_id: Coinbase.normalize_network(network_id)
+              network_id: Coinbase.normalize_network(network_id),
+              gasless: gasless
             }
           )
         end
@@ -122,40 +122,52 @@ module Coinbase
       BigDecimal(@model.amount) / BigDecimal(10).power(@model.asset.decimals)
     end
 
-    # Returns the link to the transaction on the blockchain explorer.
-    # @return [String] The link to the transaction on the blockchain explorer
-    def transaction_link
-      transaction.transaction_link
-    end
+    # Signs the Transfer with the given key. This is required before broadcasting the Transfer.
+    # @param key [Eth::Key] The key to sign the Transfer with
+    # @raise [RuntimeError] If the key is not an Eth::Key
+    # @return [Transfer] The Transfer object
+    def sign(key)
+      raise unless key.is_a?(Eth::Key)
 
-    # Returns the Unsigned Payload of the Transfer.
-    # @return [String] The Unsigned Payload
-    def unsigned_payload
-      transaction.unsigned_payload
-    end
+      unless sponsored_send.nil?
+        sponsored_send.sign(key)
 
-    # Returns the Signed Payload of the Transfer.
-    # @return [String] The Signed Payload
-    def signed_payload
-      transaction.signed_payload
+        return
+      end
+
+      transaction.sign(key)
+
+      self
     end
 
     # Returns the Transfer transaction.
     # @return [Coinbase::Transaction] The Transfer transaction
     def transaction
-      @transaction ||= Coinbase::Transaction.new(@model.transaction)
+      @transaction ||= @model.transaction.nil? ? nil : Coinbase::Transaction.new(@model.transaction)
     end
 
-    # Returns the Transaction Hash of the Transfer.
-    # @return [String] The Transaction Hash
-    def transaction_hash
-      transaction.transaction_hash
+    # Returns the SponsoredSend of the Transfer, if the transfer is gasless.
+    # @return [Coinbase::SponsoredSend] The SponsoredSend object
+    def sponsored_send
+      @sponsored_send ||= @model.sponsored_send.nil? ? nil : Coinbase::SponsoredSend.new(@model.sponsored_send)
     end
 
     # Returns the status of the Transfer.
     # @return [Symbol] The status
     def status
-      transaction.status
+      send_tx_delegate.status
+    end
+
+    # Returns the link to the transaction on the blockchain explorer.
+    # @return [String] The link to the transaction on the blockchain explorer
+    def transaction_link
+      send_tx_delegate.transaction_link
+    end
+
+    # Returns the Transaction Hash of the Transfer.
+    # @return [String] The Transaction Hash
+    def transaction_hash
+      send_tx_delegate.transaction_hash
     end
 
     # Broadcasts the Transfer to the Network.
@@ -163,18 +175,19 @@ module Coinbase
     # @raise [RuntimeError] If the Transfer is not signed
     # @return [Transfer] The Transfer object
     def broadcast!
-      raise TransactionNotSignedError unless transaction.signed?
+      raise TransactionNotSignedError unless send_tx_delegate.signed?
 
       @model = Coinbase.call_api do
         transfers_api.broadcast_transfer(
           wallet_id,
           from_address_id,
           id,
-          { signed_payload: transaction.raw.hex }
+          { signed_payload: send_tx_delegate.signature }
         )
       end
 
-      update_transaction(@model)
+      update_transaction(@model) unless @model.transaction.nil?
+      update_sponsored_send(@model) unless @model.sponsored_send.nil?
 
       self
     end
@@ -186,7 +199,8 @@ module Coinbase
         transfers_api.get_transfer(wallet_id, from_address_id, id)
       end
 
-      update_transaction(@model)
+      update_transaction(@model) unless @model.transaction.nil?
+      update_sponsored_send(@model) unless @model.sponsored_send.nil?
 
       self
     end
@@ -202,7 +216,7 @@ module Coinbase
       loop do
         reload
 
-        return self if transaction.terminal_state?
+        return self if terminal_state?
 
         raise Timeout::Error, 'Transfer timed out' if Time.now - start_time > timeout_seconds
 
@@ -229,12 +243,26 @@ module Coinbase
 
     private
 
+    def terminal_state?
+      send_tx_delegate.terminal_state?
+    end
+
+    def send_tx_delegate
+      return sponsored_send unless sponsored_send.nil?
+
+      transaction
+    end
+
     def transfers_api
       @transfers_api ||= Coinbase::Client::TransfersApi.new(Coinbase.configuration.api_client)
     end
 
     def update_transaction(model)
       @transaction = Coinbase::Transaction.new(model.transaction)
+    end
+
+    def update_sponsored_send(model)
+      @sponsored_send = Coinbase::SponsoredSend.new(model.sponsored_send)
     end
   end
 end
