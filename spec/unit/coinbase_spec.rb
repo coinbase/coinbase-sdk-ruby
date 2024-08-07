@@ -7,7 +7,7 @@ describe Coinbase do
     allow(Coinbase).to receive(:configuration).and_return(config)
   end
 
-  describe '#configure' do
+  describe '.configure' do
     let(:api_key_private_key) { 'some-key' }
     let(:api_key_name) { 'some-key-name' }
     let(:server_signer) { false }
@@ -131,6 +131,31 @@ describe Coinbase do
         expect do
           Coinbase.call_api { raise err }
         end.to raise_error(Coinbase::UnimplementedError)
+      end
+    end
+  end
+
+  describe '.pretty_print_object' do
+    context 'with no details' do
+      subject(:stringified_object) { Coinbase.pretty_print_object(Coinbase::Balance) }
+
+      it 'returns a string with the class name and no details' do
+        expect(stringified_object).to eq 'Coinbase::Balance{}'
+      end
+    end
+
+    context 'with details' do
+      subject(:stringified_object) do
+        Coinbase.pretty_print_object(
+          Coinbase::Balance,
+          amount: 100,
+          asset_id: :eth,
+          null_value: nil
+        )
+      end
+
+      it 'returns a string with the class name and all non-nil details' do
+        expect(stringified_object).to eq "Coinbase::Balance{amount: '100', asset_id: 'eth'}"
       end
     end
   end

@@ -132,6 +132,17 @@ module Coinbase
     raise e
   end
 
+  # Returns a pretty-printed object string that contains the object's class name and
+  # the details of the object, filtering out nil values.
+  # @param klass [Class] the class of the object
+  # @param details [Hash] the details of the object
+  # @return [String] the pretty-printed object string
+  def self.pretty_print_object(klass, **details)
+    filtered_details = details.filter { |_, v| !v.nil? }.map { |k, v| "#{k}: '#{v}'" }
+
+    "#{klass}{#{filtered_details.join(', ')}}"
+  end
+
   # Returns whether to use a server signer to manage private keys.
   # @return [bool] whether to use a server signer to manage private keys.
   def self.use_server_signer?
