@@ -44,28 +44,28 @@ describe Coinbase::Webhook do
     end
   end
 
-  # describe '.list' do
-  #   let(:api) { webhooks_api }
-  #   let(:fetch_params) { ->(page) { [{ limit: 100, page: page }] } }
-  #   let(:resource_list_klass) { Coinbase::Client::WebhookList }
-  #   let(:item_klass) { Coinbase::Webhook }
-  #   let(:item_initialize_args) { nil }
-  #   let(:create_model) do
-  #     Coinbase::Client::Webhook.new(
-  #       id: 'webhook_id',
-  #       network_id: 'base-mainnet',
-  #       event_type: 'erc20_transfer',
-  #       event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
-  #       notification_uri: 'https://example.com/notify'
-  #     )
-  #   end
-  #
-  #   subject(:enumerator) do
-  #     Coinbase::Webhook.list
-  #   end
-  #
-  #   it_behaves_like 'it is a paginated enumerator', :webhooks
-  # end
+  describe '.list' do
+    let(:api) { webhooks_api }
+    let(:fetch_params) { ->(page) { [{ limit: 100, page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::WebhookList }
+    let(:item_klass) { Coinbase::Webhook }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      Coinbase::Client::Webhook.new(
+        id: 'webhook_id',
+        network_id: 'base-mainnet',
+        event_type: 'erc20_transfer',
+        event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
+        notification_uri: 'https://example.com/notify'
+      )
+    end
+
+    subject(:enumerator) do
+      Coinbase::Webhook.list
+    end
+
+    it_behaves_like 'it is a paginated enumerator', :webhooks
+  end
 
   describe '#initialize' do
     it 'raises an ArgumentError if model is not a Webhook' do

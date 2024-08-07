@@ -102,6 +102,8 @@ module Coinbase
       self
     end
 
+    private
+
     def webhooks_api
       @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
     end
