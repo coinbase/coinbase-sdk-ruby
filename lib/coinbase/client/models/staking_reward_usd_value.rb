@@ -14,20 +14,23 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The partial eth staking context.
-  class PartialEthStakingContext
-    attr_accessor :stakeable_balance
+  # The USD value of the reward
+  class StakingRewardUSDValue
+    # The value of the reward in USD
+    attr_accessor :amount
 
-    attr_accessor :unstakeable_balance
+    # The conversion price from native currency to USD
+    attr_accessor :conversion_price
 
-    attr_accessor :claimable_balance
+    # The time of the conversion in UTC.
+    attr_accessor :conversion_time
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'stakeable_balance' => :'stakeable_balance',
-        :'unstakeable_balance' => :'unstakeable_balance',
-        :'claimable_balance' => :'claimable_balance'
+        :'amount' => :'amount',
+        :'conversion_price' => :'conversion_price',
+        :'conversion_time' => :'conversion_time'
       }
     end
 
@@ -39,9 +42,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'stakeable_balance' => :'Balance',
-        :'unstakeable_balance' => :'Balance',
-        :'claimable_balance' => :'Balance'
+        :'amount' => :'String',
+        :'conversion_price' => :'String',
+        :'conversion_time' => :'Time'
       }
     end
 
@@ -55,33 +58,33 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::PartialEthStakingContext` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingRewardUSDValue` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::PartialEthStakingContext`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingRewardUSDValue`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'stakeable_balance')
-        self.stakeable_balance = attributes[:'stakeable_balance']
+      if attributes.key?(:'amount')
+        self.amount = attributes[:'amount']
       else
-        self.stakeable_balance = nil
+        self.amount = nil
       end
 
-      if attributes.key?(:'unstakeable_balance')
-        self.unstakeable_balance = attributes[:'unstakeable_balance']
+      if attributes.key?(:'conversion_price')
+        self.conversion_price = attributes[:'conversion_price']
       else
-        self.unstakeable_balance = nil
+        self.conversion_price = nil
       end
 
-      if attributes.key?(:'claimable_balance')
-        self.claimable_balance = attributes[:'claimable_balance']
+      if attributes.key?(:'conversion_time')
+        self.conversion_time = attributes[:'conversion_time']
       else
-        self.claimable_balance = nil
+        self.conversion_time = nil
       end
     end
 
@@ -90,16 +93,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @stakeable_balance.nil?
-        invalid_properties.push('invalid value for "stakeable_balance", stakeable_balance cannot be nil.')
+      if @amount.nil?
+        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
       end
 
-      if @unstakeable_balance.nil?
-        invalid_properties.push('invalid value for "unstakeable_balance", unstakeable_balance cannot be nil.')
+      if @conversion_price.nil?
+        invalid_properties.push('invalid value for "conversion_price", conversion_price cannot be nil.')
       end
 
-      if @claimable_balance.nil?
-        invalid_properties.push('invalid value for "claimable_balance", claimable_balance cannot be nil.')
+      if @conversion_time.nil?
+        invalid_properties.push('invalid value for "conversion_time", conversion_time cannot be nil.')
       end
 
       invalid_properties
@@ -109,9 +112,9 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @stakeable_balance.nil?
-      return false if @unstakeable_balance.nil?
-      return false if @claimable_balance.nil?
+      return false if @amount.nil?
+      return false if @conversion_price.nil?
+      return false if @conversion_time.nil?
       true
     end
 
@@ -120,9 +123,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          stakeable_balance == o.stakeable_balance &&
-          unstakeable_balance == o.unstakeable_balance &&
-          claimable_balance == o.claimable_balance
+          amount == o.amount &&
+          conversion_price == o.conversion_price &&
+          conversion_time == o.conversion_time
     end
 
     # @see the `==` method
@@ -134,7 +137,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [stakeable_balance, unstakeable_balance, claimable_balance].hash
+      [amount, conversion_price, conversion_time].hash
     end
 
     # Builds the object from hash
