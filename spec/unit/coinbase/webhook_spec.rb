@@ -67,7 +67,6 @@ describe Coinbase::Webhook do
   #   it_behaves_like 'it is a paginated enumerator', :webhooks
   # end
 
-
   describe '#initialize' do
     it 'raises an ArgumentError if model is not a Webhook' do
       expect { Coinbase::Webhook.new(Object.new) }.to raise_error(ArgumentError, 'model must be a Webhook')
