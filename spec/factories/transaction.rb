@@ -56,5 +56,11 @@ FactoryBot.define do
   factory :transaction, class: Coinbase::Transaction do
     initialize_with { new(model) }
     model { build(:transaction_model) }
+
+    TX_TRAITS.each do |status|
+      trait status do
+        model { build(:transaction_model, status) }
+      end
+    end
   end
 end

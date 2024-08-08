@@ -23,7 +23,7 @@ FactoryBot.define do
       contract_address { '0x4200000000000000000000000000000000000006' }
     end
 
-    TEST_NETWORKS.each do |network|
+    NETWORK_TRAITS.each do |network|
       trait network do
         network_id { Coinbase.normalize_network(network) }
       end
@@ -38,7 +38,7 @@ FactoryBot.define do
 
     initialize_with { Coinbase::Asset.from_model(model, asset_id: asset_id) }
 
-    (%i[eth usdc weth] + TEST_NETWORKS).each do |trait|
+    (NETWORK_TRAITS + ASSET_TRAITS).each do |trait|
       trait trait do
         model { build(:asset_model, trait) }
       end

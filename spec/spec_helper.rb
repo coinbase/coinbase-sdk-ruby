@@ -16,10 +16,12 @@ require_relative 'support/shared_examples/address_balances'
 require_relative 'support/shared_examples/address_staking'
 require_relative 'support/shared_examples/pagination'
 
-RSpec.configure do |config|
-  TEST_ASSET_SYMBOLS = %i[eth usdc weth]
-  TEST_NETWORKS = %i[base_mainnet base_sepolia ethereum_holesky ethereum_mainnet]
+# Networks and Asset symbols used in our test factories.
+NETWORK_TRAITS = %i[base_mainnet base_sepolia ethereum_holesky ethereum_mainnet].freeze
+ASSET_TRAITS = %i[eth usdc weth].freeze
+TX_TRAITS = %i[pending signed broadcasted completed failed].freeze
 
+RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-TX_STATES = %i[pending signed broadcasted completed failed].freeze
+TX_TRAITS = %i[pending signed broadcasted completed failed].freeze
 
 FactoryBot.define do
   factory :transfer_model, class: Coinbase::Client::Transfer do
@@ -22,19 +22,19 @@ FactoryBot.define do
     eth
     pending
 
-    TX_STATES.each do |status|
+    TX_TRAITS.each do |status|
       trait status do
         transaction { build(:transaction_model, status, key: key) }
       end
     end
 
-    TEST_NETWORKS.each do |network|
+    NETWORK_TRAITS.each do |network|
       trait network do
         network_id { Coinbase.normalize_network(network) }
       end
     end
 
-    TEST_ASSET_SYMBOLS.each do |asset|
+    ASSET_TRAITS.each do |asset|
       trait asset do
         asset { build(:asset_model, asset, Coinbase.to_sym(network_id)) }
         asset_id { asset }
@@ -66,20 +66,19 @@ FactoryBot.define do
 
     model { build(:transfer_model, key: key, to_key: to_key, whole_amount: whole_amount) }
 
-    TX_STATES.each do |status|
+    TX_TRAITS.each do |status|
       trait status do
         status { status }
-        model { build(:transfer_model, status) }
       end
     end
 
-    TEST_NETWORKS.each do |network|
+    NETWORK_TRAITS.each do |network|
       trait network do
         network { network }
       end
     end
 
-    TEST_ASSET_SYMBOLS.each do |asset|
+    ASSET_TRAITS.each do |asset|
       trait asset do
         asset { asset }
       end

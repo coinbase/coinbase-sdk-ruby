@@ -754,18 +754,15 @@ describe Coinbase::Wallet do
     end
 
     it 'returns the correct ETH balance' do
-      expect(wallet.balance(:eth))
-        .to eq(Coinbase::Asset.from_model(eth_asset, asset_id: :eth).from_atomic_amount(amount))
+      expect(wallet.balance(:eth)).to eq(build(:asset, :eth).from_atomic_amount(amount))
     end
 
     it 'returns the correct Gwei balance' do
-      expect(wallet.balance(:gwei))
-        .to eq(Coinbase::Asset.from_model(eth_asset, asset_id: :gwei).from_atomic_amount(amount))
+      expect(wallet.balance(:gwei)).to eq(build(:asset, :gwei).from_atomic_amount(amount))
     end
 
     it 'returns the correct Wei balance' do
-      expect(wallet.balance(:wei))
-        .to eq(Coinbase::Asset.from_model(eth_asset, asset_id: :wei).from_atomic_amount(amount))
+      expect(wallet.balance(:wei)).to eq(build(:asset, :wei).from_atomic_amount(amount))
     end
   end
 

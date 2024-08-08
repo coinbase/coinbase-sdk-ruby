@@ -7,21 +7,21 @@ FactoryBot.define do
       whole_amount { 1 }
     end
 
-    # Default trait
-    eth
+    # Default traits
     base_sepolia
+    eth
 
     amount { nil }
 
-    TEST_ASSET_SYMBOLS.each do |asset|
-      trait asset do
-        asset { build(:asset_model, asset) }
+    NETWORK_TRAITS.each do |network|
+      trait network do
+        network_id { Coinbase.normalize_network(network) }
       end
     end
 
-    TEST_NETWORKS.each do |network|
-      trait network do
-        network_id { Coinbase.normalize_network(network) }
+    ASSET_TRAITS.each do |asset|
+      trait asset do
+        asset { build(:asset_model, asset) }
       end
     end
 
