@@ -78,23 +78,15 @@ describe Coinbase::Destination do
 
     context 'when model is a Coinbase::WalletAddress' do
       let(:address_network) { network_id }
-      let(:model) do
-        Coinbase::WalletAddress.new(
-          Coinbase::Client::Address.new(
-            network_id: address_network,
-            address_id: address_id,
-            wallet_id: SecureRandom.uuid
-          ),
-          nil
-        )
-      end
+      let(:address_model) { build(:address_model, address_network) }
+      let(:model) { Coinbase::WalletAddress.new(address_model, nil) }
 
       it 'sets the address_id' do
-        expect(destination.address_id).to eq(address_id)
+        expect(destination.address_id).to eq(address_model.address_id)
       end
 
       it 'sets the network_id' do
-        expect(destination.network_id).to eq(network_id)
+        expect(destination.network_id).to eq(address_network)
       end
 
       context 'when network_id does not match' do

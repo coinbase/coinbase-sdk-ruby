@@ -2,22 +2,26 @@
 
 describe Coinbase::Wallet do
   let(:wallet_id) { SecureRandom.uuid }
-  let(:network_id) { 'base-sepolia' }
+  let(:network) { :base_sepolia }
+  let(:network_id) { Coinbase.normalize_network(network) }
+  let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
+  let(:master_node) { MoneyTree::Master.new(seed_hex: seed) }
   let(:model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
   let(:address_model1) do
-    Coinbase::Client::Address.new(
-      address_id: '0x919538116b4F25f1CE01429fd9Ed7964556bf565',
+    build(
+      :address_model,
+      network,
       wallet_id: wallet_id,
-      public_key: '0292df2f2c31a5c4b0d4946e922cc3bd25ad7196ffeb049905b0952b9ac48ef25f',
-      network_id: network_id
+      # TODO: Derive this from node and sequence.
+      key: Eth::Key.new(priv: master_node.node_for_path("m/44'/60'/0'/0/0").private_key.to_hex)
     )
   end
   let(:address_model2) do
-    Coinbase::Client::Address.new(
-      address_id: '0xf23692a9DE556Ee1711b172Bf744C5f33B13DC89',
+    build(
+      :address_model,
+      network,
       wallet_id: wallet_id,
-      public_key: '034ecbfc86f7447c8bfd1a5f71b13600d767ccb58d290c7b146632090f3a05c66c',
-      network_id: network_id
+      key: Eth::Key.new(priv: master_node.node_for_path("m/44'/60'/0'/0/1").private_key.to_hex)
     )
   end
   let(:model_with_default_address) do
@@ -43,7 +47,6 @@ describe Coinbase::Wallet do
       server_signer_status: 'active_seed'
     )
   end
-  let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
   let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
@@ -154,14 +157,7 @@ describe Coinbase::Wallet do
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
     let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
-    let(:default_address_model) do
-      Coinbase::Client::Address.new(
-        address_id: '0xdeadbeef',
-        wallet_id: wallet_id,
-        public_key: '0x1234567890',
-        network_id: network_id
-      )
-    end
+    let(:default_address_model) { build(:address_model, network, wallet_id: wallet_id) }
 
     subject(:created_wallet) { described_class.create }
 

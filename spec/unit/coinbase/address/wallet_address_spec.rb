@@ -1,19 +1,12 @@
 # frozen_string_literal: true
 
 describe Coinbase::WalletAddress do
-  let(:key) { Eth::Key.new }
+  let(:key) { build(:key) }
   let(:network_id) { :base_sepolia }
   let(:normalized_network_id) { 'base-sepolia' }
   let(:address_id) { key.address.to_s }
-  let(:wallet_id) { SecureRandom.uuid }
-  let(:model) do
-    Coinbase::Client::Address.new(
-      network_id: normalized_network_id,
-      address_id: address_id,
-      wallet_id: wallet_id,
-      public_key: key.public_key.compressed.unpack1('H*')
-    )
-  end
+  let(:model) { build(:address_model, network_id) }
+  let(:wallet_id) { model.wallet_id }
   let(:eth_asset_model) { build(:asset_model) }
   let(:addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
