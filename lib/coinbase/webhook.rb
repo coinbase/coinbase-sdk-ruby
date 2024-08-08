@@ -10,7 +10,10 @@ module Coinbase
       #
       # @param network_id [String] The network ID for which the webhook is created.
       # @param notification_uri [String] The URI where notifications should be sent.
-      # @param event_type [String] The type of event for the webhook (e.g., erc20_transfer).
+      # @param event_type [String] The type of event for the webhook. Must be one of the following:
+      #   - `WebhookEventType::UNSPECIFIED` ("unspecified")
+      #   - `WebhookEventType::ERC20_TRANSFER` ("erc20_transfer")
+      #   - `WebhookEventType::ERC721_TRANSFER` ("erc721_transfer")
       # @param event_filters [Array<Hash>] Filters applied to the events that determine
       #   which specific events trigger the webhook. Each filter should be a hash that
       #   can include keys like `contract_address`, `from_address`, or `to_address`.
@@ -18,7 +21,7 @@ module Coinbase
       #
       # @example Create a new webhook
       #   webhook = Coinbase::Webhook.create(
-      #     network_id: 'ethereum',
+      #     network_id: 'ethereum_mainnet',
       #     notification_uri: 'https://example.com/callback',
       #     event_type: 'transaction',
       #     event_filters: [{ 'contract_address' => '0x...', 'from_address' => '0x...', 'to_address' => '0x...' }]
