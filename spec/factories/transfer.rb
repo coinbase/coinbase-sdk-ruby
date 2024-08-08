@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-TX_TRAITS = %i[pending signed broadcasted completed failed].freeze
-
 FactoryBot.define do
   factory :transfer_model, class: Coinbase::Client::Transfer do
     transient do
