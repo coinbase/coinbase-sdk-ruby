@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 shared_examples 'an address that supports balance queries' do |_operation|
-  let(:eth_asset_model) { build(:asset_model) }
-  let(:usdc_asset_model) { build(:asset_model, :usdc) }
-  let(:weth_asset_model) { build(:asset_model, :weth) }
   let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
 
   before do
@@ -14,9 +11,9 @@ shared_examples 'an address that supports balance queries' do |_operation|
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [
-          Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset_model),
-          Coinbase::Client::Balance.new(amount: '5000000000', asset: usdc_asset_model),
-          Coinbase::Client::Balance.new(amount: '3000000000000000000', asset: weth_asset_model)
+          build(:balance_model, amount: '1000000000000000000'),
+          build(:balance_model, :usdc, amount: '5000000000'),
+          build(:balance_model, :weth, amount: '3000000000000000000')
         ]
       )
     end
@@ -46,9 +43,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
   end
 
   describe '#balance' do
-    let(:response) do
-      Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset_model)
-    end
+    let(:response) { build(:balance_model, amount: '1000000000000000000') }
 
     before do
       allow(external_addresses_api)
@@ -89,9 +84,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
       let(:primary_denomination) { 'other' }
       let(:decimals) { 7 }
       let(:other_asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
-      let(:response) do
-        Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: other_asset)
-      end
+      let(:response) { build(:balance_model, asset: other_asset, amount: BigDecimal(10**18).to_s) }
 
       it 'returns the correct balance' do
         expect(address.balance(:other)).to eq BigDecimal('100_000_000_000')

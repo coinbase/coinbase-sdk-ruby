@@ -153,7 +153,7 @@ describe Coinbase::Transfer do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(Coinbase::Client::Balance.new)
+          described_class.new(build(:balance_model))
         end.to raise_error(RuntimeError)
       end
     end

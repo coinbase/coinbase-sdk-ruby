@@ -4,21 +4,16 @@ describe Coinbase::BalanceMap do
   let(:eth_asset) { build(:asset_model) }
 
   describe '.from_balances' do
-    let(:eth_amount) { BigDecimal('123.0') }
-    let(:eth_balance_model) { instance_double('Coinbase::Client::Balance', asset: eth_asset, amount: eth_amount) }
-    let(:eth_atomic_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(eth_amount) }
+    let(:eth_balance) { build(:balance_model, amount: BigDecimal('123.0')) }
+    let(:eth_atomic_amount) { Coinbase::Asset.from_model(eth_balance.asset).from_atomic_amount(eth_balance.amount) }
 
-    let(:usdc_amount) { BigDecimal('456.0') }
-    let(:usdc_asset) { build(:asset_model, :usdc) }
-    let(:usdc_balance_model) { instance_double('Coinbase::Client::Balance', asset: usdc_asset, amount: usdc_amount) }
-    let(:usdc_atomic_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(usdc_amount) }
+    let(:usdc_balance) { build(:balance_model, :usdc, amount: BigDecimal('456.0')) }
+    let(:usdc_atomic_amount) { Coinbase::Asset.from_model(usdc_balance.asset).from_atomic_amount(usdc_balance.amount) }
 
-    let(:weth_amount) { BigDecimal('789.0') }
-    let(:weth_asset) { build(:asset_model, :weth) }
-    let(:weth_balance_model) { instance_double('Coinbase::Client::Balance', asset: weth_asset, amount: weth_amount) }
-    let(:weth_atomic_amount) { Coinbase::Asset.from_model(weth_asset).from_atomic_amount(weth_amount) }
+    let(:weth_balance) { build(:balance_model, :weth, amount: BigDecimal('789.0')) }
+    let(:weth_atomic_amount) { Coinbase::Asset.from_model(weth_balance.asset).from_atomic_amount(weth_balance.amount) }
 
-    let(:balances) { [eth_balance_model, usdc_balance_model, weth_balance_model] }
+    let(:balances) { [eth_balance, usdc_balance, weth_balance] }
 
     subject { described_class.from_balances(balances) }
 

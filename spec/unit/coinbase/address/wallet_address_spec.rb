@@ -7,7 +7,6 @@ describe Coinbase::WalletAddress do
   let(:address_id) { key.address.to_s }
   let(:model) { build(:address_model, network_id) }
   let(:wallet_id) { model.wallet_id }
-  let(:eth_asset_model) { build(:asset_model) }
   let(:addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
   before do
@@ -117,12 +116,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
-        .and_return(
-          Coinbase::Client::Balance.new(
-            amount: Coinbase::Asset.from_model(eth_asset_model).to_atomic_amount(balance).to_s,
-            asset: eth_asset_model
-          )
-        )
+        .and_return(build(:balance_model, whole_amount: balance))
     end
 
     context 'when the transfer is successful' do
@@ -222,12 +216,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, normalized_from_asset_id)
-        .and_return(
-          Coinbase::Client::Balance.new(
-            amount: Coinbase::Asset.from_model(eth_asset_model).to_atomic_amount(balance).to_s,
-            asset: eth_asset_model
-          )
-        )
+        .and_return(build(:balance_model, whole_amount: balance))
 
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end

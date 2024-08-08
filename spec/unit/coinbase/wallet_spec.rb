@@ -729,8 +729,8 @@ describe Coinbase::Wallet do
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [
-          Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: build(:asset_model)),
-          Coinbase::Client::Balance.new(amount: '5000000', asset: build(:asset_model, :usdc)),
+          build(:balance_model, network, amount: '1000000000000000000'),
+          build(:balance_model, network, :usdc, amount: '5000000')
         ]
       )
     end
@@ -747,7 +747,7 @@ describe Coinbase::Wallet do
   describe '#balance' do
     let(:eth_asset) { build(:asset_model) }
     let(:amount) { 5_000_000_000_000_000_000 }
-    let(:response) { Coinbase::Client::Balance.new(amount: amount.to_s, asset: eth_asset) }
+    let(:response) { build(:balance_model, network, amount: amount) }
 
     before do
       expect(wallets_api).to receive(:get_wallet_balance).with(wallet_id, 'eth').and_return(response)
