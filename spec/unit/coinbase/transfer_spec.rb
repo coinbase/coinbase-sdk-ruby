@@ -4,29 +4,17 @@ describe Coinbase::Transfer do
   let(:from_key) { build(:key) }
   let(:to_key) { Eth::Key.new }
   let(:network_id) { :base_sepolia }
-  let(:wallet_id) { SecureRandom.uuid }
   let(:from_address_id) { from_key.address.to_s }
-  let(:amount) { BigDecimal(100) }
   let(:to_address_id) { to_key.address.to_s }
-  let(:transfer_id) { SecureRandom.uuid }
   let(:transaction_model) { build(:transaction_model, key: from_key) }
-  let(:eth_asset) { build(:asset_model) }
   let(:usdc_asset) { build(:asset_model, :usdc) }
   let(:asset_model) { eth_asset }
-  let(:eth_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(amount) }
+  let(:whole_amount) { 123 }
+  let(:atomic_amount) { build(:asset, :eth).to_atomic_amount(whole_amount) }
   let(:model) do
-    Coinbase::Client::Transfer.new(
-      network_id: network_id,
-      wallet_id: wallet_id,
-      address_id: from_address_id,
-      destination: to_address_id,
-      amount: amount.to_s,
-      asset_id: asset_model.asset_id,
-      asset: asset_model,
-      transfer_id: transfer_id,
-      transaction: transaction_model
-    )
+    build(:transfer_model, network_id, key: from_key, to_key: to_key, whole_amount: whole_amount)
   end
+  let(:wallet_id) { model.wallet_id }
   let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
 
   subject(:transfer) { described_class.new(model) }
@@ -42,7 +30,7 @@ describe Coinbase::Transfer do
     let(:destination) { Coinbase::Destination.new(to_address_id, network_id: network_id) }
     let(:create_transfer_request) do
       {
-        amount: amount.to_i.to_s,
+        amount: atomic_amount.to_i.to_s,
         asset_id: normalized_asset_id,
         destination: to_address_id,
         network_id: Coinbase.normalize_network(network_id)
@@ -53,7 +41,7 @@ describe Coinbase::Transfer do
       described_class.create(
         address_id: from_address_id,
         asset_id: asset_id,
-        amount: eth_amount,
+        amount: whole_amount,
         destination: destination,
         network_id: network_id,
         wallet_id: wallet_id
@@ -77,7 +65,7 @@ describe Coinbase::Transfer do
     end
 
     it 'sets the transfer properties' do
-      expect(transfer.id).to eq(transfer_id)
+      expect(transfer.id).to eq(model.transfer_id)
     end
 
     context 'when the destination is not valid' do
@@ -91,8 +79,9 @@ describe Coinbase::Transfer do
     context 'when the asset is not the primary denomination' do
       let(:asset_id) { :wei }
       let(:asset) { build(:asset, asset_id) }
-      let(:amount) { BigDecimal(100) }
-      let(:eth_amount) { amount }
+      let(:whole_amount) { BigDecimal(100) }
+      # The atomic amount is the same as the whole amount for wei
+      let(:atomic_amount) { BigDecimal(100) }
 
       it 'creates a new Transfer' do
         expect(transfer).to be_a(Coinbase::Transfer)
@@ -111,7 +100,7 @@ describe Coinbase::Transfer do
     let(:item_klass) { Coinbase::Transfer }
     let(:item_initialize_args) { nil }
     let(:create_model) do
-      ->(id) { Coinbase::Client::Transfer.new(transfer_id: id, network_id: 'base-sepolia') }
+      ->(id) { build(:transfer_model, network_id, transfer_id: id) }
     end
 
     subject(:enumerator) do
@@ -137,7 +126,7 @@ describe Coinbase::Transfer do
 
   describe '#id' do
     it 'returns the transfer ID' do
-      expect(transfer.id).to eq(transfer_id)
+      expect(transfer.id).to eq(model.transfer_id)
     end
   end
 
@@ -162,17 +151,17 @@ describe Coinbase::Transfer do
   describe '#amount' do
     context 'when the from asset is :eth' do
       it 'returns the amount in whole ETH units' do
-        expect(transfer.amount).to eq(eth_amount)
+        expect(transfer.amount).to eq(whole_amount)
       end
     end
 
     context 'when the asset is something else' do
+      let(:asset) { build(:asset, network_id, :usdc) }
       let(:amount) { BigDecimal(100_000) }
-      let(:decimals) { 3 }
-      let(:asset_model) { build(:asset_model, asset_id: 'other', decimals: decimals) }
+      let(:model) { build(:transfer_model, network_id, :usdc, :completed, amount: amount) }
 
       it 'returns the amount in the whole units' do
-        expect(transfer.amount).to eq(100)
+        expect(transfer.amount).to eq(asset.from_atomic_amount(amount))
       end
     end
   end
@@ -214,14 +203,7 @@ describe Coinbase::Transfer do
   end
 
   describe '#broadcast!' do
-    let(:broadcasted_transaction_model) { build(:transaction_model, :broadcasted, key: from_key) }
-    let(:broadcasted_transfer_model) do
-      instance_double(
-        Coinbase::Client::Transfer,
-        transaction: broadcasted_transaction_model,
-        address_id: from_address_id
-      )
-    end
+    let(:broadcasted_transfer_model) { build(:transfer_model, network_id, :broadcasted, key: from_key) }
 
     subject(:broadcasted_transfer) { transfer.broadcast! }
 
@@ -235,7 +217,7 @@ describe Coinbase::Transfer do
 
         allow(transfers_api)
           .to receive(:broadcast_transfer)
-          .with(wallet_id, from_address_id, transfer_id, broadcast_transfer_request)
+          .with(wallet_id, from_address_id, model.transfer_id, broadcast_transfer_request)
           .and_return(broadcasted_transfer_model)
 
         broadcasted_transfer
@@ -248,7 +230,7 @@ describe Coinbase::Transfer do
       it 'broadcasts the transaction' do
         expect(transfers_api)
           .to have_received(:broadcast_transfer)
-          .with(wallet_id, from_address_id, transfer_id, broadcast_transfer_request)
+          .with(wallet_id, from_address_id, model.transfer_id, broadcast_transfer_request)
       end
 
       it 'updates the transaction status' do
@@ -257,7 +239,7 @@ describe Coinbase::Transfer do
 
       it 'sets the transaction signed payload' do
         expect(broadcasted_transfer.transaction.signed_payload)
-          .to eq(broadcasted_transaction_model.signed_payload)
+          .to eq(broadcasted_transfer_model.transaction.signed_payload)
       end
     end
 
@@ -269,25 +251,9 @@ describe Coinbase::Transfer do
   end
 
   describe '#reload' do
-    let(:updated_transaction_model) { build(:transaction_model, :completed, key: from_key) }
     let(:updated_amount) { BigDecimal(500_000_000) }
-    let(:updated_eth_amount) do
-      Coinbase::Asset.from_model(asset_model).from_atomic_amount(updated_amount)
-    end
-
-    let(:updated_model) do
-      Coinbase::Client::Transfer.new(
-        network_id: network_id,
-        wallet_id: wallet_id,
-        address_id: from_address_id,
-        destination: to_address_id,
-        asset_id: 'eth',
-        asset: eth_asset,
-        amount: updated_amount.to_s,
-        transfer_id: transfer_id,
-        transaction: updated_transaction_model
-      )
-    end
+    let(:updated_eth_amount) { build(:asset, :eth).from_atomic_amount(updated_amount) }
+    let(:updated_model) { build(:transfer_model, network_id, :completed, amount: updated_amount) }
 
     before do
       allow(transfers_api)
@@ -302,26 +268,12 @@ describe Coinbase::Transfer do
     end
 
     it 'updates properties on the transfer' do
-      expect(transfer.amount).to eq(eth_amount)
+      expect(transfer.amount).to eq(whole_amount)
       expect(transfer.reload.amount).to eq(updated_eth_amount)
     end
   end
 
   describe '#wait!' do
-    let(:updated_model) do
-      Coinbase::Client::Transfer.new(
-        network_id: network_id,
-        wallet_id: wallet_id,
-        address_id: from_address_id,
-        destination: to_address_id,
-        amount: amount.to_s,
-        asset_id: asset_model.asset_id,
-        asset: asset_model,
-        transfer_id: transfer_id,
-        transaction: updated_transaction_model
-      )
-    end
-
     before do
       # TODO: This isn't working for some reason.
       allow(transfer).to receive(:sleep)
@@ -333,7 +285,7 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transfer is completed' do
-      let(:updated_transaction_model) { build(:transaction_model, :completed, key: from_key) }
+      let(:updated_model) { build(:transfer_model, network_id, :completed) }
 
       it 'returns the completed Transfer' do
         expect(transfer.wait!).to eq(transfer)
@@ -342,7 +294,7 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transfer is failed' do
-      let(:updated_transaction_model) { build(:transaction_model, :failed, key: from_key) }
+      let(:updated_model) { build(:transfer_model, network_id, :failed) }
 
       it 'returns the failed Transfer' do
         expect(transfer.wait!).to eq(transfer)
@@ -351,7 +303,7 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transfer times out' do
-      let(:updated_transaction_model) { build(:transaction_model, key: from_key) }
+      let(:updated_model) { build(:transfer_model, network_id, :pending) }
 
       it 'raises a Timeout::Error' do
         expect { transfer.wait!(0.2, 0.00001) }.to raise_error(Timeout::Error, 'Transfer timed out')
@@ -362,11 +314,11 @@ describe Coinbase::Transfer do
   describe '#inspect' do
     it 'includes transfer details' do
       expect(transfer.inspect).to include(
-        transfer_id,
+        model.transfer_id,
         Coinbase.to_sym(network_id).to_s,
         from_address_id,
         to_address_id,
-        eth_amount.to_s,
+        whole_amount.to_s,
         transfer.asset_id.to_s,
         transfer.status.to_s
       )
@@ -377,7 +329,7 @@ describe Coinbase::Transfer do
     end
 
     context 'when the transfer has been broadcast on chain' do
-      let(:transaction_model) { build(:transaction_model, :broadcasted, key: from_key) }
+      let(:model) { build(:transfer_model, network_id, :broadcasted) }
 
       it 'includes the updated status' do
         expect(transfer.inspect).to include('broadcast')

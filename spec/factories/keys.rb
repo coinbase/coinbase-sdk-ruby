@@ -5,5 +5,9 @@ FactoryBot.define do
     initialize_with { new(priv: priv) }
 
     priv { '0233b43978845c03783510106941f42370e0f11022b0c3b717c0791d046f4536' }
+
+    trait :destination do
+      priv { '3d560ef7d3368b419ed806b12a8c240b299ef1215d04d8042f7b3e60aae17771' }
+    end
   end
 end

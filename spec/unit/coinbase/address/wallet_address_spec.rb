@@ -100,12 +100,11 @@ describe Coinbase::WalletAddress do
   describe '#transfer' do
     let(:balance) { 1_000 }
     let(:amount) { 500 }
-    let(:to_address_id) { Eth::Key.new.address.to_s }
-    let(:transaction) { instance_double(Coinbase::Transaction, sign: '0x12345') }
-    let(:created_transfer) do
-      instance_double(Coinbase::Transfer, id: SecureRandom.uuid, transaction: transaction)
-    end
+    let(:to_key) { Eth::Key.new }
+    let(:to_address_id) { to_key.address.to_s }
     let(:asset_id) { :eth }
+    let(:created_transfer) { build(:transfer, network_id, key: key, to_key: to_key) }
+    let(:signed_transfer) { build(:transfer, network_id, :signed, key: key, to_key: to_key) }
     let(:use_server_signer) { false }
 
     subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
@@ -117,6 +116,8 @@ describe Coinbase::WalletAddress do
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
         .and_return(build(:balance_model, whole_amount: balance))
+
+      allow(created_transfer.transaction).to receive(:sign).and_return(signed_transfer.signed_payload)
     end
 
     context 'when the transfer is successful' do
@@ -136,7 +137,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the key' do
-          expect(transaction).to have_received(:sign).with(key)
+          expect(created_transfer.transaction).to have_received(:sign).with(key)
         end
 
         it 'broadcasts the transfer' do
@@ -167,7 +168,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'does not sign the transaction with the key' do
-          expect(transaction).not_to have_received(:sign)
+          expect(created_transfer.transaction).not_to have_received(:sign)
         end
       end
     end
