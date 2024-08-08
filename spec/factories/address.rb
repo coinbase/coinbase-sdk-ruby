@@ -5,6 +5,8 @@ FactoryBot.define do
     network_id { 'base-sepolia' }
 
     transient do
+      seed { nil }
+      index { 0 }
       key { build(:key) }
     end
 
@@ -12,20 +14,14 @@ FactoryBot.define do
     public_key { key.public_key.compressed.unpack1('H*') }
     wallet_id { SecureRandom.uuid }
 
-    trait :ethereum_mainnet do
-      network_id { 'ethereum-mainnet' }
+    trait :with_seed do
+      key { build(:key, :with_seed, seed: seed, index: index) }
     end
 
-    trait :ethereum_holesky do
-      network_id { 'ethereum-holesky' }
-    end
-
-    trait :base_mainnet do
-      network_id { 'base-mainnet' }
-    end
-
-    trait :base_sepolia do
-      network_id { 'base-sepolia' }
+    NETWORK_TRAITS.each do |network|
+      trait network do
+        network_id { Coinbase.normalize_network(network) }
+      end
     end
   end
 end

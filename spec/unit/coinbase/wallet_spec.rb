@@ -5,47 +5,19 @@ describe Coinbase::Wallet do
   let(:network) { :base_sepolia }
   let(:network_id) { Coinbase.normalize_network(network) }
   let(:seed) { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
-  let(:master_node) { MoneyTree::Master.new(seed_hex: seed) }
-  let(:model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
-  let(:address_model1) do
-    build(
-      :address_model,
-      network,
-      wallet_id: wallet_id,
-      # TODO: Derive this from node and sequence.
-      key: Eth::Key.new(priv: master_node.node_for_path("m/44'/60'/0'/0/0").private_key.to_hex)
-    )
-  end
-  let(:address_model2) do
-    build(
-      :address_model,
-      network,
-      wallet_id: wallet_id,
-      key: Eth::Key.new(priv: master_node.node_for_path("m/44'/60'/0'/0/1").private_key.to_hex)
-    )
-  end
-  let(:model_with_default_address) do
-    Coinbase::Client::Wallet.new(
-      id: wallet_id,
-      network_id: network_id,
-      default_address: address_model1
-    )
-  end
-
+  let(:model) { build(:wallet_model, network, :without_default_address, id: wallet_id) }
+  let(:model_with_default_address) { build(:wallet_model, network, id: wallet_id, seed: seed) }
   let(:model_with_seed_pending) do
-    Coinbase::Client::Wallet.new(
-      id: wallet_id,
-      network_id: network_id,
-      server_signer_status: 'pending_seed_creation'
-    )
+    build(:wallet_model, network, :server_signer_pending, id: wallet_id, seed: seed)
   end
   let(:model_with_seed_active) do
-    Coinbase::Client::Wallet.new(
-      id: wallet_id,
-      network_id: network_id,
-      default_address: address_model1,
-      server_signer_status: 'active_seed'
-    )
+    build(:wallet_model, network, :server_signer_active, id: wallet_id, seed: seed)
+  end
+  let(:address_model1) do
+    build(:address_model, network, :with_seed, seed: seed, wallet_id: wallet_id, index: 0)
+  end
+  let(:address_model2) do
+    build(:address_model, network, :with_seed, seed: seed, wallet_id: wallet_id, index: 1)
   end
   let(:wallets_api) { double('Coinbase::Client::WalletsApi') }
   let(:addresses_api) { double('Coinbase::Client::AddressesApi') }
@@ -70,9 +42,7 @@ describe Coinbase::Wallet do
     let(:resource_list_klass) { Coinbase::Client::WalletList }
     let(:item_klass) { Coinbase::Wallet }
     let(:item_initialize_args) { { seed: '' } }
-    let(:create_model) do
-      ->(id) { Coinbase::Client::Wallet.new(id: id, network_id: 'base-mainnet') }
-    end
+    let(:create_model) { ->(id) { build(:wallet_model, network, :without_default_address, id: id) } }
     subject(:enumerator) { described_class.list }
 
     it_behaves_like 'it is a paginated enumerator', :wallets
@@ -106,7 +76,7 @@ describe Coinbase::Wallet do
 
   describe '.import' do
     let(:wallet_id) { SecureRandom.uuid }
-    let(:wallet_model) { Coinbase::Client::Wallet.new(id: wallet_id, network_id: network_id) }
+    let(:wallet_model) { build(:wallet_model, network, id: wallet_id) }
     let(:exported_data) { Coinbase::Wallet::Data.new(wallet_id: wallet_id, seed: seed) }
 
     subject(:imported_wallet) { Coinbase::Wallet.import(exported_data) }
@@ -156,8 +126,7 @@ describe Coinbase::Wallet do
       { wallet: { network_id: network_id, use_server_signer: use_server_signer } }
     end
     let(:request) { { create_wallet_request: create_wallet_request } }
-    let(:wallet_model) { Coinbase::Client::Wallet.new({ 'id': wallet_id, 'network_id': network_id }) }
-    let(:default_address_model) { build(:address_model, network, wallet_id: wallet_id) }
+    let(:wallet_model) { build(:wallet_model, network, id: wallet_id) }
 
     subject(:created_wallet) { described_class.create }
 
@@ -203,7 +172,7 @@ describe Coinbase::Wallet do
     end
 
     context 'when setting the network ID explicitly' do
-      let(:network_id) { 'base-mainnet' }
+      let(:network) { :base_mainnet }
       let(:use_server_signer) { false }
 
       before do
@@ -226,7 +195,7 @@ describe Coinbase::Wallet do
       end
 
       subject(:created_wallet) do
-        described_class.create(network_id: network_id)
+        described_class.create(network_id: network)
       end
 
       it 'creates a new wallet' do

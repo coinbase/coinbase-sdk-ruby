@@ -8,7 +8,6 @@ FactoryBot.define do
       key { build(:key) }
       to_key { build(:key, :destination) }
       whole_amount { 123 }
-      # wallet { build(:wallet) }
     end
 
     wallet_id { SecureRandom.uuid }
