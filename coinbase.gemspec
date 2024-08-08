@@ -25,14 +25,12 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'money-tree'
 
   spec.add_development_dependency 'dotenv'
+  spec.add_development_dependency 'factory_bot'
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
-  # Pin to a specific version of RuboCop to ensure consistent linting.
-  spec.add_development_dependency 'rubocop', '1.63.1'
+  spec.add_development_dependency 'rubocop', '1.63.1' # Pin to ensure consistent linting
   spec.add_development_dependency 'simplecov'
-  # Pin to a specific version of YARD to ensure consistent documentation generation.
-  spec.add_development_dependency 'factory_bot'
-  spec.add_development_dependency 'yard', '0.9.36'
+  spec.add_development_dependency 'yard', '0.9.36' # Pin to ensure consistent documentation generation
   spec.add_development_dependency 'yard-markdown'
 end
