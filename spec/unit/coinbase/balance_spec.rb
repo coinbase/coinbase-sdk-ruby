@@ -3,9 +3,7 @@
 describe Coinbase::Balance do
   let(:amount) { BigDecimal('123.0') }
   let(:balance_model) { instance_double('Coinbase::Client::Balance', asset: asset, amount: amount) }
-  let(:eth_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset) { build(:asset_model) }
 
   describe '.from_model' do
     subject(:balance) { described_class.from_model(balance_model) }
@@ -28,13 +26,7 @@ describe Coinbase::Balance do
 
     context 'when the asset is other' do
       let(:decimals) { 9 }
-      let(:asset) do
-        Coinbase::Client::Asset.new(
-          network_id: 'base-sepolia',
-          asset_id: 'other',
-          decimals: decimals
-        )
-      end
+      let(:asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
 
       it 'returns a Balance object' do
         expect(balance).to be_a(described_class)
@@ -104,13 +96,7 @@ describe Coinbase::Balance do
     context 'when the asset is not eth' do
       let(:decimals) { 9 }
       let(:asset_id) { :other }
-      let(:asset) do
-        Coinbase::Client::Asset.new(
-          network_id: 'base-sepolia',
-          asset_id: 'other',
-          decimals: decimals
-        )
-      end
+      let(:asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
 
       it 'returns a new Balance object with the correct amount' do
         expect(balance.amount).to eq(amount / BigDecimal(10).power(decimals))

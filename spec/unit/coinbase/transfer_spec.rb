@@ -34,14 +34,10 @@ describe Coinbase::Transfer do
       unsigned_payload: unsigned_payload
     )
   end
-  let(:eth_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-  end
-  let(:usdc_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
-  end
+  let(:eth_asset) { build(:asset_model) }
+  let(:usdc_asset) { build(:asset_model, :usdc) }
   let(:asset_model) { eth_asset }
-  let(:eth_amount) { Coinbase::Asset.from_model(asset_model).from_atomic_amount(amount) }
+  let(:eth_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(amount) }
   let(:model) do
     Coinbase::Client::Transfer.new(
       network_id: network_id,
@@ -66,7 +62,7 @@ describe Coinbase::Transfer do
   describe '.create' do
     let(:asset_id) { :eth }
     let(:normalized_asset_id) { 'eth' }
-    let(:asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :eth) }
+    let(:asset) { build(:asset, :eth) }
     let(:destination) { Coinbase::Destination.new(to_address_id, network_id: network_id) }
     let(:create_transfer_request) do
       {
@@ -118,7 +114,7 @@ describe Coinbase::Transfer do
 
     context 'when the asset is not the primary denomination' do
       let(:asset_id) { :wei }
-      let(:asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :wei) }
+      let(:asset) { build(:asset, asset_id) }
       let(:amount) { BigDecimal(100) }
       let(:eth_amount) { amount }
 
@@ -197,9 +193,7 @@ describe Coinbase::Transfer do
     context 'when the asset is something else' do
       let(:amount) { BigDecimal(100_000) }
       let(:decimals) { 3 }
-      let(:asset_model) do
-        Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
-      end
+      let(:asset_model) { build(:asset_model, asset_id: 'other', decimals: decimals) }
 
       it 'returns the amount in the whole units' do
         expect(transfer.amount).to eq(100)

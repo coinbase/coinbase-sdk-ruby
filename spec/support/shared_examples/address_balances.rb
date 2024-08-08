@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 
 shared_examples 'an address that supports balance queries' do |_operation|
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
-  let(:usdc_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'usdc', decimals: 6)
-  end
-  let(:weth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'weth', decimals: 18)
-  end
+  let(:eth_asset_model) { build(:asset_model) }
+  let(:usdc_asset_model) { build(:asset_model, :usdc) }
+  let(:weth_asset_model) { build(:asset_model, :weth) }
   let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
 
   before do
@@ -94,9 +88,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
       let(:asset_id) { :other }
       let(:primary_denomination) { 'other' }
       let(:decimals) { 7 }
-      let(:other_asset) do
-        Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'other', decimals: decimals)
-      end
+      let(:other_asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
       let(:response) do
         Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: other_asset)
       end

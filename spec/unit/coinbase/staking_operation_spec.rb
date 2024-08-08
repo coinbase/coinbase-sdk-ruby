@@ -12,9 +12,7 @@ describe Coinbase::StakingOperation do
   let(:transaction_model) { instance_double(Coinbase::Client::Transaction) }
   let(:transaction) { instance_double(Coinbase::Transaction) }
   let(:key) { instance_double(Eth::Key) }
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: 'ethereum-holesky', asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset_model) { build(:asset_model, :ethereum_holesky) }
   let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
   let(:hex_encoded_transaction) { '0xdeadbeef' }
 

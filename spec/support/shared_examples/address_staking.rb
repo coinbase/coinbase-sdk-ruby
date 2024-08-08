@@ -5,9 +5,7 @@ shared_context 'with mocked staking_balances' do
   let(:stake_balance) { 100 }
   let(:unstake_balance) { 100 }
   let(:claim_stake_balance) { 100 }
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset_model) { build(:asset_model) }
   let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
   let(:staking_context) do
     instance_double(
@@ -42,9 +40,7 @@ shared_examples 'an address that supports staking' do
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:mode) { :partial }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset_model) { build(:asset_model, :ethereum_mainnet) }
   let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
 
   before do

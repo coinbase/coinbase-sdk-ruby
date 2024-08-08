@@ -28,12 +28,8 @@ describe Coinbase::Trade do
     '6dd10094a02115d1b52c49b39b6cb520077161c9bf636730b1b40e749250743f4524e9e4ba'
   end
   let(:transaction_hash) { '0x6c087c1676e8269dd81e0777244584d0cbfd39b6997b3477242a008fa9349e11' }
-  let(:eth_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-  end
-  let(:usdc_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
-  end
+  let(:eth_asset) { build(:asset_model) }
+  let(:usdc_asset) { build(:asset_model, :usdc) }
   let(:transaction_model) do
     Coinbase::Client::Transaction.new(
       status: 'pending',
@@ -209,9 +205,7 @@ describe Coinbase::Trade do
     context 'when the from asset is something else' do
       let(:from_amount) { BigDecimal(100_000) }
       let(:decimals) { 3 }
-      let(:from_asset_model) do
-        Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
-      end
+      let(:from_asset_model) { build(:asset_model, asset_id: 'other', decimals: decimals) }
 
       it 'returns the from amount in the whole units' do
         expect(trade.from_amount).to eq(100)
@@ -235,9 +229,7 @@ describe Coinbase::Trade do
     context 'when the to asset is something else' do
       let(:to_amount) { BigDecimal(42_000_000) }
       let(:decimals) { 6 }
-      let(:to_asset_model) do
-        Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'other', decimals: decimals)
-      end
+      let(:to_asset_model) { build(:asset_model, asset_id: 'other', decimals: decimals) }
 
       it 'returns the to amount in the whole units' do
         expect(trade.to_amount).to eq(BigDecimal(42))

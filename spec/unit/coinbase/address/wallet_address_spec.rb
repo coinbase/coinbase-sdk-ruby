@@ -14,9 +14,7 @@ describe Coinbase::WalletAddress do
       public_key: key.public_key.compressed.unpack1('H*')
     )
   end
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset_model) { build(:asset_model) }
   let(:addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
   before do

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 describe Coinbase::BalanceMap do
-  let(:eth_asset) do
-    Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-  end
+  let(:eth_asset) { build(:asset_model) }
 
   describe '.from_balances' do
     let(:eth_amount) { BigDecimal('123.0') }
@@ -11,17 +9,12 @@ describe Coinbase::BalanceMap do
     let(:eth_atomic_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(eth_amount) }
 
     let(:usdc_amount) { BigDecimal('456.0') }
-    let(:usdc_asset) do
-      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'usdc', decimals: 6)
-    end
+    let(:usdc_asset) { build(:asset_model, :usdc) }
     let(:usdc_balance_model) { instance_double('Coinbase::Client::Balance', asset: usdc_asset, amount: usdc_amount) }
     let(:usdc_atomic_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(usdc_amount) }
 
     let(:weth_amount) { BigDecimal('789.0') }
-    let(:weth_asset) { instance_double('Coinbase::Client::Asset', asset_id: 'WETH') }
-    let(:weth_asset) do
-      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'weth', decimals: 18)
-    end
+    let(:weth_asset) { build(:asset_model, :weth) }
     let(:weth_balance_model) { instance_double('Coinbase::Client::Balance', asset: weth_asset, amount: weth_amount) }
     let(:weth_atomic_amount) { Coinbase::Asset.from_model(weth_asset).from_atomic_amount(weth_amount) }
 
