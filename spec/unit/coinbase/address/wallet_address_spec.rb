@@ -1,22 +1,12 @@
 # frozen_string_literal: true
 
 describe Coinbase::WalletAddress do
-  let(:key) { Eth::Key.new }
+  let(:key) { build(:key) }
   let(:network_id) { :base_sepolia }
   let(:normalized_network_id) { 'base-sepolia' }
   let(:address_id) { key.address.to_s }
-  let(:wallet_id) { SecureRandom.uuid }
-  let(:model) do
-    Coinbase::Client::Address.new(
-      network_id: normalized_network_id,
-      address_id: address_id,
-      wallet_id: wallet_id,
-      public_key: key.public_key.compressed.unpack1('H*')
-    )
-  end
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
+  let(:model) { build(:address_model, network_id) }
+  let(:wallet_id) { model.wallet_id }
   let(:addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
   before do
@@ -110,12 +100,11 @@ describe Coinbase::WalletAddress do
   describe '#transfer' do
     let(:balance) { 1_000 }
     let(:amount) { 500 }
-    let(:to_address_id) { Eth::Key.new.address.to_s }
-    let(:transaction) { instance_double(Coinbase::Transaction, sign: '0x12345') }
-    let(:created_transfer) do
-      instance_double(Coinbase::Transfer, id: SecureRandom.uuid, transaction: transaction)
-    end
+    let(:to_key) { Eth::Key.new }
+    let(:to_address_id) { to_key.address.to_s }
     let(:asset_id) { :eth }
+    let(:created_transfer) { build(:transfer, network_id, key: key, to_key: to_key) }
+    let(:signed_transfer) { build(:transfer, network_id, :signed, key: key, to_key: to_key) }
     let(:use_server_signer) { false }
 
     subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
@@ -126,12 +115,9 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
-        .and_return(
-          Coinbase::Client::Balance.new(
-            amount: Coinbase::Asset.from_model(eth_asset_model).to_atomic_amount(balance).to_s,
-            asset: eth_asset_model
-          )
-        )
+        .and_return(build(:balance_model, whole_amount: balance))
+
+      allow(created_transfer.transaction).to receive(:sign).and_return(signed_transfer.signed_payload)
     end
 
     context 'when the transfer is successful' do
@@ -151,7 +137,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the key' do
-          expect(transaction).to have_received(:sign).with(key)
+          expect(created_transfer.transaction).to have_received(:sign).with(key)
         end
 
         it 'broadcasts the transfer' do
@@ -182,7 +168,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'does not sign the transaction with the key' do
-          expect(transaction).not_to have_received(:sign)
+          expect(created_transfer.transaction).not_to have_received(:sign)
         end
       end
     end
@@ -231,12 +217,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, normalized_from_asset_id)
-        .and_return(
-          Coinbase::Client::Balance.new(
-            amount: Coinbase::Asset.from_model(eth_asset_model).to_atomic_amount(balance).to_s,
-            asset: eth_asset_model
-          )
-        )
+        .and_return(build(:balance_model, whole_amount: balance))
 
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end

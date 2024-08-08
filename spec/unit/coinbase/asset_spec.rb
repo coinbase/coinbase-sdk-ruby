@@ -65,7 +65,7 @@ describe Coinbase::Asset do
     context 'when the asset is not a Coinbase::Client::Asset' do
       it 'raises an error' do
         expect do
-          described_class.from_model(Coinbase::Client::Balance.new)
+          described_class.new(build(:balance_model))
         end.to raise_error(StandardError)
       end
     end

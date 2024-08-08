@@ -40,13 +40,11 @@ describe Coinbase::User do
   end
 
   describe '#import_wallet' do
-    let(:wallet_export_data) do
-      Coinbase::Wallet::Data.new(
-        wallet_id: SecureRandom.uuid,
-        seed: MoneyTree::Master.new.seed_hex
-      )
-    end
-    let(:wallet) { instance_double(Coinbase::Wallet) }
+    let(:seed) { MoneyTree::Master.new.seed_hex }
+    let(:wallet_id) { SecureRandom.uuid }
+    let(:wallet_export_data) { Coinbase::Wallet::Data.new(wallet_id: wallet_id, seed: seed) }
+    let(:wallet) { build(:wallet, id: wallet_id, seed: seed) }
+
     subject(:imported_wallet) { user.import_wallet(wallet_export_data) }
 
     it 'imports an exported wallet' do
@@ -57,8 +55,8 @@ describe Coinbase::User do
   end
 
   describe '#wallets' do
-    let(:wallet_model1) { Coinbase::Client::Wallet.new(id: 'wallet1', network_id: 'base-sepolia') }
-    let(:wallet_model2) { Coinbase::Client::Wallet.new(id: 'wallet2', network_id: 'base-sepolia') }
+    let(:wallet_model1) { build(:wallet_model, :without_default_address, id: 'wallet-1') }
+    let(:wallet_model2) { build(:wallet_model, :without_default_address, id: 'wallet-2') }
     let(:wallet_enumerator) do
       Enumerator.new do |yielder|
         yielder << wallet_model1

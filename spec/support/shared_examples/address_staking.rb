@@ -5,27 +5,14 @@ shared_context 'with mocked staking_balances' do
   let(:stake_balance) { 100 }
   let(:unstake_balance) { 100 }
   let(:claim_stake_balance) { 100 }
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
-  let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
   let(:staking_context) do
     instance_double(
       Coinbase::Client::StakingContext,
       context: instance_double(
         Coinbase::Client::PartialEthStakingContext,
-        stakeable_balance: Coinbase::Client::Balance.new(
-          amount: eth_asset.to_atomic_amount(stake_balance),
-          asset: eth_asset_model
-        ),
-        unstakeable_balance: Coinbase::Client::Balance.new(
-          amount: eth_asset.to_atomic_amount(unstake_balance),
-          asset: eth_asset_model
-        ),
-        claimable_balance: Coinbase::Client::Balance.new(
-          amount: eth_asset.to_atomic_amount(claim_stake_balance),
-          asset: eth_asset_model
-        )
+        stakeable_balance: build(:balance_model, whole_amount: stake_balance),
+        unstakeable_balance: build(:balance_model, whole_amount: unstake_balance),
+        claimable_balance: build(:balance_model, whole_amount: claim_stake_balance)
       )
     )
   end
@@ -40,12 +27,9 @@ shared_examples 'an address that supports staking' do
   let(:amount) { 1 }
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
+  let(:asset_id) { build(:asset_model, network_id).asset_id }
   let(:mode) { :partial }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
-  let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
 
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
@@ -71,7 +55,7 @@ shared_examples 'an address that supports staking' do
       expect(Coinbase::StakingOperation).to have_received(:build).with(
         amount,
         network_id,
-        eth_asset_model.asset_id,
+        asset_id,
         address_id,
         operation,
         mode,
@@ -89,19 +73,19 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#build_stake_operation' do
-    subject { address.build_stake_operation(1, eth_asset_model.asset_id, mode: mode) }
+    subject { address.build_stake_operation(1, asset_id, mode: mode) }
 
     it_behaves_like 'it builds a staking operation', 'stake'
   end
 
   describe '#build_unstake_operation' do
-    subject { address.build_unstake_operation(1, eth_asset_model.asset_id, mode: mode) }
+    subject { address.build_unstake_operation(1, asset_id, mode: mode) }
 
     it_behaves_like 'it builds a staking operation', 'unstake'
   end
 
   describe '#build_claim_stake_operation' do
-    subject { address.build_claim_stake_operation(1, eth_asset_model.asset_id, mode: mode) }
+    subject { address.build_claim_stake_operation(1, asset_id, mode: mode) }
 
     it_behaves_like 'it builds a staking operation', 'claim_stake'
   end
@@ -117,7 +101,7 @@ shared_examples 'an address that supports staking' do
       subject
 
       expect(stake_api).to have_received(:get_staking_context).with(
-        asset_id: eth_asset_model.asset_id,
+        asset_id: asset_id,
         address_id: address_id,
         network_id: 'ethereum-mainnet',
         options: {
@@ -128,7 +112,7 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#staking_balances' do
-    subject { address.staking_balances(eth_asset_model.asset_id, mode: mode) }
+    subject { address.staking_balances(asset_id, mode: mode) }
 
     it 'returns the staking balances' do
       expect(subject).to eq(
@@ -142,7 +126,7 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#stakeable_balance' do
-    subject { address.stakeable_balance(eth_asset_model.asset_id, mode: mode) }
+    subject { address.stakeable_balance(asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 
@@ -150,7 +134,7 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#unstakeable_balance' do
-    subject { address.unstakeable_balance(eth_asset_model.asset_id, mode: mode) }
+    subject { address.unstakeable_balance(asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 
@@ -158,7 +142,7 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#claimable_balance' do
-    subject { address.claimable_balance(eth_asset_model.asset_id, mode: mode) }
+    subject { address.claimable_balance(asset_id, mode: mode) }
 
     it_behaves_like 'it called staking context balances'
 
@@ -170,13 +154,13 @@ shared_examples 'an address that supports staking' do
       start_time = Time.now
       expect(Coinbase::StakingReward).to receive(:list).with(
         network_id,
-        eth_asset_model.asset_id,
+        asset_id,
         [address_id],
         start_time: start_time,
         end_time: start_time,
         format: :usd
       )
-      subject.staking_rewards(eth_asset_model.asset_id, start_time: start_time, end_time: start_time)
+      subject.staking_rewards(asset_id, start_time: start_time, end_time: start_time)
     end
   end
 end

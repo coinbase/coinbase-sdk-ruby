@@ -1,15 +1,6 @@
 # frozen_string_literal: true
 
 shared_examples 'an address that supports balance queries' do |_operation|
-  let(:eth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'eth', decimals: 18)
-  end
-  let(:usdc_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'usdc', decimals: 6)
-  end
-  let(:weth_asset_model) do
-    Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'weth', decimals: 18)
-  end
   let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
 
   before do
@@ -20,9 +11,9 @@ shared_examples 'an address that supports balance queries' do |_operation|
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [
-          Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset_model),
-          Coinbase::Client::Balance.new(amount: '5000000000', asset: usdc_asset_model),
-          Coinbase::Client::Balance.new(amount: '3000000000000000000', asset: weth_asset_model)
+          build(:balance_model, amount: '1000000000000000000'),
+          build(:balance_model, :usdc, amount: '5000000000'),
+          build(:balance_model, :weth, amount: '3000000000000000000')
         ]
       )
     end
@@ -52,9 +43,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
   end
 
   describe '#balance' do
-    let(:response) do
-      Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: eth_asset_model)
-    end
+    let(:response) { build(:balance_model, amount: '1000000000000000000') }
 
     before do
       allow(external_addresses_api)
@@ -94,12 +83,8 @@ shared_examples 'an address that supports balance queries' do |_operation|
       let(:asset_id) { :other }
       let(:primary_denomination) { 'other' }
       let(:decimals) { 7 }
-      let(:other_asset) do
-        Coinbase::Client::Asset.new(network_id: normalized_network_id, asset_id: 'other', decimals: decimals)
-      end
-      let(:response) do
-        Coinbase::Client::Balance.new(amount: '1000000000000000000', asset: other_asset)
-      end
+      let(:other_asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
+      let(:response) { build(:balance_model, asset: other_asset, amount: BigDecimal(10**18).to_s) }
 
       it 'returns the correct balance' do
         expect(address.balance(:other)).to eq BigDecimal('100_000_000_000')
