@@ -10,36 +10,13 @@ describe Coinbase::Trade do
   let(:eth_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(from_amount) }
   let(:usdc_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(to_amount) }
   let(:trade_id) { SecureRandom.uuid }
-  let(:unsigned_payload) do \
-    '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63' \
-'65223a22307830222c22746f223a22307834643965346633663464316138623566346637623166' \
-'356235633762386436623262336231623062222c22676173223a22307835323038222c22676173' \
-'5072696365223a6e756c6c2c226d61785072696f72697479466565506572476173223a223078' \
-'3539363832663030222c226d6178466565506572476173223a2230783539363832663030222c22' \
-'76616c7565223a2230783536626337356532643633313030303030222c22696e707574223a22' \
-'3078222c226163636573734c697374223a5b5d2c2276223a22307830222c2272223a2230783022' \
-'2c2273223a22307830222c2279506172697479223a22307830222c2268617368223a2230783664' \
-'633334306534643663323633653363396561396135656438646561346332383966613861363966' \
-'3031653635393462333732386230386138323335333433227d'
-  end
-  let(:signed_payload) do \
-    '02f86b83014a3401830f4240830f4350825208946cd01c0f55ce9e0bf78f5e90f72b4345b' \
-    '16d515d0280c001a0566afb8ab09129b3f5b666c3a1e4a7e92ae12bbee8c75b4c6e0c46f6' \
-    '6dd10094a02115d1b52c49b39b6cb520077161c9bf636730b1b40e749250743f4524e9e4ba'
-  end
   let(:transaction_hash) { '0x6c087c1676e8269dd81e0777244584d0cbfd39b6997b3477242a008fa9349e11' }
   let(:eth_asset) { build(:asset_model) }
   let(:usdc_asset) { build(:asset_model, :usdc) }
-  let(:transaction_model) do
-    Coinbase::Client::Transaction.new(
-      status: 'pending',
-      from_address_id: address_id,
-      unsigned_payload: unsigned_payload
-    )
-  end
+  let(:transaction_model) { build(:transaction_model, key: from_key) }
   let(:approve_transaction_model) { nil }
-  let(:from_asset_model) { eth_asset }
-  let(:from_asset) { Coinbase::Asset.from_model(from_asset_model) }
+  let(:from_asset_model) { build(:asset_model, :eth) }
+  let(:from_asset) { build(:asset, model: from_asset_model) }
   let(:to_asset_model) { usdc_asset }
   let(:to_asset) { Coinbase::Asset.from_model(to_asset_model) }
   let(:model) do
@@ -67,9 +44,7 @@ describe Coinbase::Trade do
   end
 
   describe '.create' do
-    let(:from_asset_id) { :eth }
     let(:normalized_from_asset_id) { 'eth' }
-    let(:to_asset_id) { :usdc }
     let(:normalized_to_asset_id) { 'usdc' }
 
     let(:create_trade_request) do
@@ -83,8 +58,8 @@ describe Coinbase::Trade do
     subject(:trade) do
       described_class.create(
         address_id: address_id,
-        from_asset_id: from_asset_id,
-        to_asset_id: to_asset_id,
+        from_asset_id: from_asset.asset_id,
+        to_asset_id: to_asset.asset_id,
         amount: eth_amount,
         network_id: network_id,
         wallet_id: wallet_id
@@ -110,8 +85,7 @@ describe Coinbase::Trade do
     end
 
     context 'when the from asset is not the primary denomination' do
-      let(:from_asset_id) { :wei }
-      let(:from_asset) { Coinbase::Asset.from_model(eth_asset, asset_id: :wei) }
+      let(:from_asset) { build(:asset, :wei) }
       let(:from_amount) { BigDecimal(100) }
       let(:eth_amount) { from_amount }
 
@@ -249,13 +223,7 @@ describe Coinbase::Trade do
     end
 
     context 'when there is an approve transaction' do
-      let(:approve_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'pending',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload
-        )
-      end
+      let(:approve_transaction_model) { build(:transaction_model, key: from_key) }
 
       it 'returns a list containing both transactions' do
         expect(trade.transactions).to contain_exactly(trade.transaction, trade.approve_transaction)
@@ -281,13 +249,7 @@ describe Coinbase::Trade do
 
   describe '#broadcast!' do
     let(:broadcasted_approve_transaction_model) { nil }
-    let(:broadcasted_transaction_model) do
-      Coinbase::Client::Transaction.new(
-        status: 'broadcast',
-        unsigned_payload: unsigned_payload,
-        signed_payload: signed_payload
-      )
-    end
+    let(:broadcasted_transaction_model) { build(:transaction_model, :broadcasted, key: from_key) }
     let(:broadcasted_trade_model) do
       instance_double(
         Coinbase::Client::Trade,
@@ -330,7 +292,8 @@ describe Coinbase::Trade do
       end
 
       it 'sets the transaction signed payload' do
-        expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+        expect(broadcasted_trade.transaction.signed_payload)
+          .to eq(broadcasted_transaction_model.signed_payload)
       end
     end
 
@@ -341,20 +304,9 @@ describe Coinbase::Trade do
     end
 
     context 'when there is an approve transaction' do
-      let(:approve_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'pending',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload
-        )
-      end
+      let(:approve_transaction_model) { build(:transaction_model, key: from_key) }
       let(:broadcasted_approve_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'broadcast',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload,
-          signed_payload: signed_payload
-        )
+        build(:transaction_model, :broadcasted, key: from_key)
       end
 
       context 'and both transactions are signed' do
@@ -392,7 +344,8 @@ describe Coinbase::Trade do
         end
 
         it 'sets the transaction signed payload' do
-          expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+          expect(broadcasted_trade.transaction.signed_payload)
+            .to eq(broadcasted_transaction_model.signed_payload)
         end
 
         it 'updates the approve transaction status' do
@@ -400,7 +353,8 @@ describe Coinbase::Trade do
         end
 
         it 'sets the approve transaction signed payload' do
-          expect(broadcasted_trade.transaction.signed_payload).to eq(signed_payload)
+          expect(broadcasted_trade.approve_transaction.signed_payload)
+            .to eq(broadcasted_approve_transaction_model.signed_payload)
         end
       end
 
@@ -423,14 +377,7 @@ describe Coinbase::Trade do
   end
 
   describe '#reload' do
-    let(:updated_transaction_model) do
-      Coinbase::Client::Transaction.new(
-        status: 'complete',
-        from_address_id: address_id,
-        unsigned_payload: unsigned_payload
-      )
-    end
-
+    let(:updated_transaction_model) { build(:transaction_model, :completed, key: from_key) }
     let(:updated_to_amount) { BigDecimal(500_000_000) }
     let(:updated_usdc_amount) do
       Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(updated_to_amount)
@@ -494,13 +441,7 @@ describe Coinbase::Trade do
     end
 
     context 'when the trade is completed' do
-      let(:updated_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'complete',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload
-        )
-      end
+      let(:updated_transaction_model) { build(:transaction_model, :completed, key: from_key) }
 
       it 'returns the completed Trade' do
         expect(trade.wait!).to eq(trade)
@@ -509,13 +450,7 @@ describe Coinbase::Trade do
     end
 
     context 'when the trade is failed' do
-      let(:updated_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'failed',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload
-        )
-      end
+      let(:updated_transaction_model) { build(:transaction_model, :failed, key: from_key) }
 
       it 'returns the failed Trade' do
         expect(trade.wait!).to eq(trade)
@@ -524,13 +459,7 @@ describe Coinbase::Trade do
     end
 
     context 'when the trade times out' do
-      let(:updated_transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'pending',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload
-        )
-      end
+      let(:updated_transaction_model) { build(:transaction_model, key: from_key) }
 
       it 'raises a Timeout::Error' do
         expect { trade.wait!(0.2, 0.00001) }.to raise_error(Timeout::Error, 'Trade timed out')
@@ -557,15 +486,7 @@ describe Coinbase::Trade do
     end
 
     context 'when the trade has been broadcast on chain' do
-      let(:transaction_model) do
-        Coinbase::Client::Transaction.new(
-          status: 'broadcast',
-          from_address_id: address_id,
-          unsigned_payload: unsigned_payload,
-          signed_payload: signed_payload,
-          transaction_hash: transaction_hash
-        )
-      end
+      let(:transaction_model) { build(:transaction_model, :broadcasted, key: from_key) }
 
       it 'includes the updated status' do
         expect(trade.inspect).to include('broadcast')

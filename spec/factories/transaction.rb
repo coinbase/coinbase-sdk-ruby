@@ -2,8 +2,12 @@
 
 FactoryBot.define do
   factory :transaction_model, class: Coinbase::Client::Transaction do
+    transient do
+      key { build(:key) }
+    end
+
     status { 'pending' }
-    from_address_id { build(:key).address.to_s }
+    from_address_id { key.address.to_s }
     unsigned_payload do \
       '7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e6365223a22307830' \
         '222c22746f223a2230786533313730363564653739356566626163373163663030313134633732353262666364' \
@@ -17,6 +21,7 @@ FactoryBot.define do
 
     trait :signed do
       status { 'signed' }
+
       signed_payload do \
         '02f87183014a3480830f4240830f442e82520894e317065de795efbac71cf00114c7252bfcd23c298609184e72a0' \
           '0080c080a0eab79ad9a2933fcea4acc375ed9cffb9345623f9f377c8afca59c368e5a6a20da071f32cafa36a49' \
@@ -29,6 +34,16 @@ FactoryBot.define do
       status { 'broadcast' }
       transaction_hash { '0xdea671372a8fff080950d09ad5994145a661c8e95a9216ef34772a19191b5690' }
       transaction_link { "https://sepolia.basescan.org/tx/#{transaction_hash}" }
+    end
+
+    trait :completed do
+      broadcasted
+      status { 'complete' }
+    end
+
+    trait :failed do
+      broadcasted
+      status { 'failed' }
     end
   end
 

@@ -17,6 +17,9 @@ require_relative 'support/shared_examples/address_staking'
 require_relative 'support/shared_examples/pagination'
 
 RSpec.configure do |config|
+  TEST_ASSET_SYMBOLS = %i[eth usdc weth]
+  TEST_NETWORKS = %i[base_mainnet base_sepolia ethereum_holesky ethereum_mainnet]
+
   config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do
