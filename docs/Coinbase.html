@@ -79,7 +79,7 @@
   <dl>
     <dt>Defined in:</dt>
     <dd>lib/coinbase.rb<span class="defines">,<br />
-  lib/coinbase/user.rb,<br /> lib/coinbase/asset.rb,<br /> lib/coinbase/trade.rb,<br /> lib/coinbase/errors.rb,<br /> lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/balance.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb,<br /> lib/coinbase/validator.rb,<br /> lib/coinbase/middleware.rb,<br /> lib/coinbase/pagination.rb,<br /> lib/coinbase/balance_map.rb,<br /> lib/coinbase/destination.rb,<br /> lib/coinbase/transaction.rb,<br /> lib/coinbase/authenticator.rb,<br /> lib/coinbase/server_signer.rb,<br /> lib/coinbase/staking_reward.rb,<br /> lib/coinbase/staking_operation.rb,<br /> lib/coinbase/faucet_transaction.rb,<br /> lib/coinbase/address/wallet_address.rb,<br /> lib/coinbase/address/external_address.rb</span>
+  lib/coinbase/user.rb,<br /> lib/coinbase/asset.rb,<br /> lib/coinbase/trade.rb,<br /> lib/coinbase/errors.rb,<br /> lib/coinbase/wallet.rb,<br /> lib/coinbase/address.rb,<br /> lib/coinbase/balance.rb,<br /> lib/coinbase/network.rb,<br /> lib/coinbase/transfer.rb,<br /> lib/coinbase/constants.rb,<br /> lib/coinbase/validator.rb,<br /> lib/coinbase/middleware.rb,<br /> lib/coinbase/pagination.rb,<br /> lib/coinbase/balance_map.rb,<br /> lib/coinbase/destination.rb,<br /> lib/coinbase/transaction.rb,<br /> lib/coinbase/wallet/data.rb,<br /> lib/coinbase/authenticator.rb,<br /> lib/coinbase/server_signer.rb,<br /> lib/coinbase/staking_reward.rb,<br /> lib/coinbase/staking_operation.rb,<br /> lib/coinbase/faucet_transaction.rb,<br /> lib/coinbase/address/wallet_address.rb,<br /> lib/coinbase/address/external_address.rb</span>
 </dd>
   </dl>
   
@@ -497,9 +497,7 @@
 128
 129
 130
-131
-132
-133</pre>
+131</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 127</span>
@@ -508,8 +506,6 @@
   <span class='kw'>yield</span>
 <span class='kw'>rescue</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/Client/ApiError.html" title="Coinbase::Client::ApiError (class)">ApiError</a></span></span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Coinbase/APIError.html" title="Coinbase::APIError (class)">APIError</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_error'><span class='object_link'><a href="Coinbase/APIError.html#from_error-class_method" title="Coinbase::APIError.from_error (method)">from_error</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='label'>cause:</span> <span class='kw'>nil</span>
-<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
-  <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_e'>e</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -818,12 +814,12 @@
       <pre class="lines">
 
 
-143
-144
-145</pre>
+141
+142
+143</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 143</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 141</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configured?'>configured?</span>
   <span class='op'>!</span><span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_name'><span class='object_link'><a href="Coinbase/Configuration.html#api_key_name-instance_method" title="Coinbase::Configuration#api_key_name (method)">api_key_name</a></span></span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_key_private_key'><span class='object_link'><a href="Coinbase/Configuration.html#api_key_private_key-instance_method" title="Coinbase::Configuration#api_key_private_key (method)">api_key_private_key</a></span></span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1027,7 +1023,7 @@
       <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_normalize_network'>normalize_network</span><span class='lparen'>(</span><span class='id identifier rubyid_network_sym'>network_sym</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_network_sym'>network_sym</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>_</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_network_sym'>network_sym</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1157,12 +1153,12 @@
       <pre class="lines">
 
 
-137
-138
-139</pre>
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 137</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'>use_server_signer?</span>
   <span class='const'><span class='object_link'><a href="" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer'><span class='object_link'><a href="Coinbase/Configuration.html#use_server_signer-instance_method" title="Coinbase::Configuration#use_server_signer (method)">use_server_signer</a></span></span>

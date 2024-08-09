@@ -112,7 +112,7 @@ module Coinbase
   # @param network_sym [Symbol] the network symbol to convert
   # @return [String] the converted string
   def self.normalize_network(network_sym)
-    network_sym.to_s.gsub(/_/, '-')
+    network_sym.to_s.gsub('_', '-')
   end
 
   # Loads the default user.
@@ -129,8 +129,6 @@ module Coinbase
     yield
   rescue Coinbase::Client::ApiError => e
     raise Coinbase::APIError.from_error(e), cause: nil
-  rescue StandardError => e
-    raise e
   end
 
   # Returns a pretty-printed object string that contains the object's class name and

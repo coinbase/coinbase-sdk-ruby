@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop', '1.63.1' # Pin to ensure consistent linting
+  spec.add_development_dependency 'rubocop-rspec'
   spec.add_development_dependency 'simplecov'
   spec.add_development_dependency 'yard', '0.9.36' # Pin to ensure consistent documentation generation
   spec.add_development_dependency 'yard-markdown'
