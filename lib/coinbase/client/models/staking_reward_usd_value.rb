@@ -14,55 +14,23 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The staking rewards for an address.
-  class StakingReward
-    # The onchain address for which the staking rewards are being fetched.
-    attr_accessor :address_id
-
-    # The date of the reward in format 'YYYY-MM-DD' in UTC.
-    attr_accessor :date
-
-    # The reward amount in requested \"format\". Default is USD.
+  # The USD value of the reward
+  class StakingRewardUSDValue
+    # The value of the reward in USD
     attr_accessor :amount
 
-    # The state of the reward.
-    attr_accessor :state
+    # The conversion price from native currency to USD
+    attr_accessor :conversion_price
 
-    attr_accessor :format
-
-    attr_accessor :usd_value
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The time of the conversion in UTC.
+    attr_accessor :conversion_time
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'address_id' => :'address_id',
-        :'date' => :'date',
         :'amount' => :'amount',
-        :'state' => :'state',
-        :'format' => :'format',
-        :'usd_value' => :'usd_value'
+        :'conversion_price' => :'conversion_price',
+        :'conversion_time' => :'conversion_time'
       }
     end
 
@@ -74,12 +42,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'address_id' => :'String',
-        :'date' => :'Date',
         :'amount' => :'String',
-        :'state' => :'String',
-        :'format' => :'StakingRewardFormat',
-        :'usd_value' => :'StakingRewardUSDValue'
+        :'conversion_price' => :'String',
+        :'conversion_time' => :'Time'
       }
     end
 
@@ -93,28 +58,16 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingReward` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingRewardUSDValue` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingReward`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingRewardUSDValue`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
-
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
-      else
-        self.address_id = nil
-      end
-
-      if attributes.key?(:'date')
-        self.date = attributes[:'date']
-      else
-        self.date = nil
-      end
 
       if attributes.key?(:'amount')
         self.amount = attributes[:'amount']
@@ -122,22 +75,16 @@ module Coinbase::Client
         self.amount = nil
       end
 
-      if attributes.key?(:'state')
-        self.state = attributes[:'state']
+      if attributes.key?(:'conversion_price')
+        self.conversion_price = attributes[:'conversion_price']
       else
-        self.state = nil
+        self.conversion_price = nil
       end
 
-      if attributes.key?(:'format')
-        self.format = attributes[:'format']
+      if attributes.key?(:'conversion_time')
+        self.conversion_time = attributes[:'conversion_time']
       else
-        self.format = 'usd'
-      end
-
-      if attributes.key?(:'usd_value')
-        self.usd_value = attributes[:'usd_value']
-      else
-        self.usd_value = nil
+        self.conversion_time = nil
       end
     end
 
@@ -146,28 +93,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
-      end
-
-      if @date.nil?
-        invalid_properties.push('invalid value for "date", date cannot be nil.')
-      end
-
       if @amount.nil?
         invalid_properties.push('invalid value for "amount", amount cannot be nil.')
       end
 
-      if @state.nil?
-        invalid_properties.push('invalid value for "state", state cannot be nil.')
+      if @conversion_price.nil?
+        invalid_properties.push('invalid value for "conversion_price", conversion_price cannot be nil.')
       end
 
-      if @format.nil?
-        invalid_properties.push('invalid value for "format", format cannot be nil.')
-      end
-
-      if @usd_value.nil?
-        invalid_properties.push('invalid value for "usd_value", usd_value cannot be nil.')
+      if @conversion_time.nil?
+        invalid_properties.push('invalid value for "conversion_time", conversion_time cannot be nil.')
       end
 
       invalid_properties
@@ -177,25 +112,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @address_id.nil?
-      return false if @date.nil?
       return false if @amount.nil?
-      return false if @state.nil?
-      state_validator = EnumAttributeValidator.new('String', ["pending", "distributed"])
-      return false unless state_validator.valid?(@state)
-      return false if @format.nil?
-      return false if @usd_value.nil?
+      return false if @conversion_price.nil?
+      return false if @conversion_time.nil?
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] state Object to be assigned
-    def state=(state)
-      validator = EnumAttributeValidator.new('String', ["pending", "distributed"])
-      unless validator.valid?(state)
-        fail ArgumentError, "invalid value for \"state\", must be one of #{validator.allowable_values}."
-      end
-      @state = state
     end
 
     # Checks equality by comparing each attribute.
@@ -203,12 +123,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          address_id == o.address_id &&
-          date == o.date &&
           amount == o.amount &&
-          state == o.state &&
-          format == o.format &&
-          usd_value == o.usd_value
+          conversion_price == o.conversion_price &&
+          conversion_time == o.conversion_time
     end
 
     # @see the `==` method
@@ -220,7 +137,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [address_id, date, amount, state, format, usd_value].hash
+      [amount, conversion_price, conversion_time].hash
     end
 
     # Builds the object from hash

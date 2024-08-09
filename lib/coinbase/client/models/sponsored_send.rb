@@ -14,49 +14,28 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # A transfer of an asset from one address to another
-  class Transfer
-    # The ID of the blockchain network
-    attr_accessor :network_id
-
-    # The ID of the wallet that owns the from address
-    attr_accessor :wallet_id
-
-    # The onchain address of the sender
-    attr_accessor :address_id
-
+  # An onchain sponsored gasless send.
+  class SponsoredSend
     # The onchain address of the recipient
-    attr_accessor :destination
+    attr_accessor :to_address_id
 
-    # The amount in the atomic units of the asset
-    attr_accessor :amount
+    # The raw typed data for the sponsored send
+    attr_accessor :raw_typed_data
 
-    # The ID of the asset being transferred
-    attr_accessor :asset_id
+    # The typed data hash for the sponsored send. This is the typed data hash that needs to be signed by the sender.
+    attr_accessor :typed_data_hash
 
-    attr_accessor :asset
+    # The signed hash of the sponsored send typed data.
+    attr_accessor :signature
 
-    # The ID of the transfer
-    attr_accessor :transfer_id
-
-    attr_accessor :transaction
-
-    attr_accessor :sponsored_send
-
-    # The unsigned payload of the transfer. This is the payload that needs to be signed by the sender.
-    attr_accessor :unsigned_payload
-
-    # The signed payload of the transfer. This is the payload that has been signed by the sender.
-    attr_accessor :signed_payload
-
-    # The hash of the transfer transaction
+    # The hash of the onchain sponsored send transaction
     attr_accessor :transaction_hash
 
-    # The status of the transfer
-    attr_accessor :status
+    # The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
+    attr_accessor :transaction_link
 
-    # Whether the transfer uses sponsored gas
-    attr_accessor :gasless
+    # The status of the sponsored send
+    attr_accessor :status
 
     class EnumAttributeValidator
       attr_reader :datatype
@@ -83,21 +62,13 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'network_id' => :'network_id',
-        :'wallet_id' => :'wallet_id',
-        :'address_id' => :'address_id',
-        :'destination' => :'destination',
-        :'amount' => :'amount',
-        :'asset_id' => :'asset_id',
-        :'asset' => :'asset',
-        :'transfer_id' => :'transfer_id',
-        :'transaction' => :'transaction',
-        :'sponsored_send' => :'sponsored_send',
-        :'unsigned_payload' => :'unsigned_payload',
-        :'signed_payload' => :'signed_payload',
+        :'to_address_id' => :'to_address_id',
+        :'raw_typed_data' => :'raw_typed_data',
+        :'typed_data_hash' => :'typed_data_hash',
+        :'signature' => :'signature',
         :'transaction_hash' => :'transaction_hash',
-        :'status' => :'status',
-        :'gasless' => :'gasless'
+        :'transaction_link' => :'transaction_link',
+        :'status' => :'status'
       }
     end
 
@@ -109,21 +80,13 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'network_id' => :'String',
-        :'wallet_id' => :'String',
-        :'address_id' => :'String',
-        :'destination' => :'String',
-        :'amount' => :'String',
-        :'asset_id' => :'String',
-        :'asset' => :'Asset',
-        :'transfer_id' => :'String',
-        :'transaction' => :'Transaction',
-        :'sponsored_send' => :'SponsoredSend',
-        :'unsigned_payload' => :'String',
-        :'signed_payload' => :'String',
+        :'to_address_id' => :'String',
+        :'raw_typed_data' => :'String',
+        :'typed_data_hash' => :'String',
+        :'signature' => :'String',
         :'transaction_hash' => :'String',
-        :'status' => :'String',
-        :'gasless' => :'Boolean'
+        :'transaction_link' => :'String',
+        :'status' => :'String'
       }
     end
 
@@ -137,93 +100,51 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Transfer` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SponsoredSend` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Transfer`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SponsoredSend`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
+      if attributes.key?(:'to_address_id')
+        self.to_address_id = attributes[:'to_address_id']
       else
-        self.network_id = nil
+        self.to_address_id = nil
       end
 
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
+      if attributes.key?(:'raw_typed_data')
+        self.raw_typed_data = attributes[:'raw_typed_data']
       else
-        self.wallet_id = nil
+        self.raw_typed_data = nil
       end
 
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
+      if attributes.key?(:'typed_data_hash')
+        self.typed_data_hash = attributes[:'typed_data_hash']
       else
-        self.address_id = nil
+        self.typed_data_hash = nil
       end
 
-      if attributes.key?(:'destination')
-        self.destination = attributes[:'destination']
-      else
-        self.destination = nil
-      end
-
-      if attributes.key?(:'amount')
-        self.amount = attributes[:'amount']
-      else
-        self.amount = nil
-      end
-
-      if attributes.key?(:'asset_id')
-        self.asset_id = attributes[:'asset_id']
-      else
-        self.asset_id = nil
-      end
-
-      if attributes.key?(:'asset')
-        self.asset = attributes[:'asset']
-      else
-        self.asset = nil
-      end
-
-      if attributes.key?(:'transfer_id')
-        self.transfer_id = attributes[:'transfer_id']
-      else
-        self.transfer_id = nil
-      end
-
-      if attributes.key?(:'transaction')
-        self.transaction = attributes[:'transaction']
-      end
-
-      if attributes.key?(:'sponsored_send')
-        self.sponsored_send = attributes[:'sponsored_send']
-      end
-
-      if attributes.key?(:'unsigned_payload')
-        self.unsigned_payload = attributes[:'unsigned_payload']
-      end
-
-      if attributes.key?(:'signed_payload')
-        self.signed_payload = attributes[:'signed_payload']
+      if attributes.key?(:'signature')
+        self.signature = attributes[:'signature']
       end
 
       if attributes.key?(:'transaction_hash')
         self.transaction_hash = attributes[:'transaction_hash']
       end
 
-      if attributes.key?(:'status')
-        self.status = attributes[:'status']
+      if attributes.key?(:'transaction_link')
+        self.transaction_link = attributes[:'transaction_link']
       end
 
-      if attributes.key?(:'gasless')
-        self.gasless = attributes[:'gasless']
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
       else
-        self.gasless = nil
+        self.status = nil
       end
     end
 
@@ -232,40 +153,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      if @to_address_id.nil?
+        invalid_properties.push('invalid value for "to_address_id", to_address_id cannot be nil.')
       end
 
-      if @wallet_id.nil?
-        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      if @raw_typed_data.nil?
+        invalid_properties.push('invalid value for "raw_typed_data", raw_typed_data cannot be nil.')
       end
 
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      if @typed_data_hash.nil?
+        invalid_properties.push('invalid value for "typed_data_hash", typed_data_hash cannot be nil.')
       end
 
-      if @destination.nil?
-        invalid_properties.push('invalid value for "destination", destination cannot be nil.')
-      end
-
-      if @amount.nil?
-        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
-      end
-
-      if @asset_id.nil?
-        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
-      end
-
-      if @asset.nil?
-        invalid_properties.push('invalid value for "asset", asset cannot be nil.')
-      end
-
-      if @transfer_id.nil?
-        invalid_properties.push('invalid value for "transfer_id", transfer_id cannot be nil.')
-      end
-
-      if @gasless.nil?
-        invalid_properties.push('invalid value for "gasless", gasless cannot be nil.')
+      if @status.nil?
+        invalid_properties.push('invalid value for "status", status cannot be nil.')
       end
 
       invalid_properties
@@ -275,24 +176,19 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network_id.nil?
-      return false if @wallet_id.nil?
-      return false if @address_id.nil?
-      return false if @destination.nil?
-      return false if @amount.nil?
-      return false if @asset_id.nil?
-      return false if @asset.nil?
-      return false if @transfer_id.nil?
-      status_validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
+      return false if @to_address_id.nil?
+      return false if @raw_typed_data.nil?
+      return false if @typed_data_hash.nil?
+      return false if @status.nil?
+      status_validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed"])
       return false unless status_validator.valid?(@status)
-      return false if @gasless.nil?
       true
     end
 
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] status Object to be assigned
     def status=(status)
-      validator = EnumAttributeValidator.new('String', ["pending", "broadcast", "complete", "failed"])
+      validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed"])
       unless validator.valid?(status)
         fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
       end
@@ -304,21 +200,13 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          network_id == o.network_id &&
-          wallet_id == o.wallet_id &&
-          address_id == o.address_id &&
-          destination == o.destination &&
-          amount == o.amount &&
-          asset_id == o.asset_id &&
-          asset == o.asset &&
-          transfer_id == o.transfer_id &&
-          transaction == o.transaction &&
-          sponsored_send == o.sponsored_send &&
-          unsigned_payload == o.unsigned_payload &&
-          signed_payload == o.signed_payload &&
+          to_address_id == o.to_address_id &&
+          raw_typed_data == o.raw_typed_data &&
+          typed_data_hash == o.typed_data_hash &&
+          signature == o.signature &&
           transaction_hash == o.transaction_hash &&
-          status == o.status &&
-          gasless == o.gasless
+          transaction_link == o.transaction_link &&
+          status == o.status
     end
 
     # @see the `==` method
@@ -330,7 +218,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, wallet_id, address_id, destination, amount, asset_id, asset, transfer_id, transaction, sponsored_send, unsigned_payload, signed_payload, transaction_hash, status, gasless].hash
+      [to_address_id, raw_typed_data, typed_data_hash, signature, transaction_hash, transaction_link, status].hash
     end
 
     # Builds the object from hash
