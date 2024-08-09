@@ -13,7 +13,7 @@ module Coinbase
         amount: asset.from_atomic_amount(historical_balance_model.amount),
         block_height: BigDecimal(historical_balance_model.block_height),
         block_hash: historical_balance_model.block_hash,
-        asset: asset,
+        asset: asset
       )
     end
 
@@ -35,7 +35,8 @@ module Coinbase
     # Returns a string representation of the HistoricalBalance.
     # @return [String] a string representation of the HistoricalBalance
     def to_s
-      "Coinbase::Balance{amount: '#{amount.to_i}', block_height: '#{block_height.to_i}', block_hash: '#{block_hash}', asset: '#{asset.to_s}'}"
+      "Coinbase::Balance{amount: '#{amount.to_i}', block_height: '#{block_height.to_i}', " \
+       "block_hash: '#{block_hash}', asset: '#{asset}'}"
     end
 
     # Same as to_s.
