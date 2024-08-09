@@ -5,6 +5,8 @@ require 'json'
 require 'money-tree'
 require 'securerandom'
 
+require_relative 'wallet/data'
+
 module Coinbase
   # A representation of a Wallet. Wallets come with a single default Address, but can expand to have a set of Addresses,
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
@@ -12,17 +14,6 @@ module Coinbase
   class Wallet
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
-
-    # A representation of ServerSigner status in a Wallet.
-    module ServerSignerStatus
-      # The Wallet is awaiting seed creation by the ServerSigner. At this point,
-      # the Wallet cannot create addresses or sign transactions.
-      PENDING = 'pending_seed_creation'
-
-      # The Wallet has an associated seed created by the ServerSigner. It is ready
-      # to create addresses and sign transactions.
-      ACTIVE = 'active_seed'
-    end
 
     class << self
       # Imports a Wallet from previously exported wallet data.
@@ -43,7 +34,7 @@ module Coinbase
       # converted to an array, etc...
       # @return [Enumerable<Coinbase::Wallet>] Enumerator that returns wallets
       def list
-        Coinbase::Pagination.enumerate(lambda(&method(:fetch_wallets_page))) do |wallet|
+        Coinbase::Pagination.enumerate(method(:fetch_wallets_page)) do |wallet|
           Coinbase::Wallet.new(wallet, seed: '')
         end
       end
@@ -107,7 +98,7 @@ module Coinbase
             wallets_api.get_wallet(wallet_id)
           end
 
-          return self if model.server_signer_status == ServerSignerStatus::ACTIVE
+          return self if model.server_signer_status == ServerSigner::Status::ACTIVE
 
           if Time.now - start_time > timeout_seconds
             raise Timeout::Error, 'Wallet creation timed out. Check status of your Server-Signer'
@@ -376,7 +367,7 @@ module Coinbase
     end
 
     # Exports the Wallet's data to a Data object.
-    # @return [Data] The Wallet data
+    # @return [Coinbase::Wallet::Data] The Wallet data
     def export
       # TODO: Improve this check by relying on the backend data to decide whether a wallet is server-signer backed.
       raise 'Cannot export data for Server-Signer backed Wallet' if Coinbase.use_server_signer?
@@ -438,9 +429,7 @@ module Coinbase
         iv: iv
       }
 
-      File.open(file_path, 'w') do |file|
-        file.write(JSON.pretty_generate(existing_seeds_in_store))
-      end
+      File.write(file_path, JSON.pretty_generate(existing_seeds_in_store))
 
       "Successfully saved seed for wallet #{id} to #{file_path}."
     end
@@ -495,32 +484,6 @@ module Coinbase
     # @return [String] a String representation of the Wallet
     def inspect
       to_s
-    end
-
-    # The data required to recreate a Wallet.
-    class Data
-      attr_reader :wallet_id, :seed
-
-      # Returns a new Data object.
-      # @param wallet_id [String] The ID of the Wallet
-      # @param seed [String] The seed of the Wallet
-      def initialize(wallet_id:, seed:)
-        @wallet_id = wallet_id
-        @seed = seed
-      end
-
-      # Converts the Data object to a Hash.
-      # @return [Hash] The Hash representation of the Data object
-      def to_hash
-        { wallet_id: wallet_id, seed: seed }
-      end
-
-      # Creates a Data object from the given Hash.
-      # @param data [Hash] The Hash to create the Data object from
-      # @return [Data] The new Data object
-      def self.from_hash(data)
-        Data.new(wallet_id: data['wallet_id'], seed: data['seed'])
-      end
     end
 
     private

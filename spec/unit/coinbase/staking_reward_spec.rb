@@ -41,7 +41,7 @@ describe Coinbase::StakingReward do
       expect(Coinbase::Asset).to have_received(:fetch).with(network_id, asset_id)
     end
 
-    it 'fetches the staking rewards' do
+    it 'fetches the first page of staking rewards' do
       list.to_a
 
       expect(stake_api).to have_received(:fetch_staking_rewards).with(
@@ -53,6 +53,11 @@ describe Coinbase::StakingReward do
         format: format,
         next_page: 'next_page'
       )
+    end
+
+    it 'fetches the last page of staking rewards' do
+      list.to_a
+
       expect(stake_api).to have_received(:fetch_staking_rewards).with(
         network_id: 'network-id',
         asset_id: asset_id,
@@ -70,8 +75,9 @@ describe Coinbase::StakingReward do
   end
 
   describe '#amount' do
-    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
     subject(:amount) { staking_reward.amount }
+
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
 
     it 'returns the amount in USD' do
       expect(staking_reward.amount).to eq(BigDecimal('1'))
@@ -98,8 +104,9 @@ describe Coinbase::StakingReward do
   end
 
   describe '#date' do
-    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
     subject(:date) { staking_reward.date }
+
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
 
     it 'returns the date' do
       expect(staking_reward.date).to eq(staking_reward_model.date)
@@ -107,8 +114,9 @@ describe Coinbase::StakingReward do
   end
 
   describe '#address_id' do
-    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
     subject(:address_id) { staking_reward.address_id }
+
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
 
     it 'returns the address_id' do
       expect(staking_reward.address_id).to eq(staking_reward_model.address_id)
@@ -120,8 +128,8 @@ describe Coinbase::StakingReward do
 
     it 'returns a string representation of the StakingReward' do
       expected_string = "Coinbase::StakingReward{date: '#{staking_reward_model.date}' " \
-        "address_id: '#{staking_reward_model.address_id}' " \
-        "amount: '#{staking_reward.amount.to_f}'}"
+                        "address_id: '#{staking_reward_model.address_id}' " \
+                        "amount: '#{staking_reward.amount.to_f}'}"
       expect(staking_reward.to_s).to eq(expected_string)
     end
   end

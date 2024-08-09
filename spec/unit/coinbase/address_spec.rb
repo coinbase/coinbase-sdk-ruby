@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 describe Coinbase::Address do
+  subject(:address) { described_class.new(network_id, address_id) }
+
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
-
-  subject(:address) { described_class.new(network_id, address_id) }
 
   describe '#id' do
     subject { address.id }
@@ -22,9 +22,7 @@ describe Coinbase::Address do
   describe '#to_s' do
     subject { address.to_s }
 
-    it 'includes the network ID and address ID' do
-      expect(subject).to include(network_id.to_s, address_id)
-    end
+    it { is_expected.to include(network_id.to_s, address_id) }
   end
 
   describe '#inspect' do

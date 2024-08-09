@@ -2,7 +2,7 @@
 
 describe Coinbase::Balance do
   let(:amount) { BigDecimal('123.0') }
-  let(:balance_model) { instance_double('Coinbase::Client::Balance', asset: asset, amount: amount) }
+  let(:balance_model) { instance_double(Coinbase::Client::Balance, asset: asset, amount: amount) }
   let(:eth_asset) { build(:asset_model) }
 
   describe '.from_model' do
@@ -48,7 +48,7 @@ describe Coinbase::Balance do
     context 'when the balance model asset is :eth' do
       let(:asset) { eth_asset }
 
-      context 'and the specified asset_id is :eth' do
+      context 'when the specified asset_id is :eth' do
         let(:asset_id) { :eth }
 
         it 'returns a new Balance object with the correct amount' do
@@ -60,7 +60,7 @@ describe Coinbase::Balance do
         end
       end
 
-      context 'and the specified asset_id is :gwei' do
+      context 'when the specified asset_id is :gwei' do
         let(:asset_id) { :gwei }
 
         it 'returns a new Balance object with the correct amount' do
@@ -72,7 +72,7 @@ describe Coinbase::Balance do
         end
       end
 
-      context 'and the specified asset_id is :wei' do
+      context 'when the specified asset_id is :wei' do
         let(:asset_id) { :wei }
 
         it 'returns a new Balance object with the correct amount' do
@@ -84,7 +84,7 @@ describe Coinbase::Balance do
         end
       end
 
-      context 'and the specified asset_id is another asset type' do
+      context 'when the specified asset_id is another asset type' do
         let(:asset_id) { :other }
 
         it 'raise an error' do
@@ -117,10 +117,10 @@ describe Coinbase::Balance do
   end
 
   describe '#initialize' do
+    subject(:balance) { described_class.new(amount: amount, asset: asset) }
+
     let(:amount) { BigDecimal('123.0') }
     let(:asset) { Coinbase::Asset.from_model(eth_asset) }
-
-    subject(:balance) { described_class.new(amount: amount, asset: asset) }
 
     it 'sets the amount' do
       expect(balance.amount).to eq(amount)
@@ -136,10 +136,10 @@ describe Coinbase::Balance do
   end
 
   describe '#inspect' do
+    subject(:balance) { described_class.new(amount: amount, asset: asset) }
+
     let(:amount) { BigDecimal('123.0') }
     let(:asset) { Coinbase::Asset.from_model(eth_asset) }
-
-    subject(:balance) { described_class.new(amount: amount, asset: asset) }
 
     it 'includes balance details' do
       expect(balance.inspect).to include('123', 'eth')

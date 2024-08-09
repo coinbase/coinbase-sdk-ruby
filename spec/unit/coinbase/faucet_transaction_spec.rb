@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Coinbase::FaucetTransaction do
+  subject(:faucet_transaction) { described_class.new(model) }
+
   let(:transaction_hash) { '0x6c087c1676e8269dd81e0777244584d0cbfd39b6997b3477242a008fa9349e11' }
   let(:transaction_link) { "https://sepolia.basescan.org/tx/#{transaction_hash}" }
   let(:model) do
@@ -10,11 +12,9 @@ describe Coinbase::FaucetTransaction do
     )
   end
 
-  subject(:faucet_transaction) { described_class.new(model) }
-
   describe '#initialize' do
     it 'initializes a new FaucetTransaction' do
-      expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      expect(faucet_transaction).to be_a(described_class)
     end
   end
 

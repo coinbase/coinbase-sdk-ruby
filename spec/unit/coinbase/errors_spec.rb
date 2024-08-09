@@ -40,7 +40,7 @@ describe Coinbase::APIError do
       let(:err) { StandardError.new('message') }
 
       it 'raises an ArgumentError' do
-        expect { Coinbase::APIError.from_error(err) }.to raise_error(ArgumentError)
+        expect { described_class.from_error(err) }.to raise_error(ArgumentError)
       end
     end
 
@@ -49,7 +49,7 @@ describe Coinbase::APIError do
       let(:err) { Coinbase::Client::ApiError.new(code: http_code) }
 
       it 'returns an instance of Coinbase::APIError' do
-        expect(api_error).to be_a(Coinbase::APIError)
+        expect(api_error).to be_a(described_class)
       end
 
       it 'sets the http_code attribute' do
@@ -76,7 +76,7 @@ describe Coinbase::APIError do
       end
 
       it 'returns an instance of Coinbase::APIError' do
-        expect(api_error).to be_a(Coinbase::APIError)
+        expect(api_error).to be_a(described_class)
       end
 
       it 'sets the http_code attribute' do
@@ -108,7 +108,7 @@ describe Coinbase::APIError do
       end
 
       it 'returns an instance of Coinbase::APIError' do
-        expect(api_error).to be_a(Coinbase::APIError)
+        expect(api_error).to be_a(described_class)
       end
 
       it 'sets the http_code attribute' do
