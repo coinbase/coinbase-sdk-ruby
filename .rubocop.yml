@@ -20,9 +20,6 @@ Metrics/BlockLength:
 # Classes can be long.
 Metrics/ClassLength:
   Max: 300
-  Exclude:
-    - "lib/coinbase/wallet.rb" # TODO: Refactor wallet to remove delegatable functions.
-
 # Cyclomatic complexity is not a good measure of code quality.
 Metrics/CyclomaticComplexity:
   Max: 50
