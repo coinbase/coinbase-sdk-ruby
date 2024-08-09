@@ -63,6 +63,13 @@ module Coinbase
     end
   end
 
+  # An error raised when a resource is already signed.
+  class AlreadySignedError < StandardError
+    def initialize(msg = 'Resource already signed')
+      super(msg)
+    end
+  end
+
   # An error raised when a transaction is not signed.
   class TransactionNotSignedError < StandardError
     def initialize(msg = 'Transaction must be signed')

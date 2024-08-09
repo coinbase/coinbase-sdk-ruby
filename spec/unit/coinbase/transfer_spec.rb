@@ -15,7 +15,7 @@ describe Coinbase::Transfer do
     build(:transfer_model, network_id, key: from_key, to_key: to_key, whole_amount: whole_amount)
   end
   let(:wallet_id) { model.wallet_id }
-  let(:transfers_api) { double('Coinbase::Client::TransfersApi') }
+  let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
 
   subject(:transfer) { described_class.new(model) }
 
@@ -33,7 +33,8 @@ describe Coinbase::Transfer do
         amount: atomic_amount.to_i.to_s,
         asset_id: normalized_asset_id,
         destination: to_address_id,
-        network_id: Coinbase.normalize_network(network_id)
+        network_id: Coinbase.normalize_network(network_id),
+        gasless: false
       }
     end
 
@@ -89,6 +90,38 @@ describe Coinbase::Transfer do
 
       it 'constructs the transfer with the primary denomination from asset' do
         expect(transfer.asset_id).to be(:eth)
+      end
+    end
+
+    context 'when the transfer is gasless' do
+      let(:create_transfer_request) do
+        {
+          amount: atomic_amount.to_i.to_s,
+          asset_id: normalized_asset_id,
+          destination: to_address_id,
+          network_id: Coinbase.normalize_network(network_id),
+          gasless: true
+        }
+      end
+
+      subject(:transfer) do
+        described_class.create(
+          address_id: from_address_id,
+          asset_id: asset_id,
+          amount: whole_amount,
+          destination: destination,
+          network_id: network_id,
+          wallet_id: wallet_id,
+          gasless: true
+        )
+      end
+
+      it 'creates a new Transfer' do
+        expect(transfer).to be_a(Coinbase::Transfer)
+      end
+
+      it 'sets the transfer properties' do
+        expect(transfer.id).to eq(model.transfer_id)
       end
     end
   end
@@ -246,6 +279,54 @@ describe Coinbase::Transfer do
     context 'when the transaction is not signed' do
       it 'raises an error' do
         expect { broadcasted_transfer }.to raise_error(Coinbase::TransactionNotSignedError)
+      end
+    end
+
+    context 'when the transfer is gasless' do
+      let(:model) do
+        build(:transfer_model, network_id, :pending, :gasless)
+      end
+
+      let(:broadcasted_transfer_model) do
+        build(:transfer_model, network_id, :signed, :gasless)
+      end
+
+      context 'when the transaction is signed' do
+        let(:sponsored_send_model) { build(:sponsored_send_model, :signed) }
+        let(:broadcast_transfer_request) do
+          { signed_payload: transfer.sponsored_send.signature }
+        end
+
+        before do
+          transfer.sign(from_key)
+
+          allow(transfers_api)
+            .to receive(:broadcast_transfer)
+            .with(wallet_id, from_address_id, model.transfer_id, broadcast_transfer_request)
+            .and_return(broadcasted_transfer_model)
+
+          broadcasted_transfer
+        end
+
+        it 'returns the updated Transfer' do
+          expect(broadcasted_transfer).to be_a(Coinbase::Transfer)
+        end
+
+        it 'broadcasts the transaction' do
+          expect(transfers_api)
+            .to have_received(:broadcast_transfer)
+            .with(wallet_id, from_address_id, model.transfer_id, broadcast_transfer_request)
+        end
+
+        it 'updates the sponsored send status' do
+          expect(broadcasted_transfer.sponsored_send.status)
+            .to eq(Coinbase::Transaction::Status::SIGNED)
+        end
+
+        it 'sets the transaction signed payload' do
+          expect(broadcasted_transfer.sponsored_send.signature)
+            .to eq(sponsored_send_model.signature)
+        end
       end
     end
   end

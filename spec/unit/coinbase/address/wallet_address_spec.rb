@@ -116,14 +116,13 @@ describe Coinbase::WalletAddress do
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
         .and_return(build(:balance_model, whole_amount: balance))
-
-      allow(created_transfer.transaction).to receive(:sign).and_return(signed_transfer.signed_payload)
     end
 
     context 'when the transfer is successful' do
       before do
         allow(Coinbase::Transfer).to receive(:create).and_return(created_transfer)
 
+        allow(created_transfer).to receive(:sign)
         allow(created_transfer).to receive(:broadcast!)
 
         transfer
@@ -137,7 +136,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the key' do
-          expect(created_transfer.transaction).to have_received(:sign).with(key)
+          expect(created_transfer).to have_received(:sign).with(key)
         end
 
         it 'broadcasts the transfer' do
@@ -159,7 +158,8 @@ describe Coinbase::WalletAddress do
             asset_id: asset_id,
             destination: to_address_id,
             network_id: network_id,
-            wallet_id: wallet_id
+            wallet_id: wallet_id,
+            gasless: false
           )
         end
 
@@ -168,7 +168,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'does not sign the transaction with the key' do
-          expect(created_transfer.transaction).not_to have_received(:sign)
+          expect(created_transfer).not_to have_received(:sign)
         end
       end
     end
@@ -217,7 +217,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, normalized_from_asset_id)
-        .and_return(build(:balance_model, whole_amount: balance))
+        .and_return(build(:balance_model, :eth, whole_amount: balance))
 
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end

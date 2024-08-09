@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'constants'
-require 'bigdecimal'
 require 'eth'
 require 'json'
 
@@ -113,12 +111,18 @@ module Coinbase
       @raw = Eth::Tx::Eip1559.new(Eth::Tx.validate_eip1559_params(params))
     end
 
+    # Returns the signature of the Transaction.
+    # @return [String] The hex-encode signature
+    def signature
+      raw.hex
+    end
+
     # Signs the Transaction with the provided key and returns the hex signing payload.
     # @return [String] The hex-encoded signed payload
     def sign(key)
       raw.sign(key)
 
-      raw.hex
+      signature
     end
 
     # Returns whether the Transaction has been signed.

@@ -212,6 +212,19 @@ t = w1.transfer(0.00001, :eth, w2).wait!
 puts "Transfer successfully completed: #{t}"
 ```
 
+### Gasless USDC Transfers
+
+To transfer USDC without needing to hold ETH for gas, you can use the `transfer` method with the `gasless` option set to `true`.
+
+```ruby
+# Create a new wallet w3 to transfer funds to.
+w3 = u.create_wallet
+
+puts "Wallet successfully created: #{w3}"
+
+t = w1.transfer(0.00001, :usdc, w3, gasless: true).wait!
+```
+
 ## Listing Transfers
 
 ```

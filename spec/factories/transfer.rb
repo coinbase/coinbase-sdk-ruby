@@ -6,6 +6,8 @@ FactoryBot.define do
       key { build(:key) }
       to_key { build(:key, :destination) }
       whole_amount { 123 }
+      gasless { false }
+      status { 'pending' }
     end
 
     wallet_id { SecureRandom.uuid }
@@ -19,9 +21,13 @@ FactoryBot.define do
     eth
     pending
 
+    trait :gasless do
+      gasless { true }
+    end
+
     TX_TRAITS.each do |status|
       trait status do
-        transaction { build(:transaction_model, status, key: key) }
+        status { status }
       end
     end
 
@@ -45,6 +51,12 @@ FactoryBot.define do
         transfer.amount = Coinbase::Asset.from_model(transfer.asset)
                                          .to_atomic_amount(transients.whole_amount)
                                          .to_s
+      end
+
+      if transients.gasless
+        transfer.sponsored_send = build(:sponsored_send_model, transients.status)
+      else
+        transfer.transaction = build(:transaction_model, transients.status)
       end
     end
   end

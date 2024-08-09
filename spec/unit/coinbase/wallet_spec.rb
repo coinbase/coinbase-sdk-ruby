@@ -846,6 +846,7 @@ describe Coinbase::Wallet do
       Coinbase::Client::Wallet.new(id: other_wallet_id, network_id: 'base-sepolia', default_address: address_model2)
     end
     let(:other_wallet) { described_class.new(other_wallet_model, seed: '') }
+    let(:destination) { other_wallet }
 
     before do
       allow(addresses_api)
@@ -863,9 +864,7 @@ describe Coinbase::Wallet do
       described_class.new(model_with_default_address, seed: '')
     end
 
-    context 'when the destination is a Wallet' do
-      let(:destination) { other_wallet }
-
+    context 'when no options are specified' do
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
@@ -873,38 +872,21 @@ describe Coinbase::Wallet do
           .and_return(transfer)
       end
 
-      it 'creates a transfer from the default address to the wallet' do
+      it 'creates a transfer from the default address to the destination' do
         expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
       end
     end
 
-    context 'when the destination is an Address' do
-      let(:destination) { other_wallet.default_address }
-
+    context 'when options are specified' do
       before do
         allow(wallet.default_address)
           .to receive(:transfer)
-          .with(amount, asset_id, destination)
+          .with(amount, asset_id, destination, gasless: true)
           .and_return(transfer)
       end
 
-      it 'creates a transfer from the default address to the address' do
-        expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
-      end
-    end
-
-    context 'when the destination is a String' do
-      let(:destination) { '0x1234567890' }
-
-      before do
-        allow(wallet.default_address)
-          .to receive(:transfer)
-          .with(amount, asset_id, destination)
-          .and_return(transfer)
-      end
-
-      it 'creates a transfer from the default address to the address ID' do
-        expect(wallet.transfer(amount, asset_id, destination)).to eq(transfer)
+      it 'creates a transfer on the default address with the same options' do
+        expect(wallet.transfer(amount, asset_id, destination, gasless: true)).to eq(transfer)
       end
     end
   end

@@ -227,6 +227,24 @@ describe Coinbase::Transaction do
     end
   end
 
+  describe '#signature' do
+    context 'when the transaction has been signed' do
+      let(:signed_transaction_model) { build(:transaction_model, :broadcasted) }
+
+      before { transaction.sign(from_key) }
+
+      it 'returns the hex-encoded signature' do
+        expect(transaction.signature).to eq(signed_transaction_model.signed_payload)
+      end
+    end
+
+    context 'when the transaction has not been signed' do
+      it 'raises an error' do
+        expect { transaction.signature }.to raise_error(Eth::Signature::SignatureError)
+      end
+    end
+  end
+
   describe '#sign' do
     subject(:signature) { transaction.sign(from_key) }
 
