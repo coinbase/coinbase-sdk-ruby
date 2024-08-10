@@ -35,8 +35,13 @@ module Coinbase
     # Returns a string representation of the HistoricalBalance.
     # @return [String] a string representation of the HistoricalBalance
     def to_s
-      "Coinbase::Balance{amount: '#{amount.to_i}', block_height: '#{block_height.to_i}', " \
-       "block_hash: '#{block_hash}', asset: '#{asset}'}"
+      Coinbase.pretty_print_object(
+        self.class,
+        amount: amount.to_i,
+        block_height: block_height.to_i,
+        block_hash: block_hash,
+        asset: asset
+      )
     end
 
     # Same as to_s.

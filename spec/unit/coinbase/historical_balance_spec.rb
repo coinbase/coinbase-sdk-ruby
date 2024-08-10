@@ -76,7 +76,7 @@ describe Coinbase::HistoricalBalance do
     end
 
     it 'returns a string representation of the HistoricalBalance' do
-      expect(historical_balance.to_s).to eq("Coinbase::Balance{amount: '1', block_height: '456', "\
+      expect(historical_balance.to_s).to eq("Coinbase::HistoricalBalance{amount: '1', block_height: '456', "\
         "block_hash: 'abc123', asset: '#{eth_asset}'}")
     end
   end
