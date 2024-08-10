@@ -104,7 +104,15 @@ shared_examples 'an address that supports balance queries' do |_operation|
 
   describe '#historical_balances' do
     let(:eth_asset) { build(:asset_model) }
-    let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000', block_height: "123", block_hash: "hash", asset: eth_asset) }
+    let(:historical_balance) do
+      build(
+        :historical_balance_model,
+        amount: '1000000000000000000',
+        block_height: '123',
+        block_hash: 'hash',
+        asset: eth_asset
+      )
+    end
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [
@@ -116,7 +124,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
     before do
       allow(external_addresses_api)
         .to receive(:list_address_historical_balance)
-        .with(normalized_network_id, address_id, primary_denomination, {:limit=>100, :page=>nil})
+        .with(normalized_network_id, address_id, primary_denomination, { limit: 100, page: nil })
         .and_return(response)
     end
 
@@ -129,7 +137,6 @@ shared_examples 'an address that supports balance queries' do |_operation|
       end
     end
   end
-
 end
 
 shared_examples 'an address that supports requesting faucet funds' do |_operation|
