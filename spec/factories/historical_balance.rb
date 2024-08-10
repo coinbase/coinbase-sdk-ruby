@@ -9,6 +9,7 @@ FactoryBot.define do
 
     # Default traits
     base_sepolia
+    eth
 
     amount { nil }
 
