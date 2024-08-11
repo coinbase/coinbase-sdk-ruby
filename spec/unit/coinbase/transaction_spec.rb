@@ -154,7 +154,7 @@ describe Coinbase::Transaction do
       end
 
       it 'returns the correct chain ID' do
-        expect(transaction.raw.chain_id).to eq(Coinbase::BASE_SEPOLIA.chain_id)
+        expect(transaction.raw.chain_id).to eq(84_532)
       end
 
       it 'returns the correct sanitized sender address' do
@@ -204,7 +204,7 @@ describe Coinbase::Transaction do
       end
 
       it 'returns the correct chain ID' do
-        expect(transaction.raw.chain_id).to eq(Coinbase::BASE_SEPOLIA.chain_id)
+        expect(transaction.raw.chain_id).to eq(84_532)
       end
 
       it 'returns the correct sanitized sender address' do

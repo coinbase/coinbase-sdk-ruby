@@ -62,12 +62,12 @@ module Coinbase
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
       # create a seed for the Wallet, in seconds
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia', interval_seconds: 0.2, timeout_seconds: 20)
+      def create(network: Coinbase.default_network, interval_seconds: 0.2, timeout_seconds: 20)
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
-                network_id: Coinbase.normalize_network(network_id),
+                network_id: Coinbase.normalize_network(network),
                 use_server_signer: Coinbase.use_server_signer?
               }
             }
