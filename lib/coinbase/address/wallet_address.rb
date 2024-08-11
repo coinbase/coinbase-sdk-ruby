@@ -39,7 +39,9 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
-    # @param gasless [Boolean] Whether the transfer should be gasless. Defaults to false.
+    # @param gasless [Boolean] Whether gas fee for the transfer should be covered by Coinbase.
+    #   Defaults to false. Check the API documentation for network and asset support.
+    # Whether the transfer should be gasless. Defaults to false.
     # @return [Coinbase::Transfer] The Transfer object.
     def transfer(amount, asset_id, destination, gasless: false)
       ensure_can_sign!

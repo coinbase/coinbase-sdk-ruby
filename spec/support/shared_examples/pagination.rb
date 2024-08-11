@@ -6,14 +6,16 @@ shared_examples 'it is a paginated enumerator' do |operation|
   let(:data) { ids.map { |id| create_model.call(id) } }
   let(:expected_items) { data.map { |model| item_klass.new(model) } }
 
+  before { allow(api).to receive(:"list_#{operation}") }
+
   it 'returns an enumerator' do
     expect(enumerator).to be_a(Enumerator)
   end
 
   it 'does not fetch data until evaluated' do
-    expect(api).not_to receive(:"list_#{operation}")
-
     enumerator
+
+    expect(api).not_to have_received(:"list_#{operation}")
   end
 
   context 'when it is evaluated' do
@@ -43,28 +45,26 @@ shared_examples 'it is a paginated enumerator' do |operation|
     end
 
     it 'allows enumeration of the collection' do
-      enumerator.each do |item|
-        expect(item).to be_a(item_klass)
-      end
+      expect(enumerator).to all(be_a(item_klass))
     end
 
     it 'fetches the first page' do
+      enumerator.to_a
+
       expect(api)
-        .to receive(:"list_#{operation}")
+        .to have_received(:"list_#{operation}")
         .with(*fetch_params.call(nil))
         .once
-
-      enumerator.to_a
     end
   end
 
   context 'when there are multiple pages worth of data' do
     let(:num_items) { 150 }
     let(:next_page) { 'page_token_2' }
-    let(:resource_list1) do
+    let(:first_page) do
       resource_list_klass.new(data: data.take(100), has_more: true, next_page: next_page)
     end
-    let(:resource_list2) do
+    let(:last_page) do
       resource_list_klass.new(data: data.drop(100), has_more: false, next_page: nil)
     end
 
@@ -72,18 +72,18 @@ shared_examples 'it is a paginated enumerator' do |operation|
       allow(api)
         .to receive(:"list_#{operation}")
         .with(*fetch_params.call(nil))
-        .and_return(resource_list1)
+        .and_return(first_page)
         .once
     end
 
     context 'when only taking elements from the first page' do
       it 'only fetches the first page' do
+        enumerator.first
+
         expect(api)
-          .to receive(:"list_#{operation}")
+          .to have_received(:"list_#{operation}")
           .with(*fetch_params.call(nil))
           .once
-
-        enumerator.first
       end
 
       it 'returns the correct number of items' do
@@ -96,7 +96,7 @@ shared_examples 'it is a paginated enumerator' do |operation|
         allow(api)
           .to receive(:"list_#{operation}")
           .with(*fetch_params.call(next_page))
-          .and_return(resource_list2)
+          .and_return(last_page)
           .once
       end
 
@@ -105,23 +105,25 @@ shared_examples 'it is a paginated enumerator' do |operation|
       end
 
       it 'allows enumeration of the collection' do
-        enumerator.each do |item|
-          expect(item).to be_a(item_klass)
-        end
+        expect(enumerator).to all(be_a(item_klass))
       end
 
-      it 'fetches all pages' do
+      it 'fetches the first page' do
+        enumerator.to_a
+
         expect(api)
-          .to receive(:"list_#{operation}")
+          .to have_received(:"list_#{operation}")
           .with(*fetch_params.call(nil))
           .once
+      end
+
+      it 'fetches the last page' do
+        enumerator.to_a
 
         expect(api)
-          .to receive(:"list_#{operation}")
+          .to have_received(:"list_#{operation}")
           .with(*fetch_params.call(next_page))
           .once
-
-        enumerator.to_a
       end
     end
   end

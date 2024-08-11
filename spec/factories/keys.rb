@@ -18,7 +18,7 @@ FactoryBot.define do
     trait :with_seed do
       priv do
         MoneyTree::Master.new(seed_hex: seed)
-                         .node_for_path("m/44\'/60\'/0\'/0/#{index}")
+                         .node_for_path("m/44'/60'/0'/0/#{index}")
                          .private_key
                          .to_hex
       end

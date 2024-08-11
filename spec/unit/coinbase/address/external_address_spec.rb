@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 describe Coinbase::ExternalAddress do
+  subject(:address) { described_class.new(network_id, address_id) }
+
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
 
-  subject(:address) { described_class.new(network_id, address_id) }
-
   describe '#initialize' do
     it 'initializes a new Address' do
-      expect(address).to be_a(Coinbase::ExternalAddress)
+      expect(address).to be_a(described_class)
     end
   end
 

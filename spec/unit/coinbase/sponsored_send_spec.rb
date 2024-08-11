@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe Coinbase::SponsoredSend do
+  subject(:sponsored_send) { described_class.new(model) }
+
   let(:from_key) do
     Eth::Key.new(priv: '0233b43978845c03783510106941f42370e0f11022b0c3b717c0791d046f4536')
   end
@@ -9,7 +11,7 @@ describe Coinbase::SponsoredSend do
   let(:typed_data_hash) { '0x7523946e17c0b8090ee18c84d6f9a8d63bab4d579a6507f0998dde0791891823' }
   let(:typed_data_signature) do
     '0x2f72103b6c803dd64a681874afd13d8a946274c075b4d547f910836223564858222840424da7bb5ef49d9a1047' \
-    '54d6ddc9b2fc49447be05e89b77d6e41c9fbad1c'
+      '54d6ddc9b2fc49447be05e89b77d6e41c9fbad1c'
   end
   let(:transaction_hash) { '0xdea671372a8fff080950d09ad5994145a661c8e95a9216ef34772a19191b5690' }
   let(:transaction_link) { "https://sepolia.basescan.org/tx/#{transaction_hash}" }
@@ -38,11 +40,9 @@ describe Coinbase::SponsoredSend do
   let(:signed_send) { described_class.new(signed_model) }
   let(:completed_send) { described_class.new(completed_model) }
 
-  subject(:sponsored_send) { described_class.new(model) }
-
   describe '#initialize' do
     it 'initializes a new SponsoredSend' do
-      expect(sponsored_send).to be_a(Coinbase::SponsoredSend)
+      expect(sponsored_send).to be_a(described_class)
     end
 
     context 'when initialized with a model of a different type' do
@@ -90,7 +90,7 @@ describe Coinbase::SponsoredSend do
         expect(sponsored_send).not_to be_signed
       end
 
-      context 'and the sponsored send is then signed' do
+      context 'when the sponsored send is then signed' do
         before { sponsored_send.sign(from_key) }
 
         it 'returns true' do
@@ -114,6 +114,7 @@ describe Coinbase::SponsoredSend do
         expect(sponsored_send.transaction_hash).to be_nil
       end
     end
+
     context 'when the sponsored send has been completed on chain' do
       subject(:sponsored_send) { completed_send }
 

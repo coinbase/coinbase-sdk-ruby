@@ -2,10 +2,11 @@
 
 describe Coinbase::Asset do
   describe '.from_model' do
+    subject(:asset) { described_class.from_model(asset_model) }
+
     let(:asset_model) do
       Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
     end
-    subject(:asset) { described_class.from_model(asset_model) }
 
     it 'returns an Asset' do
       expect(asset).to be_a(described_class)
@@ -28,8 +29,9 @@ describe Coinbase::Asset do
     end
 
     context 'when the asset_id is gwei' do
-      let(:asset_id) { :gwei }
       subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      let(:asset_id) { :gwei }
 
       it 'sets the asset_id' do
         expect(asset.asset_id).to eq(asset_id)
@@ -41,8 +43,9 @@ describe Coinbase::Asset do
     end
 
     context 'when the asset_id is wei' do
-      let(:asset_id) { :wei }
       subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      let(:asset_id) { :wei }
 
       it 'sets the asset_id' do
         expect(asset.asset_id).to eq(asset_id)
@@ -54,8 +57,9 @@ describe Coinbase::Asset do
     end
 
     context 'when the asset_id is invalid' do
-      let(:asset_id) { :other }
       subject(:asset) { described_class.from_model(asset_model, asset_id: asset_id) }
+
+      let(:asset_id) { :other }
 
       it 'raises an error' do
         expect { asset }.to raise_error(ArgumentError)
@@ -104,14 +108,12 @@ describe Coinbase::Asset do
   end
 
   describe '.fetch' do
+    subject(:asset) { described_class.fetch(network_id, asset_id) }
+
     let(:assets_api) { instance_double(Coinbase::Client::AssetsApi) }
     let(:asset_id) { :eth }
     let(:network_id) { :base_sepolia }
-    let(:asset_model) do
-      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-    end
-
-    subject(:asset) { described_class.fetch(network_id, asset_id) }
+    let(:asset_model) { build(:asset_model) }
 
     before do
       allow(Coinbase::Client::AssetsApi).to receive(:new).and_return(assets_api)
@@ -119,9 +121,9 @@ describe Coinbase::Asset do
     end
 
     it 'is called with the asset_id' do
-      expect(assets_api).to receive(:get_asset).with('base-sepolia', asset_id.to_s)
-
       asset
+
+      expect(assets_api).to have_received(:get_asset).with('base-sepolia', asset_id.to_s)
     end
 
     it 'returns an Asset' do
@@ -133,7 +135,7 @@ describe Coinbase::Asset do
     end
 
     it 'sets the asset_id' do
-      expect(asset.asset_id).to eq(:eth)
+      expect(asset.asset_id).to eq(asset_id)
     end
 
     it 'sets the decimals' do
@@ -143,10 +145,10 @@ describe Coinbase::Asset do
     context 'when the asset_id is gwei' do
       let(:asset_id) { :gwei }
 
-      it 'fetches the `eth` primary denomination ' do
-        expect(assets_api).to receive(:get_asset).with('base-sepolia', 'eth')
-
+      it 'fetches the `eth` primary denomination' do
         asset
+
+        expect(assets_api).to have_received(:get_asset).with('base-sepolia', 'eth')
       end
 
       it 'sets the asset_id' do
@@ -161,10 +163,10 @@ describe Coinbase::Asset do
     context 'when the asset_id is wei' do
       let(:asset_id) { :wei }
 
-      it 'fetches the `eth` primary denomination ' do
-        expect(assets_api).to receive(:get_asset).with('base-sepolia', 'eth')
-
+      it 'fetches the `eth` primary denomination' do
         asset
+
+        expect(assets_api).to have_received(:get_asset).with('base-sepolia', 'eth')
       end
 
       it 'sets the asset_id' do
@@ -178,10 +180,6 @@ describe Coinbase::Asset do
   end
 
   describe '#initialize' do
-    let(:network_id) { :base_sepolia }
-    let(:asset_id) { :eth }
-    let(:decimals) { 7 }
-
     subject(:asset) do
       described_class.new(
         network_id: network_id,
@@ -189,6 +187,10 @@ describe Coinbase::Asset do
         decimals: decimals
       )
     end
+
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
+    let(:decimals) { 7 }
 
     it 'sets the network_id' do
       expect(asset.network_id).to eq(network_id)
@@ -207,9 +209,6 @@ describe Coinbase::Asset do
     end
 
     context 'when address_id is specified' do
-      let(:address_id) { '0x036CbD53842' }
-      let(:network_id) { :base_sepolia }
-
       subject(:asset) do
         described_class.new(
           network_id: network_id,
@@ -219,6 +218,9 @@ describe Coinbase::Asset do
         )
       end
 
+      let(:address_id) { '0x036CbD53842' }
+      let(:network_id) { :base_sepolia }
+
       it 'sets the address_id' do
         expect(asset.address_id).to eq(address_id)
       end
@@ -226,10 +228,6 @@ describe Coinbase::Asset do
   end
 
   describe '#from_atomic_amount' do
-    let(:amount) { BigDecimal('123000000000000000000') }
-    let(:network_id) { :base_sepolia }
-    let(:asset_id) { :eth }
-
     subject(:asset) do
       described_class.new(
         network_id: network_id,
@@ -237,6 +235,10 @@ describe Coinbase::Asset do
         decimals: 7
       )
     end
+
+    let(:amount) { BigDecimal('123000000000000000000') }
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
 
     it 'returns the whole amount' do
       expect(asset.from_atomic_amount(amount)).to eq(BigDecimal('12_300_000_000_000'))
@@ -244,10 +246,6 @@ describe Coinbase::Asset do
   end
 
   describe '#to_atomic_amount' do
-    let(:amount) { 123.0 }
-    let(:network_id) { :base_sepolia }
-    let(:asset_id) { :eth }
-
     subject(:asset) do
       described_class.new(
         network_id: network_id,
@@ -255,6 +253,10 @@ describe Coinbase::Asset do
         decimals: 7
       )
     end
+
+    let(:amount) { 123.0 }
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
 
     it 'returns the atomic amount' do
       expect(asset.to_atomic_amount(amount)).to eq(BigDecimal('1_230_000_000'))
@@ -290,13 +292,13 @@ describe Coinbase::Asset do
   end
 
   describe '#inspect' do
-    let(:network_id) { :base_sepolia }
-    let(:asset_id) { :eth }
-    let(:decimals) { 7 }
-
     subject(:asset) do
       described_class.new(network_id: network_id, asset_id: asset_id, decimals: decimals)
     end
+
+    let(:network_id) { :base_sepolia }
+    let(:asset_id) { :eth }
+    let(:decimals) { 7 }
 
     it 'includes asset details' do
       expect(asset.inspect).to include(
@@ -311,8 +313,6 @@ describe Coinbase::Asset do
     end
 
     context 'when the asset contains an address_id' do
-      let(:address_id) { '0x036CbD53842' }
-
       subject(:asset) do
         described_class.new(
           network_id: network_id,
@@ -321,6 +321,8 @@ describe Coinbase::Asset do
           decimals: decimals
         )
       end
+
+      let(:address_id) { '0x036CbD53842' }
 
       it 'includes the address id' do
         expect(asset.inspect).to include(address_id)
