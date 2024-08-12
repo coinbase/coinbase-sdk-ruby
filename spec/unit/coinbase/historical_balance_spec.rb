@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 describe Coinbase::HistoricalBalance do
-  let(:amount) { BigDecimal('1230000') }
+  let(:amount) { BigDecimal('1000000000000000000') }
   let(:eth_asset) { build(:asset_model) }
   let(:asset) { Coinbase::Asset.from_model(eth_asset) }
-  let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
+  let(:historical_balance_obj) { build(:historical_balance_model, amount: '1000000000000000000') }
 
   describe '.from_model' do
-    subject(:historical_balance) { described_class.from_model(historical_balance_model) }
+    subject(:historical_balance) { described_class.from_model(historical_balance_obj) }
 
     it 'returns a HistoricalBalance object' do
       expect(historical_balance).to be_a(described_class)
@@ -18,11 +18,11 @@ describe Coinbase::HistoricalBalance do
     end
 
     it 'sets the correct block_height' do
-      expect(historical_balance.block_height).to eq(BigDecimal('456'))
+      expect(historical_balance.block_height).to eq(BigDecimal('123'))
     end
 
     it 'sets the correct block_hash' do
-      expect(historical_balance.block_hash).to eq('abc123')
+      expect(historical_balance.block_hash).to eq('default_block_hash')
     end
 
     it 'sets the correct asset' do
