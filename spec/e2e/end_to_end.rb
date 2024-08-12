@@ -11,9 +11,9 @@ describe Coinbase do
     api_key_private_key = ENV['API_KEY_PRIVATE_KEY'].gsub('\n', "\n")
 
     # Use default API URL if not provided
-    api_url = ENV['API_URL']
+    api_url = ENV.fetch('API_URL', nil)
 
-    Coinbase.configure do |config|
+    described_class.configure do |config|
       config.api_key_name = api_key_name
       config.api_key_private_key = api_key_private_key
       config.api_url = api_url if api_url
@@ -21,7 +21,7 @@ describe Coinbase do
   end
 
   describe 'v0.0.9 SDK' do
-    it 'behaves as expected' do
+    it 'behaves as expected' do # rubocop:disable RSpec/NoExpectationExample
       user = fetch_user_test
       new_address = create_new_address_test(user)
       imported_wallet = import_wallet_test(user)
@@ -31,11 +31,10 @@ describe Coinbase do
     end
   end
 
-  describe 'use for serve signer' do
-    it 'behaves as expected' do
-      # Use Server-Signer only half the runs to save test time.
-      skip if rand >= 0.5
-      Coinbase.configuration.use_server_signer = true
+  # Use Server-Signer only half the runs to save test time.
+  describe 'use for serve signer', skip: rand >= 0.5 do
+    it 'behaves as expected' do # rubocop:disable RSpec/NoExpectationExample
+      described_class.configuration.use_server_signer = true
       signer = Coinbase::ServerSigner.default
       puts "Using ServerSigner with ID: #{signer.id}"
 
@@ -71,7 +70,7 @@ def create_new_address_test(user)
 end
 
 def import_wallet_test(user)
-  data_string = ENV['WALLET_DATA']
+  data_string = ENV.fetch('WALLET_DATA', nil)
   expect(data_string).not_to be_nil
   puts 'Importing wallet with balance...'
 
@@ -128,7 +127,7 @@ end
 
 def fetch_existing_wallet(user)
   # TODO: Change to using get method when available.
-  data_string = ENV['SERVER_SIGNER_WALLET_DATA']
+  data_string = ENV.fetch('SERVER_SIGNER_WALLET_DATA', nil)
   expect(data_string).not_to be_nil
   decoded_data = Base64.decode64(data_string)
   data_hash = JSON.parse(decoded_data)

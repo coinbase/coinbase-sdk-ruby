@@ -94,7 +94,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/coinbase/wallet.rb</dd>
+    <dd>lib/coinbase/wallet/data.rb</dd>
   </dl>
   
 </div>
@@ -339,13 +339,13 @@
       <pre class="lines">
 
 
-502
-503
-504
-505</pre>
+12
+13
+14
+15</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 502</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet/data.rb', line 12</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>wallet_id:</span><span class='comma'>,</span> <span class='label'>seed:</span><span class='rparen'>)</span>
   <span class='ivar'>@wallet_id</span> <span class='op'>=</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span>
@@ -389,12 +389,12 @@
       <pre class="lines">
 
 
-497
-498
-499</pre>
+7
+8
+9</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 497</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet/data.rb', line 7</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_seed'>seed</span>
   <span class='ivar'>@seed</span>
@@ -432,12 +432,12 @@
       <pre class="lines">
 
 
-497
-498
-499</pre>
+7
+8
+9</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 497</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet/data.rb', line 7</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span>
   <span class='ivar'>@wallet_id</span>
@@ -518,12 +518,12 @@
       <pre class="lines">
 
 
-516
-517
-518</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 516</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet/data.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_from_hash'>from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="" title="Coinbase::Wallet::Data (class)">Data</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="#initialize-instance_method" title="Coinbase::Wallet::Data#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='label'>wallet_id:</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wallet_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>seed</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
@@ -583,12 +583,12 @@
       <pre class="lines">
 
 
-509
-510
-511</pre>
+19
+20
+21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet.rb', line 509</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/wallet/data.rb', line 19</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='lbrace'>{</span> <span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='label'>seed:</span> <span class='id identifier rubyid_seed'>seed</span> <span class='rbrace'>}</span>

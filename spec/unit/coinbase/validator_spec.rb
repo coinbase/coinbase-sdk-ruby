@@ -36,10 +36,10 @@ describe Coinbase::Validator do
   end
 
   describe '.list' do
+    subject(:list) { described_class.list(network_id, asset_id, status: status) }
+
     let(:status) { 'status' }
     let(:page) { 1 }
-
-    subject(:list) { described_class.list(network_id, asset_id, status: status) }
 
     before do
       allow(stake_api).to receive(:list_validators).and_return(
@@ -61,7 +61,7 @@ describe Coinbase::Validator do
     end
 
     it 'returns a list of validators' do
-      expect(list).to all(be_a(Coinbase::Validator))
+      expect(list).to all(be_a(described_class))
     end
   end
 end
