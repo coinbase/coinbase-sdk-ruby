@@ -2,6 +2,7 @@
 
 require 'simplecov'
 require 'pry'
+require 'active_support/inflector' # Required for factory_bot
 require 'factory_bot'
 
 SimpleCov.start do
