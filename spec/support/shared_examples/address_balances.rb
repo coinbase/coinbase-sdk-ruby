@@ -104,15 +104,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
 
   describe '#historical_balances' do
     let(:eth_asset) { build(:asset_model) }
-    let(:historical_balance) do
-      instance_double(
-        'Coinbase::Client::HistoricalBalance',
-        amount: '1000000000000000000',
-        block_height: '456',
-        block_hash: 'abc123',
-        asset: eth_asset
-      )
-    end
+    let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [

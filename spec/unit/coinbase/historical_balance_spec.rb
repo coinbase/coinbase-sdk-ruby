@@ -4,15 +4,7 @@ describe Coinbase::HistoricalBalance do
   let(:amount) { BigDecimal('1230000') }
   let(:eth_asset) { build(:asset_model) }
   let(:asset) { Coinbase::Asset.from_model(eth_asset) }
-  let(:historical_balance_model) do
-    instance_double(
-      'Coinbase::Client::HistoricalBalance',
-      amount: '1230000',
-      block_height: '456',
-      block_hash: 'abc123',
-      asset: eth_asset
-    )
-  end
+  let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
 
   describe '.from_model' do
     subject(:historical_balance) { described_class.from_model(historical_balance_model) }
@@ -76,8 +68,8 @@ describe Coinbase::HistoricalBalance do
     end
 
     it 'returns a string representation of the HistoricalBalance' do
-      expect(historical_balance.to_s).to eq("Coinbase::HistoricalBalance{amount: '1', block_height: '456', "\
-        "block_hash: 'abc123', asset: '#{eth_asset}'}")
+      expect(historical_balance.to_s).to eq("Coinbase::HistoricalBalance{amount: '1', block_height: '456', " \
+                                            "block_hash: 'abc123', asset: '#{eth_asset}'}")
     end
   end
 
