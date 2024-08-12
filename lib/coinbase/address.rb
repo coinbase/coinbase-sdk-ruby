@@ -62,6 +62,18 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
+    # Enumerates the historical balances for a given asset belonging of address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
+    def historical_balances(asset_id)
+      Coinbase::Pagination.enumerate(
+        ->(page) { list_page(asset_id, page) }
+      ) do |historical_balance|
+        Coinbase::HistoricalBalance.from_model(historical_balance)
+      end
+    end
+
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
@@ -207,6 +219,15 @@ module Coinbase
 
     def stake_api
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    def list_page(asset_id, page)
+      addresses_api.list_address_historical_balance(
+        Coinbase.normalize_network(network_id),
+        id,
+        Coinbase::Asset.primary_denomination(asset_id).to_s,
+        { limit: DEFAULT_PAGE_LIMIT, page: page }
+      )
     end
   end
 end

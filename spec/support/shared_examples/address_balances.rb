@@ -101,6 +101,34 @@ shared_examples 'an address that supports balance queries' do |_operation|
       end
     end
   end
+
+  describe '#historical_balances' do
+    let(:eth_asset) { build(:asset_model) }
+    let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
+    let(:response) do
+      Coinbase::Client::AddressBalanceList.new(
+        data: [
+          historical_balance
+        ]
+      )
+    end
+
+    before do
+      allow(external_addresses_api)
+        .to receive(:list_address_historical_balance)
+        .with(normalized_network_id, address_id, primary_denomination, { limit: 100, page: nil })
+        .and_return(response)
+    end
+
+    context 'when the asset_id is :eth' do
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct ETH historical balances' do
+        expect(address.historical_balances(:eth).first.amount).to eq BigDecimal('1')
+      end
+    end
+  end
 end
 
 shared_examples 'an address that supports requesting faucet funds' do |_operation|
