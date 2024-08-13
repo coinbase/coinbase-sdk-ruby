@@ -14,28 +14,24 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # An onchain sponsored gasless send.
-  class SponsoredSend
-    # The onchain address of the recipient
-    attr_accessor :to_address_id
+  class Network
+    attr_accessor :id
 
-    # The raw typed data for the sponsored send
-    attr_accessor :raw_typed_data
+    # The human-readable name of the blockchain network
+    attr_accessor :display_name
 
-    # The typed data hash for the sponsored send. This is the typed data hash that needs to be signed by the sender.
-    attr_accessor :typed_data_hash
+    # The chain ID of the blockchain network
+    attr_accessor :chain_id
 
-    # The signed hash of the sponsored send typed data.
-    attr_accessor :signature
+    # The protocol family of the blockchain network
+    attr_accessor :protocol_family
 
-    # The hash of the onchain sponsored send transaction
-    attr_accessor :transaction_hash
+    # Whether the network is a testnet or not
+    attr_accessor :is_testnet
 
-    # The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
-    attr_accessor :transaction_link
+    attr_accessor :native_asset
 
-    # The status of the sponsored send
-    attr_accessor :status
+    attr_accessor :feature_set
 
     class EnumAttributeValidator
       attr_reader :datatype
@@ -62,13 +58,13 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'to_address_id' => :'to_address_id',
-        :'raw_typed_data' => :'raw_typed_data',
-        :'typed_data_hash' => :'typed_data_hash',
-        :'signature' => :'signature',
-        :'transaction_hash' => :'transaction_hash',
-        :'transaction_link' => :'transaction_link',
-        :'status' => :'status'
+        :'id' => :'id',
+        :'display_name' => :'display_name',
+        :'chain_id' => :'chain_id',
+        :'protocol_family' => :'protocol_family',
+        :'is_testnet' => :'is_testnet',
+        :'native_asset' => :'native_asset',
+        :'feature_set' => :'feature_set'
       }
     end
 
@@ -80,13 +76,13 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'to_address_id' => :'String',
-        :'raw_typed_data' => :'String',
-        :'typed_data_hash' => :'String',
-        :'signature' => :'String',
-        :'transaction_hash' => :'String',
-        :'transaction_link' => :'String',
-        :'status' => :'String'
+        :'id' => :'NetworkIdentifier',
+        :'display_name' => :'String',
+        :'chain_id' => :'Integer',
+        :'protocol_family' => :'String',
+        :'is_testnet' => :'Boolean',
+        :'native_asset' => :'Asset',
+        :'feature_set' => :'FeatureSet'
       }
     end
 
@@ -100,51 +96,57 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SponsoredSend` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Network` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SponsoredSend`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Network`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'to_address_id')
-        self.to_address_id = attributes[:'to_address_id']
+      if attributes.key?(:'id')
+        self.id = attributes[:'id']
       else
-        self.to_address_id = nil
+        self.id = nil
       end
 
-      if attributes.key?(:'raw_typed_data')
-        self.raw_typed_data = attributes[:'raw_typed_data']
+      if attributes.key?(:'display_name')
+        self.display_name = attributes[:'display_name']
       else
-        self.raw_typed_data = nil
+        self.display_name = nil
       end
 
-      if attributes.key?(:'typed_data_hash')
-        self.typed_data_hash = attributes[:'typed_data_hash']
+      if attributes.key?(:'chain_id')
+        self.chain_id = attributes[:'chain_id']
       else
-        self.typed_data_hash = nil
+        self.chain_id = nil
       end
 
-      if attributes.key?(:'signature')
-        self.signature = attributes[:'signature']
-      end
-
-      if attributes.key?(:'transaction_hash')
-        self.transaction_hash = attributes[:'transaction_hash']
-      end
-
-      if attributes.key?(:'transaction_link')
-        self.transaction_link = attributes[:'transaction_link']
-      end
-
-      if attributes.key?(:'status')
-        self.status = attributes[:'status']
+      if attributes.key?(:'protocol_family')
+        self.protocol_family = attributes[:'protocol_family']
       else
-        self.status = nil
+        self.protocol_family = nil
+      end
+
+      if attributes.key?(:'is_testnet')
+        self.is_testnet = attributes[:'is_testnet']
+      else
+        self.is_testnet = nil
+      end
+
+      if attributes.key?(:'native_asset')
+        self.native_asset = attributes[:'native_asset']
+      else
+        self.native_asset = nil
+      end
+
+      if attributes.key?(:'feature_set')
+        self.feature_set = attributes[:'feature_set']
+      else
+        self.feature_set = nil
       end
     end
 
@@ -153,20 +155,32 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @to_address_id.nil?
-        invalid_properties.push('invalid value for "to_address_id", to_address_id cannot be nil.')
+      if @id.nil?
+        invalid_properties.push('invalid value for "id", id cannot be nil.')
       end
 
-      if @raw_typed_data.nil?
-        invalid_properties.push('invalid value for "raw_typed_data", raw_typed_data cannot be nil.')
+      if @display_name.nil?
+        invalid_properties.push('invalid value for "display_name", display_name cannot be nil.')
       end
 
-      if @typed_data_hash.nil?
-        invalid_properties.push('invalid value for "typed_data_hash", typed_data_hash cannot be nil.')
+      if @chain_id.nil?
+        invalid_properties.push('invalid value for "chain_id", chain_id cannot be nil.')
       end
 
-      if @status.nil?
-        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      if @protocol_family.nil?
+        invalid_properties.push('invalid value for "protocol_family", protocol_family cannot be nil.')
+      end
+
+      if @is_testnet.nil?
+        invalid_properties.push('invalid value for "is_testnet", is_testnet cannot be nil.')
+      end
+
+      if @native_asset.nil?
+        invalid_properties.push('invalid value for "native_asset", native_asset cannot be nil.')
+      end
+
+      if @feature_set.nil?
+        invalid_properties.push('invalid value for "feature_set", feature_set cannot be nil.')
       end
 
       invalid_properties
@@ -176,23 +190,26 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @to_address_id.nil?
-      return false if @raw_typed_data.nil?
-      return false if @typed_data_hash.nil?
-      return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed", "unknown_default_open_api"])
-      return false unless status_validator.valid?(@status)
+      return false if @id.nil?
+      return false if @display_name.nil?
+      return false if @chain_id.nil?
+      return false if @protocol_family.nil?
+      protocol_family_validator = EnumAttributeValidator.new('String', ["evm", "unknown_default_open_api"])
+      return false unless protocol_family_validator.valid?(@protocol_family)
+      return false if @is_testnet.nil?
+      return false if @native_asset.nil?
+      return false if @feature_set.nil?
       true
     end
 
     # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] status Object to be assigned
-    def status=(status)
-      validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed", "unknown_default_open_api"])
-      unless validator.valid?(status)
-        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
+    # @param [Object] protocol_family Object to be assigned
+    def protocol_family=(protocol_family)
+      validator = EnumAttributeValidator.new('String', ["evm", "unknown_default_open_api"])
+      unless validator.valid?(protocol_family)
+        fail ArgumentError, "invalid value for \"protocol_family\", must be one of #{validator.allowable_values}."
       end
-      @status = status
+      @protocol_family = protocol_family
     end
 
     # Checks equality by comparing each attribute.
@@ -200,13 +217,13 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          to_address_id == o.to_address_id &&
-          raw_typed_data == o.raw_typed_data &&
-          typed_data_hash == o.typed_data_hash &&
-          signature == o.signature &&
-          transaction_hash == o.transaction_hash &&
-          transaction_link == o.transaction_link &&
-          status == o.status
+          id == o.id &&
+          display_name == o.display_name &&
+          chain_id == o.chain_id &&
+          protocol_family == o.protocol_family &&
+          is_testnet == o.is_testnet &&
+          native_asset == o.native_asset &&
+          feature_set == o.feature_set
     end
 
     # @see the `==` method
@@ -218,7 +235,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [to_address_id, raw_typed_data, typed_data_hash, signature, transaction_hash, transaction_link, status].hash
+      [id, display_name, chain_id, protocol_family, is_testnet, native_asset, feature_set].hash
     end
 
     # Builds the object from hash

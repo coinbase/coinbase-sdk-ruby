@@ -14,61 +14,49 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # An onchain sponsored gasless send.
-  class SponsoredSend
-    # The onchain address of the recipient
-    attr_accessor :to_address_id
+  # An Ethereum validator.
+  class EthereumValidator
+    # The index of the validator in the validator set.
+    attr_accessor :index
 
-    # The raw typed data for the sponsored send
-    attr_accessor :raw_typed_data
-
-    # The typed data hash for the sponsored send. This is the typed data hash that needs to be signed by the sender.
-    attr_accessor :typed_data_hash
-
-    # The signed hash of the sponsored send typed data.
-    attr_accessor :signature
-
-    # The hash of the onchain sponsored send transaction
-    attr_accessor :transaction_hash
-
-    # The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
-    attr_accessor :transaction_link
-
-    # The status of the sponsored send
+    # The status of the validator.
     attr_accessor :status
 
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
+    # The public key of the validator.
+    attr_accessor :public_key
 
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
+    # The address to which the validator's rewards are sent.
+    attr_accessor :withdrawl_address
 
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # Whether the validator has been slashed.
+    attr_accessor :slashed
+
+    # The epoch at which the validator was activated.
+    attr_accessor :activation_epoch
+
+    # The epoch at which the validator exited.
+    attr_accessor :exit_epoch
+
+    # The epoch at which the validator can withdraw.
+    attr_accessor :withdrawable_epoch
+
+    attr_accessor :balance
+
+    attr_accessor :effective_balance
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'to_address_id' => :'to_address_id',
-        :'raw_typed_data' => :'raw_typed_data',
-        :'typed_data_hash' => :'typed_data_hash',
-        :'signature' => :'signature',
-        :'transaction_hash' => :'transaction_hash',
-        :'transaction_link' => :'transaction_link',
-        :'status' => :'status'
+        :'index' => :'index',
+        :'status' => :'status',
+        :'public_key' => :'public_key',
+        :'withdrawl_address' => :'withdrawl_address',
+        :'slashed' => :'slashed',
+        :'activation_epoch' => :'activationEpoch',
+        :'exit_epoch' => :'exitEpoch',
+        :'withdrawable_epoch' => :'withdrawableEpoch',
+        :'balance' => :'balance',
+        :'effective_balance' => :'effective_balance'
       }
     end
 
@@ -80,13 +68,16 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'to_address_id' => :'String',
-        :'raw_typed_data' => :'String',
-        :'typed_data_hash' => :'String',
-        :'signature' => :'String',
-        :'transaction_hash' => :'String',
-        :'transaction_link' => :'String',
-        :'status' => :'String'
+        :'index' => :'String',
+        :'status' => :'String',
+        :'public_key' => :'String',
+        :'withdrawl_address' => :'String',
+        :'slashed' => :'Boolean',
+        :'activation_epoch' => :'String',
+        :'exit_epoch' => :'String',
+        :'withdrawable_epoch' => :'String',
+        :'balance' => :'Balance',
+        :'effective_balance' => :'Balance'
       }
     end
 
@@ -100,51 +91,75 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SponsoredSend` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumValidator` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SponsoredSend`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumValidator`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'to_address_id')
-        self.to_address_id = attributes[:'to_address_id']
+      if attributes.key?(:'index')
+        self.index = attributes[:'index']
       else
-        self.to_address_id = nil
-      end
-
-      if attributes.key?(:'raw_typed_data')
-        self.raw_typed_data = attributes[:'raw_typed_data']
-      else
-        self.raw_typed_data = nil
-      end
-
-      if attributes.key?(:'typed_data_hash')
-        self.typed_data_hash = attributes[:'typed_data_hash']
-      else
-        self.typed_data_hash = nil
-      end
-
-      if attributes.key?(:'signature')
-        self.signature = attributes[:'signature']
-      end
-
-      if attributes.key?(:'transaction_hash')
-        self.transaction_hash = attributes[:'transaction_hash']
-      end
-
-      if attributes.key?(:'transaction_link')
-        self.transaction_link = attributes[:'transaction_link']
+        self.index = nil
       end
 
       if attributes.key?(:'status')
         self.status = attributes[:'status']
       else
         self.status = nil
+      end
+
+      if attributes.key?(:'public_key')
+        self.public_key = attributes[:'public_key']
+      else
+        self.public_key = nil
+      end
+
+      if attributes.key?(:'withdrawl_address')
+        self.withdrawl_address = attributes[:'withdrawl_address']
+      else
+        self.withdrawl_address = nil
+      end
+
+      if attributes.key?(:'slashed')
+        self.slashed = attributes[:'slashed']
+      else
+        self.slashed = nil
+      end
+
+      if attributes.key?(:'activation_epoch')
+        self.activation_epoch = attributes[:'activation_epoch']
+      else
+        self.activation_epoch = nil
+      end
+
+      if attributes.key?(:'exit_epoch')
+        self.exit_epoch = attributes[:'exit_epoch']
+      else
+        self.exit_epoch = nil
+      end
+
+      if attributes.key?(:'withdrawable_epoch')
+        self.withdrawable_epoch = attributes[:'withdrawable_epoch']
+      else
+        self.withdrawable_epoch = nil
+      end
+
+      if attributes.key?(:'balance')
+        self.balance = attributes[:'balance']
+      else
+        self.balance = nil
+      end
+
+      if attributes.key?(:'effective_balance')
+        self.effective_balance = attributes[:'effective_balance']
+      else
+        self.effective_balance = nil
       end
     end
 
@@ -153,20 +168,44 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @to_address_id.nil?
-        invalid_properties.push('invalid value for "to_address_id", to_address_id cannot be nil.')
-      end
-
-      if @raw_typed_data.nil?
-        invalid_properties.push('invalid value for "raw_typed_data", raw_typed_data cannot be nil.')
-      end
-
-      if @typed_data_hash.nil?
-        invalid_properties.push('invalid value for "typed_data_hash", typed_data_hash cannot be nil.')
+      if @index.nil?
+        invalid_properties.push('invalid value for "index", index cannot be nil.')
       end
 
       if @status.nil?
         invalid_properties.push('invalid value for "status", status cannot be nil.')
+      end
+
+      if @public_key.nil?
+        invalid_properties.push('invalid value for "public_key", public_key cannot be nil.')
+      end
+
+      if @withdrawl_address.nil?
+        invalid_properties.push('invalid value for "withdrawl_address", withdrawl_address cannot be nil.')
+      end
+
+      if @slashed.nil?
+        invalid_properties.push('invalid value for "slashed", slashed cannot be nil.')
+      end
+
+      if @activation_epoch.nil?
+        invalid_properties.push('invalid value for "activation_epoch", activation_epoch cannot be nil.')
+      end
+
+      if @exit_epoch.nil?
+        invalid_properties.push('invalid value for "exit_epoch", exit_epoch cannot be nil.')
+      end
+
+      if @withdrawable_epoch.nil?
+        invalid_properties.push('invalid value for "withdrawable_epoch", withdrawable_epoch cannot be nil.')
+      end
+
+      if @balance.nil?
+        invalid_properties.push('invalid value for "balance", balance cannot be nil.')
+      end
+
+      if @effective_balance.nil?
+        invalid_properties.push('invalid value for "effective_balance", effective_balance cannot be nil.')
       end
 
       invalid_properties
@@ -176,23 +215,17 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @to_address_id.nil?
-      return false if @raw_typed_data.nil?
-      return false if @typed_data_hash.nil?
+      return false if @index.nil?
       return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed", "unknown_default_open_api"])
-      return false unless status_validator.valid?(@status)
+      return false if @public_key.nil?
+      return false if @withdrawl_address.nil?
+      return false if @slashed.nil?
+      return false if @activation_epoch.nil?
+      return false if @exit_epoch.nil?
+      return false if @withdrawable_epoch.nil?
+      return false if @balance.nil?
+      return false if @effective_balance.nil?
       true
-    end
-
-    # Custom attribute writer method checking allowed values (enum).
-    # @param [Object] status Object to be assigned
-    def status=(status)
-      validator = EnumAttributeValidator.new('String', ["pending", "signed", "submitted", "complete", "failed", "unknown_default_open_api"])
-      unless validator.valid?(status)
-        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
-      end
-      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -200,13 +233,16 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          to_address_id == o.to_address_id &&
-          raw_typed_data == o.raw_typed_data &&
-          typed_data_hash == o.typed_data_hash &&
-          signature == o.signature &&
-          transaction_hash == o.transaction_hash &&
-          transaction_link == o.transaction_link &&
-          status == o.status
+          index == o.index &&
+          status == o.status &&
+          public_key == o.public_key &&
+          withdrawl_address == o.withdrawl_address &&
+          slashed == o.slashed &&
+          activation_epoch == o.activation_epoch &&
+          exit_epoch == o.exit_epoch &&
+          withdrawable_epoch == o.withdrawable_epoch &&
+          balance == o.balance &&
+          effective_balance == o.effective_balance
     end
 
     # @see the `==` method
@@ -218,7 +254,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [to_address_id, raw_typed_data, typed_data_hash, signature, transaction_hash, transaction_link, status].hash
+      [index, status, public_key, withdrawl_address, slashed, activation_epoch, exit_epoch, withdrawable_epoch, balance, effective_balance].hash
     end
 
     # Builds the object from hash

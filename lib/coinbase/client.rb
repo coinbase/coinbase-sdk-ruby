@@ -46,11 +46,8 @@ Coinbase::Client.autoload :FetchStakingRewards200Response, 'coinbase/client/mode
 Coinbase::Client.autoload :FetchStakingRewardsRequest, 'coinbase/client/models/fetch_staking_rewards_request'
 Coinbase::Client.autoload :GetStakingContextRequest, 'coinbase/client/models/get_staking_context_request'
 Coinbase::Client.autoload :HistoricalBalance, 'coinbase/client/models/historical_balance'
-<<<<<<< HEAD
-=======
 Coinbase::Client.autoload :Network, 'coinbase/client/models/network'
 Coinbase::Client.autoload :NetworkIdentifier, 'coinbase/client/models/network_identifier'
->>>>>>> 3d6beb0 (adds usd_conversion_price/time & usd_value)
 Coinbase::Client.autoload :SeedCreationEvent, 'coinbase/client/models/seed_creation_event'
 Coinbase::Client.autoload :SeedCreationEventResult, 'coinbase/client/models/seed_creation_event_result'
 Coinbase::Client.autoload :ServerSigner, 'coinbase/client/models/server_signer'
@@ -62,10 +59,7 @@ Coinbase::Client.autoload :SignatureCreationEvent, 'coinbase/client/models/signa
 Coinbase::Client.autoload :SignatureCreationEventResult, 'coinbase/client/models/signature_creation_event_result'
 Coinbase::Client.autoload :SignedVoluntaryExitMessageMetadata, 'coinbase/client/models/signed_voluntary_exit_message_metadata'
 Coinbase::Client.autoload :SponsoredSend, 'coinbase/client/models/sponsored_send'
-<<<<<<< HEAD
-=======
 Coinbase::Client.autoload :StakingBalance, 'coinbase/client/models/staking_balance'
->>>>>>> 3d6beb0 (adds usd_conversion_price/time & usd_value)
 Coinbase::Client.autoload :StakingContext, 'coinbase/client/models/staking_context'
 Coinbase::Client.autoload :StakingContextContext, 'coinbase/client/models/staking_context_context'
 Coinbase::Client.autoload :StakingOperation, 'coinbase/client/models/staking_operation'
