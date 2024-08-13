@@ -13,7 +13,8 @@ describe Coinbase::StakingBalance do
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:fetch_historical_staking_balances).and_return(
-      instance_double(Coinbase::Client::FetchHistoricalStakingBalances200Response, data: [staking_balance_model], has_more: true,
+      instance_double(Coinbase::Client::FetchHistoricalStakingBalances200Response, data: [staking_balance_model],
+                                                                                   has_more: true,
                                                                                    next_page: 'next_page'),
       instance_double(Coinbase::Client::FetchHistoricalStakingBalances200Response, data: [], has_more: false)
     )
@@ -76,7 +77,9 @@ describe Coinbase::StakingBalance do
     end
 
     it 'has the proper asset' do
-      expect(bonded_stake.asset.asset_id).to eq(Coinbase::Balance.from_model(staking_balance_model.bonded_stake).asset.asset_id)
+      expect(bonded_stake.asset.asset_id).to eq(
+        Coinbase::Balance.from_model(staking_balance_model.bonded_stake).asset.asset_id
+      )
     end
   end
 
@@ -89,13 +92,16 @@ describe Coinbase::StakingBalance do
     end
 
     it 'has the proper asset' do
-      expect(unbonded_balance.asset.asset_id).to eq(Coinbase::Balance.from_model(staking_balance_model.unbonded_balance).asset.asset_id)
+      expect(unbonded_balance.asset.asset_id).to eq(
+        Coinbase::Balance.from_model(staking_balance_model.unbonded_balance).asset.asset_id
+      )
     end
   end
 
   describe '#to_s' do
     it 'returns a string representation of the StakingBalance' do
-      expected_string = "Coinbase::StakingBalance{date: '#{staking_balance_model.date}' address: '#{staking_balance_model.address}'}"
+      expected_string =
+        "Coinbase::StakingBalance{date: '#{staking_balance_model.date}' address: '#{staking_balance_model.address}'}"
       expect(staking_balance.to_s).to eq(expected_string)
     end
   end
