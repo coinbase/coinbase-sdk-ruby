@@ -10,8 +10,13 @@ describe Coinbase::StakingReward do
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:format) { :usd }
   let(:has_more) { false }
+  let(:usd_value) do
+    instance_double(Coinbase::Client::StakingRewardUSDValue, amount: 125, conversion_price: 150,
+                                                             conversion_time: '2024-07-17')
+  end
   let(:staking_reward_model) do
-    instance_double(Coinbase::Client::StakingReward, amount: 100, date: '2024-07-17', address_id: 'some-address')
+    instance_double(Coinbase::Client::StakingReward, amount: 100, date: '2024-07-17', address_id: 'some-address',
+                                                     usd_value: usd_value)
   end
 
   before do
@@ -120,6 +125,30 @@ describe Coinbase::StakingReward do
 
     it 'returns the address_id' do
       expect(staking_reward.address_id).to eq(staking_reward_model.address_id)
+    end
+  end
+
+  describe '#usd_value' do
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
+    it 'returns the usd value' do
+      expect(staking_reward.usd_value).to eq(BigDecimal('1.25'))
+    end
+  end
+
+  describe '#usd_conversion_price' do
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
+    it 'returns the usd conversion price' do
+      expect(staking_reward.usd_conversion_price).to eq(BigDecimal('1.50'))
+    end
+  end
+
+  describe '#usd_conversion_time' do
+    let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
+    it 'returns the usd conversion time' do
+      expect(staking_reward.usd_conversion_time).to eq('2024-07-17')
     end
   end
 

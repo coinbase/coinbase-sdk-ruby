@@ -206,6 +206,21 @@ module Coinbase
       )
     end
 
+    # Fetches the historical staking balances for the address.
+    # @param asset_id [Symbol] The asset to retrieve staking rewards for
+    # @param start_time [Time] The start time for the rewards. Defaults to 1 week ago.
+    # @param end_time [Time] The end time for the rewards. Defaults to the current time.
+    # @return [Enumerable<Coinbase::StakingBalance>] The staking rewards
+    def historical_staking_balances(asset_id, start_time: DateTime.now.prev_week(1), end_time: DateTime.now)
+      StakingBalance.list(
+        network_id,
+        asset_id,
+        id,
+        start_time: start_time,
+        end_time: end_time
+      )
+    end
+
     private
 
     def validate_can_perform_staking_action!(amount, asset_id, balance_type, mode, options)
