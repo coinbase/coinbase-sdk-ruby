@@ -130,6 +130,7 @@ describe Coinbase::StakingReward do
 
   describe '#usd_value' do
     let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
     it 'returns the usd value' do
       expect(staking_reward.usd_value).to eq(BigDecimal('1.25'))
     end
@@ -137,6 +138,7 @@ describe Coinbase::StakingReward do
 
   describe '#usd_conversion_price' do
     let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
     it 'returns the usd conversion price' do
       expect(staking_reward.usd_conversion_price).to eq(BigDecimal('1.50'))
     end
@@ -144,6 +146,7 @@ describe Coinbase::StakingReward do
 
   describe '#usd_conversion_time' do
     let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
+
     it 'returns the usd conversion time' do
       expect(staking_reward.usd_conversion_time).to eq('2024-07-17')
     end

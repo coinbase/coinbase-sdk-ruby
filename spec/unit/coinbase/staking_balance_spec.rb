@@ -30,7 +30,7 @@ describe Coinbase::StakingBalance do
       )
     end
 
-    it 'fetches the staking balances' do
+    it 'fetches the first page of staking balances' do
       list.to_a
 
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
@@ -41,6 +41,11 @@ describe Coinbase::StakingBalance do
         end_time.iso8601,
         { next_page: nil }
       )
+    end
+
+    it 'fetches the last page of staking balances' do
+      list.to_a
+
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
         network_id,
         asset_id,
@@ -70,6 +75,7 @@ describe Coinbase::StakingBalance do
 
   describe '#bonded_stake' do
     subject(:bonded_stake) { staking_balance.bonded_stake }
+
     it { is_expected.to be_a(Coinbase::Balance) }
 
     it 'has the proper amount' do
@@ -85,6 +91,7 @@ describe Coinbase::StakingBalance do
 
   describe '#unbonded_balance' do
     subject(:unbonded_balance) { staking_balance.unbonded_balance }
+
     it { is_expected.to be_a(Coinbase::Balance) }
 
     it 'has the proper amount' do
