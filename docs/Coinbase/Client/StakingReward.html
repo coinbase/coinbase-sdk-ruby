@@ -262,6 +262,33 @@
 </li>
 
     
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#usd_value-instance_method" title="#usd_value (instance method)">#<strong>usd_value</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute usd_value.</p>
+</div></span>
+  
+</li>
+
+    
   </ul>
 
 
@@ -722,10 +749,6 @@
       <pre class="lines">
 
 
-90
-91
-92
-93
 94
 95
 96
@@ -764,10 +787,20 @@
 129
 130
 131
-132</pre>
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -810,6 +843,12 @@
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;format&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>else</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>usd</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;usd_value&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_usd_value'>usd_value</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;usd_value&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_usd_value'>usd_value</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1037,6 +1076,49 @@
 </table>
 </div>
     
+      
+      <span id="usd_value=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="usd_value-instance_method">
+  
+    #<strong>usd_value</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute usd_value.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+33
+34
+35</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 33</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_usd_value'>usd_value</span>
+  <span class='ivar'>@usd_value</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
   </div>
 
 
@@ -1124,22 +1206,6 @@
       <pre class="lines">
 
 
-237
-238
-239
-240
-241
-242
-243
-244
-245
-246
-247
-248
-249
-250
-251
-252
 253
 254
 255
@@ -1161,10 +1227,26 @@
 271
 272
 273
-274</pre>
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 237</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 253</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1235,12 +1317,12 @@
       <pre class="lines">
 
 
-67
-68
-69</pre>
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 70</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -1276,18 +1358,19 @@
       <pre class="lines">
 
 
-56
-57
 58
 59
 60
 61
 62
 63
-64</pre>
+64
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 56</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 58</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
@@ -1295,7 +1378,8 @@
     <span class='symbol'>:&#39;date&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;date&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;amount&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;state&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;state&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;format&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;format&#39;</span>
+    <span class='symbol'>:&#39;format&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;format&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;usd_value&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;usd_value&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1367,28 +1451,28 @@
       <pre class="lines">
 
 
-213
-214
-215
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228
 229
 230
-231</pre>
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 213</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 229</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1440,13 +1524,13 @@
       <pre class="lines">
 
 
-83
-84
-85
-86</pre>
+87
+88
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -1483,18 +1567,19 @@
       <pre class="lines">
 
 
-72
-73
-74
 75
 76
 77
 78
 79
-80</pre>
+80
+81
+82
+83
+84</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
@@ -1502,7 +1587,8 @@
     <span class='symbol'>:&#39;date&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Date&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;amount&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;state&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;format&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;StakingRewardFormat&#39;</span>
+    <span class='symbol'>:&#39;format&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;StakingRewardFormat&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;usd_value&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;StakingRewardUSDValue&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1562,18 +1648,19 @@
       <pre class="lines">
 
 
-188
-189
-190
-191
-192
-193
-194
-195
-196</pre>
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 188</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 203</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
@@ -1582,7 +1669,8 @@
       <span class='id identifier rubyid_date'>date</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_date'>date</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_amount'>amount</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_amount'>amount</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_state'>state</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_state'>state</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_format'>format</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span>
+      <span class='id identifier rubyid_format'>format</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_usd_value'>usd_value</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_usd_value'>usd_value</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1653,22 +1741,22 @@
       <pre class="lines">
 
 
-308
-309
-310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320</pre>
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 308</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 324</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1752,12 +1840,12 @@
       <pre class="lines">
 
 
-200
-201
-202</pre>
+216
+217
+218</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 200</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 216</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1811,15 +1899,15 @@
       <pre class="lines">
 
 
-206
-207
-208</pre>
+222
+223
+224</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 206</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 222</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_date'>date</span><span class='comma'>,</span> <span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_date'>date</span><span class='comma'>,</span> <span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_format'>format</span><span class='comma'>,</span> <span class='id identifier rubyid_usd_value'>usd_value</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1870,16 +1958,6 @@
       <pre class="lines">
 
 
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
 146
 147
 148
@@ -1894,10 +1972,24 @@
 157
 158
 159
-160</pre>
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 136</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 146</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
@@ -1920,6 +2012,10 @@
 
   <span class='kw'>if</span> <span class='ivar'>@format</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;format&quot;, format cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@usd_value</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;usd_value&quot;, usd_value cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span>
@@ -1973,12 +2069,12 @@
       <pre class="lines">
 
 
-284
-285
-286</pre>
+300
+301
+302</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 284</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 300</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -2032,22 +2128,22 @@
       <pre class="lines">
 
 
-290
-291
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302</pre>
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 290</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 306</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2111,12 +2207,12 @@
       <pre class="lines">
 
 
-278
-279
-280</pre>
+294
+295
+296</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 278</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 294</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -2170,20 +2266,21 @@
       <pre class="lines">
 
 
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174</pre>
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 164</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward.rb', line 178</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
@@ -2191,9 +2288,10 @@
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@date</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@amount</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@state</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='id identifier rubyid_state_validator'>state_validator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="StakingReward/EnumAttributeValidator.html" title="Coinbase::Client::StakingReward::EnumAttributeValidator (class)">EnumAttributeValidator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="StakingReward/EnumAttributeValidator.html#initialize-instance_method" title="Coinbase::Client::StakingReward::EnumAttributeValidator#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pending</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>distributed</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_state_validator'>state_validator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="StakingReward/EnumAttributeValidator.html" title="Coinbase::Client::StakingReward::EnumAttributeValidator (class)">EnumAttributeValidator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="StakingReward/EnumAttributeValidator.html#initialize-instance_method" title="Coinbase::Client::StakingReward::EnumAttributeValidator#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pending</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>distributed</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>unknown_default_open_api</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_state_validator'>state_validator</span><span class='period'>.</span><span class='id identifier rubyid_valid?'>valid?</span><span class='lparen'>(</span><span class='ivar'>@state</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@format</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@usd_value</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>true</span>
 <span class='kw'>end</span></pre>
     </td>

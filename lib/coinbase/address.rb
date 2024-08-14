@@ -62,6 +62,18 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
+    # Enumerates the historical balances for a given asset belonging of address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
+    def historical_balances(asset_id)
+      Coinbase::Pagination.enumerate(
+        ->(page) { list_page(asset_id, page) }
+      ) do |historical_balance|
+        Coinbase::HistoricalBalance.from_model(historical_balance)
+      end
+    end
+
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
@@ -194,6 +206,21 @@ module Coinbase
       )
     end
 
+    # Fetches the historical staking balances for the address.
+    # @param asset_id [Symbol] The asset to retrieve staking rewards for
+    # @param start_time [Time] The start time for the rewards. Defaults to 1 week ago.
+    # @param end_time [Time] The end time for the rewards. Defaults to the current time.
+    # @return [Enumerable<Coinbase::StakingBalance>] The staking rewards
+    def historical_staking_balances(asset_id, start_time: DateTime.now.prev_week(1), end_time: DateTime.now)
+      StakingBalance.list(
+        network_id,
+        asset_id,
+        id,
+        start_time: start_time,
+        end_time: end_time
+      )
+    end
+
     private
 
     def validate_can_perform_staking_action!(amount, asset_id, balance_type, mode, options)
@@ -207,6 +234,15 @@ module Coinbase
 
     def stake_api
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    def list_page(asset_id, page)
+      addresses_api.list_address_historical_balance(
+        Coinbase.normalize_network(network_id),
+        id,
+        Coinbase::Asset.primary_denomination(asset_id).to_s,
+        { limit: DEFAULT_PAGE_LIMIT, page: page }
+      )
     end
   end
 end

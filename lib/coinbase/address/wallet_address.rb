@@ -39,8 +39,11 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to send. For Ether, :eth, :gwei, and :wei are supported.
     # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
     #  default address. If a String, interprets it as the address ID.
+    # @param gasless [Boolean] Whether gas fee for the transfer should be covered by Coinbase.
+    #   Defaults to false. Check the API documentation for network and asset support.
+    # Whether the transfer should be gasless. Defaults to false.
     # @return [Coinbase::Transfer] The Transfer object.
-    def transfer(amount, asset_id, destination)
+    def transfer(amount, asset_id, destination, gasless: false)
       ensure_can_sign!
       ensure_sufficient_balance!(amount, asset_id)
 
@@ -50,14 +53,14 @@ module Coinbase
         asset_id: asset_id,
         destination: destination,
         network_id: network_id,
-        wallet_id: wallet_id
+        wallet_id: wallet_id,
+        gasless: gasless
       )
 
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
       return transfer if Coinbase.use_server_signer?
 
-      transfer.transaction.sign(@key)
-
+      transfer.sign(@key)
       transfer.broadcast!
       transfer
     end

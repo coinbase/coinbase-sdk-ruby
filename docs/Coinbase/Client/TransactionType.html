@@ -113,6 +113,11 @@
         </dt>
         <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>transfer</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
+        <dt id="UNKNOWN_DEFAULT_OPEN_API-constant" class="">UNKNOWN_DEFAULT_OPEN_API =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>unknown_default_open_api</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
     </dl>
   
 
@@ -233,15 +238,15 @@
       <pre class="lines">
 
 
-20
 21
-22</pre>
+22
+23</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 20</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 21</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_vars'>all_vars</span>
-  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#TRANSFER-constant" title="Coinbase::Client::TransactionType::TRANSFER (constant)">TRANSFER</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#TRANSFER-constant" title="Coinbase::Client::TransactionType::TRANSFER (constant)">TRANSFER</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#UNKNOWN_DEFAULT_OPEN_API-constant" title="Coinbase::Client::TransactionType::UNKNOWN_DEFAULT_OPEN_API (constant)">UNKNOWN_DEFAULT_OPEN_API</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -312,12 +317,12 @@
       <pre class="lines">
 
 
-27
 28
-29</pre>
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -397,13 +402,13 @@
       <pre class="lines">
 
 
-34
 35
 36
-37</pre>
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction_type.rb', line 35</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_value'>value</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="" title="Coinbase::Client::TransactionType (class)">TransactionType</a></span></span><span class='period'>.</span><span class='id identifier rubyid_all_vars'><span class='object_link'><a href="#all_vars-class_method" title="Coinbase::Client::TransactionType.all_vars (method)">all_vars</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>

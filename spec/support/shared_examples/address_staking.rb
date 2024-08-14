@@ -9,7 +9,7 @@ shared_context 'with mocked staking_balances' do
     instance_double(
       Coinbase::Client::StakingContext,
       context: instance_double(
-        Coinbase::Client::PartialEthStakingContext,
+        Coinbase::Client::StakingContextContext,
         stakeable_balance: build(:balance_model, whole_amount: stake_balance),
         unstakeable_balance: build(:balance_model, whole_amount: unstake_balance),
         claimable_balance: build(:balance_model, whole_amount: claim_stake_balance)
@@ -34,6 +34,7 @@ shared_examples 'an address that supports staking' do
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
   end
+
   include_context 'with mocked staking_balances'
 
   shared_examples 'it builds a staking operation' do |operation|
@@ -150,17 +151,41 @@ shared_examples 'an address that supports staking' do
   end
 
   describe '#staking_rewards' do
+    let(:start_time) { Time.now }
+    let(:end_time) { Time.now + 1_000 }
+
+    before { allow(Coinbase::StakingReward).to receive(:list) }
+
     it 'calls list on StakingReward' do
-      start_time = Time.now
-      expect(Coinbase::StakingReward).to receive(:list).with(
+      subject.staking_rewards(asset_id, start_time: start_time, end_time: end_time)
+
+      expect(Coinbase::StakingReward).to have_received(:list).with(
         network_id,
         asset_id,
         [address_id],
         start_time: start_time,
-        end_time: start_time,
+        end_time: end_time,
         format: :usd
       )
-      subject.staking_rewards(asset_id, start_time: start_time, end_time: start_time)
+    end
+  end
+
+  describe '#historical_staking_balances' do
+    let(:start_time) { Time.now }
+    let(:end_time) { Time.now + 1_000 }
+
+    before { allow(Coinbase::StakingBalance).to receive(:list) }
+
+    it 'calls list on StakingBalance' do
+      subject.historical_staking_balances(asset_id, start_time: start_time, end_time: start_time)
+
+      expect(Coinbase::StakingBalance).to have_received(:list).with(
+        network_id,
+        asset_id,
+        address_id,
+        start_time: start_time,
+        end_time: start_time
+      )
     end
   end
 end

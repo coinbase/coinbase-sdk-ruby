@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Coinbase::WalletAddress do
+  subject(:address) do
+    described_class.new(model, key)
+  end
+
   let(:key) { build(:key) }
   let(:network_id) { :base_sepolia }
   let(:normalized_network_id) { 'base-sepolia' }
@@ -11,10 +15,6 @@ describe Coinbase::WalletAddress do
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(addresses_api)
-  end
-
-  subject(:address) do
-    described_class.new(model, key)
   end
 
   describe '#initialize' do
@@ -98,6 +98,8 @@ describe Coinbase::WalletAddress do
   it_behaves_like 'an address that supports staking'
 
   describe '#transfer' do
+    subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
+
     let(:balance) { 1_000 }
     let(:amount) { 500 }
     let(:to_key) { Eth::Key.new }
@@ -107,8 +109,6 @@ describe Coinbase::WalletAddress do
     let(:signed_transfer) { build(:transfer, network_id, :signed, key: key, to_key: to_key) }
     let(:use_server_signer) { false }
 
-    subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
-
     before do
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
 
@@ -116,14 +116,13 @@ describe Coinbase::WalletAddress do
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
         .and_return(build(:balance_model, whole_amount: balance))
-
-      allow(created_transfer.transaction).to receive(:sign).and_return(signed_transfer.signed_payload)
     end
 
     context 'when the transfer is successful' do
       before do
         allow(Coinbase::Transfer).to receive(:create).and_return(created_transfer)
 
+        allow(created_transfer).to receive(:sign)
         allow(created_transfer).to receive(:broadcast!)
 
         transfer
@@ -137,7 +136,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'signs the transaction with the key' do
-          expect(created_transfer.transaction).to have_received(:sign).with(key)
+          expect(created_transfer).to have_received(:sign).with(key)
         end
 
         it 'broadcasts the transfer' do
@@ -159,7 +158,8 @@ describe Coinbase::WalletAddress do
             asset_id: asset_id,
             destination: to_address_id,
             network_id: network_id,
-            wallet_id: wallet_id
+            wallet_id: wallet_id,
+            gasless: false
           )
         end
 
@@ -168,7 +168,7 @@ describe Coinbase::WalletAddress do
         end
 
         it 'does not sign the transaction with the key' do
-          expect(created_transfer.transaction).not_to have_received(:sign)
+          expect(created_transfer).not_to have_received(:sign)
         end
       end
     end
@@ -195,6 +195,8 @@ describe Coinbase::WalletAddress do
   end
 
   describe '#trade' do
+    subject(:trade) { address.trade(amount, from_asset_id, to_asset_id) }
+
     let(:balance) { 1_000 }
     let(:amount) { 500 }
     let(:transactions) do
@@ -211,13 +213,11 @@ describe Coinbase::WalletAddress do
     let(:to_asset_id) { :usdc }
     let(:use_server_signer) { false }
 
-    subject(:trade) { address.trade(amount, from_asset_id, to_asset_id) }
-
     before do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, normalized_from_asset_id)
-        .and_return(build(:balance_model, whole_amount: balance))
+        .and_return(build(:balance_model, :eth, whole_amount: balance))
 
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end
@@ -325,23 +325,25 @@ describe Coinbase::WalletAddress do
   end
 
   shared_examples 'an address that can do a staking_action' do |operation|
+    subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
+
     include_context 'with mocked staking_balances'
     let(:amount) { 1 }
     let(:mode) { :default }
     let(:asset_id) { :eth }
     let(:staking_operation) { instance_double(Coinbase::StakingOperation, id: 'test-id') }
     let(:transaction) { instance_double(Coinbase::Transaction) }
-    subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
 
     before do
       allow(Coinbase::StakingOperation).to receive(:create).and_return(staking_operation)
       allow(staking_operation).to receive(:transactions).and_return([transaction])
       allow(transaction).to receive(:sign).and_return('signed_payload')
       allow(staking_operation).to receive(:broadcast!)
+
+      action
     end
 
     it 'creates a staking operation' do
-      subject
       expect(Coinbase::StakingOperation).to have_received(:create).with(
         amount,
         network_id,
@@ -355,12 +357,10 @@ describe Coinbase::WalletAddress do
     end
 
     it 'signs the transaction' do
-      subject
       expect(transaction).to have_received(:sign).with(key)
     end
 
-    it 'braodcasts the transaciton' do
-      subject
+    it 'broadcasts the transaction' do
       expect(staking_operation).to have_received(:broadcast!)
     end
   end

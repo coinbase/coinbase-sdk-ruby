@@ -53,6 +53,24 @@ module Coinbase
       @model.address_id
     end
 
+    # Returns the USD value of the StakingReward.
+    # @return [BigDecimal] The USD value
+    def usd_value
+      BigDecimal(@model.usd_value.amount.to_i) / BigDecimal(100)
+    end
+
+    # Returns the USD conversion price of the StakingReward.
+    # @return [BigDecimal] The USD conversion price
+    def usd_conversion_price
+      BigDecimal(@model.usd_value.conversion_price.to_i) / BigDecimal(100)
+    end
+
+    # Returns the USD conversion time of the StakingReward.
+    # @return [Time] The USD conversion time
+    def usd_conversion_time
+      @model.usd_value.conversion_time
+    end
+
     # Returns a string representation of the StakingReward.
     # @return [String] a string representation of the StakingReward
     def to_s

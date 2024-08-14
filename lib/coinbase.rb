@@ -7,6 +7,7 @@ require_relative 'coinbase/asset'
 require_relative 'coinbase/authenticator'
 require_relative 'coinbase/balance'
 require_relative 'coinbase/balance_map'
+require_relative 'coinbase/historical_balance'
 require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
 require_relative 'coinbase/destination'
@@ -21,6 +22,8 @@ require_relative 'coinbase/transaction'
 require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
 require_relative 'coinbase/server_signer'
+require_relative 'coinbase/sponsored_send'
+require_relative 'coinbase/staking_balance'
 require_relative 'coinbase/staking_operation'
 require_relative 'coinbase/staking_reward'
 require_relative 'coinbase/validator'
@@ -111,7 +114,7 @@ module Coinbase
   # @param network_sym [Symbol] the network symbol to convert
   # @return [String] the converted string
   def self.normalize_network(network_sym)
-    network_sym.to_s.gsub(/_/, '-')
+    network_sym.to_s.gsub('_', '-')
   end
 
   # Loads the default user.
@@ -128,8 +131,17 @@ module Coinbase
     yield
   rescue Coinbase::Client::ApiError => e
     raise Coinbase::APIError.from_error(e), cause: nil
-  rescue StandardError => e
-    raise e
+  end
+
+  # Returns a pretty-printed object string that contains the object's class name and
+  # the details of the object, filtering out nil values.
+  # @param klass [Class] the class of the object
+  # @param details [Hash] the details of the object
+  # @return [String] the pretty-printed object string
+  def self.pretty_print_object(klass, **details)
+    filtered_details = details.filter { |_, v| !v.nil? }.map { |k, v| "#{k}: '#{v}'" }
+
+    "#{klass}{#{filtered_details.join(', ')}}"
   end
 
   # Returns whether to use a server signer to manage private keys.

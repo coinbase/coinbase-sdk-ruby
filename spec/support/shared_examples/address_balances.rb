@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 shared_examples 'an address that supports balance queries' do |_operation|
-  let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
+  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
@@ -101,10 +101,38 @@ shared_examples 'an address that supports balance queries' do |_operation|
       end
     end
   end
+
+  describe '#historical_balances' do
+    let(:eth_asset) { build(:asset_model) }
+    let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
+    let(:response) do
+      Coinbase::Client::AddressBalanceList.new(
+        data: [
+          historical_balance
+        ]
+      )
+    end
+
+    before do
+      allow(external_addresses_api)
+        .to receive(:list_address_historical_balance)
+        .with(normalized_network_id, address_id, primary_denomination, { limit: 100, page: nil })
+        .and_return(response)
+    end
+
+    context 'when the asset_id is :eth' do
+      let(:asset_id) { :eth }
+      let(:primary_denomination) { 'eth' }
+
+      it 'returns the correct ETH historical balances' do
+        expect(address.historical_balances(:eth).first.amount).to eq BigDecimal('1')
+      end
+    end
+  end
 end
 
 shared_examples 'an address that supports requesting faucet funds' do |_operation|
-  let(:external_addresses_api) { double('Coinbase::Client::ExternalAddressesApi') }
+  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
@@ -113,28 +141,39 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
   describe '#faucet' do
     let(:tx_hash) { '0xdeadbeef' }
     let(:faucet_tx) do
-      instance_double('Coinbase::Client::FaucetTransaction', transaction_hash: tx_hash)
+      instance_double(Coinbase::Client::FaucetTransaction, transaction_hash: tx_hash)
     end
 
     context 'when the request is successful' do
       subject(:faucet_response) { address.faucet }
 
       before do
-        expect(external_addresses_api)
+        allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
           .with(normalized_network_id, address_id)
           .and_return(faucet_tx)
       end
 
-      it 'requests funds from the faucet and returns the faucet transaction' do
+      it 'requests external faucet funds for the address' do
+        faucet_response
+
+        expect(external_addresses_api)
+          .to have_received(:request_external_faucet_funds)
+          .with(normalized_network_id, address_id)
+      end
+
+      it 'returns the faucet transaction' do
         expect(faucet_response).to be_a(Coinbase::FaucetTransaction)
+      end
+
+      it 'returns the correct transaction hash' do
         expect(faucet_response.transaction_hash).to eq(tx_hash)
       end
     end
 
     context 'when the request is unsuccesful' do
       before do
-        expect(external_addresses_api)
+        allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
           .with(normalized_network_id, address_id)
           .and_raise(api_error)
@@ -152,7 +191,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
         end
 
         it 'raises a FaucetLimitReachedError' do
-          expect { address.faucet }.to raise_error(::Coinbase::FaucetLimitReachedError)
+          expect { address.faucet }.to raise_error(Coinbase::FaucetLimitReachedError)
         end
       end
 
@@ -168,7 +207,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
         end
 
         it 'raises an internal error' do
-          expect { address.faucet }.to raise_error(::Coinbase::InternalError)
+          expect { address.faucet }.to raise_error(Coinbase::InternalError)
         end
       end
     end

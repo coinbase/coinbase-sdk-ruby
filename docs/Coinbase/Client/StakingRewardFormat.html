@@ -118,6 +118,11 @@
         </dt>
         <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>native</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
+        <dt id="UNKNOWN_DEFAULT_OPEN_API-constant" class="">UNKNOWN_DEFAULT_OPEN_API =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>unknown_default_open_api</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
     </dl>
   
 
@@ -238,15 +243,15 @@
       <pre class="lines">
 
 
-21
 22
-23</pre>
+23
+24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 21</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 22</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_vars'>all_vars</span>
-  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#USD-constant" title="Coinbase::Client::StakingRewardFormat::USD (constant)">USD</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#NATIVE-constant" title="Coinbase::Client::StakingRewardFormat::NATIVE (constant)">NATIVE</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#USD-constant" title="Coinbase::Client::StakingRewardFormat::USD (constant)">USD</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#NATIVE-constant" title="Coinbase::Client::StakingRewardFormat::NATIVE (constant)">NATIVE</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#UNKNOWN_DEFAULT_OPEN_API-constant" title="Coinbase::Client::StakingRewardFormat::UNKNOWN_DEFAULT_OPEN_API (constant)">UNKNOWN_DEFAULT_OPEN_API</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -317,12 +322,12 @@
       <pre class="lines">
 
 
-28
 29
-30</pre>
+30
+31</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 28</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 29</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -402,13 +407,13 @@
       <pre class="lines">
 
 
-35
 36
 37
-38</pre>
+38
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 35</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/staking_reward_format.rb', line 36</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_value'>value</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="" title="Coinbase::Client::StakingRewardFormat (class)">StakingRewardFormat</a></span></span><span class='period'>.</span><span class='id identifier rubyid_all_vars'><span class='object_link'><a href="#all_vars-class_method" title="Coinbase::Client::StakingRewardFormat.all_vars (method)">all_vars</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>

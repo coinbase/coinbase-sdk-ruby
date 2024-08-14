@@ -5,8 +5,14 @@ describe Coinbase::StakingOperation do
   let(:network_id) { :ethereum_holesky }
   let(:address_id) { 'address_id' }
   let(:staking_operation_model) do
-    instance_double(Coinbase::Client::StakingOperation, status: :initialized, id: 'some_id', wallet_id: wallet_id,
-                                                        network_id: 'ethereum-holesky', address_id: 'address_id')
+    instance_double(
+      Coinbase::Client::StakingOperation,
+      status: :initialized,
+      id: 'some_id',
+      wallet_id: wallet_id,
+      network_id: 'ethereum-holesky',
+      address_id: 'address_id'
+    )
   end
   let(:staking_operation) { described_class.new(staking_operation_model) }
   let(:transaction_model) { instance_double(Coinbase::Client::Transaction) }
@@ -16,136 +22,138 @@ describe Coinbase::StakingOperation do
   let(:eth_asset) { Coinbase::Asset.from_model(eth_asset_model) }
   let(:hex_encoded_transaction) { '0xdeadbeef' }
 
-  let(:stake_api) { double('Coinbase::Client::StakeApi') }
-
-  before(:each) do
-    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
-  end
+  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+  let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
 
   before do
+    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(staking_operation_model).to receive(:transactions).and_return([transaction_model])
     allow(Coinbase::Transaction).to receive(:new).and_return(transaction)
-    allow(transaction).to receive(:signed?).and_return(false)
     allow(transaction).to receive(:sign)
     allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
-    allow(stake_api).to receive(:build_staking_operation).and_return(staking_operation_model)
-    allow(stake_api).to receive(:create_staking_operation).and_return(staking_operation_model)
+    allow(stake_api).to receive_messages(
+      build_staking_operation: staking_operation_model,
+      create_staking_operation: staking_operation_model
+    )
     allow(stake_api).to receive(:broadcast_staking_operation)
-    raw_tx = double 'EthereumTransaction'
-    allow(transaction).to receive(:raw).and_return(raw_tx)
+    allow(transaction).to receive_messages(signed?: false, raw: raw_tx)
     allow(raw_tx).to receive(:hex).and_return(hex_encoded_transaction)
   end
 
   describe '.build' do
+    subject(:staking_operation) do
+      described_class.build(amount, network_id, asset_id, address_id, action, mode, options)
+    end
+
     let(:amount) { 1 }
     let(:asset_id) { :eth }
     let(:action) { :stake }
     let(:mode) { :partial }
     let(:options) { {} }
 
-    subject { described_class.build(amount, network_id, asset_id, address_id, action, mode, options) }
+    before { staking_operation }
 
-    it 'calls Asset.fetch' do
-      subject
-
+    it 'fetches the asset' do
       expect(Coinbase::Asset).to have_received(:fetch).with(network_id, :eth)
     end
 
-    it 'calls StakeApi.build_staking_operation' do
-      subject
-
+    it 'builds the staking operation' do
       expect(stake_api).to have_received(:build_staking_operation).with(
-        {
-          asset_id: 'eth',
-          address_id: address_id,
-          action: :stake,
-          network_id: 'ethereum-holesky',
-          options: {
-            amount: '1000000000000000000',
-            mode: :partial
-          }
+        asset_id: 'eth',
+        address_id: address_id,
+        action: :stake,
+        network_id: 'ethereum-holesky',
+        options: {
+          amount: '1000000000000000000',
+          mode: :partial
         }
       )
     end
   end
 
   describe '.create' do
+    subject(:staking_operation) do
+      described_class.create(amount, network_id, asset_id, address_id, wallet_id, action, mode, options)
+    end
+
     let(:amount) { 1 }
     let(:asset_id) { :eth }
     let(:action) { :stake }
     let(:mode) { :partial }
     let(:options) { {} }
 
-    subject { described_class.create(amount, network_id, asset_id, address_id, wallet_id, action, mode, options) }
+    before { staking_operation }
 
-    it 'calls Asset.fetch' do
-      subject
-
+    it 'fetches the asset' do
       expect(Coinbase::Asset).to have_received(:fetch).with(network_id, :eth)
     end
 
-    it 'calls StakeApi.build_staking_operation' do
-      subject
-
+    it 'creates the staking operation' do # rubocop:disable RSpec/ExampleLength
       expect(stake_api).to have_received(:create_staking_operation).with(
         wallet_id,
         address_id,
-        {
-          asset_id: 'eth',
-          address_id: address_id,
-          action: :stake,
-          network_id: 'ethereum-holesky',
-          options: {
-            amount: '1000000000000000000',
-            mode: :partial
-          }
+        asset_id: 'eth',
+        address_id: address_id,
+        action: :stake,
+        network_id: 'ethereum-holesky',
+        options: {
+          amount: '1000000000000000000',
+          mode: :partial
         }
       )
     end
   end
 
   describe '.fetch' do
+    subject(:staking_operation) { described_class.fetch(network_id, address_id, 'some_id') }
+
     before do
-      allow(stake_api).to receive(:get_external_staking_operation).and_return(staking_operation_model)
-      allow(stake_api).to receive(:get_staking_operation).and_return(staking_operation_model)
+      allow(stake_api).to receive_messages(
+        get_external_staking_operation: staking_operation_model,
+        get_staking_operation: staking_operation_model
+      )
     end
 
-    subject(:fetch) { described_class.fetch(network_id, address_id, 'some_id') }
+    it 'fetches the external staking operation' do
+      staking_operation
 
-    it 'calls StakeApi.get_external_staking_operation' do
-      subject
-
-      expect(stake_api).to have_received(:get_external_staking_operation).with(network_id, address_id, 'some_id')
+      expect(stake_api)
+        .to have_received(:get_external_staking_operation)
+        .with(network_id, address_id, 'some_id')
     end
 
     it { is_expected.to be_a described_class }
 
     it 'has the correct id' do
-      expect(subject.id).to eq(staking_operation_model.id)
+      expect(staking_operation.id).to eq(staking_operation_model.id)
     end
 
     context 'when a wallet_id is provided' do
-      subject(:fetch) { described_class.fetch(network_id, address_id, 'some_id', wallet_id: wallet_id) }
+      subject(:staking_operation) do
+        described_class.fetch(network_id, address_id, 'some_id', wallet_id: wallet_id)
+      end
 
-      it 'calls StakeApi.get_staking_operation' do
-        subject
+      it 'fetches the wallet-scoped staking operation' do
+        staking_operation
 
-        expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
+        expect(stake_api)
+          .to have_received(:get_staking_operation)
+          .with(wallet_id, address_id, 'some_id')
       end
     end
   end
 
   describe '.reload' do
-    before do
-      allow(stake_api).to receive(:get_external_staking_operation).and_return(staking_operation_model)
-      allow(stake_api).to receive(:get_staking_operation).and_return(staking_operation_model)
-    end
-
     subject(:reload) { staking_operation.reload }
 
+    before do
+      allow(stake_api).to receive_messages(get_external_staking_operation: staking_operation_model,
+                                           get_staking_operation: staking_operation_model)
+    end
+
     it 'calls StakeApi.get_staking_operation' do
-      subject
+      reload
 
       expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
     end
@@ -153,17 +161,23 @@ describe Coinbase::StakingOperation do
     it { is_expected.to be_a described_class }
 
     it 'has the correct id' do
-      expect(subject.id).to eq(staking_operation_model.id)
+      expect(reload.id).to eq(staking_operation_model.id)
     end
 
     context 'when a wallet_id is not provided' do
       let(:staking_operation_model) do
-        instance_double(Coinbase::Client::StakingOperation, status: :initialized, id: 'some_id', wallet_id: nil,
-                                                            network_id: 'ethereum-holesky', address_id: 'address_id')
+        instance_double(
+          Coinbase::Client::StakingOperation,
+          status: :initialized,
+          id: 'some_id',
+          wallet_id: nil,
+          network_id: 'ethereum-holesky',
+          address_id: 'address_id'
+        )
       end
 
       it 'calls StakeApi.get_external_staking_operation' do
-        subject
+        reload
 
         expect(stake_api).to have_received(:get_external_staking_operation).with(network_id, address_id, 'some_id')
       end
@@ -172,9 +186,9 @@ describe Coinbase::StakingOperation do
 
   describe '#initialize' do
     it 'creates a transaction for each transaction model' do
-      expect(Coinbase::Transaction).to receive(:new).with(transaction_model)
-
       staking_operation
+
+      expect(Coinbase::Transaction).to have_received(:new).with(transaction_model)
     end
   end
 
@@ -213,8 +227,7 @@ describe Coinbase::StakingOperation do
 
     context 'when the staking operation is completed' do
       it 'returns the completed StakingOperation' do
-        expect(staking_operation.wait!).to eq(staking_operation)
-        expect(staking_operation.status).to eq('complete')
+        expect(staking_operation.wait!.status).to eq('complete')
       end
     end
 
@@ -253,15 +266,21 @@ describe Coinbase::StakingOperation do
     context 'with multiple transactions' do
       let(:other_hex_encoded_transaction) { '0xdeadbeef' }
       let(:other_transaction) { instance_double(Coinbase::Transaction) }
+      let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
+
       before do
         allow(staking_operation).to receive(:transactions).and_return([transaction, other_transaction])
-        allow(other_transaction).to receive(:signed?).and_return(transaction_signed)
-        raw_tx = double 'EthereumTransaction'
-        allow(other_transaction).to receive(:raw).and_return(raw_tx)
+        allow(other_transaction).to receive_messages(signed?: transaction_signed, raw: raw_tx)
         allow(raw_tx).to receive(:hex).and_return(other_hex_encoded_transaction)
       end
 
-      it 'calls broadcast with the transaction twice' do
+      it 'broadcasts both transactions' do
+        staking_operation.broadcast!
+
+        expect(stake_api).to have_received(:broadcast_staking_operation).twice
+      end
+
+      it 'broadcasts the first transaction' do
         staking_operation.broadcast!
 
         expect(stake_api).to have_received(:broadcast_staking_operation).with(
@@ -270,6 +289,11 @@ describe Coinbase::StakingOperation do
           staking_operation.id,
           { signed_payload: hex_encoded_transaction, transaction_index: 0 }
         )
+      end
+
+      it 'broadcasts the second transaction' do
+        staking_operation.broadcast!
+
         expect(stake_api).to have_received(:broadcast_staking_operation).with(
           wallet_id,
           address_id,
