@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Class: Coinbase::Client::Wallet
+  Class: Coinbase::Client::FeatureSet
   
     &mdash; Documentation by YARD 0.9.36
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "Coinbase::Client::Wallet";
+  pathId = "Coinbase::Client::FeatureSet";
   relpath = '../../';
 </script>
 
@@ -36,10 +36,10 @@
       <div id="header">
         <div id="menu">
   
-    <a href="../../_index.html">Index (W)</a> &raquo;
+    <a href="../../_index.html">Index (F)</a> &raquo;
     <span class='title'><span class='object_link'><a href="../../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Client.html" title="Coinbase::Client (module)">Client</a></span></span>
      &raquo; 
-    <span class="title">Wallet</span>
+    <span class="title">FeatureSet</span>
   
 </div>
 
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Class: Coinbase::Client::Wallet
+      <div id="content"><h1>Class: Coinbase::Client::FeatureSet
   
   
   
@@ -74,7 +74,7 @@
         <ul class="fullTree">
           <li>Object</li>
           
-            <li class="next">Coinbase::Client::Wallet</li>
+            <li class="next">Coinbase::Client::FeatureSet</li>
           
         </ul>
         <a href="#" class="inheritanceTree">show all</a>
@@ -94,21 +94,11 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/coinbase/client/models/wallet.rb</dd>
+    <dd>lib/coinbase/client/models/feature_set.rb</dd>
   </dl>
   
 </div>
 
-<h2>Defined Under Namespace</h2>
-<p class="children">
-  
-    
-  
-    
-      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Wallet/EnumAttributeValidator.html" title="Coinbase::Client::Wallet::EnumAttributeValidator (class)">EnumAttributeValidator</a></span>
-    
-  
-</p>
 
 
 
@@ -119,7 +109,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#default_address-instance_method" title="#default_address (instance method)">#<strong>default_address</strong>  &#x21d2; Object </a>
+      <a href="#faucet-instance_method" title="#faucet (instance method)">#<strong>faucet</strong>  &#x21d2; Object </a>
     
 
     
@@ -137,7 +127,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute default_address.</p>
+<p>Whether the network supports a faucet.</p>
 </div></span>
   
 </li>
@@ -146,7 +136,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#feature_set-instance_method" title="#feature_set (instance method)">#<strong>feature_set</strong>  &#x21d2; Object </a>
+      <a href="#gasless_send-instance_method" title="#gasless_send (instance method)">#<strong>gasless_send</strong>  &#x21d2; Object </a>
     
 
     
@@ -164,7 +154,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute feature_set.</p>
+<p>Whether the network supports gasless sends.</p>
 </div></span>
   
 </li>
@@ -173,7 +163,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#id-instance_method" title="#id (instance method)">#<strong>id</strong>  &#x21d2; Object </a>
+      <a href="#server_signer-instance_method" title="#server_signer (instance method)">#<strong>server_signer</strong>  &#x21d2; Object </a>
     
 
     
@@ -191,7 +181,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The server-assigned ID for the wallet.</p>
+<p>Whether the network supports Server-Signers.</p>
 </div></span>
   
 </li>
@@ -200,7 +190,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#network_id-instance_method" title="#network_id (instance method)">#<strong>network_id</strong>  &#x21d2; Object </a>
+      <a href="#stake-instance_method" title="#stake (instance method)">#<strong>stake</strong>  &#x21d2; Object </a>
     
 
     
@@ -218,7 +208,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The ID of the blockchain network.</p>
+<p>Whether the network supports staking.</p>
 </div></span>
   
 </li>
@@ -227,7 +217,7 @@
       <li class="public ">
   <span class="summary_signature">
     
-      <a href="#server_signer_status-instance_method" title="#server_signer_status (instance method)">#<strong>server_signer_status</strong>  &#x21d2; Object </a>
+      <a href="#trade-instance_method" title="#trade (instance method)">#<strong>trade</strong>  &#x21d2; Object </a>
     
 
     
@@ -245,7 +235,34 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>The status of the Server-Signer for the wallet if present.</p>
+<p>Whether the network supports trading.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#transfer-instance_method" title="#transfer (instance method)">#<strong>transfer</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Whether the network supports transfers.</p>
 </div></span>
   
 </li>
@@ -514,7 +531,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(attributes = {})  &#x21d2; Wallet </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(attributes = {})  &#x21d2; FeatureSet </a>
     
 
     
@@ -666,7 +683,7 @@
     <div class="method_details first">
   <h3 class="signature first" id="initialize-instance_method">
   
-    #<strong>initialize</strong>(attributes = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Client::Wallet (class)">Wallet</a></span></tt> 
+    #<strong>initialize</strong>(attributes = {})  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Client::FeatureSet (class)">FeatureSet</a></span></tt> 
   
 
   
@@ -711,6 +728,21 @@
       <pre class="lines">
 
 
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
 88
 89
 90
@@ -744,53 +776,58 @@
 118
 119
 120
-121
-122
-123
-124
-125
-126</pre>
+121</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The input argument (attributes) must be a hash in `Coinbase::Client::Wallet` initialize method</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The input argument (attributes) must be a hash in `Coinbase::Client::FeatureSet` initialize method</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
 
   <span class='comment'># check to see if the attribute exists and convert string to symbol for hash key
 </span>  <span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_each_with_object'>each_with_object</span><span class='lparen'>(</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_h'>h</span><span class='op'>|</span>
     <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span><span class='rparen'>)</span>
-      <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>`</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is not a valid attribute in `Coinbase::Client::Wallet`. Please check the name to make sure it&#39;s valid. List of attributes: </span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span>
+      <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>`</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>` is not a valid attribute in `Coinbase::Client::FeatureSet`. Please check the name to make sure it&#39;s valid. List of attributes: </span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span>
     <span class='kw'>end</span>
     <span class='id identifier rubyid_h'>h</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span>
   <span class='rbrace'>}</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;id&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;faucet&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;faucet&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>else</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;network_id&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;network_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;server_signer&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_signer'>server_signer</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;server_signer&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>else</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_signer'>server_signer</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;default_address&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;default_address&#39;</span><span class='rbracket'>]</span>
-  <span class='kw'>end</span>
-
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;feature_set&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;feature_set&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;transfer&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;transfer&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>else</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;server_signer_status&#39;</span><span class='rparen'>)</span>
-    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_server_signer_status'>server_signer_status</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;server_signer_status&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;trade&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_trade'>trade</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;trade&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_trade'>trade</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;stake&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_stake'>stake</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;stake&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_stake'>stake</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;gasless_send&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gasless_send'>gasless_send</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;gasless_send&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_gasless_send'>gasless_send</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -804,54 +841,11 @@
     <h2>Instance Attribute Details</h2>
     
       
-      <span id="default_address=-instance_method"></span>
+      <span id="faucet=-instance_method"></span>
       <div class="method_details first">
-  <h3 class="signature first" id="default_address-instance_method">
+  <h3 class="signature first" id="faucet-instance_method">
   
-    #<strong>default_address</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Returns the value of attribute default_address.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-24
-25
-26</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 24</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_default_address'>default_address</span>
-  <span class='ivar'>@default_address</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id="feature_set=-instance_method"></span>
-      <div class="method_details ">
-  <h3 class="signature " id="feature_set-instance_method">
-  
-    #<strong>feature_set</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>faucet</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -860,50 +854,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the value of attribute feature_set.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-26
-27
-28</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 26</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_feature_set'>feature_set</span>
-  <span class='ivar'>@feature_set</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      
-      <span id="id=-instance_method"></span>
-      <div class="method_details ">
-  <h3 class="signature " id="id-instance_method">
-  
-    #<strong>id</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>The server-assigned ID for the wallet.</p>
+<p>Whether the network supports a faucet</p>
 
 
   </div>
@@ -922,10 +873,10 @@
 21</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 19</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
-  <span class='ivar'>@id</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_faucet'>faucet</span>
+  <span class='ivar'>@faucet</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -933,11 +884,11 @@
 </div>
     
       
-      <span id="network_id=-instance_method"></span>
+      <span id="gasless_send=-instance_method"></span>
       <div class="method_details ">
-  <h3 class="signature " id="network_id-instance_method">
+  <h3 class="signature " id="gasless_send-instance_method">
   
-    #<strong>network_id</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>gasless_send</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -946,7 +897,50 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>The ID of the blockchain network</p>
+<p>Whether the network supports gasless sends</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+34
+35
+36</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 34</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_gasless_send'>gasless_send</span>
+  <span class='ivar'>@gasless_send</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="server_signer=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="server_signer-instance_method">
+  
+    #<strong>server_signer</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Whether the network supports Server-Signers</p>
 
 
   </div>
@@ -965,10 +959,10 @@
 24</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 22</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 22</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
-  <span class='ivar'>@network_id</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_server_signer'>server_signer</span>
+  <span class='ivar'>@server_signer</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -976,11 +970,11 @@
 </div>
     
       
-      <span id="server_signer_status=-instance_method"></span>
+      <span id="stake=-instance_method"></span>
       <div class="method_details ">
-  <h3 class="signature " id="server_signer_status-instance_method">
+  <h3 class="signature " id="stake-instance_method">
   
-    #<strong>server_signer_status</strong>  &#x21d2; <tt>Object</tt> 
+    #<strong>stake</strong>  &#x21d2; <tt>Object</tt> 
   
 
   
@@ -989,7 +983,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>The status of the Server-Signer for the wallet if present.</p>
+<p>Whether the network supports staking</p>
 
 
   </div>
@@ -1003,15 +997,101 @@
       <pre class="lines">
 
 
-29
-30
-31</pre>
+31
+32
+33</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 29</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 31</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_server_signer_status'>server_signer_status</span>
-  <span class='ivar'>@server_signer_status</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_stake'>stake</span>
+  <span class='ivar'>@stake</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="trade=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="trade-instance_method">
+  
+    #<strong>trade</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Whether the network supports trading</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+28
+29
+30</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 28</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_trade'>trade</span>
+  <span class='ivar'>@trade</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="transfer=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="transfer-instance_method">
+  
+    #<strong>transfer</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Whether the network supports transfers</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_transfer'>transfer</span>
+  <span class='ivar'>@transfer</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1105,6 +1185,7 @@
       <pre class="lines">
 
 
+220
 221
 222
 223
@@ -1141,11 +1222,10 @@
 254
 255
 256
-257
-258</pre>
+257</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 221</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 220</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1216,12 +1296,12 @@
       <pre class="lines">
 
 
-65
-66
-67</pre>
+49
+50
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 49</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -1257,26 +1337,28 @@
       <pre class="lines">
 
 
-54
-55
-56
-57
-58
-59
-60
-61
-62</pre>
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 54</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 37</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
-    <span class='symbol'>:&#39;id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;id&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;network_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;network_id&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;default_address&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;default_address&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;feature_set&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;server_signer_status&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;server_signer_status&#39;</span>
+    <span class='symbol'>:&#39;faucet&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;faucet&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;server_signer&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;server_signer&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;transfer&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;transfer&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;trade&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;trade&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;stake&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;stake&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;gasless_send&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;gasless_send&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1348,6 +1430,7 @@
       <pre class="lines">
 
 
+196
 197
 198
 199
@@ -1365,11 +1448,10 @@
 211
 212
 213
-214
-215</pre>
+214</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 197</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 196</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1421,13 +1503,13 @@
       <pre class="lines">
 
 
-81
-82
-83
-84</pre>
+66
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 81</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 66</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -1464,26 +1546,28 @@
       <pre class="lines">
 
 
-70
-71
-72
-73
-74
-75
-76
-77
-78</pre>
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
-    <span class='symbol'>:&#39;id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;network_id&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;default_address&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Address&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;FeatureSet&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;server_signer_status&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span>
+    <span class='symbol'>:&#39;faucet&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;server_signer&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;transfer&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;trade&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;stake&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;gasless_send&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1543,6 +1627,8 @@
       <pre class="lines">
 
 
+170
+171
 172
 173
 174
@@ -1550,20 +1636,20 @@
 176
 177
 178
-179
-180</pre>
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 172</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 170</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_id'>id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_default_address'>default_address</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_default_address'>default_address</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_server_signer_status'>server_signer_status</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_server_signer_status'>server_signer_status</span>
+      <span class='id identifier rubyid_faucet'>faucet</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_faucet'>faucet</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_server_signer'>server_signer</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_server_signer'>server_signer</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_transfer'>transfer</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_transfer'>transfer</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_trade'>trade</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_trade'>trade</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_stake'>stake</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_stake'>stake</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_gasless_send'>gasless_send</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_gasless_send'>gasless_send</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1634,6 +1720,7 @@
       <pre class="lines">
 
 
+291
 292
 293
 294
@@ -1645,11 +1732,10 @@
 300
 301
 302
-303
-304</pre>
+303</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 292</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 291</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1733,12 +1819,12 @@
       <pre class="lines">
 
 
+183
 184
-185
-186</pre>
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 183</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1792,15 +1878,15 @@
       <pre class="lines">
 
 
+189
 190
-191
-192</pre>
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 190</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_default_address'>default_address</span><span class='comma'>,</span> <span class='id identifier rubyid_feature_set'>feature_set</span><span class='comma'>,</span> <span class='id identifier rubyid_server_signer_status'>server_signer_status</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_faucet'>faucet</span><span class='comma'>,</span> <span class='id identifier rubyid_server_signer'>server_signer</span><span class='comma'>,</span> <span class='id identifier rubyid_transfer'>transfer</span><span class='comma'>,</span> <span class='id identifier rubyid_trade'>trade</span><span class='comma'>,</span> <span class='id identifier rubyid_stake'>stake</span><span class='comma'>,</span> <span class='id identifier rubyid_gasless_send'>gasless_send</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1851,6 +1937,11 @@
       <pre class="lines">
 
 
+125
+126
+127
+128
+129
 130
 131
 132
@@ -1867,24 +1958,43 @@
 143
 144
 145
-146</pre>
+146
+147
+148
+149
+150
+151
+152
+153</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 130</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 125</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
-  <span class='kw'>if</span> <span class='ivar'>@id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;id&quot;, id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@faucet</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;faucet&quot;, faucet cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='ivar'>@network_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;network_id&quot;, network_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@server_signer</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;server_signer&quot;, server_signer cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='kw'>if</span> <span class='ivar'>@feature_set</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;feature_set&quot;, feature_set cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@transfer</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;transfer&quot;, transfer cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@trade</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;trade&quot;, trade cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@stake</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;stake&quot;, stake cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='ivar'>@gasless_send</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;gasless_send&quot;, gasless_send cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span>
@@ -1938,12 +2048,12 @@
       <pre class="lines">
 
 
+267
 268
-269
-270</pre>
+269</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 268</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 267</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -1997,6 +2107,7 @@
       <pre class="lines">
 
 
+273
 274
 275
 276
@@ -2008,11 +2119,10 @@
 282
 283
 284
-285
-286</pre>
+285</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 274</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 273</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2076,12 +2186,12 @@
       <pre class="lines">
 
 
+261
 262
-263
-264</pre>
+263</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 262</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 261</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -2135,26 +2245,28 @@
       <pre class="lines">
 
 
-150
-151
-152
-153
-154
-155
-156
 157
-158</pre>
+158
+159
+160
+161
+162
+163
+164
+165
+166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/wallet.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/feature_set.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@network_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@feature_set</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='id identifier rubyid_server_signer_status_validator'>server_signer_status_validator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="Wallet/EnumAttributeValidator.html" title="Coinbase::Client::Wallet::EnumAttributeValidator (class)">EnumAttributeValidator</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Wallet/EnumAttributeValidator.html#initialize-instance_method" title="Coinbase::Client::Wallet::EnumAttributeValidator#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>String</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>pending_seed_creation</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>active_seed</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>unknown_default_open_api</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_server_signer_status_validator'>server_signer_status_validator</span><span class='period'>.</span><span class='id identifier rubyid_valid?'>valid?</span><span class='lparen'>(</span><span class='ivar'>@server_signer_status</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@faucet</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@server_signer</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@transfer</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@trade</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@stake</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@gasless_send</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>true</span>
 <span class='kw'>end</span></pre>
     </td>
