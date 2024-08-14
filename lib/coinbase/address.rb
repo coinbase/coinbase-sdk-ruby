@@ -215,7 +215,7 @@ module Coinbase
       StakingBalance.list(
         network_id,
         asset_id,
-        [id],
+        id,
         start_time: start_time,
         end_time: end_time
       )

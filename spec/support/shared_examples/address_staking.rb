@@ -169,4 +169,18 @@ shared_examples 'an address that supports staking' do
       )
     end
   end
+
+  describe '#historical_staking_balances' do
+    it 'calls list on StakingBalance' do
+      start_time = Time.now
+      expect(Coinbase::StakingBalance).to receive(:list).with(
+        network_id,
+        asset_id,
+        address_id,
+        start_time: start_time,
+        end_time: start_time
+      )
+      subject.historical_staking_balances(asset_id, start_time: start_time, end_time: start_time)
+    end
+  end
 end

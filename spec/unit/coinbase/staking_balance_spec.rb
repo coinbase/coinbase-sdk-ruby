@@ -3,7 +3,7 @@
 describe Coinbase::StakingBalance do
   let(:network_id) { 'network-id' }
   let(:asset_id) { 'asset_id' }
-  let(:address_ids) { %w[address_id] }
+  let(:address_id) { 'address_id' }
   let(:start_time) { Time.now }
   let(:end_time) { Time.now }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
@@ -24,7 +24,7 @@ describe Coinbase::StakingBalance do
     subject(:list) do
       described_class.list(
         network_id, asset_id,
-        address_ids,
+        address_id,
         start_time: start_time,
         end_time: end_time
       )
@@ -36,7 +36,7 @@ describe Coinbase::StakingBalance do
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
         network_id,
         asset_id,
-        address_ids,
+        address_id,
         start_time.iso8601,
         end_time.iso8601,
         { next_page: nil }
@@ -44,7 +44,7 @@ describe Coinbase::StakingBalance do
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
         network_id,
         asset_id,
-        address_ids,
+        address_id,
         start_time.iso8601,
         end_time.iso8601,
         { next_page: 'next_page' }
