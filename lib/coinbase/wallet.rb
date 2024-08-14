@@ -509,7 +509,7 @@ module Coinbase
     def address_path_prefix
       # TODO: Push this logic to the backend.
       @address_path_prefix ||= case network_id.to_s.split('_').first
-                               when 'base', 'ethereum'
+                               when 'base', 'ethereum', 'polygon'
                                  "m/44'/60'/0'/0"
                                else
                                  raise ArgumentError, "Unsupported network ID: #{network_id}"
