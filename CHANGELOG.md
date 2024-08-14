@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for gasless transfers. Initially only supporting USDC sends on Base mainnet.
 - Add support for list historical balances for an asset of an address.
 - Add support for Ethereum-Mainnet and Polygon-Mainnet
+- Add support for retrieving historical staking balances information
+- Add USD value conversion details to the StakingReward object
 
 ## [0.0.14] - 2024-08-05
 
