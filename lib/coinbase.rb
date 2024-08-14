@@ -19,7 +19,6 @@ require_relative 'coinbase/pagination'
 require_relative 'coinbase/trade'
 require_relative 'coinbase/transfer'
 require_relative 'coinbase/transaction'
-require_relative 'coinbase/user'
 require_relative 'coinbase/wallet'
 require_relative 'coinbase/server_signer'
 require_relative 'coinbase/sponsored_send'
@@ -98,12 +97,6 @@ module Coinbase
     end
   end
 
-  # Returns the default user.
-  # @return [Coinbase::User] the default user
-  def self.default_user
-    @default_user ||= load_default_user
-  end
-
   # Converts a string to a symbol, replacing hyphens with underscores.
   # @param string [String] the string to convert
   # @return [Symbol] the converted symbol
@@ -116,14 +109,6 @@ module Coinbase
   # @return [String] the converted string
   def self.normalize_network(network_sym)
     network_sym.to_s.gsub('_', '-')
-  end
-
-  # Loads the default user.
-  # @return [Coinbase::User] the default user
-  def self.load_default_user
-    users_api = Coinbase::Client::UsersApi.new(configuration.api_client)
-    user_model = users_api.get_current_user
-    Coinbase::User.new(user_model)
   end
 
   # Wraps a call to the Platform API to ensure that the error is caught and

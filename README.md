@@ -155,30 +155,26 @@ Coinbase.configure_from_json('~/Downloads/cdp_api_key.json')
 puts "Coinbase SDK has been successfully configured from JSON file."
 ```
 
-This will allow you to [authenticate](./authentication.md) with the Platform APIs and get access to the
-[`default_user`](./users.md):
-
-```ruby
-u = Coinbase.default_user
-```
+This will allow you to [authenticate](./authentication.md) with the Platform APIs.
 
 If you are using a CDP Server-Signer to manage your private keys, enable it with
 
 ```ruby
 Coinbase.configuration.use_server_signer=true
 ```
-Now, create a wallet from the User. Wallets are created with a single default address.
+
+Now create a wallet. Wallets are created with a single default address.
 
 ```ruby
 # Create a wallet with one address by default.
-w1 = u.create_wallet
+wallet1 = Coinbase::Wallet.create
 ```
 
 Wallets come with a single default address, accessible via `default_address`:
 
 ```ruby
 # A wallet has a default address.
-a = w1.default_address
+address = wallet1.default_address
 ```
 
 ## Funding a Wallet
@@ -188,7 +184,7 @@ testnet ETH. You are allowed one faucet claim per 24-hour window.
 
 ```ruby
 # Fund the wallet with a faucet transaction.
-faucet_tx = w1.faucet
+faucet_tx = wallet1.faucet
 
 puts "Faucet transaction successfully completed: #{faucet_tx}"
 ```
@@ -202,14 +198,14 @@ The code below creates another wallet, and uses the `transfer` function to send 
 the second:
 
 ```ruby
-# Create a new wallet w2 to transfer funds to.
-w2 = u.create_wallet
+# Create a new wallet wallet2 to transfer funds to.
+wallet2 = Coinbase::Wallet.create
 
-puts "Wallet successfully created: #{w2}"
+puts "Wallet successfully created: #{wallet2}"
 
-t = w1.transfer(0.00001, :eth, w2).wait!
+transfer = wallet1.transfer(0.00001, :eth, wallet2).wait!
 
-puts "Transfer successfully completed: #{t}"
+puts "Transfer successfully completed: #{transfer}"
 ```
 
 ### Gasless USDC Transfers
@@ -217,12 +213,12 @@ puts "Transfer successfully completed: #{t}"
 To transfer USDC without needing to hold ETH for gas, you can use the `transfer` method with the `gasless` option set to `true`.
 
 ```ruby
-# Create a new wallet w3 to transfer funds to.
-w3 = u.create_wallet
+# Create a new wallet wallet3 to transfer funds to.
+wallet3 = Coinbase::Wallet.create
 
-puts "Wallet successfully created: #{w3}"
+puts "Wallet successfully created: #{wallet3}"
 
-t = w1.transfer(0.00001, :usdc, w3, gasless: true).wait!
+transfer = wallet1.transfer(0.00001, :usdc, wallet3, gasless: true).wait!
 ```
 
 ## Listing Transfers
@@ -245,8 +241,7 @@ address.transfers.to_a
 See [Trades](https://docs.cdp.coinbase.com/wallets/docs/trades) for more information.
 
 ```ruby
-
-wallet = Coinbase::Wallet.create(network_id: "base-mainnet")
+wallet = Coinbase::Wallet.create(network_id: :base_mainnet)
 
 puts "Wallet successfully created: #{wallet}"
 puts "Send `base-mainnet` ETH to wallets default address: #{wallet.default_address.id}"
@@ -277,7 +272,7 @@ The SDK creates wallets with developer managed keys, which means you are respons
 
 ```ruby
 # Export the data required to re-instantiate the wallet.
-data = w1.export
+data = wallet1.export
 ```
 
 In order to persist the data for a wallet, you will need to implement a `store` method to store the exported data in a secure location. If you do not store the wallet in a secure location, you will lose access to the wallet, as well as the funds on it.
@@ -299,9 +294,9 @@ convenience function purely for testing purposes, and should not be considered a
 file_path = 'my_seed.json'
 
 # Set encrypt: true to encrypt the wallet seed with your CDP API key.
-w1.save_seed!(file_path, encrypt: true)
+wallet1.save_seed!(file_path, encrypt: true)
 
-puts "Seed for wallet #{w1.id} successfully saved to #{file_path}."
+puts "Seed for wallet #{wallet1.id} successfully saved to #{file_path}."
 ```
 
 ## Re-instantiating a Wallet
@@ -311,10 +306,10 @@ To re-instantiate a wallet, fetch your export data from your secure storage, and
 ```ruby
 # You should implement the "fetch" method to retrieve the securely persisted data object,
 # keyed by the wallet ID.
-fetched_data = fetch(w1.id)
+fetched_data = fetch(wallet1.id)
 
-# w3 will be equivalent to w1.
-w3 = u.import_wallet(fetched_data)
+# wallet3 will be equivalent to wallet1.
+wallet3 = Coinbase::Wallet.import(fetched_data)
 ```
 
 If you used the `save_seed!` function to persist a wallet's seed to a local file, then you can first fetch
@@ -322,11 +317,11 @@ the unhydrated wallet from the server, and then use the `load_seed` method to re
 
 ```ruby
 # Get the unhydrated wallet from the server.
-w4 = u.wallet(w1.id)
+wallet4 = Coinbase::Wallet.fetch(wallet1.id)
 
 # You can now load the seed into the wallet from the local file.
-# w4 will be equivalent to w1.
-w4.load_seed(file_path)
+# wallet4 will be equivalent to wallet1.
+wallet4.load_seed(file_path)
 ```
 
 ## External Addresses
@@ -366,15 +361,6 @@ bundle install
 This SDK transitively depends on [rbsecp256k1](https://github.com/etscrivner/rbsecp256k1). Follow
 [these instructions](https://github.com/etscrivner/rbsecp256k1?tab=readme-ov-file#requirements) to
 ensure you have the necessary dependencies installed.
-
-The SDK assumes the existence of a `BASE_SEPOLIA_RPC_URL` environment variable defined in your .env file.
-By default, this is the publicly available endpoint, which is rate-limited.
-To provision your own endpoint, go to the [CDP Portal](https://portal.cloud.coinbase.com/products/base). Then
-copy and paste your Base Sepolia RPC URL in the .env file:
-
-```
-BASE_SEPOLIA_RPC_URL=YOUR-URL
-```
 
 ### Linting
 
