@@ -86,9 +86,9 @@ module Coinbase
 
     # Returns the network ID associated with the webhook.
     #
-    # @return [String] The network ID of the webhook.
+    # @return [Symbol] The network ID of the webhook.
     def network_id
-      @model.network_id
+      Coinbase.to_sym(@model.network_id)
     end
 
     # Returns the notification URI of the webhook.
