@@ -187,7 +187,7 @@ module Coinbase::Client
       return false if @network_id.nil?
       return false if @address_id.nil?
       return false if @status.nil?
-      status_validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified", "unknown_default_open_api"])
+      status_validator = EnumAttributeValidator.new('String', ["initialized", "complete", "failed", "unspecified", "unknown_default_open_api"])
       return false unless status_validator.valid?(@status)
       return false if @transactions.nil?
       true
@@ -196,7 +196,7 @@ module Coinbase::Client
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] status Object to be assigned
     def status=(status)
-      validator = EnumAttributeValidator.new('String', ["initialized", "pending", "complete", "failed", "unspecified", "unknown_default_open_api"])
+      validator = EnumAttributeValidator.new('String', ["initialized", "complete", "failed", "unspecified", "unknown_default_open_api"])
       unless validator.valid?(status)
         fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
       end

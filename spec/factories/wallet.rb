@@ -37,7 +37,7 @@ FactoryBot.define do
       id { SecureRandom.uuid }
     end
 
-    initialize_with { new(model, seed: seed) }
+    initialize_with { Coinbase::Wallet.new(model, seed: seed) }
 
     model { build(:wallet_model, id: id) }
   end

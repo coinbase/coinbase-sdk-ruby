@@ -95,6 +95,12 @@ describe Coinbase::Transaction do
     end
   end
 
+  describe '#to_address_id' do
+    it 'returns the to address' do
+      expect(transaction.to_address_id).to eq(transaction_model.to_address_id)
+    end
+  end
+
   describe '#terminal_state?' do
     let(:transaction_model) { build(:transaction_model, status: status) }
 

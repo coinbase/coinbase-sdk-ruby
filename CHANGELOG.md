@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Add to_address_id method to Transaction class
+- Remove "pending" status from staking operation status
+
 ## [0.0.16] - 2024-08-14
 
 - Add support for gasless transfers. Initially only supporting USDC sends on Base mainnet.
