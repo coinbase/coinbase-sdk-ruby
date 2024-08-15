@@ -206,7 +206,8 @@ module Coinbase
 
         req = {
           public_key: key.public_key.compressed.unpack1('H*'),
-          attestation: create_attestation(key)
+          attestation: create_attestation(key),
+          address_index: private_key_index
         }
       end
 
