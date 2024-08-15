@@ -6,7 +6,7 @@ describe Coinbase::Webhook do
   let(:webhook_model) do
     Coinbase::Client::Webhook.new(
       id: 'webhook_id',
-      network_id: 'base-mainnet',
+      network_id: :base_sepolia,
       event_type: 'erc20_transfer',
       event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
       notification_uri: 'https://example.com/notify'
@@ -28,7 +28,7 @@ describe Coinbase::Webhook do
       )
     end
 
-    let(:network_id) { 'base-mainnet' }
+    let(:network_id) { :base_sepolia }
     let(:notification_uri) { 'https://example.com/notify' }
     let(:event_type) { 'erc20_transfer' }
     let(:event_filters) { [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }] }
@@ -72,7 +72,7 @@ describe Coinbase::Webhook do
     let(:item_klass) { described_class }
     let(:item_initialize_args) { nil }
     let(:create_model) do
-      ->(id) { Coinbase::Client::Webhook.new(id: id, network_id: 'base-mainnet') }
+      ->(id) { Coinbase::Client::Webhook.new(id: id, network_id: :base_sepolia) }
     end
 
     it_behaves_like 'it is a paginated enumerator', :webhooks
@@ -96,7 +96,7 @@ describe Coinbase::Webhook do
     let(:updated_webhook_model) do
       Coinbase::Client::Webhook.new(
         id: 'webhook_id',
-        network_id: 'base-mainnet',
+        network_id: :base_sepolia,
         event_type: 'erc20_transfer',
         event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
         notification_uri: new_notification_uri
@@ -118,7 +118,7 @@ describe Coinbase::Webhook do
       expect(webhooks_api).to have_received(:update_webhook).with(
         'webhook_id',
         update_webhook_request: {
-          network_id: 'base-mainnet',
+          network_id: :base_sepolia,
           notification_uri: new_notification_uri,
           event_type: 'erc20_transfer',
           event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }]
