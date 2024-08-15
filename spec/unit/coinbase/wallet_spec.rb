@@ -873,6 +873,22 @@ describe Coinbase::Wallet do
           .with(:eth, mode: :default, options: {})
       end
     end
+
+    describe '#historical_balances' do
+      subject(:historical_balances) { wallet.historical_balances(:eth) }
+
+      before do
+        allow(wallet.default_address).to receive(:historical_balances)
+      end
+
+      it 'calls historical_balances' do
+        historical_balances
+
+        expect(wallet.default_address)
+          .to have_received(:historical_balances)
+          .with(:eth)
+      end
+    end
   end
 
   describe '#transfer' do
