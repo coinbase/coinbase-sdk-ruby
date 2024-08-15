@@ -367,7 +367,7 @@ module Coinbase
       default_address.claimable_balance(asset_id, mode: mode, options: options)
     end
 
-    # Enumerates the historical balances for a given asset belonging of default address.
+    # Enumerates the historical balances for a given asset belonging to the default address of the wallet.
     # The result is an enumerator that lazily fetches from the server, and can be iterated over,
     # converted to an array, etc...
     # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
