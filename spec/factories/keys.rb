@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :key, class: Eth::Key do
-    initialize_with { new(priv: priv) }
+    initialize_with { Eth::Key.new(priv: priv) }
 
     transient do
       seed { nil }

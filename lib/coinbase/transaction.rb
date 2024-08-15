@@ -68,6 +68,12 @@ module Coinbase
       @model.from_address_id
     end
 
+    # Returns the to address for the Transaction.
+    # @return [String] The to address
+    def to_address_id
+      @model.to_address_id
+    end
+
     # Returns whether the Transaction is in a terminal state.
     # @return [Boolean] Whether the Transaction is in a terminal state
     def terminal_state?
