@@ -143,16 +143,9 @@ module Coinbase
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
     def addresses
-      @addresses ||= begin
-        address_list = Coinbase.call_api do
-          addresses_api.list_addresses(@model.id, { limit: MAX_ADDRESSES })
-        end
+      return @addresses unless @addresses.nil?
 
-        # Build the WalletAddress objects, injecting the key if available.
-        address_list.data.each_with_index.map do |address_model, index|
-          build_wallet_address(address_model, index)
-        end
-      end
+      set_addresses
     end
 
     # Returns the Wallet ID.
@@ -198,7 +191,12 @@ module Coinbase
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
-      opts = { create_address_request: {} }
+      req = {}
+
+      # Ensure that the address cache is set before creating a new address.
+      # This ensures that for a server signer, the addresses have been loaded and we
+      # can create a new address and add it to a cache.
+      set_addresses if @addresses.nil?
 
       unless Coinbase.use_server_signer?
         # The index for the next address is the number of addresses already registered.
@@ -206,22 +204,24 @@ module Coinbase
 
         key = derive_key(private_key_index)
 
-        opts = {
-          create_address_request: {
-            public_key: key.public_key.compressed.unpack1('H*'),
-            attestation: create_attestation(key)
-          }
+        req = {
+          public_key: key.public_key.compressed.unpack1('H*'),
+          attestation: create_attestation(key)
         }
       end
 
       address_model = Coinbase.call_api do
-        addresses_api.create_address(id, opts)
+        addresses_api.create_address(id, { create_address_request: req })
       end
 
-      # Auto-reload wallet to set default address on first address creation.
+      # Default address can be nil because either this is the first address being
+      # created for this wallet or the addresses cache has not yet been loaded.
+
+      # If the default address is nil, we must reload the wallet model after creating
+      # the address, in order for the default address to be set.
       reload if default_address.nil?
 
-      # Cache the address in our memoized list
+      # The addreses cache is already created, so we can add the new address to the cache.
       address = WalletAddress.new(address_model, key)
       @addresses << address
       address
@@ -602,6 +602,16 @@ module Coinbase
 
     def wallets_api
       @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+    end
+
+    def set_addresses
+      address_list = Coinbase.call_api do
+        addresses_api.list_addresses(@model.id, { limit: MAX_ADDRESSES })
+      end
+
+      @addresses = address_list.data.each_with_index.map do |address_model, index|
+        build_wallet_address(address_model, index)
+      end
     end
   end
 end

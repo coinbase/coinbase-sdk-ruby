@@ -516,6 +516,7 @@ describe Coinbase::Wallet do
         .to receive(:list_addresses)
         .with(wallet_id, { limit: 20 })
         .and_return(Coinbase::Client::AddressList.new(data: existing_addresses, total_count: existing_addresses.length))
+        .once
 
       allow(addresses_api)
         .to receive(:create_address)
@@ -527,7 +528,7 @@ describe Coinbase::Wallet do
 
             public_key == expected_public_key && attestation.is_a?(String)
           end
-        ).and_return(created_address_model)
+        ).and_return(created_address_model).once
     end
 
     context 'when the wallet does not have a default address initially' do
@@ -585,6 +586,7 @@ describe Coinbase::Wallet do
           .to receive(:create_address)
           .with(wallet_id).and_return(created_address_model)
 
+        # Reload the wallet with the new address
         allow(wallets_api)
           .to receive(:get_wallet)
           .with(wallet_id)
