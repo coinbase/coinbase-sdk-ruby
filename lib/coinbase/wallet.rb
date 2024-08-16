@@ -56,7 +56,8 @@ module Coinbase
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
-      # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+      # @param network [Coinbase::Network, Symbol] (Optional) The network object or ID to create the
+      #   Wallet on. When omitted this uses the SDK configured default network.
       # @param interval_seconds [Integer] The interval at which to poll the CDPService for the Wallet to
       # have an active seed, if using a ServerSigner, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
@@ -250,10 +251,10 @@ module Coinbase
       @model.id
     end
 
-    # Returns the Network ID of the Wallet.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Wallet.
+    # @return [Coinbase::Network] The Network of the Wallet
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the ServerSigner Status of the Wallet.
@@ -465,8 +466,12 @@ module Coinbase
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
-      "Coinbase::Wallet{wallet_id: '#{id}', network_id: '#{network_id}', " \
-        "default_address: '#{@model.default_address&.address_id}'}"
+      Coinbase.pretty_print_object(
+        self.class,
+        id: id,
+        network_id: network.id,
+        default_address: @model.default_address&.address_id
+      )
     end
 
     # Same as to_s.
@@ -495,13 +500,11 @@ module Coinbase
     end
 
     def address_path_prefix
-      # TODO: Push this logic to the backend.
-      @address_path_prefix ||= case network_id.to_s.split('_').first
-                               when 'base', 'ethereum', 'polygon'
-                                 "m/44'/60'/0'/0"
-                               else
-                                 raise ArgumentError, "Unsupported network ID: #{network_id}"
-                               end
+      if network.address_path_prefix.nil? || network.address_path_prefix.empty?
+        raise ArgumentError, "Cannot create address for network #{network.id}"
+      end
+
+      network.address_path_prefix
     end
 
     # Derives a key for the given address index.

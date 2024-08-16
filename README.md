@@ -241,7 +241,7 @@ address.transfers.to_a
 See [Trades](https://docs.cdp.coinbase.com/wallets/docs/trades) for more information.
 
 ```ruby
-wallet = Coinbase::Wallet.create(network_id: :base_mainnet)
+wallet = Coinbase::Wallet.create(network: Coinbase::Network::BASE_MAINNET)
 
 puts "Wallet successfully created: #{wallet}"
 puts "Send `base-mainnet` ETH to wallets default address: #{wallet.default_address.id}"

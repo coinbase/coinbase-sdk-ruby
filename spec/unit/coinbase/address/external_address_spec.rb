@@ -3,9 +3,14 @@
 describe Coinbase::ExternalAddress do
   subject(:address) { described_class.new(network_id, address_id) }
 
+  let(:network) { build(:network, :ethereum_mainnet) }
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
+
+  before do
+    allow(Coinbase::Network).to receive(:from_id).with(network_id).and_return(network)
+  end
 
   describe '#initialize' do
     it 'initializes a new Address' do
@@ -13,9 +18,9 @@ describe Coinbase::ExternalAddress do
     end
   end
 
-  describe '#network_id' do
-    it 'returns the network ID' do
-      expect(address.network_id).to eq(network_id)
+  describe '#network' do
+    it 'returns the network' do
+      expect(address.network).to eq(network)
     end
   end
 

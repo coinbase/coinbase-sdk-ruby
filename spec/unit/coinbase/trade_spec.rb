@@ -7,20 +7,19 @@ describe Coinbase::Trade do
 
   let(:from_key) { Eth::Key.new }
   let(:network_id) { :base_sepolia }
+  let(:network) { build(:network, network_id) }
   let(:wallet_id) { SecureRandom.uuid }
   let(:address_id) { from_key.address.to_s }
   let(:from_amount) { BigDecimal(100) }
   let(:to_amount) { BigDecimal(100_000) }
   let(:eth_amount) { Coinbase::Asset.from_model(eth_asset).from_atomic_amount(from_amount) }
-  let(:usdc_amount) { Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(to_amount) }
   let(:trade_id) { SecureRandom.uuid }
   let(:eth_asset) { build(:asset_model) }
-  let(:usdc_asset) { build(:asset_model, :usdc) }
   let(:transaction_model) { build(:transaction_model, key: from_key) }
   let(:approve_transaction_model) { nil }
   let(:from_asset_model) { build(:asset_model, :eth) }
   let(:from_asset) { build(:asset, model: from_asset_model) }
-  let(:to_asset_model) { usdc_asset }
+  let(:to_asset_model) { build(:asset_model, :usdc) }
   let(:to_asset) { Coinbase::Asset.from_model(to_asset_model) }
   let(:model) do
     Coinbase::Client::Trade.new(
@@ -40,6 +39,11 @@ describe Coinbase::Trade do
 
   before do
     allow(Coinbase::Client::TradesApi).to receive(:new).and_return(trades_api)
+
+    allow(Coinbase::Network)
+      .to receive(:from_id)
+      .with(satisfy { |n| n == network || n == network_id || n == network.normalized_id })
+      .and_return(network)
   end
 
   describe '.create' do
@@ -49,7 +53,7 @@ describe Coinbase::Trade do
         from_asset_id: from_asset.asset_id,
         to_asset_id: to_asset.asset_id,
         amount: eth_amount,
-        network_id: network_id,
+        network: network_id,
         wallet_id: wallet_id
       )
     end
@@ -66,8 +70,8 @@ describe Coinbase::Trade do
     end
 
     before do
-      allow(Coinbase::Asset).to receive(:fetch).with(network_id, from_asset.asset_id).and_return(from_asset)
-      allow(Coinbase::Asset).to receive(:fetch).with(network_id, to_asset.asset_id).and_return(to_asset)
+      allow(network).to receive(:get_asset).with(from_asset.asset_id).and_return(from_asset)
+      allow(network).to receive(:get_asset).with(to_asset.asset_id).and_return(to_asset)
 
       allow(trades_api)
         .to receive(:create_trade)
@@ -124,7 +128,7 @@ describe Coinbase::Trade do
     let(:item_klass) { described_class }
     let(:item_initialize_args) { nil }
     let(:create_model) do
-      ->(id) { Coinbase::Client::Trade.new(trade_id: id, network_id: 'base-sepolia') }
+      ->(id) { Coinbase::Client::Trade.new(trade_id: id, network_id: network.normalized_id) }
     end
 
     it_behaves_like 'it is a paginated enumerator', :trades
@@ -138,7 +142,7 @@ describe Coinbase::Trade do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(build(:balance_model))
+          described_class.new(build(:balance_model, network_id))
         end.to raise_error(StandardError)
       end
     end
@@ -150,9 +154,9 @@ describe Coinbase::Trade do
     end
   end
 
-  describe '#network_id' do
-    it 'returns the network ID' do
-      expect(trade.network_id).to eq(network_id)
+  describe '#network' do
+    it 'returns the network' do
+      expect(trade.network).to eq(network)
     end
   end
 
@@ -193,9 +197,11 @@ describe Coinbase::Trade do
   end
 
   describe '#to_amount' do
+    let(:expected_amount) { to_asset.from_atomic_amount(to_amount) }
+
     context 'when the to asset is :usdc' do
       it 'returns the amount' do
-        expect(trade.to_amount).to eq(usdc_amount)
+        expect(trade.to_amount).to eq(expected_amount)
       end
     end
 
@@ -379,9 +385,7 @@ describe Coinbase::Trade do
   describe '#reload' do
     let(:updated_transaction_model) { build(:transaction_model, :completed, key: from_key) }
     let(:updated_to_amount) { BigDecimal(500_000_000) }
-    let(:updated_usdc_amount) do
-      Coinbase::Asset.from_model(usdc_asset).from_atomic_amount(updated_to_amount)
-    end
+    let(:expected_amount) { to_asset.from_atomic_amount(updated_to_amount) }
 
     let(:updated_model) do
       Coinbase::Client::Trade.new(
@@ -409,7 +413,7 @@ describe Coinbase::Trade do
     end
 
     it 'updates properties on the trade' do
-      expect(trade.reload.to_amount).to eq(updated_usdc_amount)
+      expect(trade.reload.to_amount).to eq(expected_amount)
     end
   end
 
@@ -463,6 +467,8 @@ describe Coinbase::Trade do
   end
 
   describe '#inspect' do
+    let(:expected_amount) { to_asset.from_atomic_amount(to_amount) }
+
     it 'includes trade details' do
       expect(trade.inspect).to include(
         trade_id,
@@ -471,7 +477,7 @@ describe Coinbase::Trade do
         from_asset_model.asset_id,
         eth_amount.to_s,
         to_asset_model.asset_id,
-        usdc_amount.to_s,
+        expected_amount.to_s,
         trade.status.to_s
       )
     end

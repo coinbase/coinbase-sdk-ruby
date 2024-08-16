@@ -12,6 +12,7 @@ FactoryBot.define do
       is_testnet { true }
       native_asset { build(:asset_model, :eth, :base_sepolia) }
       chain_id { 84_532 }
+      address_path_prefix { "m/44'/60'/0'/0" }
     end
 
     trait :base_mainnet do
@@ -21,6 +22,7 @@ FactoryBot.define do
       is_testnet { false }
       native_asset { build(:asset_model, :eth, :base_mainnet) }
       chain_id { 8_453 }
+      address_path_prefix { "m/44'/60'/0'/0" }
     end
 
     trait :ethereum_mainnet do
@@ -30,6 +32,7 @@ FactoryBot.define do
       is_testnet { false }
       native_asset { build(:asset_model, :eth, :ethereum_mainnet) }
       chain_id { 1 }
+      address_path_prefix { "m/44'/60'/0'/0" }
     end
 
     trait :ethereum_holesky do
@@ -39,6 +42,7 @@ FactoryBot.define do
       is_testnet { true }
       native_asset { build(:asset_model, :eth, :ethereum_holesky) }
       chain_id { 17_000 }
+      address_path_prefix { "m/44'/60'/0'/0" }
     end
   end
 

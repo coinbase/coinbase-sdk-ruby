@@ -15,7 +15,7 @@ describe Coinbase::Transaction do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(build(:balance_model))
+          described_class.new(build(:balance_model, :base_sepolia))
         end.to raise_error(RuntimeError)
       end
     end

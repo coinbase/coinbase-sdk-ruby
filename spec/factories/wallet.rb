@@ -35,10 +35,22 @@ FactoryBot.define do
     transient do
       seed { '000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
       id { SecureRandom.uuid }
+      network_trait { nil }
     end
 
     initialize_with { Coinbase::Wallet.new(model, seed: seed) }
 
     model { build(:wallet_model, id: id) }
+
+    # Register traits to enable passing through to wallet model factory.
+    %i[without_default_address server_signer_pending server_signer_active].each do |trait_name|
+      trait(trait_name { model.traits[trait_name] = true })
+    end
+
+    before(:build) do |_wallet, transients|
+      transfer.model do
+        build(:wallet_model, transients, id: id)
+      end
+    end
   end
 end

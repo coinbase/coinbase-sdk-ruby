@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add historical_balances function for wallet: listing historical balances for default address of the wallet.
 - Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`
 
+### Breaking Changes
+- All method signatures that took a `network_id` now take a `network` that can be either a network constant (e.g. `Coinbase::Network::BASE_MAINNET`) or a network ID (e.g.  `:base_mainnet`)
+
 ### Added
 
 - Add to_address_id method to Transaction class

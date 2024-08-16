@@ -176,3 +176,10 @@ Coinbase::Network.const_set(
     list << network
   end
 )
+
+Coinbase::Network.const_set(
+  'NETWORK_MAP',
+  Coinbase::Network::ALL.each_with_object({}) do |network, map|
+    map[network.id] = network
+  end
+)

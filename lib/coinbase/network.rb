@@ -3,6 +3,19 @@
 module Coinbase
   # A blockchain network.
   class Network
+    # Returns the Network object for the given ID, if supported.
+    # @param network_id [Symbol, String] The ID of the network
+    # @return [Network] The network object
+    def self.from_id(network_id)
+      return network_id if network_id.is_a?(Network)
+
+      network = NETWORK_MAP.fetch(Coinbase.to_sym(network_id), nil)
+
+      return network unless network.nil?
+
+      raise NetworkUnsupportedError, network_id
+    end
+
     # Constructs a new Network object. Do not use this method directly. Instead, use the Network constants defined in
     # the Coinbase module.
     # @param id [Symbol, String] The Network ID
@@ -11,7 +24,20 @@ module Coinbase
       @id = ::Coinbase.to_sym(id)
     end
 
+    # Returns the equality of the Network object with another Network object by ID.
+    # @param other [Coinbase::Network] The network object to compare
+    # @return [Boolean] Whether the Network objects are equal
+    def ==(other)
+      return false unless other.is_a?(Network)
+
+      id == other.id
+    end
+
     attr_reader :id
+
+    def normalized_id
+      id.to_s.gsub('_', '-')
+    end
 
     # The Chain ID of the Network.
     # @return [Integer] The Chain ID of the Network
@@ -43,6 +69,14 @@ module Coinbase
     #  network.protocol_family #=> "evm"
     def protocol_family
       model.protocol_family
+    end
+
+    # The address path prefix of the Network.
+    # @return [String] The address path prefix of the Network
+    # @example
+    #   network.address_path_prefix #=> "m/44'/60'/0'/0"
+    def address_path_prefix
+      model.address_path_prefix
     end
 
     # Gets the Asset with the given ID.

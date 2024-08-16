@@ -11,22 +11,24 @@ module Coinbase
 
     # Builds an ephemeral staking operation this is intended to be called via an Address or Wallet.
     # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The Asset ID
     # @param address_id [String] The Address ID
     # @param action [Symbol] The action to perform
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.build(amount, network_id, asset_id, address_id, action, mode, options)
+    def self.build(amount, network, asset_id, address_id, action, mode, options)
+      network = Coinbase::Network.from_id(network)
+      asset = network.get_asset(asset_id)
+
       model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
         stake_api.build_staking_operation(
           {
             asset_id: asset.primary_denomination.to_s,
             address_id: address_id,
             action: action,
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network),
             options: {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               mode: mode
@@ -40,7 +42,7 @@ module Coinbase
 
     # Creates a persisted staking operation this is intended to be called via an Address or Wallet.
     # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The Asset ID
     # @param address_id [String] The Address ID
     # @param wallet_id [String] The Wallet ID
@@ -48,9 +50,11 @@ module Coinbase
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.create(amount, network_id, asset_id, address_id, wallet_id, action, mode, options)
+    def self.create(amount, network, asset_id, address_id, wallet_id, action, mode, options)
+      network = Coinbase::Network.from_id(network)
+      asset = network.get_asset(asset_id)
+
       model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
         stake_api.create_staking_operation(
           wallet_id,
           address_id,
@@ -58,7 +62,7 @@ module Coinbase
             asset_id: asset.primary_denomination.to_s,
             address_id: address_id,
             action: action,
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network),
             options: {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               mode: mode
@@ -82,10 +86,10 @@ module Coinbase
       @model.id
     end
 
-    # Returns the Network ID of the Staking Operation.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Staking Operation.
+    # @return [Coinbase::Network] The Network
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the Address ID of the Staking Operation.
@@ -130,15 +134,17 @@ module Coinbase
     end
 
     # Fetch the StakingOperation with the provided network, address and staking operation ID.
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param address_id [Symbol] The Address ID
     # @param id [String] The ID of the StakingOperation
     # @param wallet_id [String] The optional Wallet ID
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.fetch(network_id, address_id, id, wallet_id: nil)
+    def self.fetch(network, address_id, id, wallet_id: nil)
+      network = Coinbase::Network.from_id(network)
+
       staking_operation_model = Coinbase.call_api do
         if wallet_id.nil?
-          stake_api.get_external_staking_operation(network_id, address_id, id)
+          stake_api.get_external_staking_operation(network.id, address_id, id)
         else
           stake_api.get_staking_operation(wallet_id, address_id, id)
         end
@@ -160,7 +166,7 @@ module Coinbase
     def reload
       @model = Coinbase.call_api do
         if wallet_id.nil?
-          stake_api.get_external_staking_operation(network_id, address_id, id)
+          stake_api.get_external_staking_operation(network.id, address_id, id)
         else
           stake_api.get_staking_operation(wallet_id, address_id, id)
         end

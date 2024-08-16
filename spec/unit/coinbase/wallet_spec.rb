@@ -26,6 +26,7 @@ describe Coinbase::Wallet do
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
   let(:use_server_signer) { false }
   let(:default_network) { build(:network, :base_sepolia) }
+  let(:network) { default_network }
   let(:configuration) do
     instance_double(
       Coinbase::Configuration,
@@ -40,6 +41,11 @@ describe Coinbase::Wallet do
     allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
 
     allow(Coinbase).to receive(:configuration).and_return(configuration)
+
+    allow(Coinbase::Network)
+      .to receive(:from_id)
+      .with(satisfy { |id| id == network_id || id == normalized_network_id })
+      .and_return(network)
   end
 
   describe '.list' do
@@ -192,6 +198,7 @@ describe Coinbase::Wallet do
       let(:network_id) { :ethereum_mainnet }
       let(:use_server_signer) { false }
       let(:network) { build(:network, network_id) }
+      let(:normalized_network_id) { 'ethereum-mainnet' }
 
       before do
         allow(addresses_api)
@@ -217,8 +224,8 @@ describe Coinbase::Wallet do
         expect(created_wallet).to be_a(described_class)
       end
 
-      it 'sets the specified network ID' do
-        expect(created_wallet.network_id).to eq(network_id)
+      it 'sets the specified network' do
+        expect(created_wallet.network).to eq(network)
       end
 
       context 'when using a network symbol' do
@@ -226,7 +233,9 @@ describe Coinbase::Wallet do
           described_class.create(network: network_id)
         end
 
+        let(:normalized_network_id) { 'base-mainnet' }
         let(:network_id) { :base_mainnet }
+        let(:network) { build(:network, network_id) }
         let(:create_wallet_request) do
           { wallet: { network_id: 'base-mainnet', use_server_signer: use_server_signer } }
         end
@@ -235,8 +244,8 @@ describe Coinbase::Wallet do
           expect(created_wallet).to be_a(described_class)
         end
 
-        it 'sets the specified network ID' do
-          expect(created_wallet.network_id).to eq(network_id)
+        it 'sets the specified network' do
+          expect(created_wallet.network).to eq(network)
         end
       end
     end
@@ -273,7 +282,7 @@ describe Coinbase::Wallet do
       end
 
       it 'sets the default network ID' do
-        expect(created_wallet.network_id).to eq(:base_sepolia)
+        expect(created_wallet.network).to eq(network)
       end
     end
 
@@ -406,8 +415,8 @@ describe Coinbase::Wallet do
   end
 
   describe '#network_id' do
-    it 'returns the Network ID' do
-      expect(wallet.network_id).to eq(:base_sepolia)
+    it 'returns the Network' do
+      expect(wallet.network).to eq(network)
     end
   end
 

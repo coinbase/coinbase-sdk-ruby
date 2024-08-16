@@ -1,25 +1,23 @@
 # frozen_string_literal: true
 
 module Coinbase
-  # A representation of a blockchain Address, which is a user-controlled account on a Network. Addresses are used to
-  # send and receive Assets.
-  # @attr_reader [Symbol] network_id The Network ID
-  # @attr_reader [String] id The onchain Address ID
+  # A representation of a blockchain Address, which is a user-controlled account on a Network.
+  # Addresses are used to send and receive Assets.
   class Address
-    attr_reader :network_id, :id
+    attr_reader :network, :id
 
     # Returns a new Address object.
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param id [String] The onchain Address ID
-    def initialize(network_id, id)
-      @network_id = Coinbase.to_sym(network_id)
+    def initialize(network, id)
+      @network = Coinbase::Network.from_id(network)
       @id = id
     end
 
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s
-      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}'}"
+      Coinbase.pretty_print_object(self.class, id: id, network_id: network.id)
     end
 
     # Same as to_s.
@@ -39,7 +37,7 @@ module Coinbase
     #  in ETH.
     def balances
       response = Coinbase.call_api do
-        addresses_api.list_external_address_balances(Coinbase.normalize_network(network_id), id)
+        addresses_api.list_external_address_balances(network.normalized_id, id)
       end
 
       Coinbase::BalanceMap.from_balances(response.data)
@@ -51,7 +49,7 @@ module Coinbase
     def balance(asset_id)
       response = Coinbase.call_api do
         addresses_api.get_external_address_balance(
-          Coinbase.normalize_network(network_id),
+          network.normalized_id,
           id,
           Coinbase::Asset.primary_denomination(asset_id).to_s
         )
@@ -82,7 +80,7 @@ module Coinbase
     def faucet
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(
-          addresses_api.request_external_faucet_funds(Coinbase.normalize_network(network_id), id)
+          addresses_api.request_external_faucet_funds(network.normalized_id, id)
         )
       end
     end
@@ -97,7 +95,7 @@ module Coinbase
     def build_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
 
-      StakingOperation.build(amount, network_id, asset_id, id, 'stake', mode, options)
+      StakingOperation.build(amount, network, asset_id, id, 'stake', mode, options)
     end
 
     # Builds an unstake operation for the supplied asset.
@@ -109,7 +107,7 @@ module Coinbase
     def build_unstake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
 
-      StakingOperation.build(amount, network_id, asset_id, id, 'unstake', mode, options)
+      StakingOperation.build(amount, network, asset_id, id, 'unstake', mode, options)
     end
 
     # Builds a claim_stake operation for the supplied asset.
@@ -121,7 +119,7 @@ module Coinbase
     def build_claim_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
 
-      StakingOperation.build(amount, network_id, asset_id, id, 'claim_stake', mode, options)
+      StakingOperation.build(amount, network, asset_id, id, 'claim_stake', mode, options)
     end
 
     # Retrieves the balances used for staking for the supplied asset.
@@ -137,7 +135,7 @@ module Coinbase
         stake_api.get_staking_context(
           {
             asset_id: asset_id,
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: network.normalized_id,
             address_id: id,
             options: {
               mode: mode
@@ -197,7 +195,7 @@ module Coinbase
     # @return [Enumerable<Coinbase::StakingReward>] The staking rewards
     def staking_rewards(asset_id, start_time: DateTime.now.prev_week(1), end_time: DateTime.now, format: :usd)
       StakingReward.list(
-        network_id,
+        network,
         asset_id,
         [id],
         start_time: start_time,
@@ -213,7 +211,7 @@ module Coinbase
     # @return [Enumerable<Coinbase::StakingBalance>] The staking rewards
     def historical_staking_balances(asset_id, start_time: DateTime.now.prev_week(1), end_time: DateTime.now)
       StakingBalance.list(
-        network_id,
+        network,
         asset_id,
         id,
         start_time: start_time,
@@ -238,7 +236,7 @@ module Coinbase
 
     def list_page(asset_id, page)
       addresses_api.list_address_historical_balance(
-        Coinbase.normalize_network(network_id),
+        network.normalized_id,
         id,
         Coinbase::Asset.primary_denomination(asset_id).to_s,
         { limit: DEFAULT_PAGE_LIMIT, page: page }

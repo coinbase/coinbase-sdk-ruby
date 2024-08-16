@@ -52,7 +52,7 @@ module Coinbase
         amount: amount,
         asset_id: asset_id,
         destination: destination,
-        network_id: network_id,
+        network: network,
         wallet_id: wallet_id,
         gasless: gasless
       )
@@ -80,7 +80,7 @@ module Coinbase
         amount: amount,
         from_asset_id: from_asset_id,
         to_asset_id: to_asset_id,
-        network_id: network_id,
+        network: network,
         wallet_id: wallet_id
       )
 
@@ -164,7 +164,7 @@ module Coinbase
     # Returns a String representation of the WalletAddress.
     # @return [String] a String representation of the WalletAddress
     def to_s
-      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+      "Coinbase::Address{id: '#{id}', network_id: '#{network.id}', wallet_id: '#{wallet_id}'}"
     end
 
     private
@@ -185,7 +185,7 @@ module Coinbase
     end
 
     def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      op = StakingOperation.create(amount, network_id, asset_id, id, wallet_id, action, mode, options)
+      op = StakingOperation.create(amount, network, asset_id, id, wallet_id, action, mode, options)
       op.transactions.each do |transaction|
         transaction.sign(@key)
       end

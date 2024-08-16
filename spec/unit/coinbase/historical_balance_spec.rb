@@ -2,9 +2,10 @@
 
 describe Coinbase::HistoricalBalance do
   let(:amount) { BigDecimal('1000000000000000000') }
-  let(:eth_asset) { build(:asset_model) }
+  let(:network_id) { :ethereum_mainnet }
+  let(:eth_asset) { build(:asset_model, network_id) }
   let(:asset) { Coinbase::Asset.from_model(eth_asset) }
-  let(:historical_balance_obj) { build(:historical_balance_model, amount: '1000000000000000000') }
+  let(:historical_balance_obj) { build(:historical_balance_model, network_id, amount: '1000000000000000000') }
 
   describe '.from_model' do
     subject(:historical_balance) { described_class.from_model(historical_balance_obj) }
