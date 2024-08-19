@@ -3,15 +3,7 @@
 describe Coinbase::Webhook do
   let(:api_client) { instance_double(Coinbase::Client::ApiClient) }
   let(:webhooks_api) { instance_double(Coinbase::Client::WebhooksApi) }
-  let(:webhook_model) do
-    Coinbase::Client::Webhook.new(
-      id: 'webhook_id',
-      network_id: :base_sepolia,
-      event_type: 'erc20_transfer',
-      event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
-      notification_uri: 'https://example.com/notify'
-    )
-  end
+  let(:webhook_model) { build(:webhook_model) }
 
   before do
     allow(Coinbase.configuration).to receive(:api_client).and_return(api_client)
@@ -93,15 +85,7 @@ describe Coinbase::Webhook do
     subject(:updated_webhook) { webhook.update(notification_uri: new_notification_uri) }
 
     let(:new_notification_uri) { 'https://newurl.com/notify' }
-    let(:updated_webhook_model) do
-      Coinbase::Client::Webhook.new(
-        id: 'webhook_id',
-        network_id: :base_sepolia,
-        event_type: 'erc20_transfer',
-        event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
-        notification_uri: new_notification_uri
-      )
-    end
+    let(:updated_webhook_model) { build(:webhook_model, :updated_uri, notification_uri: new_notification_uri) }
     let(:webhook) { described_class.new(webhook_model) }
 
     before do
