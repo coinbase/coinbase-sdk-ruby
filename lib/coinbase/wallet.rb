@@ -12,6 +12,8 @@ module Coinbase
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
   # list their balances, and transfer Assets to other Addresses.
   class Wallet
+    extend Forwardable
+
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
@@ -140,6 +142,101 @@ module Coinbase
       @master = master_node(seed)
     end
 
+    # @!method transfer
+    # Transfers the amount of the Asset from the default address to the specified destination.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
+    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param destination [Wallet | Address | String] The destination of the transfer.
+    #  If a Wallet, sends to the Wallet's default address.
+    #  If a String, interprets it as the address ID.
+    # @param gasless [Boolean] Whether the transfer should be gasless. Defaults to false.
+    # @return [Coinbase::Transfer] The Transfer object.
+    # (see Coinbase::Address::WalletAddress#transfer)
+
+    # @!method trade
+    # Trades the specified amount from one asset to another using the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param from_asset_id [Symbol] The ID of the Asset to trade from.
+    # @param to_asset_id [Symbol] The ID of the Asset to trade to.
+    #  default address. If a String, interprets it as the address ID.
+    # @return [Coinbase::Trade] The Trade object.
+
+    # @!method faucet
+    # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+
+    # @!method stake
+    # Stakes the given amount of the given Asset for the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
+    # @param asset_id [Symbol] The ID of the Asset to stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the staking operation.
+    # @return [Coinbase::StakingOperation] The stake operation
+
+    # @!method unstake
+    # Unstakes the given amount of the given Asset on the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
+    # @param asset_id [Symbol] The ID of the Asset to unstake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The unstake operation
+
+    # @!method claim_stake
+    # Claims stake of the given amount of the given Asset for the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim_stake.
+    # @param asset_id [Symbol] The ID of the Asset to claim_stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The claim_stake operation
+
+    # @!method staking_balances
+    # Retrieves the balances used for staking for the supplied asset for the default address.
+    # @param asset_id [Symbol] The asset to retrieve staking balances for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [Hash] The staking balances
+    # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
+    # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
+    # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
+
+    # @!method stakeable_balance
+    # Retrieves the stakeable balance of the supplied asset for the default address.
+    # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The stakeable balance
+
+    # @!method unstakeable_balance
+    # Retrieves the unstakeable balance for the supplied asset.
+    # Currently only the default_address is used to source the unstakeable balance.
+    # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The unstakeable balance
+
+    # @!method claimable_balance
+    # Retrieves the claimable balance for the supplied asset.
+    # Currently only the default_address is used to source the claimable balance.
+    # @param asset_id [Symbol] The asset to retrieve the claimable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The claimable balance
+
+    # @!method historical_balances
+    # Enumerates the historical balances for a given asset belonging to the default address of the wallet.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @param asset_id [Symbol, String] The ID of the Asset to retrieve historical balances for.
+    #   This can be an asset alias (e.g. `:usdc`) or a contract address
+    #   (e.g. `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`).
+    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
+
+    def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
+                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :historical_balances
+
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
     def addresses
@@ -263,118 +360,6 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the specified address or wallet.
-    # Only same-network Transfers are supported. Currently only the default_address is used to source the Transfer.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
-    # @param asset_id [Symbol] The ID of the Asset to send
-    # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
-    #  default address. If a String, interprets it as the address ID.
-    # @param gasless [Boolean] Whether gas fee for the transfer should be covered by Coinbase.
-    #   Defaults to false. Check the API documentation for network and asset support.
-    # @return [Coinbase::Transfer] The Transfer object.
-    def transfer(amount, asset_id, destination, options = {})
-      # For ruby 2.7 compatibility we cannot pass in keyword args when the create wallet
-      # options is empty
-      return default_address.transfer(amount, asset_id, destination) if options.empty?
-
-      default_address.transfer(amount, asset_id, destination, **options)
-    end
-
-    # Trades the given amount of the given Asset for another Asset.
-    # Currently only the default_address is used to source the Trade
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
-    # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
-    # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
-    #  default address. If a String, interprets it as the address ID.
-    # @return [Coinbase::Trade] The Trade object.
-    def trade(amount, from_asset_id, to_asset_id)
-      default_address.trade(amount, from_asset_id, to_asset_id)
-    end
-
-    # Stakes the given amount of the given Asset.
-    # Currently only the default_address is used to source the Stake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
-    # @param asset_id [Symbol] The ID of the Asset to stake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the staking operation.
-    # @return [Coinbase::StakingOperation] The stake operation
-    def stake(amount, asset_id, mode: :default, options: {})
-      default_address.stake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Unstakes the given amount of the given Asset.
-    # Currently only the default_address is used to source the Unstake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
-    # @param asset_id [Symbol] The ID of the Asset to unstake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the unstaking operation.
-    # @return [Coinbase::StakingOperation] The unstake operation
-    def unstake(amount, asset_id, mode: :default, options: {})
-      default_address.unstake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Claims stake of the given amount of the given Asset.
-    # Currently only the default_address is used as the source for claim_stake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim_stake.
-    # @param asset_id [Symbol] The ID of the Asset to claim_stake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the unstaking operation.
-    # @return [Coinbase::StakingOperation] The claim_stake operation
-    def claim_stake(amount, asset_id, mode: :default, options: {})
-      default_address.claim_stake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the balances used for staking for the supplied asset.
-    # Currently only the default_address is used to source the staking balances.
-    # @param asset_id [Symbol] The asset to retrieve staking balances for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [Hash] The staking balances
-    # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
-    # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
-    # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
-    def staking_balances(asset_id, mode: :default, options: {})
-      default_address.staking_balances(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the stakeable balance for the supplied asset.
-    # Currently only the default_address is used to source the stakeable balance.
-    # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The stakeable balance
-    def stakeable_balance(asset_id, mode: :default, options: {})
-      default_address.stakeable_balance(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the unstakeable balance for the supplied asset.
-    # Currently only the default_address is used to source the unstakeable balance.
-    # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The unstakeable balance
-    def unstakeable_balance(asset_id, mode: :default, options: {})
-      default_address.unstakeable_balance(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the claimable balance for the supplied asset.
-    # Currently only the default_address is used to source the claimable balance.
-    # @param asset_id [Symbol] The asset to retrieve the claimable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The claimable balance
-    def claimable_balance(asset_id, mode: :default, options: {})
-      default_address.claimable_balance(asset_id, mode: mode, options: options)
-    end
-
-    # Enumerates the historical balances for a given asset belonging to the default address of the wallet.
-    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
-    # converted to an array, etc...
-    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
-    def historical_balances(asset_id)
-      default_address.historical_balances(asset_id)
-    end
-
     # Exports the Wallet's data to a Data object.
     # @return [Coinbase::Wallet::Data] The Wallet data
     def export
@@ -386,11 +371,6 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
-    # This is only supported on testnet networks.
-    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
-    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
-    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id))
