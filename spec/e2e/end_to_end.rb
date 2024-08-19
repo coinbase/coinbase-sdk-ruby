@@ -20,11 +20,10 @@ describe Coinbase do
     end
   end
 
-  describe 'v0.0.16 SDK' do
+  describe 'v0.1.0 SDK' do
     it 'behaves as expected' do # rubocop:disable RSpec/NoExpectationExample
-      user = fetch_user_test
-      new_address = create_new_address_test(user)
-      imported_wallet = import_wallet_test(user)
+      new_address = create_new_address_test
+      imported_wallet = import_wallet_test
       fetch_addresses_balances_test(imported_wallet)
       imported_address = imported_wallet.addresses[0]
       transfer_test(imported_address, new_address)
@@ -38,9 +37,8 @@ describe Coinbase do
       signer = Coinbase::ServerSigner.default
       puts "Using ServerSigner with ID: #{signer.id}"
 
-      user = fetch_user_test
-      new_address = create_new_address_test(user)
-      existing_wallet = fetch_existing_wallet(user)
+      new_address = create_new_address_test
+      existing_wallet = fetch_existing_wallet
       fetch_addresses_balances_test(existing_wallet)
       existing_address = existing_wallet.addresses[0]
       transfer_test(existing_address, new_address)
@@ -48,16 +46,9 @@ describe Coinbase do
   end
 end
 
-def fetch_user_test
-  puts 'Fetching default user...'
-  user = Coinbase.default_user
-  expect(user).not_to be_nil
-  user
-end
-
-def create_new_address_test(user)
+def create_new_address_test
   puts 'Creating new wallet...'
-  w1 = user.create_wallet
+  w1 = Coinbase::Wallet.create
   expect(w1).not_to be_nil
   puts "Created new wallet with ID: #{w1.id}, default address: #{w1.default_address}"
 
@@ -69,7 +60,7 @@ def create_new_address_test(user)
   new_address
 end
 
-def import_wallet_test(user)
+def import_wallet_test
   data_string = ENV.fetch('WALLET_DATA', nil)
   expect(data_string).not_to be_nil
   puts 'Importing wallet with balance...'
@@ -81,7 +72,7 @@ def import_wallet_test(user)
   expect(data.wallet_id).not_to be_nil
   expect(data.seed).not_to be_nil
 
-  wallet = user.import_wallet(data)
+  wallet = Coinbase::Wallet.import(data)
   expect(wallet).not_to be_nil
   puts "Imported wallet with ID: #{wallet.id}, default address: #{wallet.default_address}"
 
@@ -125,7 +116,7 @@ def transfer_test(imported_address, new_address)
   puts "New address balances: #{second_balance}"
 end
 
-def fetch_existing_wallet(user)
+def fetch_existing_wallet
   # TODO: Change to using get method when available.
   data_string = ENV.fetch('SERVER_SIGNER_WALLET_DATA', nil)
   expect(data_string).not_to be_nil
@@ -136,7 +127,7 @@ def fetch_existing_wallet(user)
   expect(data).not_to be_nil
   expect(data.wallet_id).not_to be_nil
 
-  wallet = user.import_wallet(data)
+  wallet = Coinbase::Wallet.import(data)
   expect(wallet).not_to be_nil
 
   wallet

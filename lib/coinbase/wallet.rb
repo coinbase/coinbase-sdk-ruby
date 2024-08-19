@@ -125,8 +125,7 @@ module Coinbase
       end
     end
 
-    # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
-    # User#import_wallet.
+    # Returns a new Wallet object. Do not use this method directly. Instead use Coinbase::Wallet.create.
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be
