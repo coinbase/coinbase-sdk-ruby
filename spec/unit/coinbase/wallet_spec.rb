@@ -151,9 +151,11 @@ describe Coinbase::Wallet do
           .with(
             wallet_id,
             satisfy do |opts|
-              public_key_present = opts[:create_address_request][:public_key].is_a?(String)
-              attestation_present = opts[:create_address_request][:attestation].is_a?(String)
-              public_key_present && attestation_present
+              public_key = opts[:create_address_request][:public_key]
+              attestation = opts[:create_address_request][:attestation]
+              address_index = opts[:create_address_request][:address_index]
+
+              public_key.is_a?(String) && attestation.is_a?(String) && address_index == 0
             end
           ).and_return(first_address_model)
 
@@ -192,8 +194,9 @@ describe Coinbase::Wallet do
             satisfy do |req|
               public_key = req[:create_address_request][:public_key]
               attestation = req[:create_address_request][:attestation]
+              address_index = req[:create_address_request][:address_index]
 
-              public_key.is_a?(String) && attestation.is_a?(String)
+              public_key.is_a?(String) && attestation.is_a?(String) && address_index == 0
             end
           ).and_return(first_address_model)
 
@@ -504,12 +507,23 @@ describe Coinbase::Wallet do
     end
   end
 
+  def match_create_address_request(req, expected_public_key, expected_address_index)
+    public_key = req[:create_address_request][:public_key]
+    attestation = req[:create_address_request][:attestation]
+    address_index = req[:create_address_request][:address_index]
+
+    public_key == expected_public_key &&
+      attestation.is_a?(String) &&
+      address_index == expected_address_index
+  end
+
   describe '#create_address' do
     subject(:created_address) { wallet.create_address }
 
-    let(:expected_public_key) { created_address_model.public_key }
     let(:wallet) { described_class.new(model, seed: seed) }
     let(:existing_addresses) { [] }
+    let(:expected_index) { 0 }
+    let(:created_address_models) { [created_address_model] }
 
     before do
       allow(addresses_api)
@@ -520,21 +534,14 @@ describe Coinbase::Wallet do
 
       allow(addresses_api)
         .to receive(:create_address)
-        .with(
-          wallet_id,
-          satisfy do |req|
-            public_key = req[:create_address_request][:public_key]
-            attestation = req[:create_address_request][:attestation]
-
-            public_key == expected_public_key && attestation.is_a?(String)
-          end
-        ).and_return(created_address_model).once
+        .and_return(*created_address_models)
     end
 
     context 'when the wallet does not have a default address initially' do
       let(:created_address_model) { first_address_model }
 
       before do
+        # Expect the wallet to be reloaded with the new default address
         allow(wallets_api)
           .to receive(:get_wallet)
           .with(wallet_id)
@@ -551,6 +558,17 @@ describe Coinbase::Wallet do
 
       it 'reloads the wallet with the new default address' do
         expect(created_address).to eq(wallet.default_address)
+      end
+
+      it 'creates an address with the correct parameters' do
+        created_address
+
+        expect(addresses_api)
+          .to have_received(:create_address)
+          .with(
+            wallet_id,
+            satisfy { |req| match_create_address_request(req, created_address_model.public_key, 0) }
+          )
       end
     end
 
@@ -573,6 +591,50 @@ describe Coinbase::Wallet do
 
       it 'is not set as the default address' do
         expect(created_address).not_to eq(wallet.default_address)
+      end
+
+      it 'creates an address with the correct parameters' do
+        expect(addresses_api)
+          .to have_received(:create_address)
+          .with(
+            wallet_id,
+            satisfy { |req| match_create_address_request(req, created_address_model.public_key, 1) }
+          )
+      end
+    end
+
+    context 'when creating multiple addresses' do
+      let(:created_address_models) { [first_address_model, second_address_model] }
+
+      before do
+        allow(wallets_api)
+          .to receive(:get_wallet)
+          .with(wallet_id)
+          .and_return(model)
+
+        2.times { wallet.create_address }
+      end
+
+      it 'updates the address count' do
+        expect(wallet.addresses.length).to eq(2)
+      end
+
+      it 'creates the first address with the correct parameters' do
+        expect(addresses_api)
+          .to have_received(:create_address)
+          .with(
+            wallet_id,
+            satisfy { |req| match_create_address_request(req, first_address_model.public_key, 0) }
+          )
+      end
+
+      it 'creates the second address with the correct parameters' do
+        expect(addresses_api)
+          .to have_received(:create_address)
+          .with(
+            wallet_id,
+            satisfy { |req| match_create_address_request(req, second_address_model.public_key, 1) }
+          )
       end
     end
 
