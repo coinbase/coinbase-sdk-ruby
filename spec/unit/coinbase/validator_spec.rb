@@ -1,13 +1,18 @@
 # frozen_string_literal: true
 
 describe Coinbase::Validator do
-  let(:network_id) { :network_id }
+  let(:normalized_network_id) { 'base-sepolia' }
+  let(:network_id) { :base_sepolia }
+  let(:network) { build(:network, network_id) }
   let(:asset_id) { :asset_id }
   let(:validator_id) { 'validator_id' }
   let(:stake_api) { instance_double(Coinbase::Client::ValidatorsApi) }
   let(:validator_model) do
-    instance_double(Coinbase::Client::Validator, status: 'validator_status',
-                                                 details: Coinbase::Client::EthereumValidatorMetadata)
+    instance_double(
+      Coinbase::Client::Validator,
+      status: 'validator_status',
+      details: Coinbase::Client::EthereumValidatorMetadata
+    )
   end
 
   before do
@@ -18,11 +23,15 @@ describe Coinbase::Validator do
   describe '.fetch' do
     subject(:fetch) { described_class.fetch(network_id, asset_id, validator_id) }
 
+    before do
+      allow(Coinbase::Network).to receive(:from_id).with(network_id).and_return(network)
+    end
+
     it 'fetches the validator' do
       fetch
 
       expect(stake_api).to have_received(:get_validator).with(
-        network_id,
+        normalized_network_id,
         asset_id,
         validator_id
       )
@@ -42,6 +51,8 @@ describe Coinbase::Validator do
     let(:page) { 1 }
 
     before do
+      allow(Coinbase::Network).to receive(:from_id).with(network_id).and_return(network)
+
       allow(stake_api).to receive(:list_validators).and_return(
         instance_double(Coinbase::Client::ValidatorList, data: [validator_model], has_more: false)
       )
@@ -51,7 +62,7 @@ describe Coinbase::Validator do
       list.first
 
       expect(stake_api).to have_received(:list_validators).with(
-        network_id,
+        normalized_network_id,
         asset_id,
         {
           status: status,

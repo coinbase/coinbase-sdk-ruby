@@ -1,40 +1,55 @@
 # frozen_string_literal: true
 
 describe Coinbase::StakingBalance do
-  let(:network_id) { 'network-id' }
+  let(:network_id) { :ethereum_mainnet }
+  let(:network) { build(:network, network_id) }
+  let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:asset_id) { 'asset_id' }
   let(:address_id) { 'address_id' }
   let(:start_time) { Time.now }
   let(:end_time) { Time.now }
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
-  let(:staking_balance_model) { build(:staking_balance_model) }
-  let(:staking_balance) { build(:staking_balance, model: staking_balance_model) }
+  let(:staking_balance_model) { build(:staking_balance_model, network_id) }
+  let(:staking_balance) { build(:staking_balance, network_id, model: staking_balance_model) }
 
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+
     allow(stake_api).to receive(:fetch_historical_staking_balances).and_return(
-      instance_double(Coinbase::Client::FetchHistoricalStakingBalances200Response, data: [staking_balance_model],
-                                                                                   has_more: true,
-                                                                                   next_page: 'next_page'),
-      instance_double(Coinbase::Client::FetchHistoricalStakingBalances200Response, data: [], has_more: false)
+      instance_double(
+        Coinbase::Client::FetchHistoricalStakingBalances200Response,
+        data: [staking_balance_model],
+        has_more: true,
+        next_page: 'next_page'
+      ),
+      instance_double(
+        Coinbase::Client::FetchHistoricalStakingBalances200Response,
+        data: [],
+        has_more: false
+      )
     )
   end
 
   describe '.list' do
     subject(:list) do
       described_class.list(
-        network_id, asset_id,
+        network_id,
+        asset_id,
         address_id,
         start_time: start_time,
         end_time: end_time
       )
     end
 
+    before do
+      allow(Coinbase::Network).to receive(:from_id).with(network_id).and_return(network)
+    end
+
     it 'fetches the first page of staking balances' do
       list.to_a
 
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
-        network_id,
+        normalized_network_id,
         asset_id,
         address_id,
         start_time.iso8601,
@@ -47,7 +62,7 @@ describe Coinbase::StakingBalance do
       list.to_a
 
       expect(stake_api).to have_received(:fetch_historical_staking_balances).with(
-        network_id,
+        normalized_network_id,
         asset_id,
         address_id,
         start_time.iso8601,

@@ -6,6 +6,8 @@ describe Coinbase::Transfer do
   let(:from_key) { build(:key) }
   let(:to_key) { Eth::Key.new }
   let(:network_id) { :base_sepolia }
+  let(:normalized_network_id) { 'base-sepolia' }
+  let(:network) { build(:network, network_id) }
   let(:from_address_id) { from_key.address.to_s }
   let(:to_address_id) { to_key.address.to_s }
   let(:transaction_model) { build(:transaction_model, key: from_key) }
@@ -21,6 +23,11 @@ describe Coinbase::Transfer do
 
   before do
     allow(Coinbase::Client::TransfersApi).to receive(:new).and_return(transfers_api)
+
+    allow(Coinbase::Network)
+      .to receive(:from_id)
+      .with(satisfy { |n| n == network || n == network_id || n == normalized_network_id })
+      .and_return(network)
   end
 
   describe '.create' do
@@ -30,7 +37,7 @@ describe Coinbase::Transfer do
         asset_id: asset_id,
         amount: whole_amount,
         destination: destination,
-        network_id: network_id,
+        network: network_id,
         wallet_id: wallet_id
       )
     end
@@ -38,21 +45,21 @@ describe Coinbase::Transfer do
     let(:asset_id) { :eth }
     let(:normalized_asset_id) { 'eth' }
     let(:asset) { build(:asset, :eth) }
-    let(:destination) { Coinbase::Destination.new(to_address_id, network_id: network_id) }
+    let(:destination) { Coinbase::Destination.new(to_address_id, network: network_id) }
     let(:create_transfer_request) do
       {
         amount: atomic_amount.to_i.to_s,
         asset_id: normalized_asset_id,
         destination: to_address_id,
-        network_id: Coinbase.normalize_network(network_id),
+        network_id: normalized_network_id,
         gasless: false
       }
     end
 
     before do
-      allow(Coinbase::Asset)
-        .to receive(:fetch)
-        .with(network_id, asset.asset_id)
+      allow(network)
+        .to receive(:get_asset)
+        .with(asset.asset_id)
         .and_return(asset)
 
       allow(transfers_api)
@@ -100,7 +107,7 @@ describe Coinbase::Transfer do
           asset_id: asset_id,
           amount: whole_amount,
           destination: destination,
-          network_id: network_id,
+          network: network_id,
           wallet_id: wallet_id,
           gasless: true
         )
@@ -111,7 +118,7 @@ describe Coinbase::Transfer do
           amount: atomic_amount.to_i.to_s,
           asset_id: normalized_asset_id,
           destination: to_address_id,
-          network_id: Coinbase.normalize_network(network_id),
+          network_id: normalized_network_id,
           gasless: true
         }
       end
@@ -151,7 +158,7 @@ describe Coinbase::Transfer do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(build(:balance_model))
+          described_class.new(build(:balance_model, network_id))
         end.to raise_error(RuntimeError)
       end
     end
@@ -163,9 +170,9 @@ describe Coinbase::Transfer do
     end
   end
 
-  describe '#network_id' do
-    it 'returns the network ID' do
-      expect(transfer.network_id).to eq(network_id)
+  describe '#network' do
+    it 'returns the network' do
+      expect(transfer.network).to eq(network)
     end
   end
 
@@ -210,8 +217,8 @@ describe Coinbase::Transfer do
       expect(transfer.asset).to be_a(Coinbase::Asset)
     end
 
-    it 'configures the asset with the correct network ID' do
-      expect(transfer.asset.network_id).to eq(network_id)
+    it 'configures the asset with the correct network' do
+      expect(transfer.asset.network).to eq(network)
     end
 
     it 'configures the asset with the correct asset ID' do

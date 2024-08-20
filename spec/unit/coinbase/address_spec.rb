@@ -3,9 +3,14 @@
 describe Coinbase::Address do
   subject(:address) { described_class.new(network_id, address_id) }
 
+  let(:network) { build(:network, :ethereum_mainnet) }
   let(:network_id) { :ethereum_mainnet }
   let(:normalized_network_id) { 'ethereum-mainnet' }
   let(:address_id) { '0x1234' }
+
+  before do
+    allow(Coinbase::Network).to receive(:from_id).with(network_id).and_return(network)
+  end
 
   describe '#id' do
     subject { address.id }
@@ -13,10 +18,10 @@ describe Coinbase::Address do
     it { is_expected.to eq(address_id) }
   end
 
-  describe '#network_id' do
-    subject { address.network_id }
+  describe '#network' do
+    subject { address.network }
 
-    it { is_expected.to eq(network_id) }
+    it { is_expected.to eq(network) }
   end
 
   describe '#to_s' do

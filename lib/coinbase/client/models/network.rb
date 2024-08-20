@@ -33,6 +33,9 @@ module Coinbase::Client
 
     attr_accessor :feature_set
 
+    # The BIP44 path prefix for the network
+    attr_accessor :address_path_prefix
+
     class EnumAttributeValidator
       attr_reader :datatype
       attr_reader :allowable_values
@@ -64,7 +67,8 @@ module Coinbase::Client
         :'protocol_family' => :'protocol_family',
         :'is_testnet' => :'is_testnet',
         :'native_asset' => :'native_asset',
-        :'feature_set' => :'feature_set'
+        :'feature_set' => :'feature_set',
+        :'address_path_prefix' => :'address_path_prefix'
       }
     end
 
@@ -82,7 +86,8 @@ module Coinbase::Client
         :'protocol_family' => :'String',
         :'is_testnet' => :'Boolean',
         :'native_asset' => :'Asset',
-        :'feature_set' => :'FeatureSet'
+        :'feature_set' => :'FeatureSet',
+        :'address_path_prefix' => :'String'
       }
     end
 
@@ -147,6 +152,10 @@ module Coinbase::Client
         self.feature_set = attributes[:'feature_set']
       else
         self.feature_set = nil
+      end
+
+      if attributes.key?(:'address_path_prefix')
+        self.address_path_prefix = attributes[:'address_path_prefix']
       end
     end
 
@@ -223,7 +232,8 @@ module Coinbase::Client
           protocol_family == o.protocol_family &&
           is_testnet == o.is_testnet &&
           native_asset == o.native_asset &&
-          feature_set == o.feature_set
+          feature_set == o.feature_set &&
+          address_path_prefix == o.address_path_prefix
     end
 
     # @see the `==` method
@@ -235,7 +245,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, display_name, chain_id, protocol_family, is_testnet, native_asset, feature_set].hash
+      [id, display_name, chain_id, protocol_family, is_testnet, native_asset, feature_set, address_path_prefix].hash
     end
 
     # Builds the object from hash

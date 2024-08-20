@@ -73,6 +73,17 @@ module Coinbase
       @debug_api = false
       @use_server_signer = false
       @max_network_tries = 3
+      @default_network = Coinbase::Network::BASE_SEPOLIA
+    end
+
+    attr_reader :default_network
+
+    def default_network=(network)
+      unless network.is_a?(Coinbase::Network)
+        raise InvalidConfiguration, 'Default network must use a network constant, e.g. Coinbase::Network::BASE_MAINNET'
+      end
+
+      @default_network = network
     end
 
     # Sets configuration values based on the provided CDP API Key JSON file.
@@ -104,10 +115,13 @@ module Coinbase
     value.to_s.gsub('-', '_').to_sym
   end
 
-  # Converts a network symbol to a string, replacing underscores with hyphens.
-  # @param network_sym [Symbol] the network symbol to convert
-  # @return [String] the converted string
-  def self.normalize_network(network_sym)
+  # Converts a Network object or network symbol with the string representation of the network ID,
+  # replacing underscores with hyphens.
+  # @param network_sym [Coinbase::Network, Symbol] The network or network symbol to convert
+  # @return [String] The string representation of the network ID
+  def self.normalize_network(network)
+    network_sym = network.is_a?(Coinbase::Network) ? network.id : network
+
     network_sym.to_s.gsub('_', '-')
   end
 
@@ -136,9 +150,36 @@ module Coinbase
     Coinbase.configuration.use_server_signer
   end
 
+  # Returns the default network.
+  # @return [Coinbase::Network] the default network
+  def self.default_network
+    Coinbase.configuration.default_network
+  end
+
   # Returns whether the SDK is configured.
   # @return [bool] whether the SDK is configured
   def self.configured?
     !Coinbase.configuration.api_key_name.nil? && !Coinbase.configuration.api_key_private_key.nil?
   end
 end
+
+# Initialize the Network constants.
+Coinbase::Network.const_set(
+  'ALL',
+  Coinbase::Client::NetworkIdentifier.all_vars.each_with_object([]) do |id, list|
+    next if id == Coinbase::Client::NetworkIdentifier::UNKNOWN_DEFAULT_OPEN_API
+
+    network = Coinbase::Network.new(id)
+
+    Coinbase::Network.const_set(id.upcase.gsub('-', '_'), network)
+
+    list << network
+  end
+)
+
+Coinbase::Network.const_set(
+  'NETWORK_MAP',
+  Coinbase::Network::ALL.each_with_object({}) do |network, map|
+    map[network.id] = network
+  end
+)

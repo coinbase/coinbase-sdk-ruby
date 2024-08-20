@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 - Add historical_balances function for wallet: listing historical balances for default address of the wallet.
+- Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`
+
+### Breaking Changes
+- All method signatures that took a `network_id` now take a `network` that can be either a network constant (e.g. `Coinbase::Network::BASE_MAINNET`) or a network ID (e.g.  `:base_mainnet`)
 
 ### Added
 

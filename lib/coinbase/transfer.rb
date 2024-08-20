@@ -20,12 +20,13 @@ module Coinbase
       #   If the destination is a Wallet, it uses the default Address of the Wallet.
       #   If the destination is an Address, it uses the Address's ID.
       #   If the destination is a String, it uses it as the Address ID.
-      # @param network_id [Symbol] The Network ID of the Asset
+      # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
       # @param wallet_id [String] The Wallet ID of the sending Wallet
       # @return [Transfer] The new pending Transfer object
       # @raise [Coinbase::ApiError] If the Transfer fails
-      def create(address_id:, amount:, asset_id:, destination:, network_id:, wallet_id:, gasless: false)
-        asset = Asset.fetch(network_id, asset_id)
+      def create(address_id:, amount:, asset_id:, destination:, network:, wallet_id:, gasless: false)
+        network = Coinbase::Network.from_id(network)
+        asset = network.get_asset(asset_id)
 
         model = Coinbase.call_api do
           transfers_api.create_transfer(
@@ -34,8 +35,8 @@ module Coinbase
             {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               asset_id: asset.primary_denomination.to_s,
-              destination: Coinbase::Destination.new(destination, network_id: network_id).address_id,
-              network_id: Coinbase.normalize_network(network_id),
+              destination: Coinbase::Destination.new(destination, network: network).address_id,
+              network_id: network.normalized_id,
               gasless: gasless
             }
           )
@@ -82,10 +83,10 @@ module Coinbase
       @model.transfer_id
     end
 
-    # Returns the Network ID of the Transfer.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Transfer.
+    # @return [Symbol] The Network
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the Wallet ID of the Transfer.
@@ -229,7 +230,7 @@ module Coinbase
     # Returns a String representation of the Transfer.
     # @return [String] a String representation of the Transfer
     def to_s
-      "Coinbase::Transfer{transfer_id: '#{id}', network_id: '#{network_id}', " \
+      "Coinbase::Transfer{transfer_id: '#{id}', network_id: '#{network.id}', " \
         "from_address_id: '#{from_address_id}', destination_address_id: '#{destination_address_id}', " \
         "asset_id: '#{asset_id}', amount: '#{amount}', transaction_link: '#{transaction_link}', " \
         "status: '#{status}'}"

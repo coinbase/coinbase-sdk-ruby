@@ -11,9 +11,9 @@ shared_examples 'an address that supports balance queries' do |_operation|
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [
-          build(:balance_model, amount: '1000000000000000000'),
-          build(:balance_model, :usdc, amount: '5000000000'),
-          build(:balance_model, :weth, amount: '3000000000000000000')
+          build(:balance_model, network_id, amount: '1000000000000000000'),
+          build(:balance_model, network_id, :usdc, amount: '5000000000'),
+          build(:balance_model, network_id, :weth, amount: '3000000000000000000')
         ]
       )
     end
@@ -43,7 +43,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
   end
 
   describe '#balance' do
-    let(:response) { build(:balance_model, amount: '1000000000000000000') }
+    let(:response) { build(:balance_model, network_id, amount: '1000000000000000000') }
 
     before do
       allow(external_addresses_api)
@@ -83,8 +83,8 @@ shared_examples 'an address that supports balance queries' do |_operation|
       let(:asset_id) { :other }
       let(:primary_denomination) { 'other' }
       let(:decimals) { 7 }
-      let(:other_asset) { build(:asset_model, asset_id: 'other', decimals: decimals) }
-      let(:response) { build(:balance_model, asset: other_asset, amount: BigDecimal(10**18).to_s) }
+      let(:other_asset) { build(:asset_model, network_id, asset_id: 'other', decimals: decimals) }
+      let(:response) { build(:balance_model, network_id, asset: other_asset, amount: BigDecimal(10**18).to_s) }
 
       it 'returns the correct balance' do
         expect(address.balance(:other)).to eq BigDecimal('100_000_000_000')
@@ -104,7 +104,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
 
   describe '#historical_balances' do
     let(:eth_asset) { build(:asset_model) }
-    let(:historical_balance) { build(:historical_balance_model, amount: '1000000000000000000') }
+    let(:historical_balance) { build(:historical_balance_model, network_id, amount: '1000000000000000000') }
     let(:response) do
       Coinbase::Client::AddressBalanceList.new(
         data: [

@@ -15,7 +15,7 @@ describe Coinbase::Transaction do
     context 'when initialized with a model of a different type' do
       it 'raises an error' do
         expect do
-          described_class.new(build(:balance_model))
+          described_class.new(build(:balance_model, :base_sepolia))
         end.to raise_error(RuntimeError)
       end
     end
@@ -154,7 +154,7 @@ describe Coinbase::Transaction do
       end
 
       it 'returns the correct chain ID' do
-        expect(transaction.raw.chain_id).to eq(Coinbase::BASE_SEPOLIA.chain_id)
+        expect(transaction.raw.chain_id).to eq(84_532)
       end
 
       it 'returns the correct sanitized sender address' do
@@ -204,7 +204,7 @@ describe Coinbase::Transaction do
       end
 
       it 'returns the correct chain ID' do
-        expect(transaction.raw.chain_id).to eq(Coinbase::BASE_SEPOLIA.chain_id)
+        expect(transaction.raw.chain_id).to eq(84_532)
       end
 
       it 'returns the correct sanitized sender address' do

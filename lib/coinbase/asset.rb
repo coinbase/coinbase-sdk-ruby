@@ -35,7 +35,7 @@ module Coinbase
         end
 
         new(
-          network_id: Coinbase.to_sym(asset_model.network_id),
+          network: Coinbase.to_sym(asset_model.network_id),
           asset_id: asset_id || Coinbase.to_sym(asset_model.asset_id),
           address_id: asset_model.contract_address,
           decimals: decimals
@@ -43,12 +43,15 @@ module Coinbase
       end
 
       # Fetches the Asset with the provided Asset ID.
+      # @param network [Coinbase::Network, Symbol] The Network or Network ID
       # @param asset_id [Symbol] The Asset ID
       # @return [Coinbase::Asset] The Asset
-      def fetch(network_id, asset_id)
+      def fetch(network, asset_id)
+        network = Coinbase::Network.from_id(network)
+
         asset_model = Coinbase.call_api do
           assets_api.get_asset(
-            Coinbase.normalize_network(network_id),
+            network.normalized_id,
             primary_denomination(asset_id).to_s
           )
         end
@@ -65,18 +68,18 @@ module Coinbase
 
     # Returns a new Asset object. Do not use this method. Instead, use the Asset constants defined in
     # the Coinbase module.
-    # @param network_id [Symbol] The ID of the Network to which the Asset belongs
+    # @param network [Symbol] The Network or Network ID to which the Asset belongs
     # @param asset_id [Symbol] The Asset ID
     # @param address_id [String] (Optional) The Asset's address ID, if one exists
     # @param decimals [Integer] (Optional) The number of decimal places the Asset uses
-    def initialize(network_id:, asset_id:, decimals:, address_id: nil)
-      @network_id = network_id
+    def initialize(network:, asset_id:, decimals:, address_id: nil)
+      @network = Coinbase::Network.from_id(network)
       @asset_id = asset_id
       @address_id = address_id
       @decimals = decimals
     end
 
-    attr_reader :network_id, :asset_id, :address_id, :decimals
+    attr_reader :network, :asset_id, :address_id, :decimals
 
     # Converts the amount of the Asset from atomic to whole units.
     # @param atomic_amount [Integer, Float, BigDecimal] The atomic amount to convert to whole units.
@@ -103,7 +106,7 @@ module Coinbase
     # Returns a string representation of the Asset.
     # @return [String] a string representation of the Asset
     def to_s
-      "Coinbase::Asset{network_id: '#{network_id}', asset_id: '#{asset_id}', decimals: '#{decimals}'" \
+      "Coinbase::Asset{network_id: '#{network.id}', asset_id: '#{asset_id}', decimals: '#{decimals}'" \
         "#{address_id.nil? ? '' : ", address_id: '#{address_id}'"}}"
     end
 

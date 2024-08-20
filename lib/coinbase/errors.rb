@@ -57,6 +57,13 @@ module Coinbase
   end
 
   # An error raised when an operation is attempted with insufficient funds.
+  class NetworkUnsupportedError < StandardError
+    def initialize(network_id)
+      super("Network #{network_id} is not supported")
+    end
+  end
+
+  # An error raised when an operation is attempted with insufficient funds.
   class InsufficientFundsError < StandardError
     def initialize(expected, exact, msg = 'Insufficient funds')
       super("#{msg}: have #{exact}, need #{expected}.")
