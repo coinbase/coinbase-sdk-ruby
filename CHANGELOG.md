@@ -5,10 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.1.0] - 2024-08-22
 
-- Add historical_balances function for wallet: listing historical balances for default address of the wallet.
+- Add support for listing historical balances for a wallet, defaulting to the
+historical_balances function for wallet: listing historical balances for default address of the wallet.
 - Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`
+- Add support for managing Webhooks.
+- Add support for listing smart contract events.
 
 ### Breaking Changes
 - All method signatures that took a `network_id` now take a `network` that can be either a network constant (e.g. `Coinbase::Network::BASE_MAINNET`) or a network ID (e.g.  `:base_mainnet`)

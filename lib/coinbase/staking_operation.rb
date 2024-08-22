@@ -55,7 +55,7 @@ module Coinbase
       asset = network.get_asset(asset_id)
 
       model = Coinbase.call_api do
-        stake_api.create_staking_operation(
+        wallet_stake_api.create_staking_operation(
           wallet_id,
           address_id,
           {
@@ -73,6 +73,18 @@ module Coinbase
 
       new(model)
     end
+
+    def self.stake_api
+      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    private_class_method :stake_api
+
+    def self.wallet_stake_api
+      Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    private_class_method :wallet_stake_api
 
     # Returns a new StakingOperation object.
     # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
@@ -146,7 +158,7 @@ module Coinbase
         if wallet_id.nil?
           stake_api.get_external_staking_operation(network.id, address_id, id)
         else
-          stake_api.get_staking_operation(wallet_id, address_id, id)
+          wallet_stake_api.get_staking_operation(wallet_id, address_id, id)
         end
       end
 
@@ -168,7 +180,7 @@ module Coinbase
         if wallet_id.nil?
           stake_api.get_external_staking_operation(network.id, address_id, id)
         else
-          stake_api.get_staking_operation(wallet_id, address_id, id)
+          wallet_stake_api.get_staking_operation(wallet_id, address_id, id)
         end
       end
 
@@ -197,7 +209,7 @@ module Coinbase
         raise TransactionNotSignedError unless transaction.signed?
 
         Coinbase.call_api do
-          stake_api.broadcast_staking_operation(
+          wallet_stake_api.broadcast_staking_operation(
             wallet_id,
             address_id,
             id,
@@ -209,14 +221,14 @@ module Coinbase
       self
     end
 
-    def self.stake_api
-      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
-    end
-
     private
 
     def stake_api
-      @stake_api ||= self.class.stake_api
+      @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    def wallet_stake_api
+      @wallet_stake_api ||= Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
     end
 
     def from_model(model)
