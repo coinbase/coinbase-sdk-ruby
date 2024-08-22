@@ -23,20 +23,25 @@ describe Coinbase::StakingOperation do
   let(:hex_encoded_transaction) { '0xdeadbeef' }
 
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+  let(:wallet_stake_api) { instance_double(Coinbase::Client::WalletStakeApi) }
   let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
 
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+    allow(Coinbase::Client::WalletStakeApi).to receive(:new).and_return(wallet_stake_api)
+
     allow(staking_operation_model).to receive(:transactions).and_return([transaction_model])
     allow(Coinbase::Transaction).to receive(:new).and_return(transaction)
     allow(transaction).to receive(:sign)
     allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
-    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+
     allow(stake_api).to receive_messages(
-      build_staking_operation: staking_operation_model,
+      build_staking_operation: staking_operation_model
+    )
+    allow(wallet_stake_api).to receive_messages(
       create_staking_operation: staking_operation_model
     )
-    allow(stake_api).to receive(:broadcast_staking_operation)
+    allow(wallet_stake_api).to receive(:broadcast_staking_operation)
     allow(transaction).to receive_messages(signed?: false, raw: raw_tx)
     allow(raw_tx).to receive(:hex).and_return(hex_encoded_transaction)
   end
@@ -90,7 +95,7 @@ describe Coinbase::StakingOperation do
     end
 
     it 'creates the staking operation' do # rubocop:disable RSpec/ExampleLength
-      expect(stake_api).to have_received(:create_staking_operation).with(
+      expect(wallet_stake_api).to have_received(:create_staking_operation).with(
         wallet_id,
         address_id,
         asset_id: 'eth',
@@ -110,7 +115,9 @@ describe Coinbase::StakingOperation do
 
     before do
       allow(stake_api).to receive_messages(
-        get_external_staking_operation: staking_operation_model,
+        get_external_staking_operation: staking_operation_model
+      )
+      allow(wallet_stake_api).to receive_messages(
         get_staking_operation: staking_operation_model
       )
     end
@@ -137,7 +144,7 @@ describe Coinbase::StakingOperation do
       it 'fetches the wallet-scoped staking operation' do
         staking_operation
 
-        expect(stake_api)
+        expect(wallet_stake_api)
           .to have_received(:get_staking_operation)
           .with(wallet_id, address_id, 'some_id')
       end
@@ -148,14 +155,17 @@ describe Coinbase::StakingOperation do
     subject(:reload) { staking_operation.reload }
 
     before do
-      allow(stake_api).to receive_messages(get_external_staking_operation: staking_operation_model,
-                                           get_staking_operation: staking_operation_model)
+      allow(stake_api)
+        .to receive_messages(get_external_staking_operation: staking_operation_model)
+
+      allow(wallet_stake_api)
+        .to receive_messages(get_staking_operation: staking_operation_model)
     end
 
-    it 'calls StakeApi.get_staking_operation' do
+    it 'fetches the staking operation' do
       reload
 
-      expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
+      expect(wallet_stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
     end
 
     it { is_expected.to be_a described_class }
@@ -219,7 +229,7 @@ describe Coinbase::StakingOperation do
     before do
       allow(staking_operation).to receive(:sleep)
 
-      allow(stake_api)
+      allow(wallet_stake_api)
         .to receive(:get_staking_operation)
         .with(wallet_id, address_id, staking_operation.id)
         .and_return(staking_operation_model, staking_operation_model, updated_staking_operation_model)
@@ -255,7 +265,7 @@ describe Coinbase::StakingOperation do
     it 'calls broadcast with the transaction' do
       staking_operation.broadcast!
 
-      expect(stake_api).to have_received(:broadcast_staking_operation).with(
+      expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
         wallet_id,
         address_id,
         staking_operation.id,
@@ -277,13 +287,13 @@ describe Coinbase::StakingOperation do
       it 'broadcasts both transactions' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).twice
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).twice
       end
 
       it 'broadcasts the first transaction' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
           wallet_id,
           address_id,
           staking_operation.id,
@@ -294,7 +304,7 @@ describe Coinbase::StakingOperation do
       it 'broadcasts the second transaction' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
           wallet_id,
           address_id,
           staking_operation.id,

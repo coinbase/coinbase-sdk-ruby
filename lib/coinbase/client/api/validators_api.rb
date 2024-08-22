@@ -99,7 +99,7 @@ module Coinbase::Client
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validators for.
     # @param [Hash] opts the optional parameters
-    # @option opts [String] :status A filter to list validators based on a status.
+    # @option opts [ValidatorStatus] :status A filter to list validators based on a status.
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 50.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [ValidatorList]
@@ -113,7 +113,7 @@ module Coinbase::Client
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validators for.
     # @param [Hash] opts the optional parameters
-    # @option opts [String] :status A filter to list validators based on a status.
+    # @option opts [ValidatorStatus] :status A filter to list validators based on a status.
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 50.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [Array<(ValidatorList, Integer, Hash)>] ValidatorList data, response status code and response headers
