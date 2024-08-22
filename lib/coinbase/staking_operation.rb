@@ -104,6 +104,12 @@ module Coinbase
       @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
+    # Returns the Network ID of the Staking Operation.
+    # @return [String] The Network ID
+    def network_id
+      @model.network_id
+    end
+
     # Returns the Address ID of the Staking Operation.
     # @return [String] The Address ID
     def address_id
@@ -114,6 +120,24 @@ module Coinbase
     # @return [Symbol] The status
     def status
       @model.status
+    end
+
+    def terminal_state?
+      failed_state? || complete_state?
+    end
+
+    def failed_state?
+      status == 'failed'
+    end
+
+    def complete_state?
+      status == 'complete'
+    end
+
+    # Returns a String representation of the Staking Operation.
+    # @return [String] a String representation of the Staking Operation
+    def to_s
+      "StakingOperation { id: #{id}, status: #{status}, network_id: #{network_id}, address_id: #{address_id} }"
     end
 
     # Returns the Wallet ID of the Staking Operation.
@@ -135,7 +159,7 @@ module Coinbase
         reload
 
         # Wait for the Staking Operation to be in a terminal state.
-        break if status == 'complete'
+        break if terminal_state?
 
         raise Timeout::Error, 'Staking Operation timed out' if Time.now - start_time > timeout_seconds
 
@@ -234,8 +258,22 @@ module Coinbase
     def from_model(model)
       @model = model
       @status = model.status
-      @transactions = model.transactions.map do |transaction_model|
-        Transaction.new(transaction_model)
+      @transactions ||= []
+
+      # Only overwrite the transactions if the response is populated.
+      if model.transactions && !model.transactions.empty?
+        # Create a set of existing unsigned payloads to avoid duplicates.
+        existing_unsigned_payloads = Set.new
+        @transactions.each do |transaction|
+          existing_unsigned_payloads.add(transaction.unsigned_payload)
+        end
+
+        # Add transactions that are not already in the transactions array.
+        model.transactions.each do |transaction_model|
+          unless existing_unsigned_payloads.include?(transaction_model.unsigned_payload)
+            @transactions << Transaction.new(transaction_model)
+          end
+        end
       end
 
       self
