@@ -353,8 +353,8 @@ describe Coinbase::StakingOperation do
     end
   end
 
-  describe '#failed_state?' do
-    subject { staking_operation.failed_state? }
+  describe '#failed?' do
+    subject { staking_operation.failed? }
 
     context 'when status is failed' do
       before do
@@ -373,8 +373,8 @@ describe Coinbase::StakingOperation do
     end
   end
 
-  describe '#complete_state?' do
-    subject { staking_operation.complete_state? }
+  describe '#completed?' do
+    subject { staking_operation.completed? }
 
     context 'when status is complete' do
       before do
@@ -395,8 +395,8 @@ describe Coinbase::StakingOperation do
 
   describe '#to_s' do
     it 'returns the correct string representation of the staking operation' do
-      expected_string = 'StakingOperation { id: some_id, status: initialized, network_id: ethereum_holesky, ' \
-                        'address_id: address_id }'
+      expected_string = "Coinbase::StakingOperation{id: 'some_id', status: 'initialized', " \
+                        "network_id: 'ethereum_holesky', address_id: 'address_id'}"
       expect(staking_operation.to_s).to eq(expected_string)
     end
   end
