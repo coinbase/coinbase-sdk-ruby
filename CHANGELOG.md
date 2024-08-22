@@ -12,6 +12,7 @@ historical_balances function for wallet: listing historical balances for default
 - Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`
 - Add support for managing Webhooks.
 - Add support for listing smart contract events.
+- Add support for Dedicated ETH Staking for wallet addresses
 
 ### Breaking Changes
 - All method signatures that took a `network_id` now take a `network` that can be either a network constant (e.g. `Coinbase::Network::BASE_MAINNET`) or a network ID (e.g.  `:base_mainnet`)
