@@ -105,9 +105,9 @@ module Coinbase
     end
 
     # Returns the Network ID of the Staking Operation.
-    # @return [String] The Network ID
+    # @return [Symbol] The Network ID
     def network_id
-      @model.network_id
+      Coinbase.to_sym(@model.network_id)
     end
 
     # Returns the Address ID of the Staking Operation.
