@@ -36,7 +36,7 @@ describe Coinbase::StakingOperation do
     allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
 
     allow(stake_api).to receive_messages(
-      build_staking_operation: staking_operation_model,
+      build_staking_operation: staking_operation_model
     )
     allow(wallet_stake_api).to receive_messages(
       create_staking_operation: staking_operation_model
@@ -115,7 +115,7 @@ describe Coinbase::StakingOperation do
 
     before do
       allow(stake_api).to receive_messages(
-        get_external_staking_operation: staking_operation_model,
+        get_external_staking_operation: staking_operation_model
       )
       allow(wallet_stake_api).to receive_messages(
         get_staking_operation: staking_operation_model
