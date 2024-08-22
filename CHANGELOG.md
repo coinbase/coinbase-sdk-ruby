@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2024-08-22
+
+### Fixed
+
+- Incorrect stake client api being used for staking_operation.complete when calling `broadcast_staking_operation`
+
 ## [0.1.0] - 2024-08-22
 
 - Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`

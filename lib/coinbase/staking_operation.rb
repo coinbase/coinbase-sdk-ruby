@@ -194,7 +194,7 @@ module Coinbase
 
           transaction.sign(key)
           @model = Coinbase.call_api do
-            stake_api.broadcast_staking_operation(
+            wallet_stake_api.broadcast_staking_operation(
               wallet_id,
               address_id,
               id,
@@ -211,8 +211,6 @@ module Coinbase
 
         sleep interval_seconds
       end
-
-      self
     end
 
     # Fetch the StakingOperation with the provided network, address and staking operation ID.
