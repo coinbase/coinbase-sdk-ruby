@@ -395,7 +395,7 @@ describe Coinbase::StakingOperation do
 
   describe '#to_s' do
     it 'returns the correct string representation of the staking operation' do
-      expected_string = 'StakingOperation { id: some_id, status: initialized, network_id: ethereum-holesky, ' \
+      expected_string = 'StakingOperation { id: some_id, status: initialized, network_id: ethereum_holesky, ' \
                         'address_id: address_id }'
       expect(staking_operation.to_s).to eq(expected_string)
     end
