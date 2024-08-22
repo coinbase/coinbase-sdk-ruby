@@ -122,14 +122,20 @@ module Coinbase
       @model.status
     end
 
+    # Returns whether the Staking Operation is in a terminal state.
+    # @return [Boolean] Whether the Staking Operation is in a terminal state
     def terminal_state?
       failed_state? || complete_state?
     end
 
+    # Returns whether the Staking Operation is in a failed state.
+    # @return [Boolean] Whether the Staking Operation is in a failed state
     def failed_state?
       status == 'failed'
     end
 
+    # Returns whether the Staking Operation is in a complete state.
+    # @return [Boolean] Whether the Staking Operation is in a complete state
     def complete_state?
       status == 'complete'
     end
