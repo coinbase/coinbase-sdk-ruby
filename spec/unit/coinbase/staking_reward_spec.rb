@@ -140,7 +140,7 @@ describe Coinbase::StakingReward do
     let(:staking_reward) { described_class.new(staking_reward_model, asset, format) }
 
     it 'returns the usd conversion price' do
-      expect(staking_reward.usd_conversion_price).to eq(BigDecimal('1.50'))
+      expect(staking_reward.usd_conversion_price).to eq(BigDecimal('150'))
     end
   end
 

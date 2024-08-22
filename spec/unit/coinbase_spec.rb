@@ -80,32 +80,6 @@ describe Coinbase do
     end
   end
 
-  describe '.default_user' do
-    let(:users_api) { instance_double(Coinbase::Client::UsersApi) }
-    let(:user_model) { instance_double(Coinbase::Client::User) }
-
-    before do
-      allow(Coinbase::Client::UsersApi).to receive(:new).and_return(users_api)
-      allow(users_api).to receive(:get_current_user).and_return(user_model)
-      allow(Coinbase::User).to receive(:new)
-    end
-
-    it 'creates a new users api client' do
-      described_class.default_user
-      expect(Coinbase::Client::UsersApi).to have_received(:new).with(described_class.configuration.api_client)
-    end
-
-    it 'gets the current user from the api' do
-      described_class.default_user
-      expect(users_api).to have_received(:get_current_user)
-    end
-
-    it 'creates a new user object from the response' do
-      described_class.default_user
-      expect(Coinbase::User).to have_received(:new).with(user_model)
-    end
-  end
-
   describe '.call_api' do
     context 'when the API call is successful' do
       it 'does not raise an error' do

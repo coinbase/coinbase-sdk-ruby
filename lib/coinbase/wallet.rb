@@ -12,6 +12,8 @@ module Coinbase
   # each of which can hold a balance of one or more Assets. Wallets can create new Addresses, list their addresses,
   # list their balances, and transfer Assets to other Addresses.
   class Wallet
+    extend Forwardable
+
     # The maximum number of addresses in a Wallet.
     MAX_ADDRESSES = 20
 
@@ -54,18 +56,19 @@ module Coinbase
       end
 
       # Creates a new Wallet on the specified Network and generate a default address for it.
-      # @param network_id [String] (Optional) the ID of the blockchain network. Defaults to 'base-sepolia'.
+      # @param network [Coinbase::Network, Symbol] (Optional) The network object or ID to create the
+      #   Wallet on. When omitted this uses the SDK configured default network.
       # @param interval_seconds [Integer] The interval at which to poll the CDPService for the Wallet to
       # have an active seed, if using a ServerSigner, in seconds
       # @param timeout_seconds [Integer] The maximum amount of time to wait for the ServerSigner to
       # create a seed for the Wallet, in seconds
       # @return [Coinbase::Wallet] the new Wallet
-      def create(network_id: 'base-sepolia', interval_seconds: 0.2, timeout_seconds: 20)
+      def create(network: Coinbase.default_network, interval_seconds: 0.2, timeout_seconds: 20)
         model = Coinbase.call_api do
           wallets_api.create_wallet(
             create_wallet_request: {
               wallet: {
-                network_id: Coinbase.normalize_network(network_id),
+                network_id: Coinbase.normalize_network(network),
                 use_server_signer: Coinbase.use_server_signer?
               }
             }
@@ -123,8 +126,7 @@ module Coinbase
       end
     end
 
-    # Returns a new Wallet object. Do not use this method directly. Instead, use User#create_wallet or
-    # User#import_wallet.
+    # Returns a new Wallet object. Do not use this method directly. Instead use Coinbase::Wallet.create.
     # @param model [Coinbase::Client::Wallet] The underlying Wallet object
     # @param seed [String] (Optional) The seed to use for the Wallet. Expects a 32-byte hexadecimal with no 0x prefix.
     #   If nil, a new seed will be generated. If the empty string, no seed is generated, and the Wallet will be
@@ -140,19 +142,98 @@ module Coinbase
       @master = master_node(seed)
     end
 
+    # @!method transfer
+    # Transfers the amount of the Asset from the default address to the specified destination.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
+    # @param asset_id [Symbol] The ID of the Asset to send
+    # @param destination [Wallet | Address | String] The destination of the transfer.
+    #  If a Wallet, sends to the Wallet's default address.
+    #  If a String, interprets it as the address ID.
+    # @param gasless [Boolean] Whether the transfer should be gasless. Defaults to false.
+    # @return [Coinbase::Transfer] The Transfer object.
+    # (see Coinbase::Address::WalletAddress#transfer)
+
+    # @!method trade
+    # Trades the specified amount from one asset to another using the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
+    # @param from_asset_id [Symbol] The ID of the Asset to trade from.
+    # @param to_asset_id [Symbol] The ID of the Asset to trade to.
+    #  default address. If a String, interprets it as the address ID.
+    # @return [Coinbase::Trade] The Trade object.
+
+    # @!method faucet
+    # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
+    # This is only supported on testnet networks.
+    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
+    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
+    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
+
+    # @!method stake
+    # Stakes the given amount of the given Asset for the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
+    # @param asset_id [Symbol] The ID of the Asset to stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the staking operation.
+    # @return [Coinbase::StakingOperation] The stake operation
+
+    # @!method unstake
+    # Unstakes the given amount of the given Asset on the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
+    # @param asset_id [Symbol] The ID of the Asset to unstake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The unstake operation
+
+    # @!method claim_stake
+    # Claims stake of the given amount of the given Asset for the default address.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim_stake.
+    # @param asset_id [Symbol] The ID of the Asset to claim_stake.
+    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
+    # @param options [Hash] (Optional) Additional options for the unstaking operation.
+    # @return [Coinbase::StakingOperation] The claim_stake operation
+
+    # @!method staking_balances
+    # Retrieves the balances used for staking for the supplied asset for the default address.
+    # @param asset_id [Symbol] The asset to retrieve staking balances for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [Hash] The staking balances
+    # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
+    # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
+    # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
+
+    # @!method stakeable_balance
+    # Retrieves the stakeable balance of the supplied asset for the default address.
+    # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The stakeable balance
+
+    # @!method unstakeable_balance
+    # Retrieves the unstakeable balance for the supplied asset.
+    # Currently only the default_address is used to source the unstakeable balance.
+    # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The unstakeable balance
+
+    # @!method claimable_balance
+    # Retrieves the claimable balance for the supplied asset.
+    # Currently only the default_address is used to source the claimable balance.
+    # @param asset_id [Symbol] The asset to retrieve the claimable balance for
+    # @param mode [Symbol] The staking mode. Defaults to :default.
+    # @param options [Hash] Additional options for the staking operation
+    # @return [BigDecimal] The claimable balance
+
+    def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
+                   :stakeable_balance, :unstakeable_balance, :claimable_balance
+
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
     def addresses
-      @addresses ||= begin
-        address_list = Coinbase.call_api do
-          addresses_api.list_addresses(@model.id, { limit: MAX_ADDRESSES })
-        end
+      return @addresses unless @addresses.nil?
 
-        # Build the WalletAddress objects, injecting the key if available.
-        address_list.data.each_with_index.map do |address_model, index|
-          build_wallet_address(address_model, index)
-        end
-      end
+      set_addresses
     end
 
     # Returns the Wallet ID.
@@ -161,10 +242,10 @@ module Coinbase
       @model.id
     end
 
-    # Returns the Network ID of the Wallet.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Wallet.
+    # @return [Coinbase::Network] The Network of the Wallet
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the ServerSigner Status of the Wallet.
@@ -198,7 +279,12 @@ module Coinbase
     # Creates a new Address in the Wallet.
     # @return [Address] The new Address
     def create_address
-      opts = { create_address_request: {} }
+      req = {}
+
+      # Ensure that the address cache is set before creating a new address.
+      # This ensures that for a server signer, the addresses have been loaded and we
+      # can create a new address and add it to a cache.
+      set_addresses if @addresses.nil?
 
       unless Coinbase.use_server_signer?
         # The index for the next address is the number of addresses already registered.
@@ -206,22 +292,25 @@ module Coinbase
 
         key = derive_key(private_key_index)
 
-        opts = {
-          create_address_request: {
-            public_key: key.public_key.compressed.unpack1('H*'),
-            attestation: create_attestation(key)
-          }
+        req = {
+          public_key: key.public_key.compressed.unpack1('H*'),
+          attestation: create_attestation(key),
+          address_index: private_key_index
         }
       end
 
       address_model = Coinbase.call_api do
-        addresses_api.create_address(id, opts)
+        addresses_api.create_address(id, { create_address_request: req })
       end
 
-      # Auto-reload wallet to set default address on first address creation.
+      # Default address can be nil because either this is the first address being
+      # created for this wallet or the addresses cache has not yet been loaded.
+
+      # If the default address is nil, we must reload the wallet model after creating
+      # the address, in order for the default address to be set.
       reload if default_address.nil?
 
-      # Cache the address in our memoized list
+      # The addreses cache is already created, so we can add the new address to the cache.
       address = WalletAddress.new(address_model, key)
       @addresses << address
       address
@@ -263,110 +352,6 @@ module Coinbase
       Coinbase::Balance.from_model_and_asset_id(response, asset_id).amount
     end
 
-    # Transfers the given amount of the given Asset to the specified address or wallet.
-    # Only same-network Transfers are supported. Currently only the default_address is used to source the Transfer.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send
-    # @param asset_id [Symbol] The ID of the Asset to send
-    # @param destination [Wallet | Address | String] The destination of the transfer. If a Wallet, sends to the Wallet's
-    #  default address. If a String, interprets it as the address ID.
-    # @param gasless [Boolean] Whether gas fee for the transfer should be covered by Coinbase.
-    #   Defaults to false. Check the API documentation for network and asset support.
-    # @return [Coinbase::Transfer] The Transfer object.
-    def transfer(amount, asset_id, destination, options = {})
-      # For ruby 2.7 compatibility we cannot pass in keyword args when the create wallet
-      # options is empty
-      return default_address.transfer(amount, asset_id, destination) if options.empty?
-
-      default_address.transfer(amount, asset_id, destination, **options)
-    end
-
-    # Trades the given amount of the given Asset for another Asset.
-    # Currently only the default_address is used to source the Trade
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to send.
-    # @param from_asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
-    # @param to_asset_id [Symbol] The ID of the Asset to trade to. For Ether, :eth, :gwei, and :wei are supported.
-    #  default address. If a String, interprets it as the address ID.
-    # @return [Coinbase::Trade] The Trade object.
-    def trade(amount, from_asset_id, to_asset_id)
-      default_address.trade(amount, from_asset_id, to_asset_id)
-    end
-
-    # Stakes the given amount of the given Asset.
-    # Currently only the default_address is used to source the Stake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
-    # @param asset_id [Symbol] The ID of the Asset to stake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the staking operation.
-    # @return [Coinbase::StakingOperation] The stake operation
-    def stake(amount, asset_id, mode: :default, options: {})
-      default_address.stake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Unstakes the given amount of the given Asset.
-    # Currently only the default_address is used to source the Unstake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
-    # @param asset_id [Symbol] The ID of the Asset to unstake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the unstaking operation.
-    # @return [Coinbase::StakingOperation] The unstake operation
-    def unstake(amount, asset_id, mode: :default, options: {})
-      default_address.unstake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Claims stake of the given amount of the given Asset.
-    # Currently only the default_address is used as the source for claim_stake.
-    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim_stake.
-    # @param asset_id [Symbol] The ID of the Asset to claim_stake.
-    # @param mode [Symbol] (Optional) The staking mode. Defaults to :default.
-    # @param options [Hash] (Optional) Additional options for the unstaking operation.
-    # @return [Coinbase::StakingOperation] The claim_stake operation
-    def claim_stake(amount, asset_id, mode: :default, options: {})
-      default_address.claim_stake(amount, asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the balances used for staking for the supplied asset.
-    # Currently only the default_address is used to source the staking balances.
-    # @param asset_id [Symbol] The asset to retrieve staking balances for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [Hash] The staking balances
-    # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
-    # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
-    # @return [BigDecimal] :claimable_balance The amount of the asset that can be claimed
-    def staking_balances(asset_id, mode: :default, options: {})
-      default_address.staking_balances(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the stakeable balance for the supplied asset.
-    # Currently only the default_address is used to source the stakeable balance.
-    # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The stakeable balance
-    def stakeable_balance(asset_id, mode: :default, options: {})
-      default_address.stakeable_balance(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the unstakeable balance for the supplied asset.
-    # Currently only the default_address is used to source the unstakeable balance.
-    # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The unstakeable balance
-    def unstakeable_balance(asset_id, mode: :default, options: {})
-      default_address.unstakeable_balance(asset_id, mode: mode, options: options)
-    end
-
-    # Retrieves the claimable balance for the supplied asset.
-    # Currently only the default_address is used to source the claimable balance.
-    # @param asset_id [Symbol] The asset to retrieve the claimable balance for
-    # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
-    # @return [BigDecimal] The claimable balance
-    def claimable_balance(asset_id, mode: :default, options: {})
-      default_address.claimable_balance(asset_id, mode: mode, options: options)
-    end
-
     # Exports the Wallet's data to a Data object.
     # @return [Coinbase::Wallet::Data] The Wallet data
     def export
@@ -378,11 +363,6 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
-    # This is only supported on testnet networks.
-    # @return [Coinbase::FaucetTransaction] The successful faucet transaction
-    # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
-    # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id))
@@ -477,8 +457,12 @@ module Coinbase
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
-      "Coinbase::Wallet{wallet_id: '#{id}', network_id: '#{network_id}', " \
-        "default_address: '#{@model.default_address&.address_id}'}"
+      Coinbase.pretty_print_object(
+        self.class,
+        id: id,
+        network_id: network.id,
+        default_address: @model.default_address&.address_id
+      )
     end
 
     # Same as to_s.
@@ -507,13 +491,11 @@ module Coinbase
     end
 
     def address_path_prefix
-      # TODO: Push this logic to the backend.
-      @address_path_prefix ||= case network_id.to_s.split('_').first
-                               when 'base', 'ethereum', 'polygon'
-                                 "m/44'/60'/0'/0"
-                               else
-                                 raise ArgumentError, "Unsupported network ID: #{network_id}"
-                               end
+      if network.address_path_prefix.nil? || network.address_path_prefix.empty?
+        raise ArgumentError, "Cannot create address for network #{network.id}"
+      end
+
+      network.address_path_prefix
     end
 
     # Derives a key for the given address index.
@@ -594,6 +576,16 @@ module Coinbase
 
     def wallets_api
       @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+    end
+
+    def set_addresses
+      address_list = Coinbase.call_api do
+        addresses_api.list_addresses(@model.id, { limit: MAX_ADDRESSES })
+      end
+
+      @addresses = address_list.data.each_with_index.map do |address_model, index|
+        build_wallet_address(address_model, index)
+      end
     end
   end
 end

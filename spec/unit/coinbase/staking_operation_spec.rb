@@ -4,6 +4,7 @@ describe Coinbase::StakingOperation do
   let(:wallet_id) { 'wallet_id' }
   let(:network_id) { :ethereum_holesky }
   let(:address_id) { 'address_id' }
+  let(:metadata) { nil }
   let(:staking_operation_model) do
     instance_double(
       Coinbase::Client::StakingOperation,
@@ -11,7 +12,9 @@ describe Coinbase::StakingOperation do
       id: 'some_id',
       wallet_id: wallet_id,
       network_id: 'ethereum-holesky',
-      address_id: 'address_id'
+      address_id: 'address_id',
+      transactions: [],
+      metadata: metadata
     )
   end
   let(:staking_operation) { described_class.new(staking_operation_model) }
@@ -23,20 +26,26 @@ describe Coinbase::StakingOperation do
   let(:hex_encoded_transaction) { '0xdeadbeef' }
 
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+  let(:wallet_stake_api) { instance_double(Coinbase::Client::WalletStakeApi) }
   let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
 
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+    allow(Coinbase::Client::WalletStakeApi).to receive(:new).and_return(wallet_stake_api)
+
     allow(staking_operation_model).to receive(:transactions).and_return([transaction_model])
+    allow(transaction_model).to receive(:unsigned_payload).and_return('some_unsigned_payload')
     allow(Coinbase::Transaction).to receive(:new).and_return(transaction)
     allow(transaction).to receive(:sign)
+    allow(transaction).to receive(:unsigned_payload).and_return('some_unsigned_payload')
     allow(Coinbase::Asset).to receive(:fetch).and_return(eth_asset)
-    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive_messages(
-      build_staking_operation: staking_operation_model,
+      build_staking_operation: staking_operation_model
+    )
+    allow(wallet_stake_api).to receive_messages(
       create_staking_operation: staking_operation_model
     )
-    allow(stake_api).to receive(:broadcast_staking_operation)
+    allow(wallet_stake_api).to receive(:broadcast_staking_operation)
     allow(transaction).to receive_messages(signed?: false, raw: raw_tx)
     allow(raw_tx).to receive(:hex).and_return(hex_encoded_transaction)
   end
@@ -90,7 +99,7 @@ describe Coinbase::StakingOperation do
     end
 
     it 'creates the staking operation' do # rubocop:disable RSpec/ExampleLength
-      expect(stake_api).to have_received(:create_staking_operation).with(
+      expect(wallet_stake_api).to have_received(:create_staking_operation).with(
         wallet_id,
         address_id,
         asset_id: 'eth',
@@ -110,7 +119,9 @@ describe Coinbase::StakingOperation do
 
     before do
       allow(stake_api).to receive_messages(
-        get_external_staking_operation: staking_operation_model,
+        get_external_staking_operation: staking_operation_model
+      )
+      allow(wallet_stake_api).to receive_messages(
         get_staking_operation: staking_operation_model
       )
     end
@@ -137,7 +148,7 @@ describe Coinbase::StakingOperation do
       it 'fetches the wallet-scoped staking operation' do
         staking_operation
 
-        expect(stake_api)
+        expect(wallet_stake_api)
           .to have_received(:get_staking_operation)
           .with(wallet_id, address_id, 'some_id')
       end
@@ -148,14 +159,17 @@ describe Coinbase::StakingOperation do
     subject(:reload) { staking_operation.reload }
 
     before do
-      allow(stake_api).to receive_messages(get_external_staking_operation: staking_operation_model,
-                                           get_staking_operation: staking_operation_model)
+      allow(stake_api)
+        .to receive_messages(get_external_staking_operation: staking_operation_model)
+
+      allow(wallet_stake_api)
+        .to receive_messages(get_staking_operation: staking_operation_model)
     end
 
-    it 'calls StakeApi.get_staking_operation' do
+    it 'fetches the staking operation' do
       reload
 
-      expect(stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
+      expect(wallet_stake_api).to have_received(:get_staking_operation).with(wallet_id, address_id, 'some_id')
     end
 
     it { is_expected.to be_a described_class }
@@ -218,8 +232,7 @@ describe Coinbase::StakingOperation do
 
     before do
       allow(staking_operation).to receive(:sleep)
-
-      allow(stake_api)
+      allow(wallet_stake_api)
         .to receive(:get_staking_operation)
         .with(wallet_id, address_id, staking_operation.id)
         .and_return(staking_operation_model, staking_operation_model, updated_staking_operation_model)
@@ -255,7 +268,7 @@ describe Coinbase::StakingOperation do
     it 'calls broadcast with the transaction' do
       staking_operation.broadcast!
 
-      expect(stake_api).to have_received(:broadcast_staking_operation).with(
+      expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
         wallet_id,
         address_id,
         staking_operation.id,
@@ -277,13 +290,13 @@ describe Coinbase::StakingOperation do
       it 'broadcasts both transactions' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).twice
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).twice
       end
 
       it 'broadcasts the first transaction' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
           wallet_id,
           address_id,
           staking_operation.id,
@@ -294,7 +307,7 @@ describe Coinbase::StakingOperation do
       it 'broadcasts the second transaction' do
         staking_operation.broadcast!
 
-        expect(stake_api).to have_received(:broadcast_staking_operation).with(
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
           wallet_id,
           address_id,
           staking_operation.id,
@@ -308,6 +321,103 @@ describe Coinbase::StakingOperation do
 
       it 'raises a transaction not signed exception' do
         expect { staking_operation.broadcast! }.to raise_error Coinbase::TransactionNotSignedError
+      end
+    end
+  end
+
+  describe '#terminal_state?' do
+    subject { staking_operation.terminal_state? }
+
+    context 'when status is complete' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('complete')
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context 'when status is failed' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('failed')
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context 'when status is not terminal' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('initialized')
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#failed?' do
+    subject { staking_operation.failed? }
+
+    context 'when status is failed' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('failed')
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context 'when status is not failed' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('initialized')
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#completed?' do
+    subject { staking_operation.completed? }
+
+    context 'when status is complete' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('complete')
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context 'when status is not complete' do
+      before do
+        allow(staking_operation_model).to receive(:status).and_return('initialized')
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe '#to_s' do
+    it 'returns the correct string representation of the staking operation' do
+      expected_string = "Coinbase::StakingOperation{id: 'some_id', status: 'initialized', " \
+                        "network_id: 'ethereum_holesky', address_id: 'address_id'}"
+      expect(staking_operation.to_s).to eq(expected_string)
+    end
+  end
+
+  describe '#signed_voluntary_exit_messages' do
+    context 'when metadata is nil' do
+      let(:metadata) { nil }
+
+      it 'returns an empty array' do
+        expect(staking_operation.signed_voluntary_exit_messages).to eq([])
+      end
+    end
+
+    context 'when metadata is present' do
+      let(:encoded_message) { Base64.encode64('signed_message') }
+      let(:metadata) do
+        [instance_double(Coinbase::Client::SignedVoluntaryExitMessageMetadata, signed_voluntary_exit: encoded_message)]
+      end
+
+      it 'returns the decoded messages' do
+        expect(staking_operation.signed_voluntary_exit_messages).to eq(['signed_message'])
       end
     end
   end

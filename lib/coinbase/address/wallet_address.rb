@@ -52,7 +52,7 @@ module Coinbase
         amount: amount,
         asset_id: asset_id,
         destination: destination,
-        network_id: network_id,
+        network: network,
         wallet_id: wallet_id,
         gasless: gasless
       )
@@ -80,7 +80,7 @@ module Coinbase
         amount: amount,
         from_asset_id: from_asset_id,
         to_asset_id: to_asset_id,
-        network_id: network_id,
+        network: network,
         wallet_id: wallet_id
       )
 
@@ -100,11 +100,16 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the stake operation
+    # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
+    # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation
-    def stake(amount, asset_id, mode: :default, options: {})
+    # @raise [Timeout::Error] if the Staking Operation takes longer than the given timeout.
+    def stake(amount, asset_id, mode: :default, options: {}, interval_seconds: 5, timeout_seconds: 600)
       validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
 
-      complete_staking_operation(amount, asset_id, 'stake', mode: mode, options: options)
+      op = StakingOperation.create(amount, network, asset_id, id, wallet_id, 'stake', mode, options)
+
+      op.complete(@key, interval_seconds: interval_seconds, timeout_seconds: timeout_seconds)
     end
 
     # Unstakes the given amount of the given Asset
@@ -112,11 +117,16 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the stake operation
+    # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
+    # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation
-    def unstake(amount, asset_id, mode: :default, options: {})
+    # @raise [Timeout::Error] if the Staking Operation takes longer than the given timeout.
+    def unstake(amount, asset_id, mode: :default, options: {}, interval_seconds: 5, timeout_seconds: 600)
       validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
 
-      complete_staking_operation(amount, asset_id, 'unstake', mode: mode, options: options)
+      op = StakingOperation.create(amount, network, asset_id, id, wallet_id, 'unstake', mode, options)
+
+      op.complete(@key, interval_seconds: interval_seconds, timeout_seconds: timeout_seconds)
     end
 
     # Claims the given amount of the given Asset
@@ -124,11 +134,16 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
     # @param options [Hash] Additional options for the stake operation
+    # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
+    # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation
-    def claim_stake(amount, asset_id, mode: :default, options: {})
+    # @raise [Timeout::Error] if the Staking Operation takes longer than the given timeout.
+    def claim_stake(amount, asset_id, mode: :default, options: {}, interval_seconds: 5, timeout_seconds: 600)
       validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
 
-      complete_staking_operation(amount, asset_id, 'claim_stake', mode: mode, options: options)
+      op = StakingOperation.create(amount, network, asset_id, id, wallet_id, 'claim_stake', mode, options)
+
+      op.complete(@key, interval_seconds: interval_seconds, timeout_seconds: timeout_seconds)
     end
 
     # Returns whether the Address has a private key backing it to sign transactions.
@@ -164,7 +179,7 @@ module Coinbase
     # Returns a String representation of the WalletAddress.
     # @return [String] a String representation of the WalletAddress
     def to_s
-      "Coinbase::Address{id: '#{id}', network_id: '#{network_id}', wallet_id: '#{wallet_id}'}"
+      "Coinbase::Address{id: '#{id}', network_id: '#{network.id}', wallet_id: '#{wallet_id}'}"
     end
 
     private
@@ -182,14 +197,6 @@ module Coinbase
       return unless current_balance < amount
 
       raise InsufficientFundsError.new(amount, current_balance)
-    end
-
-    def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
-      op = StakingOperation.create(amount, network_id, asset_id, id, wallet_id, action, mode, options)
-      op.transactions.each do |transaction|
-        transaction.sign(@key)
-      end
-      op.broadcast!
     end
   end
 end

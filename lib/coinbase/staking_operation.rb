@@ -11,22 +11,24 @@ module Coinbase
 
     # Builds an ephemeral staking operation this is intended to be called via an Address or Wallet.
     # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The Asset ID
     # @param address_id [String] The Address ID
     # @param action [Symbol] The action to perform
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.build(amount, network_id, asset_id, address_id, action, mode, options)
+    def self.build(amount, network, asset_id, address_id, action, mode, options)
+      network = Coinbase::Network.from_id(network)
+      asset = network.get_asset(asset_id)
+
       model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
         stake_api.build_staking_operation(
           {
             asset_id: asset.primary_denomination.to_s,
             address_id: address_id,
             action: action,
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network),
             options: {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               mode: mode
@@ -40,7 +42,7 @@ module Coinbase
 
     # Creates a persisted staking operation this is intended to be called via an Address or Wallet.
     # @param amount [BigDecimal] The amount to stake, in the primary denomination of the asset
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The Asset ID
     # @param address_id [String] The Address ID
     # @param wallet_id [String] The Wallet ID
@@ -48,17 +50,19 @@ module Coinbase
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.create(amount, network_id, asset_id, address_id, wallet_id, action, mode, options)
+    def self.create(amount, network, asset_id, address_id, wallet_id, action, mode, options)
+      network = Coinbase::Network.from_id(network)
+      asset = network.get_asset(asset_id)
+
       model = Coinbase.call_api do
-        asset = Coinbase::Asset.fetch(network_id, asset_id)
-        stake_api.create_staking_operation(
+        wallet_stake_api.create_staking_operation(
           wallet_id,
           address_id,
           {
             asset_id: asset.primary_denomination.to_s,
             address_id: address_id,
             action: action,
-            network_id: Coinbase.normalize_network(network_id),
+            network_id: Coinbase.normalize_network(network),
             options: {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               mode: mode
@@ -70,10 +74,24 @@ module Coinbase
       new(model)
     end
 
+    def self.stake_api
+      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    private_class_method :stake_api
+
+    def self.wallet_stake_api
+      Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    private_class_method :wallet_stake_api
+
     # Returns a new StakingOperation object.
     # @param model [Coinbase::Client::StakingOperation] The underlying StakingOperation object
     def initialize(model)
-      from_model(model)
+      @model = model
+      @transactions ||= []
+      update_transactions(model.transactions)
     end
 
     # Returns the Staking Operation ID.
@@ -82,10 +100,10 @@ module Coinbase
       @model.id
     end
 
-    # Returns the Network ID of the Staking Operation.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Staking Operation.
+    # @return [Coinbase::Network] The Network
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the Address ID of the Staking Operation.
@@ -100,18 +118,48 @@ module Coinbase
       @model.status
     end
 
+    # Returns whether the Staking Operation is in a terminal state.
+    # @return [Boolean] Whether the Staking Operation is in a terminal state
+    def terminal_state?
+      failed? || completed?
+    end
+
+    # Returns whether the Staking Operation is in a failed state.
+    # @return [Boolean] Whether the Staking Operation is in a failed state
+    def failed?
+      status == 'failed'
+    end
+
+    # Returns whether the Staking Operation is in a complete state.
+    # @return [Boolean] Whether the Staking Operation is in a complete state
+    def completed?
+      status == 'complete'
+    end
+
+    # Returns a String representation of the Staking Operation.
+    # @return [String] a String representation of the Staking Operation
+    def to_s
+      Coinbase.pretty_print_object(
+        self.class,
+        id: id,
+        status: status,
+        network_id: network.id,
+        address_id: address_id
+      )
+    end
+
     # Returns the Wallet ID of the Staking Operation.
     # @return [String] The Wallet ID
     def wallet_id
       @model.wallet_id
     end
 
-    # Waits until the Staking Operation is completed or failed by polling its status at the given interval. Raises a
-    # Timeout::Error if the Staking Operation takes longer than the given timeout.
+    # Waits until the Staking Operation is completed or failed by polling its status at the given interval.
     # @param interval_seconds [Integer] The interval at which to poll, in seconds
     # @param timeout_seconds [Integer] The maximum amount of time
     #   to wait for the StakingOperation to complete, in seconds
     # @return [StakingOperation] The completed StakingOperation object
+    # @raise [Timeout::Error] if the Staking Operation takes longer than the given timeout.
     def wait!(interval_seconds = 5, timeout_seconds = 3600)
       start_time = Time.now
 
@@ -119,7 +167,7 @@ module Coinbase
         reload
 
         # Wait for the Staking Operation to be in a terminal state.
-        break if status == 'complete'
+        break if terminal_state?
 
         raise Timeout::Error, 'Staking Operation timed out' if Time.now - start_time > timeout_seconds
 
@@ -129,18 +177,58 @@ module Coinbase
       self
     end
 
+    # Complete helps the Staking Operation reach complete state, by polling its status at the given interval, signing
+    # and broadcasting any available transaction.
+    # @param key [Eth::Key] The key to sign the Staking Operation transactions with
+    # @param interval_seconds [Integer] The interval at which to poll, in seconds
+    # @param timeout_seconds [Integer] The maximum amount of time
+    #   to wait for the StakingOperation to complete, in seconds
+    # @return [StakingOperation] The completed StakingOperation object
+    # @raise [Timeout::Error] if the Staking Operation takes longer than the given timeout.
+    def complete(key, interval_seconds: 5, timeout_seconds: 600)
+      start_time = Time.now
+
+      loop do
+        @transactions.each_with_index do |transaction, i|
+          next if transaction.signed?
+
+          transaction.sign(key)
+          @model = Coinbase.call_api do
+            stake_api.broadcast_staking_operation(
+              wallet_id,
+              address_id,
+              id,
+              { signed_payload: transaction.raw.hex, transaction_index: i }
+            )
+          end
+        end
+
+        return self if terminal_state?
+
+        reload
+
+        raise Timeout::Error, 'Staking Operation timed out' if Time.now - start_time > timeout_seconds
+
+        sleep interval_seconds
+      end
+
+      self
+    end
+
     # Fetch the StakingOperation with the provided network, address and staking operation ID.
-    # @param network_id [Symbol] The Network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param address_id [Symbol] The Address ID
     # @param id [String] The ID of the StakingOperation
     # @param wallet_id [String] The optional Wallet ID
     # @return [Coinbase::StakingOperation] The staking operation
-    def self.fetch(network_id, address_id, id, wallet_id: nil)
+    def self.fetch(network, address_id, id, wallet_id: nil)
+      network = Coinbase::Network.from_id(network)
+
       staking_operation_model = Coinbase.call_api do
         if wallet_id.nil?
-          stake_api.get_external_staking_operation(network_id, address_id, id)
+          stake_api.get_external_staking_operation(network.id, address_id, id)
         else
-          stake_api.get_staking_operation(wallet_id, address_id, id)
+          wallet_stake_api.get_staking_operation(wallet_id, address_id, id)
         end
       end
 
@@ -160,13 +248,15 @@ module Coinbase
     def reload
       @model = Coinbase.call_api do
         if wallet_id.nil?
-          stake_api.get_external_staking_operation(network_id, address_id, id)
+          stake_api.get_external_staking_operation(network.id, address_id, id)
         else
-          stake_api.get_staking_operation(wallet_id, address_id, id)
+          wallet_stake_api.get_staking_operation(wallet_id, address_id, id)
         end
       end
 
-      from_model(@model)
+      update_transactions(@model.transactions)
+
+      self
     end
 
     # Fetches the presigned_voluntary exit messages for the staking operation
@@ -191,7 +281,7 @@ module Coinbase
         raise TransactionNotSignedError unless transaction.signed?
 
         Coinbase.call_api do
-          stake_api.broadcast_staking_operation(
+          wallet_stake_api.broadcast_staking_operation(
             wallet_id,
             address_id,
             id,
@@ -203,24 +293,32 @@ module Coinbase
       self
     end
 
-    def self.stake_api
-      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
-    end
-
     private
 
     def stake_api
-      @stake_api ||= self.class.stake_api
+      @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
 
-    def from_model(model)
-      @model = model
-      @status = model.status
-      @transactions = model.transactions.map do |transaction_model|
-        Transaction.new(transaction_model)
+    def wallet_stake_api
+      @wallet_stake_api ||= Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
+    end
+
+    def update_transactions(transactions)
+      # Only overwrite the transactions if the response is populated.
+      return unless transactions && !transactions.empty?
+
+      # Create a set of existing unsigned payloads to avoid duplicates.
+      existing_unsigned_payloads = Set.new
+      @transactions.each do |transaction|
+        existing_unsigned_payloads.add(transaction.unsigned_payload)
       end
 
-      self
+      # Add transactions that are not already in the transactions array.
+      transactions.each do |transaction_model|
+        unless existing_unsigned_payloads.include?(transaction_model.unsigned_payload)
+          @transactions << Transaction.new(transaction_model)
+        end
+      end
     end
   end
 end

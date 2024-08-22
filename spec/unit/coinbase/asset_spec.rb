@@ -1,19 +1,28 @@
 # frozen_string_literal: true
 
 describe Coinbase::Asset do
+  let(:network_id) { :base_sepolia }
+  let(:normalized_network_id) { 'base-sepolia' }
+  let(:network) { build(:network, network_id) }
+
+  before do
+    allow(Coinbase::Network)
+      .to receive(:from_id)
+      .with(network_id)
+      .and_return(network)
+  end
+
   describe '.from_model' do
     subject(:asset) { described_class.from_model(asset_model) }
 
-    let(:asset_model) do
-      Coinbase::Client::Asset.new(network_id: 'base-sepolia', asset_id: 'eth', decimals: 18)
-    end
+    let(:asset_model) { build(:asset_model, network_id, :eth) }
 
     it 'returns an Asset' do
       expect(asset).to be_a(described_class)
     end
 
-    it 'sets the network_id' do
-      expect(asset.network_id).to eq(:base_sepolia)
+    it 'sets the network' do
+      expect(asset.network).to eq(network)
     end
 
     it 'sets the asset_id' do
@@ -69,21 +78,14 @@ describe Coinbase::Asset do
     context 'when the asset is not a Coinbase::Client::Asset' do
       it 'raises an error' do
         expect do
-          described_class.new(build(:balance_model))
+          described_class.new(build(:balance_model, network_id))
         end.to raise_error(StandardError)
       end
     end
 
     context 'when the asset has a contract address' do
       let(:contract_address) { '0x036CbD53842c5426634e7929541eC2318f3dCF7e' }
-      let(:asset_model) do
-        Coinbase::Client::Asset.new(
-          network_id: 'base-sepolia',
-          asset_id: 'usdc',
-          decimals: 6,
-          contract_address: contract_address
-        )
-      end
+      let(:asset_model) { build(:asset_model, network_id, :usdc, contract_address: contract_address) }
 
       it 'sets the address_id' do
         expect(asset.address_id).to eq(contract_address)
@@ -123,15 +125,15 @@ describe Coinbase::Asset do
     it 'is called with the asset_id' do
       asset
 
-      expect(assets_api).to have_received(:get_asset).with('base-sepolia', asset_id.to_s)
+      expect(assets_api).to have_received(:get_asset).with(normalized_network_id, asset_id.to_s)
     end
 
     it 'returns an Asset' do
       expect(asset).to be_a(described_class)
     end
 
-    it 'sets the network_id' do
-      expect(asset.network_id).to eq(:base_sepolia)
+    it 'sets the network' do
+      expect(asset.network).to eq(network)
     end
 
     it 'sets the asset_id' do
@@ -166,7 +168,7 @@ describe Coinbase::Asset do
       it 'fetches the `eth` primary denomination' do
         asset
 
-        expect(assets_api).to have_received(:get_asset).with('base-sepolia', 'eth')
+        expect(assets_api).to have_received(:get_asset).with(normalized_network_id, 'eth')
       end
 
       it 'sets the asset_id' do
@@ -182,7 +184,7 @@ describe Coinbase::Asset do
   describe '#initialize' do
     subject(:asset) do
       described_class.new(
-        network_id: network_id,
+        network: network_id,
         asset_id: asset_id,
         decimals: decimals
       )
@@ -192,8 +194,8 @@ describe Coinbase::Asset do
     let(:asset_id) { :eth }
     let(:decimals) { 7 }
 
-    it 'sets the network_id' do
-      expect(asset.network_id).to eq(network_id)
+    it 'sets the network' do
+      expect(asset.network).to eq(network)
     end
 
     it 'sets the asset_id' do
@@ -211,7 +213,7 @@ describe Coinbase::Asset do
     context 'when address_id is specified' do
       subject(:asset) do
         described_class.new(
-          network_id: network_id,
+          network: network_id,
           asset_id: asset_id,
           address_id: address_id,
           decimals: decimals
@@ -230,7 +232,7 @@ describe Coinbase::Asset do
   describe '#from_atomic_amount' do
     subject(:asset) do
       described_class.new(
-        network_id: network_id,
+        network: network_id,
         asset_id: asset_id,
         decimals: 7
       )
@@ -248,7 +250,7 @@ describe Coinbase::Asset do
   describe '#to_atomic_amount' do
     subject(:asset) do
       described_class.new(
-        network_id: network_id,
+        network: network_id,
         asset_id: asset_id,
         decimals: 7
       )
@@ -266,7 +268,7 @@ describe Coinbase::Asset do
   describe '#primary_denomination' do
     subject(:asset) do
       described_class.new(
-        network_id: :base_sepolia,
+        network: network_id,
         asset_id: asset_id,
         decimals: 7
       )
@@ -293,7 +295,7 @@ describe Coinbase::Asset do
 
   describe '#inspect' do
     subject(:asset) do
-      described_class.new(network_id: network_id, asset_id: asset_id, decimals: decimals)
+      described_class.new(network: network_id, asset_id: asset_id, decimals: decimals)
     end
 
     let(:network_id) { :base_sepolia }
@@ -315,7 +317,7 @@ describe Coinbase::Asset do
     context 'when the asset contains an address_id' do
       subject(:asset) do
         described_class.new(
-          network_id: network_id,
+          network: network_id,
           asset_id: asset_id,
           address_id: address_id,
           decimals: decimals

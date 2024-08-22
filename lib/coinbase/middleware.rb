@@ -9,6 +9,7 @@ module Coinbase
   # A module for middleware that can be used with Faraday.
   module Middleware
     Faraday::Request.register_middleware authenticator: -> { Coinbase::Authenticator }
+    Faraday::Request.register_middleware correlation: -> { Coinbase::Correlation }
 
     # Returns the default middleware configuration for the Coinbase SDK.
     def self.config
@@ -19,6 +20,7 @@ module Coinbase
         config.host = uri.host + (uri.port ? ":#{uri.port}" : '')
         config.scheme = uri.scheme if uri.scheme
         config.request(:authenticator)
+        config.request(:correlation)
         retry_options = {
           max: Coinbase.configuration.max_network_tries,
           interval: 0.05,

@@ -20,32 +20,34 @@ module Coinbase
     #   If the destination is a String, it uses it as the Address ID.
     # @param network_id [Symbol] The ID of the Network to which the Destination belongs
     # @return [Destination] The Destination object
-    def initialize(model, network_id: nil)
+    def initialize(model, network:)
+      network = Coinbase::Network.from_id(network)
+
       case model
       when Coinbase::Destination
-        raise ArgumentError, 'destination network must match destination' unless model.network_id == network_id
+        raise ArgumentError, 'destination network must match destination' unless model.network == network
 
         @address_id = model.address_id
-        @network_id = model.network_id
+        @network = model.network
       when Coinbase::Wallet
-        raise ArgumentError, 'destination network must match wallet' unless model.network_id == network_id
+        raise ArgumentError, 'destination network must match wallet' unless model.network == network
         raise ArgumentError, 'destination wallet must have default address' if model.default_address.nil?
 
         @address_id = model.default_address.id
-        @network_id = model.network_id
+        @network = model.network
       when Coinbase::Address
-        raise ArgumentError, 'destination network must match address' unless model.network_id == network_id
+        raise ArgumentError, 'destination network must match address' unless model.network == network
 
         @address_id = model.id
-        @network_id = model.network_id
+        @network = model.network
       when String
         @address_id = model
-        @network_id = network_id
+        @network = network
       else
         raise ArgumentError, "unsupported destination type: #{model.class}"
       end
     end
 
-    attr_reader :address_id, :network_id
+    attr_reader :address_id, :network
   end
 end

@@ -8,6 +8,7 @@ describe Coinbase::WalletAddress do
   let(:key) { build(:key) }
   let(:network_id) { :base_sepolia }
   let(:normalized_network_id) { 'base-sepolia' }
+  let(:network) { build(:network, network_id) }
   let(:address_id) { key.address.to_s }
   let(:model) { build(:address_model, network_id) }
   let(:wallet_id) { model.wallet_id }
@@ -15,6 +16,11 @@ describe Coinbase::WalletAddress do
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(addresses_api)
+
+    allow(Coinbase::Network)
+      .to receive(:from_id)
+      .with(satisfy { |id| id == network_id || id == normalized_network_id })
+      .and_return(network)
   end
 
   describe '#initialize' do
@@ -23,9 +29,9 @@ describe Coinbase::WalletAddress do
     end
   end
 
-  describe '#network_id' do
-    it 'returns the network ID' do
-      expect(address.network_id).to eq(network_id)
+  describe '#network' do
+    it 'returns the network' do
+      expect(address.network).to eq(network)
     end
   end
 
@@ -67,7 +73,7 @@ describe Coinbase::WalletAddress do
   describe '#export' do
     let(:private_key) { key.private_hex }
 
-    it 'export private key from address' do
+    it 'exports the private key from address' do
       expect(address.export).to eq(private_key)
     end
 
@@ -115,7 +121,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, 'eth')
-        .and_return(build(:balance_model, whole_amount: balance))
+        .and_return(build(:balance_model, network_id, whole_amount: balance))
     end
 
     context 'when the transfer is successful' do
@@ -157,7 +163,7 @@ describe Coinbase::WalletAddress do
             amount: amount,
             asset_id: asset_id,
             destination: to_address_id,
-            network_id: network_id,
+            network: network,
             wallet_id: wallet_id,
             gasless: false
           )
@@ -217,7 +223,7 @@ describe Coinbase::WalletAddress do
       allow(addresses_api)
         .to receive(:get_external_address_balance)
         .with(normalized_network_id, address_id, normalized_from_asset_id)
-        .and_return(build(:balance_model, :eth, whole_amount: balance))
+        .and_return(build(:balance_model, network_id, :eth, whole_amount: balance))
 
       allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
     end
@@ -247,7 +253,7 @@ describe Coinbase::WalletAddress do
             amount: amount,
             from_asset_id: from_asset_id,
             to_asset_id: to_asset_id,
-            network_id: network_id,
+            network: network,
             wallet_id: wallet_id
           )
         end
@@ -274,7 +280,7 @@ describe Coinbase::WalletAddress do
             amount: amount,
             from_asset_id: from_asset_id,
             to_asset_id: to_asset_id,
-            network_id: network_id,
+            network: network,
             wallet_id: wallet_id
           )
         end
@@ -336,9 +342,7 @@ describe Coinbase::WalletAddress do
 
     before do
       allow(Coinbase::StakingOperation).to receive(:create).and_return(staking_operation)
-      allow(staking_operation).to receive(:transactions).and_return([transaction])
-      allow(transaction).to receive(:sign).and_return('signed_payload')
-      allow(staking_operation).to receive(:broadcast!)
+      allow(staking_operation).to receive(:complete)
 
       action
     end
@@ -346,7 +350,7 @@ describe Coinbase::WalletAddress do
     it 'creates a staking operation' do
       expect(Coinbase::StakingOperation).to have_received(:create).with(
         amount,
-        network_id,
+        network,
         asset_id,
         address_id,
         wallet_id,
@@ -356,12 +360,8 @@ describe Coinbase::WalletAddress do
       )
     end
 
-    it 'signs the transaction' do
-      expect(transaction).to have_received(:sign).with(key)
-    end
-
-    it 'broadcasts the transaction' do
-      expect(staking_operation).to have_received(:broadcast!)
+    it 'completes the operation' do
+      expect(staking_operation).to have_received(:complete).with(key, anything)
     end
   end
 

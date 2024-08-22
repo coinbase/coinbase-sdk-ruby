@@ -10,9 +10,9 @@ shared_context 'with mocked staking_balances' do
       Coinbase::Client::StakingContext,
       context: instance_double(
         Coinbase::Client::StakingContextContext,
-        stakeable_balance: build(:balance_model, whole_amount: stake_balance),
-        unstakeable_balance: build(:balance_model, whole_amount: unstake_balance),
-        claimable_balance: build(:balance_model, whole_amount: claim_stake_balance)
+        stakeable_balance: build(:balance_model, network_id, whole_amount: stake_balance),
+        unstakeable_balance: build(:balance_model, network_id, whole_amount: unstake_balance),
+        claimable_balance: build(:balance_model, network_id, whole_amount: claim_stake_balance)
       )
     )
   end
@@ -55,7 +55,7 @@ shared_examples 'an address that supports staking' do
       subject
       expect(Coinbase::StakingOperation).to have_received(:build).with(
         amount,
-        network_id,
+        network,
         asset_id,
         address_id,
         operation,
@@ -160,7 +160,7 @@ shared_examples 'an address that supports staking' do
       subject.staking_rewards(asset_id, start_time: start_time, end_time: end_time)
 
       expect(Coinbase::StakingReward).to have_received(:list).with(
-        network_id,
+        network,
         asset_id,
         [address_id],
         start_time: start_time,
@@ -180,7 +180,7 @@ shared_examples 'an address that supports staking' do
       subject.historical_staking_balances(asset_id, start_time: start_time, end_time: start_time)
 
       expect(Coinbase::StakingBalance).to have_received(:list).with(
-        network_id,
+        network,
         asset_id,
         address_id,
         start_time: start_time,

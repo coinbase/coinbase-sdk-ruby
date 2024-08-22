@@ -6,15 +6,17 @@ module Coinbase
   # A representation of a staking balance on a network for a given asset.
   class StakingBalance
     # Returns a list of StakingBalance for the provided network, asset, and addresses.
-    # @param network_id [Symbol] The network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The asset ID
     # @param address_id [String] The address ID
     # @param start_time [Time] The start time. Defaults to one month ago.
     # @param end_time [Time] The end time. Defaults to the current time.
     # @return [Enumerable<Coinbase::StakingBalance>] The staking balances
-    def self.list(network_id, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)
+    def self.list(network, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)
+      network = Coinbase::Network.from_id(network)
+
       Coinbase::Pagination.enumerate(
-        ->(page) { list_page(network_id, asset_id, address_id, start_time, end_time, page) }
+        ->(page) { list_page(network, asset_id, address_id, start_time, end_time, page) }
       ) do |staking_balance|
         new(staking_balance)
       end
@@ -72,9 +74,11 @@ module Coinbase
       Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
 
-    def self.list_page(network_id, asset_id, address_id, start_time, end_time, page)
+    private_class_method :stake_api
+
+    def self.list_page(network, asset_id, address_id, start_time, end_time, page)
       stake_api.fetch_historical_staking_balances(
-        Coinbase.normalize_network(network_id),
+        network.normalized_id,
         asset_id,
         address_id,
         start_time.iso8601,
@@ -82,5 +86,7 @@ module Coinbase
         { next_page: page }
       )
     end
+
+    private_class_method :list_page
   end
 end

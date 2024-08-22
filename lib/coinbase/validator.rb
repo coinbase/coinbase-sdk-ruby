@@ -10,27 +10,31 @@ module Coinbase
     end
 
     # Returns a list of Validators for the provided network and asset.
-    # @param network_id [Symbol] The network ID
+    # @param network [Coinbase::Nework, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The asset ID
     # @param status [Symbol] The status of the validator. Defaults to nil.
     # @return [Enumerable<Coinbase::Validator>] The validators
-    def self.list(network_id, asset_id, status: nil)
-      Coinbase::Pagination.enumerate(
-        ->(page) { list_page(network_id, asset_id, status, page) }
-      ) do |validator|
+    def self.list(network, asset_id, status: nil)
+      network = Coinbase::Network.from_id(network)
+
+      Coinbase::Pagination.enumerate(lambda { |page|
+        list_page(network, asset_id, status, page)
+      }) do |validator|
         new(validator)
       end
     end
 
     # Returns a Validator for the provided network, asset, and validator.
-    # @param network_id [Symbol] The network ID
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID
     # @param asset_id [Symbol] The asset ID
     # @param validator_id [String] The validator ID
     # @return [Coinbase::Validator] The validator
-    def self.fetch(network_id, asset_id, validator_id)
+    def self.fetch(network, asset_id, validator_id)
+      network = Coinbase::Network.from_id(network)
+
       validator = Coinbase.call_api do
         validators_api.get_validator(
-          network_id,
+          network.normalized_id,
           asset_id,
           validator_id
         )
@@ -62,10 +66,10 @@ module Coinbase
       to_s
     end
 
-    def self.list_page(network_id, asset_id, status, page)
+    def self.list_page(network, asset_id, status, page)
       Coinbase.call_api do
         validators_api.list_validators(
-          network_id,
+          network.normalized_id,
           asset_id,
           {
             status: status,
@@ -75,8 +79,12 @@ module Coinbase
       end
     end
 
+    private_class_method :list_page
+
     def self.validators_api
       Coinbase::Client::ValidatorsApi.new(Coinbase.configuration.api_client)
     end
+
+    private_class_method :validators_api
   end
 end

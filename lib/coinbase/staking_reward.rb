@@ -62,7 +62,7 @@ module Coinbase
     # Returns the USD conversion price of the StakingReward.
     # @return [BigDecimal] The USD conversion price
     def usd_conversion_price
-      BigDecimal(@model.usd_value.conversion_price.to_i) / BigDecimal(100)
+      BigDecimal(@model.usd_value.conversion_price.to_i)
     end
 
     # Returns the USD conversion time of the StakingReward.

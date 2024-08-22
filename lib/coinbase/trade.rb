@@ -15,12 +15,13 @@ module Coinbase
       # @param from_asset_id [Symbol] The Asset ID of the Asset to trade from
       # @param to_asset_id [Symbol] The Asset ID of the Asset to trade to
       # @param amount [BigDecimal] The amount of the Asset to send
-      # @param network_id [Symbol] The Network ID of the Asset
+      # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
       # @param wallet_id [String] The Wallet ID of the sending Wallet
       # @return [Send] The new pending Send object
-      def create(address_id:, from_asset_id:, to_asset_id:, amount:, network_id:, wallet_id:)
-        from_asset = Asset.fetch(network_id, from_asset_id)
-        to_asset = Asset.fetch(network_id, to_asset_id)
+      def create(address_id:, from_asset_id:, to_asset_id:, amount:, network:, wallet_id:)
+        network = Coinbase::Network.from_id(network)
+        from_asset = network.get_asset(from_asset_id)
+        to_asset = network.get_asset(to_asset_id)
 
         model = Coinbase.call_api do
           trades_api.create_trade(
@@ -75,10 +76,10 @@ module Coinbase
       @model.trade_id
     end
 
-    # Returns the Network ID of the Trade.
-    # @return [Symbol] The Network ID
-    def network_id
-      Coinbase.to_sym(@model.network_id)
+    # Returns the Network of the Trade.
+    # @return [Coinbase::Network] The Network the Trade is on
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
     end
 
     # Returns the Wallet ID of the Trade.
@@ -198,7 +199,7 @@ module Coinbase
     # Returns a String representation of the Trade.
     # @return [String] a String representation of the Trade
     def to_s
-      "Coinbase::Trade{transfer_id: '#{id}', network_id: '#{network_id}', " \
+      "Coinbase::Trade{transfer_id: '#{id}', network_id: '#{network.id}', " \
         "address_id: '#{address_id}', from_asset_id: '#{from_asset_id}', " \
         "to_asset_id: '#{to_asset_id}', from_amount: '#{from_amount}', " \
         "to_amount: '#{to_amount}' status: '#{status}'}"
