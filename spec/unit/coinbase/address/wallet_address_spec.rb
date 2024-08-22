@@ -339,12 +339,27 @@ describe Coinbase::WalletAddress do
     let(:asset_id) { :eth }
     let(:staking_operation) { instance_double(Coinbase::StakingOperation, id: 'test-id') }
     let(:transaction) { instance_double(Coinbase::Transaction) }
+    let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
+    let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
+    let(:hex_encoded_transaction) { '0xdeadbeef' }
 
     before do
+      allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
+      allow(stake_api).to receive(:broadcast_staking_operation)
       allow(Coinbase::StakingOperation).to receive(:create).and_return(staking_operation)
-      allow(staking_operation).to receive(:transactions).and_return([transaction])
-      allow(transaction).to receive(:sign).and_return('signed_payload')
-      allow(staking_operation).to receive(:broadcast!)
+      allow(staking_operation).to receive_messages(
+        transactions: [transaction],
+        broadcast!: nil,
+        reload: nil,
+        terminal_state?: true
+      )
+
+      allow(raw_tx).to receive(:hex).and_return(hex_encoded_transaction)
+      allow(transaction).to receive_messages(
+        sign: 'signed_payload',
+        signed?: false,
+        raw: raw_tx
+      )
 
       action
     end
@@ -367,7 +382,9 @@ describe Coinbase::WalletAddress do
     end
 
     it 'broadcasts the transaction' do
-      expect(staking_operation).to have_received(:broadcast!)
+      expect(stake_api).to have_received(:broadcast_staking_operation).with(wallet_id, address_id, 'test-id',
+                                                                            { signed_payload: '0xdeadbeef',
+                                                                              transaction_index: 0 })
     end
   end
 

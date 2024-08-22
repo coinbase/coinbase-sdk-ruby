@@ -184,12 +184,34 @@ module Coinbase
       raise InsufficientFundsError.new(amount, current_balance)
     end
 
-    def complete_staking_operation(amount, asset_id, action, mode: :default, options: {})
+    def complete_staking_operation(amount, asset_id, action, mode: :default, options: {}, interval_seconds: 5,
+                                   timeout_seconds: 600)
       op = StakingOperation.create(amount, network, asset_id, id, wallet_id, action, mode, options)
-      op.transactions.each do |transaction|
-        transaction.sign(@key)
+      start_time = Time.now
+
+      while Time.now - start_time < timeout_seconds
+        op.transactions.each_with_index do |transaction, i|
+          next if transaction.signed?
+
+          transaction.sign(@key)
+          @model = Coinbase.call_api do
+            stake_api.broadcast_staking_operation(
+              wallet_id,
+              id,
+              op.id,
+              { signed_payload: transaction.raw.hex, transaction_index: i }
+            )
+          end
+        end
+
+        op.reload
+
+        return op if op.terminal_state?
+
+        sleep interval_seconds
       end
-      op.broadcast!
+
+      raise
     end
   end
 end
