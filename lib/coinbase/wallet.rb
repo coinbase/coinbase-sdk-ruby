@@ -225,17 +225,8 @@ module Coinbase
     # @param options [Hash] Additional options for the staking operation
     # @return [BigDecimal] The claimable balance
 
-    # @!method historical_balances
-    # Enumerates the historical balances for a given asset belonging to the default address of the wallet.
-    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
-    # converted to an array, etc...
-    # @param asset_id [Symbol, String] The ID of the Asset to retrieve historical balances for.
-    #   This can be an asset alias (e.g. `:usdc`) or a contract address
-    #   (e.g. `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`).
-    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
-
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
-                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :historical_balances
+                   :stakeable_balance, :unstakeable_balance, :claimable_balance
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
