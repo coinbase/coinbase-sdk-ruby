@@ -7,8 +7,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2024-08-22
 
-- Add support for listing historical balances for a wallet, defaulting to the
-historical_balances function for wallet: listing historical balances for default address of the wallet.
 - Expose all networks as constants, e.g. `Coinbase::Network::ETHEREUM_MAINNET`
 - Add support for managing Webhooks.
 - Add support for listing smart contract events.
