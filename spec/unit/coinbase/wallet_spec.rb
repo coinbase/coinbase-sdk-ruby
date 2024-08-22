@@ -892,6 +892,7 @@ describe Coinbase::Wallet do
         end
       end
     end
+  end
 
   describe '#transfer' do
     subject(:wallet) do
