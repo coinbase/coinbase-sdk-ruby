@@ -43,6 +43,24 @@ describe Coinbase::Transaction do
     end
   end
 
+  describe '#block_height' do
+    it 'returns the block height' do
+      expect(transaction.block_height).to eq(transaction_model.block_height)
+    end
+  end
+
+  describe '#block_hash' do
+    it 'returns the block hash' do
+      expect(transaction.block_hash).to eq(transaction_model.block_hash)
+    end
+  end
+
+  describe '#content' do
+    it 'returns the content' do
+      expect(transaction.content).to eq(transaction_model.content)
+    end
+  end
+
   describe '#signed?' do
     context 'when the transaction model has not been signed' do
       it 'returns false' do

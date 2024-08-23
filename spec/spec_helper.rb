@@ -15,6 +15,7 @@ end
 require_relative '../lib/coinbase'
 require_relative 'support/shared_examples/address_balances'
 require_relative 'support/shared_examples/address_staking'
+require_relative 'support/shared_examples/address_transactions'
 require_relative 'support/shared_examples/pagination'
 
 # Networks and Asset symbols used in our test factories.

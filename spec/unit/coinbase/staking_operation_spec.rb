@@ -43,9 +43,9 @@ describe Coinbase::StakingOperation do
       build_staking_operation: staking_operation_model
     )
     allow(wallet_stake_api).to receive_messages(
-      create_staking_operation: staking_operation_model
+      create_staking_operation: staking_operation_model,
+      broadcast_staking_operation: staking_operation_model
     )
-    allow(wallet_stake_api).to receive(:broadcast_staking_operation)
     allow(transaction).to receive_messages(signed?: false, raw: raw_tx)
     allow(raw_tx).to receive(:hex).and_return(hex_encoded_transaction)
   end
@@ -418,6 +418,50 @@ describe Coinbase::StakingOperation do
 
       it 'returns the decoded messages' do
         expect(staking_operation.signed_voluntary_exit_messages).to eq(['signed_message'])
+      end
+    end
+  end
+
+  describe '#complete' do
+    subject(:complete_operation) { staking_operation.complete(key, interval_seconds: 0.0001) }
+
+    context 'when the staking operation completes successfully' do
+      before do
+        allow(staking_operation).to receive(:terminal_state?).and_return(false, true)
+        allow(transaction).to receive(:signed?).and_return(false, true)
+        allow(staking_operation).to receive(:reload)
+      end
+
+      it 'signs the transaction' do
+        complete_operation
+        expect(transaction).to have_received(:sign).with(key)
+      end
+
+      it 'broadcasts the transaction' do
+        complete_operation
+        expect(wallet_stake_api).to have_received(:broadcast_staking_operation).with(
+          wallet_id,
+          address_id,
+          staking_operation.id,
+          { signed_payload: hex_encoded_transaction, transaction_index: 0 }
+        )
+      end
+
+      it 'returns the staking operation' do
+        expect(complete_operation).to eq(staking_operation)
+      end
+
+      context 'when the staking operation times out' do
+        before do
+          allow(staking_operation).to receive(:terminal_state?).and_return(false)
+          allow(staking_operation).to receive(:reload)
+        end
+
+        it 'raises a Timeout::Error' do
+          expect do
+            staking_operation.complete(key, interval_seconds: 0.0001, timeout_seconds: 0.00001)
+          end.to raise_error(Timeout::Error, 'Staking Operation timed out')
+        end
       end
     end
   end

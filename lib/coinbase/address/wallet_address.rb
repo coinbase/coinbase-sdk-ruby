@@ -95,11 +95,12 @@ module Coinbase
       trade
     end
 
-    # Stakes the given amount of the given Asset
+    # Stakes the given amount of the given Asset. The stake operation
+    # may take a few minutes to complete in the case when infrastructure is spun up.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the stake operation
+    # @param options [Hash] (Optional) Additional options for the stake operation. ({StakingOperation#create see_more})
     # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
     # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation
@@ -116,7 +117,8 @@ module Coinbase
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to unstake.
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the stake operation
+    # @param options [Hash] (Optional) Additional options for the unstake operation.
+    #   ({StakingOperation#create see_more})
     # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
     # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation
@@ -133,7 +135,8 @@ module Coinbase
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to claim.
     # @param asset_id [Symbol] The ID of the Asset to stake. For Ether, :eth, :gwei, and :wei are supported.
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the stake operation
+    # @param options [Hash] (Optional) Additional options for the claim_stake operation.
+    #   ({StakingOperation#create see_more})
     # @param interval_seconds [Integer] The number of seconds to wait between polling for updates. Defaults to 5.
     # @param timeout_seconds [Integer] The number of seconds to wait before timing out. Defaults to 600.
     # @return [Coinbase::StakingOperation] The staking operation

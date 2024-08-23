@@ -27,6 +27,8 @@ describe Coinbase do
       fetch_addresses_balances_test(imported_wallet)
       imported_address = imported_wallet.addresses[0]
       transfer_test(imported_address, new_address)
+      fetch_address_historical_balances_test(imported_address)
+      list_address_transactions_test(imported_address)
     end
   end
 
@@ -42,6 +44,8 @@ describe Coinbase do
       fetch_addresses_balances_test(existing_wallet)
       existing_address = existing_wallet.addresses[0]
       transfer_test(existing_address, new_address)
+      fetch_address_historical_balances_test(existing_address)
+      list_address_transactions_test(existing_address)
     end
   end
 end
@@ -91,21 +95,42 @@ def fetch_addresses_balances_test(wallet)
   puts "Fetched balances: #{balances}"
 end
 
+def fetch_address_historical_balances_test(address)
+  puts 'Listing address historical balances...'
+  historical_balances = address.historical_balances(:eth)
+  expect(historical_balances.first).not_to be_nil
+  puts "Most recent historical balances: #{historical_balances.first}"
+end
+
+def list_address_transactions_test(address)
+  puts 'Listing address transactions...'
+  txns = address.transactions
+  expect(txns.first).not_to be_nil
+  expect(txns.first.block_hash).not_to be_nil
+  puts "Most recent transaction: #{txns.first}"
+end
+
 def transfer_test(imported_address, new_address)
-  # Transfer gwei from imported address to new address.
-  puts 'Transferring 1 Gwei from imported address to new address...'
-  t = imported_address.transfer(1, :gwei, new_address).wait!
+  # Transfer eth from imported address to new address.
+  puts 'Transferring 0.00008 Eth from imported address to new address...'
+  t = imported_address.transfer(0.00008, :eth, new_address).wait!
   expect(t.status).to eq('complete')
-  puts "Transferred 1 Gwei from #{imported_address} to #{new_address}"
+  puts "Transferred 0.00008 eth from #{imported_address} to #{new_address}"
 
   # Fund the new address with faucet.
-  faucet_tx = new_address.faucet
-  puts "Requested faucet funds: #{faucet_tx}"
+  begin
+    faucet_tx = new_address.faucet
+    puts "Requested faucet funds: #{faucet_tx}"
+  rescue Coinbase::InternalError
+    puts 'Faucet has reached limit. Will continue with test'
+  end
+
+  send_amount = new_address.balance(:eth) - 1e-4 # Leave some eth for gas.
 
   # Transfer eth back from new address to imported address.
-  t = new_address.transfer(0.008, :eth, imported_address).wait!
+  t = new_address.transfer(send_amount, :eth, imported_address).wait!
   expect(t.status).to eq('complete')
-  puts "Transferred 0.008 eth from #{new_address} to #{imported_address}"
+  puts "Transferred #{send_amount} eth from #{new_address} to #{imported_address}"
 
   puts 'Fetching updated balances...'
   first_balance = imported_address.balances

@@ -22,6 +22,8 @@ module Coinbase
       # @param event_filters [Array<Hash>] Filters applied to the events that determine
       #   which specific events trigger the webhook. Each filter should be a hash that
       #   can include keys like `contract_address`, `from_address`, or `to_address`.
+      # @param signature_header [String] The custom header to be used for x-webhook-signature header on callbacks,
+      #   so developers can verify the requests are coming from Coinbase.
       # @return [Coinbase::Webhook] A new instance of Webhook.
       #
       # @example Create a new webhook
@@ -29,16 +31,18 @@ module Coinbase
       #     network_id: :ethereum_mainnet,
       #     notification_uri: 'https://example.com/callback',
       #     event_type: 'transaction',
-      #     event_filters: [{ 'contract_address' => '0x...', 'from_address' => '0x...', 'to_address' => '0x...' }]
+      #     event_filters: [{ 'contract_address' => '0x...', 'from_address' => '0x...', 'to_address' => '0x...' }],
+      #     signature_header: 'example_header'
       #   )
-      def create(network_id:, notification_uri:, event_type:, event_filters:)
+      def create(network_id:, notification_uri:, event_type:, event_filters:, signature_header: '')
         model = Coinbase.call_api do
           webhooks_api.create_webhook(
             create_webhook_request: {
               network_id: Coinbase.normalize_network(network_id),
               notification_uri: notification_uri,
               event_type: event_type,
-              event_filters: event_filters
+              event_filters: event_filters,
+              signature_header: signature_header
             }
           )
         end
@@ -112,6 +116,14 @@ module Coinbase
       @model.event_filters
     end
 
+    # Returns the signature header for the webhook. It is used as the value of callback header
+    # with key 'x-webhook-signature'.
+    #
+    # @return [String] The signature header value.
+    def signature_header
+      @model.signature_header
+    end
+
     # Updates the webhook with a new notification URI.
     #
     # @param notification_uri [String] The new URI for webhook notifications.
@@ -124,9 +136,7 @@ module Coinbase
         webhooks_api.update_webhook(
           id,
           update_webhook_request: {
-            network_id: network_id,
             notification_uri: notification_uri,
-            event_type: event_type,
             event_filters: event_filters.map(&:to_hash)
           }
         )
@@ -162,7 +172,8 @@ module Coinbase
         network_id: @model.network_id,
         event_type: @model.event_type,
         notification_uri: @model.notification_uri,
-        event_filters: @model.event_filters.map(&:to_hash).to_json
+        event_filters: @model.event_filters.map(&:to_hash).to_json,
+        signature_header: @model.signature_header
       )
     end
 

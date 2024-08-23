@@ -8,6 +8,14 @@ FactoryBot.define do
 
     from_address_id { key.address.to_s }
 
+    block_hash { 'default_block_hash' }
+    block_height { '123' }
+    content do
+      Coinbase::Client::EthereumTransaction.new(
+        hash: 'transaction_hash',
+      )
+    end
+
     # Default trait.
     pending
 

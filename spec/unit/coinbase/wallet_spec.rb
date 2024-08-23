@@ -23,6 +23,7 @@ describe Coinbase::Wallet do
   end
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
+  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
   let(:use_server_signer) { false }
   let(:default_network) { build(:network, :base_sepolia) }
@@ -39,6 +40,7 @@ describe Coinbase::Wallet do
   before do
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
     allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
+    allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
 
     allow(Coinbase).to receive(:configuration).and_return(configuration)
 
@@ -1008,31 +1010,57 @@ describe Coinbase::Wallet do
   end
 
   describe '#faucet' do
-    subject(:faucet_transaction) { wallet.faucet }
-
     let(:faucet_transaction_model) do
       Coinbase::Client::FaucetTransaction.new({ transaction_hash: '0x123456789' })
     end
     let(:wallet) { described_class.new(model_with_default_address, seed: '') }
 
-    before do
-      allow(addresses_api)
-        .to receive(:list_addresses)
-        .with(wallet_id, { limit: 20 })
-        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+    context 'when using default asset' do
+      subject(:faucet_transaction) { wallet.faucet }
 
-      allow(addresses_api)
-        .to receive(:request_faucet_funds)
-        .with(wallet_id, first_address_model.address_id)
-        .and_return(faucet_transaction_model)
+      before do
+        allow(addresses_api)
+          .to receive(:list_addresses)
+          .with(wallet_id, { limit: 20 })
+          .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+        allow(external_addresses_api)
+          .to receive(:request_external_faucet_funds)
+          .with(normalized_network_id, first_address_model.address_id, {})
+          .and_return(faucet_transaction_model)
+      end
+
+      it 'returns the faucet transaction' do
+        expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      end
+
+      it 'contains the transaction hash' do
+        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+      end
     end
 
-    it 'returns the faucet transaction' do
-      expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
-    end
+    context 'when using specific asset' do
+      subject(:faucet_transaction) { wallet.faucet(asset_id: :usdc) }
 
-    it 'contains the transaction hash' do
-      expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+      before do
+        allow(addresses_api)
+          .to receive(:list_addresses)
+          .with(wallet_id, { limit: 20 })
+          .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+        allow(external_addresses_api)
+          .to receive(:request_external_faucet_funds)
+          .with(normalized_network_id, first_address_model.address_id, { asset_id: :usdc })
+          .and_return(faucet_transaction_model)
+      end
+
+      it 'returns the faucet transaction' do
+        expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      end
+
+      it 'contains the transaction hash' do
+        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+      end
     end
   end
 

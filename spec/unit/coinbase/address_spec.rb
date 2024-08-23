@@ -44,4 +44,5 @@ describe Coinbase::Address do
 
   it_behaves_like 'an address that supports balance queries'
   it_behaves_like 'an address that supports requesting faucet funds'
+  it_behaves_like 'an address that supports transaction queries'
 end
