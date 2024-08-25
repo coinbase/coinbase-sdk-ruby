@@ -30,6 +30,12 @@ module Coinbase::Client
     # @return [Hash]
     attr_accessor :default_headers
 
+    class << self
+      def default
+        @@default ||= ApiClient.new
+      end
+    end
+
     # Initializes the ApiClient
     # @option config [Configuration] Configuration for initializing the object, default to Configuration.default
     def initialize(config = Configuration.default)
@@ -39,10 +45,6 @@ module Coinbase::Client
         'Content-Type' => 'application/json',
         'User-Agent' => @user_agent
       }
-    end
-
-    def self.default
-      @@default ||= ApiClient.new
     end
 
     # Call an API with given options.

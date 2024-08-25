@@ -8,6 +8,31 @@ module Coinbase
   class APIError < StandardError
     attr_reader :http_code, :api_code, :api_message, :handled
 
+    class << self
+      # Creates a specific APIError based on the API error code.
+      # @param err [Coinbase::Client::APIError] The underlying error object.
+      # @return [APIError] The specific APIError object.
+      def from_error(err)
+        raise ArgumentError, 'Argument must be a Coinbase::Client::APIError' unless err.is_a? Coinbase::Client::ApiError
+        return APIError.new(err) unless err.response_body
+
+        begin
+          body = JSON.parse(err.response_body)
+        rescue JSON::ParserError
+          return APIError.new(err)
+        end
+
+        message = body['message']
+        code = body['code']
+
+        if ERROR_CODE_TO_ERROR_CLASS.key?(code)
+          ERROR_CODE_TO_ERROR_CLASS[code].new(err, code: code, message: message)
+        else
+          APIError.new(err, code: code, message: message, unhandled: true)
+        end
+      end
+    end
+
     # Initializes a new APIError object.
     # @param err [Coinbase::Client::APIError] The underlying error object.
     def initialize(err, code: nil, message: nil, unhandled: false)
@@ -17,29 +42,6 @@ module Coinbase
       @handled = code && message && !unhandled
 
       super(err)
-    end
-
-    # Creates a specific APIError based on the API error code.
-    # @param err [Coinbase::Client::APIError] The underlying error object.
-    # @return [APIError] The specific APIError object.
-    def self.from_error(err)
-      raise ArgumentError, 'Argument must be a Coinbase::Client::APIError' unless err.is_a? Coinbase::Client::ApiError
-      return APIError.new(err) unless err.response_body
-
-      begin
-        body = JSON.parse(err.response_body)
-      rescue JSON::ParserError
-        return APIError.new(err)
-      end
-
-      message = body['message']
-      code = body['code']
-
-      if ERROR_CODE_TO_ERROR_CLASS.key?(code)
-        ERROR_CODE_TO_ERROR_CLASS[code].new(err, code: code, message: message)
-      else
-        APIError.new(err, code: code, message: message, unhandled: true)
-      end
     end
 
     # Override to_s to display a friendly error message

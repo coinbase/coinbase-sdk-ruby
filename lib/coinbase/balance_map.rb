@@ -5,15 +5,17 @@ require 'bigdecimal'
 module Coinbase
   # A convenience class for printing out Asset balances in a human-readable format.
   class BalanceMap < Hash
-    # Converts a list of Coinbase::Client::Balance models to a Coinbase::BalanceMap.
-    # @param balances [Array<Coinbase::Client::Balance>] The list of balances fetched from the API.
-    # @return [BalanceMap] The converted BalanceMap object.
-    def self.from_balances(balances)
-      BalanceMap.new.tap do |balance_map|
-        balances.each do |balance_model|
-          balance = Coinbase::Balance.from_model(balance_model)
+    class << self
+      # Converts a list of Coinbase::Client::Balance models to a Coinbase::BalanceMap.
+      # @param balances [Array<Coinbase::Client::Balance>] The list of balances fetched from the API.
+      # @return [BalanceMap] The converted BalanceMap object.
+      def from_balances(balances)
+        BalanceMap.new.tap do |balance_map|
+          balances.each do |balance_model|
+            balance = Coinbase::Balance.from_model(balance_model)
 
-          balance_map.add(balance)
+            balance_map.add(balance)
+          end
         end
       end
     end

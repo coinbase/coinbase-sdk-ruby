@@ -37,34 +37,90 @@ require 'json'
 module Coinbase
   class InvalidConfiguration < StandardError; end
 
-  # Returns the configuration object.
-  # @return [Configuration] the configuration object
-  def self.configuration
-    @configuration ||= Configuration.new
-  end
+  class << self
+    # Returns the configuration object.
+    # @return [Configuration] the configuration object
+    def configuration
+      @configuration ||= Configuration.new
+    end
 
-  # Configures the Coinbase SDK.
-  # @return [String] A string indicating successful configuration
-  def self.configure
-    yield(configuration)
+    # Configures the Coinbase SDK.
+    # @return [String] A string indicating successful configuration
+    def configure
+      yield(configuration)
 
-    raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
-    raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+      raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
+      raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
 
-    'Successfully configured Coinbase SDK'
-  end
+      'Successfully configured Coinbase SDK'
+    end
 
-  # Configures the Coinbase SDK from the given CDP API Key JSON file.
-  # @param file_path [String] (Optional) the path to the CDP API Key JSON file
-  # file in the root directory by default.
-  # @return [String] A string indicating successful configuration
-  def self.configure_from_json(file_path = 'cdp_api_key.json')
-    configuration.from_json(file_path)
+    # Configures the Coinbase SDK from the given CDP API Key JSON file.
+    # @param file_path [String] (Optional) the path to the CDP API Key JSON file
+    # file in the root directory by default.
+    # @return [String] A string indicating successful configuration
+    def configure_from_json(file_path = 'cdp_api_key.json')
+      configuration.from_json(file_path)
 
-    raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
-    raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
+      raise InvalidConfiguration, 'API key private key is not set' unless configuration.api_key_private_key
+      raise InvalidConfiguration, 'API key name is not set' unless configuration.api_key_name
 
-    'Successfully configured Coinbase SDK'
+      'Successfully configured Coinbase SDK'
+    end
+
+    # Converts a string to a symbol, replacing hyphens with underscores.
+    # @param string [String] the string to convert
+    # @return [Symbol] the converted symbol
+    def to_sym(value)
+      value.to_s.gsub('-', '_').to_sym
+    end
+
+    # Converts a Network object or network symbol with the string representation of the network ID,
+    # replacing underscores with hyphens.
+    # @param network_sym [Coinbase::Network, Symbol] The network or network symbol to convert
+    # @return [String] The string representation of the network ID
+    def normalize_network(network)
+      network_sym = network.is_a?(Coinbase::Network) ? network.id : network
+
+      network_sym.to_s.gsub('_', '-')
+    end
+
+    # Wraps a call to the Platform API to ensure that the error is caught and
+    # wrapped as an APIError.
+    def call_api
+      yield
+    rescue Coinbase::Client::ApiError => e
+      raise Coinbase::APIError.from_error(e), cause: nil
+    end
+
+    # Returns a pretty-printed object string that contains the object's class name and
+    # the details of the object, filtering out nil values.
+    # @param klass [Class] the class of the object
+    # @param details [Hash] the details of the object
+    # @return [String] the pretty-printed object string
+    def pretty_print_object(klass, **details)
+      filtered_details = details.filter { |_, v| !v.nil? }.map { |k, v| "#{k}: '#{v}'" }
+
+      "#{klass}{#{filtered_details.join(', ')}}"
+    end
+
+    # Returns whether to use a server signer to manage private keys.
+    # @return [bool] whether to use a server signer to manage private keys.
+    def use_server_signer?
+      Coinbase.configuration.use_server_signer
+    end
+
+    # Returns the default network.
+    # @return [Coinbase::Network] the default network
+    def default_network
+      Coinbase.configuration.default_network
+    end
+
+    # Returns whether the SDK is configured.
+    # @return [bool] whether the SDK is configured
+    def configured?
+      !Coinbase.configuration.api_key_name.nil? && !Coinbase.configuration.api_key_private_key.nil?
+    end
   end
 
   # Configuration object for the Coinbase SDK.
@@ -110,60 +166,6 @@ module Coinbase
     def api_client
       @api_client ||= Coinbase::Client::ApiClient.new(Middleware.config)
     end
-  end
-
-  # Converts a string to a symbol, replacing hyphens with underscores.
-  # @param string [String] the string to convert
-  # @return [Symbol] the converted symbol
-  def self.to_sym(value)
-    value.to_s.gsub('-', '_').to_sym
-  end
-
-  # Converts a Network object or network symbol with the string representation of the network ID,
-  # replacing underscores with hyphens.
-  # @param network_sym [Coinbase::Network, Symbol] The network or network symbol to convert
-  # @return [String] The string representation of the network ID
-  def self.normalize_network(network)
-    network_sym = network.is_a?(Coinbase::Network) ? network.id : network
-
-    network_sym.to_s.gsub('_', '-')
-  end
-
-  # Wraps a call to the Platform API to ensure that the error is caught and
-  # wrapped as an APIError.
-  def self.call_api
-    yield
-  rescue Coinbase::Client::ApiError => e
-    raise Coinbase::APIError.from_error(e), cause: nil
-  end
-
-  # Returns a pretty-printed object string that contains the object's class name and
-  # the details of the object, filtering out nil values.
-  # @param klass [Class] the class of the object
-  # @param details [Hash] the details of the object
-  # @return [String] the pretty-printed object string
-  def self.pretty_print_object(klass, **details)
-    filtered_details = details.filter { |_, v| !v.nil? }.map { |k, v| "#{k}: '#{v}'" }
-
-    "#{klass}{#{filtered_details.join(', ')}}"
-  end
-
-  # Returns whether to use a server signer to manage private keys.
-  # @return [bool] whether to use a server signer to manage private keys.
-  def self.use_server_signer?
-    Coinbase.configuration.use_server_signer
-  end
-
-  # Returns the default network.
-  # @return [Coinbase::Network] the default network
-  def self.default_network
-    Coinbase.configuration.default_network
-  end
-
-  # Returns whether the SDK is configured.
-  # @return [bool] whether the SDK is configured
-  def self.configured?
-    !Coinbase.configuration.api_key_name.nil? && !Coinbase.configuration.api_key_private_key.nil?
   end
 end
 
