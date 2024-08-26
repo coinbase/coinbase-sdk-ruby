@@ -175,7 +175,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#list_contract_events-instance_method" title="#list_contract_events (instance method)">#<strong>list_contract_events</strong>(network_id, protocol_name, contract_address, from_block_height, to_block_height, opts = {})  &#x21d2; ContractEventList </a>
+      <a href="#list_contract_events-instance_method" title="#list_contract_events (instance method)">#<strong>list_contract_events</strong>(network_id, protocol_name, contract_address, contract_name, event_name, from_block_height, to_block_height, opts = {})  &#x21d2; ContractEventList </a>
     
 
     
@@ -199,7 +199,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#list_contract_events_with_http_info-instance_method" title="#list_contract_events_with_http_info (instance method)">#<strong>list_contract_events_with_http_info</strong>(network_id, protocol_name, contract_address, from_block_height, to_block_height, opts = {})  &#x21d2; Array&lt;(ContractEventList, Integer, Hash)&gt; </a>
+      <a href="#list_contract_events_with_http_info-instance_method" title="#list_contract_events_with_http_info (instance method)">#<strong>list_contract_events_with_http_info</strong>(network_id, protocol_name, contract_address, contract_name, event_name, from_block_height, to_block_height, opts = {})  &#x21d2; Array&lt;(ContractEventList, Integer, Hash)&gt; </a>
     
 
     
@@ -325,7 +325,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="list_contract_events-instance_method">
   
-    #<strong>list_contract_events</strong>(network_id, protocol_name, contract_address, from_block_height, to_block_height, opts = {})  &#x21d2; <tt><span class='object_link'><a href="ContractEventList.html" title="Coinbase::Client::ContractEventList (class)">ContractEventList</a></span></tt> 
+    #<strong>list_contract_events</strong>(network_id, protocol_name, contract_address, contract_name, event_name, from_block_height, to_block_height, opts = {})  &#x21d2; <tt><span class='object_link'><a href="ContractEventList.html" title="Coinbase::Client::ContractEventList (class)">ContractEventList</a></span></tt> 
   
 
   
@@ -387,6 +387,38 @@
         &mdash;
         <div class='inline'>
 <p>EVM address of the smart contract (42 characters, including &amp;#39;0x&amp;#39;, in lowercase)</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>contract_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Case-sensitive name of the specific contract within the project</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Case-sensitive name of the event to filter for in the contract&amp;#39;s logs</p>
 </div>
       
     </li>
@@ -456,34 +488,12 @@
     
     
     
+    
+    
+    
+    
     <p class="tag_title">Options Hash (<tt>opts</tt>):</p>
     <ul class="option">
-      
-        <li>
-          <span class="name">:contract_name</span>
-          <span class="type">(<tt>String</tt>)</span>
-          <span class="default">
-            
-          </span>
-          
-            &mdash; <div class='inline'>
-<p>Case-sensitive name of the specific contract within the project</p>
-</div>
-          
-        </li>
-      
-        <li>
-          <span class="name">:event_name</span>
-          <span class="type">(<tt>String</tt>)</span>
-          <span class="default">
-            
-          </span>
-          
-            &mdash; <div class='inline'>
-<p>Case-sensitive name of the event to filter for in the contract&amp;#39;s logs</p>
-</div>
-          
-        </li>
       
         <li>
           <span class="name">:next_page</span>
@@ -529,8 +539,8 @@
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/contract_events_api.rb', line 34</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_list_contract_events'>list_contract_events</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid__status_code'>_status_code</span><span class='comma'>,</span> <span class='id identifier rubyid__headers'>_headers</span> <span class='op'>=</span> <span class='id identifier rubyid_list_contract_events_with_http_info'>list_contract_events_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_list_contract_events'>list_contract_events</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_name'>contract_name</span><span class='comma'>,</span> <span class='id identifier rubyid_event_name'>event_name</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid__status_code'>_status_code</span><span class='comma'>,</span> <span class='id identifier rubyid__headers'>_headers</span> <span class='op'>=</span> <span class='id identifier rubyid_list_contract_events_with_http_info'>list_contract_events_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_name'>contract_name</span><span class='comma'>,</span> <span class='id identifier rubyid_event_name'>event_name</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_data'>data</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -541,7 +551,7 @@
       <div class="method_details ">
   <h3 class="signature " id="list_contract_events_with_http_info-instance_method">
   
-    #<strong>list_contract_events_with_http_info</strong>(network_id, protocol_name, contract_address, from_block_height, to_block_height, opts = {})  &#x21d2; <tt>Array&lt;(<span class='object_link'><a href="ContractEventList.html" title="Coinbase::Client::ContractEventList (class)">ContractEventList</a></span>, Integer, Hash)&gt;</tt> 
+    #<strong>list_contract_events_with_http_info</strong>(network_id, protocol_name, contract_address, contract_name, event_name, from_block_height, to_block_height, opts = {})  &#x21d2; <tt>Array&lt;(<span class='object_link'><a href="ContractEventList.html" title="Coinbase::Client::ContractEventList (class)">ContractEventList</a></span>, Integer, Hash)&gt;</tt> 
   
 
   
@@ -603,6 +613,38 @@
         &mdash;
         <div class='inline'>
 <p>EVM address of the smart contract (42 characters, including &amp;#39;0x&amp;#39;, in lowercase)</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>contract_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Case-sensitive name of the specific contract within the project</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Case-sensitive name of the event to filter for in the contract&amp;#39;s logs</p>
 </div>
       
     </li>
@@ -672,34 +714,12 @@
     
     
     
+    
+    
+    
+    
     <p class="tag_title">Options Hash (<tt>opts</tt>):</p>
     <ul class="option">
-      
-        <li>
-          <span class="name">:contract_name</span>
-          <span class="type">(<tt>String</tt>)</span>
-          <span class="default">
-            
-          </span>
-          
-            &mdash; <div class='inline'>
-<p>Case-sensitive name of the specific contract within the project</p>
-</div>
-          
-        </li>
-      
-        <li>
-          <span class="name">:event_name</span>
-          <span class="type">(<tt>String</tt>)</span>
-          <span class="default">
-            
-          </span>
-          
-            &mdash; <div class='inline'>
-<p>Case-sensitive name of the event to filter for in the contract&amp;#39;s logs</p>
-</div>
-          
-        </li>
       
         <li>
           <span class="name">:next_page</span>
@@ -810,12 +830,20 @@
 116
 117
 118
-119</pre>
+119
+120
+121
+122
+123
+124
+125
+126
+127</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/contract_events_api.rb', line 51</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_list_contract_events_with_http_info'>list_contract_events_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_list_contract_events_with_http_info'>list_contract_events_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span> <span class='id identifier rubyid_contract_name'>contract_name</span><span class='comma'>,</span> <span class='id identifier rubyid_event_name'>event_name</span><span class='comma'>,</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_debugging'>debugging</span>
     <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Calling API: ContractEventsApi.list_contract_events ...</span><span class='tstring_end'>&#39;</span></span>
   <span class='kw'>end</span>
@@ -831,6 +859,14 @@
 </span>  <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_side_validation'>client_side_validation</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Missing the required parameter &#39;contract_address&#39; when calling ContractEventsApi.list_contract_events</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
+  <span class='comment'># verify the required parameter &#39;contract_name&#39; is set
+</span>  <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_side_validation'>client_side_validation</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_contract_name'>contract_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Missing the required parameter &#39;contract_name&#39; when calling ContractEventsApi.list_contract_events</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+  <span class='comment'># verify the required parameter &#39;event_name&#39; is set
+</span>  <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_side_validation'>client_side_validation</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_event_name'>event_name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Missing the required parameter &#39;event_name&#39; when calling ContractEventsApi.list_contract_events</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
   <span class='comment'># verify the required parameter &#39;from_block_height&#39; is set
 </span>  <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_client_side_validation'>client_side_validation</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
     <span class='id identifier rubyid_fail'>fail</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Missing the required parameter &#39;from_block_height&#39; when calling ContractEventsApi.list_contract_events</span><span class='tstring_end'>&quot;</span></span>
@@ -845,10 +881,10 @@
   <span class='comment'># query parameters
 </span>  <span class='id identifier rubyid_query_params'>query_params</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:query_params</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
   <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;protocol_name&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_protocol_name'>protocol_name</span>
+  <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;contract_name&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_contract_name'>contract_name</span>
+  <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;event_name&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_event_name'>event_name</span>
   <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;from_block_height&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_from_block_height'>from_block_height</span>
   <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;to_block_height&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_to_block_height'>to_block_height</span>
-  <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;contract_name&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;contract_name&#39;</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;contract_name&#39;</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;event_name&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;event_name&#39;</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;event_name&#39;</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;next_page&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;next_page&#39;</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;next_page&#39;</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='comment'># header parameters

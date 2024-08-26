@@ -119,6 +119,33 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#address_path_prefix-instance_method" title="#address_path_prefix (instance method)">#<strong>address_path_prefix</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The BIP44 path prefix for the network.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#chain_id-instance_method" title="#chain_id (instance method)">#<strong>chain_id</strong>  &#x21d2; Object </a>
     
 
@@ -765,11 +792,6 @@
       <pre class="lines">
 
 
-97
-98
-99
-100
-101
 102
 103
 104
@@ -819,10 +841,19 @@
 148
 149
 150
-151</pre>
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -878,6 +909,10 @@
   <span class='kw'>else</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;address_path_prefix&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_address_path_prefix'>address_path_prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;address_path_prefix&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -890,9 +925,52 @@
     <h2>Instance Attribute Details</h2>
     
       
-      <span id="chain_id=-instance_method"></span>
+      <span id="address_path_prefix=-instance_method"></span>
       <div class="method_details first">
-  <h3 class="signature first" id="chain_id-instance_method">
+  <h3 class="signature first" id="address_path_prefix-instance_method">
+  
+    #<strong>address_path_prefix</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The BIP44 path prefix for the network</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+37
+38
+39</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 37</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_address_path_prefix'>address_path_prefix</span>
+  <span class='ivar'>@address_path_prefix</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="chain_id=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="chain_id-instance_method">
   
     #<strong>chain_id</strong>  &#x21d2; <tt>Object</tt> 
   
@@ -1277,16 +1355,6 @@
       <pre class="lines">
 
 
-268
-269
-270
-271
-272
-273
-274
-275
-276
-277
 278
 279
 280
@@ -1314,10 +1382,20 @@
 302
 303
 304
-305</pre>
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 268</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 278</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1388,12 +1466,12 @@
       <pre class="lines">
 
 
-72
-73
-74</pre>
+76
+77
+78</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 76</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -1429,9 +1507,6 @@
       <pre class="lines">
 
 
-59
-60
-61
 62
 63
 64
@@ -1439,10 +1514,14 @@
 66
 67
 68
-69</pre>
+69
+70
+71
+72
+73</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 62</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
@@ -1452,7 +1531,8 @@
     <span class='symbol'>:&#39;protocol_family&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;protocol_family&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;is_testnet&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;is_testnet&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;native_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;native_asset&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;feature_set&#39;</span>
+    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;feature_set&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;address_path_prefix&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;address_path_prefix&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1524,16 +1604,6 @@
       <pre class="lines">
 
 
-244
-245
-246
-247
-248
-249
-250
-251
-252
-253
 254
 255
 256
@@ -1542,10 +1612,20 @@
 259
 260
 261
-262</pre>
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 244</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 254</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1597,13 +1677,13 @@
       <pre class="lines">
 
 
-90
-91
-92
-93</pre>
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -1640,20 +1720,21 @@
       <pre class="lines">
 
 
-77
-78
-79
-80
 81
 82
 83
 84
 85
 86
-87</pre>
+87
+88
+89
+90
+91
+92</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 77</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 81</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
@@ -1663,7 +1744,8 @@
     <span class='symbol'>:&#39;protocol_family&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;is_testnet&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Boolean&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;native_asset&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Asset&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;FeatureSet&#39;</span>
+    <span class='symbol'>:&#39;feature_set&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;FeatureSet&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;address_path_prefix&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1723,20 +1805,21 @@
       <pre class="lines">
 
 
-217
-218
-219
-220
-221
-222
-223
-224
-225
 226
-227</pre>
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 217</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 226</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
@@ -1747,7 +1830,8 @@
       <span class='id identifier rubyid_protocol_family'>protocol_family</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_protocol_family'>protocol_family</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_is_testnet'>is_testnet</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_is_testnet'>is_testnet</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_native_asset'>native_asset</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_native_asset'>native_asset</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span>
+      <span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_feature_set'>feature_set</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_address_path_prefix'>address_path_prefix</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_address_path_prefix'>address_path_prefix</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1818,22 +1902,22 @@
       <pre class="lines">
 
 
-339
-340
-341
-342
-343
-344
-345
-346
-347
-348
 349
 350
-351</pre>
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 339</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 349</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1917,12 +2001,12 @@
       <pre class="lines">
 
 
-231
-232
-233</pre>
+241
+242
+243</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 231</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 241</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1976,15 +2060,15 @@
       <pre class="lines">
 
 
-237
-238
-239</pre>
+247
+248
+249</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 237</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 247</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_display_name'>display_name</span><span class='comma'>,</span> <span class='id identifier rubyid_chain_id'>chain_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_family'>protocol_family</span><span class='comma'>,</span> <span class='id identifier rubyid_is_testnet'>is_testnet</span><span class='comma'>,</span> <span class='id identifier rubyid_native_asset'>native_asset</span><span class='comma'>,</span> <span class='id identifier rubyid_feature_set'>feature_set</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_display_name'>display_name</span><span class='comma'>,</span> <span class='id identifier rubyid_chain_id'>chain_id</span><span class='comma'>,</span> <span class='id identifier rubyid_protocol_family'>protocol_family</span><span class='comma'>,</span> <span class='id identifier rubyid_is_testnet'>is_testnet</span><span class='comma'>,</span> <span class='id identifier rubyid_native_asset'>native_asset</span><span class='comma'>,</span> <span class='id identifier rubyid_feature_set'>feature_set</span><span class='comma'>,</span> <span class='id identifier rubyid_address_path_prefix'>address_path_prefix</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2035,15 +2119,6 @@
       <pre class="lines">
 
 
-155
-156
-157
-158
-159
-160
-161
-162
-163
 164
 165
 166
@@ -2067,10 +2142,19 @@
 184
 185
 186
-187</pre>
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 155</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
@@ -2154,12 +2238,12 @@
       <pre class="lines">
 
 
-315
-316
-317</pre>
+325
+326
+327</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 315</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 325</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -2213,22 +2297,22 @@
       <pre class="lines">
 
 
-321
-322
-323
-324
-325
-326
-327
-328
-329
-330
 331
 332
-333</pre>
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 321</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 331</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2292,12 +2376,12 @@
       <pre class="lines">
 
 
-309
-310
-311</pre>
+319
+320
+321</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 309</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 319</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -2351,22 +2435,22 @@
       <pre class="lines">
 
 
-191
-192
-193
-194
-195
-196
-197
-198
-199
 200
 201
 202
-203</pre>
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 191</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/network.rb', line 200</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
