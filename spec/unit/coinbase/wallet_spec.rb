@@ -1008,32 +1008,60 @@ describe Coinbase::Wallet do
   end
 
   describe '#faucet' do
-    subject(:faucet_transaction) { wallet.faucet }
-
     let(:faucet_transaction_model) do
       Coinbase::Client::FaucetTransaction.new({ transaction_hash: '0x123456789' })
     end
     let(:wallet) { described_class.new(model_with_default_address, seed: '') }
 
-    before do
-      allow(addresses_api)
-        .to receive(:list_addresses)
-        .with(wallet_id, { limit: 20 })
-        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+    context 'when using default asset' do
+      subject(:faucet_transaction) { wallet.faucet }
 
-      allow(addresses_api)
-        .to receive(:request_faucet_funds)
-        .with(wallet_id, first_address_model.address_id)
-        .and_return(faucet_transaction_model)
+      before do
+        allow(addresses_api)
+          .to receive(:list_addresses)
+          .with(wallet_id, { limit: 20 })
+          .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+        allow(addresses_api)
+          .to receive(:request_faucet_funds)
+          .with(wallet_id, first_address_model.address_id, {asset_id: ''})
+          .and_return(faucet_transaction_model)
+      end
+
+      it 'returns the faucet transaction' do
+        expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      end
+
+      it 'contains the transaction hash' do
+        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+      end
     end
 
-    it 'returns the faucet transaction' do
-      expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+
+    context 'when using specific asset' do
+      subject(:faucet_transaction) { wallet.faucet(asset: :usdc) }
+
+      before do
+        allow(addresses_api)
+          .to receive(:list_addresses)
+                .with(wallet_id, { limit: 20 })
+                .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+        allow(addresses_api)
+          .to receive(:request_faucet_funds)
+                .with(wallet_id, first_address_model.address_id, {asset_id: :usdc})
+                .and_return(faucet_transaction_model)
+      end
+
+      it 'returns the faucet transaction' do
+        expect(faucet_transaction).to be_a(Coinbase::FaucetTransaction)
+      end
+
+      it 'contains the transaction hash' do
+        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+      end
     end
 
-    it 'contains the transaction hash' do
-      expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
-    end
   end
 
   describe '#can_sign?' do

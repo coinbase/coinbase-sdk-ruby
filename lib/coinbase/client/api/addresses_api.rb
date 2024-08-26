@@ -53,7 +53,7 @@ module Coinbase::Client
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
       # HTTP header 'Content-Type'
       content_type = @api_client.select_header_content_type(['application/json'])
       if !content_type.nil?
@@ -127,7 +127,7 @@ module Coinbase::Client
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
 
       # form parameters
       form_params = opts[:form_params] || {}
@@ -202,7 +202,7 @@ module Coinbase::Client
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
 
       # form parameters
       form_params = opts[:form_params] || {}
@@ -278,7 +278,7 @@ module Coinbase::Client
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
 
       # form parameters
       form_params = opts[:form_params] || {}
@@ -351,7 +351,7 @@ module Coinbase::Client
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
 
       # form parameters
       form_params = opts[:form_params] || {}
@@ -387,6 +387,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet the address belongs to.
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
     # @return [FaucetTransaction]
     def request_faucet_funds(wallet_id, address_id, opts = {})
       data, _status_code, _headers = request_faucet_funds_with_http_info(wallet_id, address_id, opts)
@@ -398,6 +399,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet the address belongs to.
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
     # @return [Array<(FaucetTransaction, Integer, Hash)>] FaucetTransaction data, response status code and response headers
     def request_faucet_funds_with_http_info(wallet_id, address_id, opts = {})
       if @api_client.config.debugging
@@ -416,11 +418,12 @@ module Coinbase::Client
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'asset_id'] = opts[:'asset_id'] if !opts[:'asset_id'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
       # HTTP header 'Accept' (if needed)
-      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
 
       # form parameters
       form_params = opts[:form_params] || {}

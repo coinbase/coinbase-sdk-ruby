@@ -363,9 +363,9 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    def faucet
+    def faucet(asset: '')
       Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id))
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id, {asset_id: asset}))
       end
     end
 
