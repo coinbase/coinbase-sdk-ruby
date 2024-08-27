@@ -365,7 +365,7 @@ module Coinbase
     end
 
     def faucet(asset_id: '')
-      opts = asset_id.empty? ? {} : {asset_id: asset_id}
+      opts = asset_id.empty? ? {} : { asset_id: asset_id }
 
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id, opts))

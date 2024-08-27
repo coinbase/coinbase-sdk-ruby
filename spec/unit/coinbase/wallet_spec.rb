@@ -1037,20 +1037,19 @@ describe Coinbase::Wallet do
       end
     end
 
-
     context 'when using specific asset' do
       subject(:faucet_transaction) { wallet.faucet(asset_id: :usdc) }
 
       before do
         allow(addresses_api)
           .to receive(:list_addresses)
-                .with(wallet_id, { limit: 20 })
-                .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+          .with(wallet_id, { limit: 20 })
+          .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
 
         allow(addresses_api)
           .to receive(:request_faucet_funds)
-                .with(wallet_id, first_address_model.address_id, {asset_id: :usdc})
-                .and_return(faucet_transaction_model)
+          .with(wallet_id, first_address_model.address_id, { asset_id: :usdc })
+          .and_return(faucet_transaction_model)
       end
 
       it 'returns the faucet transaction' do
@@ -1061,7 +1060,6 @@ describe Coinbase::Wallet do
         expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
       end
     end
-
   end
 
   describe '#can_sign?' do
