@@ -1024,7 +1024,7 @@ describe Coinbase::Wallet do
 
         allow(addresses_api)
           .to receive(:request_faucet_funds)
-          .with(wallet_id, first_address_model.address_id, {asset_id: ''})
+          .with(wallet_id, first_address_model.address_id, {})
           .and_return(faucet_transaction_model)
       end
 
@@ -1039,7 +1039,7 @@ describe Coinbase::Wallet do
 
 
     context 'when using specific asset' do
-      subject(:faucet_transaction) { wallet.faucet(asset: :usdc) }
+      subject(:faucet_transaction) { wallet.faucet(asset_id: :usdc) }
 
       before do
         allow(addresses_api)

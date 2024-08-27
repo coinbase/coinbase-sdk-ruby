@@ -162,6 +162,7 @@ module Coinbase
     # @return [Coinbase::Trade] The Trade object.
 
     # @!method faucet
+    # @param asset_id [Symbol] The ID of the Asset to transfer to the wallet.
     # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
@@ -363,9 +364,11 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    def faucet(asset: '')
+    def faucet(asset_id: '')
+      opts = asset_id.empty? ? {} : {asset_id: asset_id}
+
       Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id, {asset_id: asset}))
+        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id, opts))
       end
     end
 
