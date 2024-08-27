@@ -128,7 +128,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(network_id, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)  &#x21d2; Enumerable&lt;Coinbase::StakingBalance&gt; </a>
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(network, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)  &#x21d2; Enumerable&lt;Coinbase::StakingBalance&gt; </a>
     
 
     
@@ -145,50 +145,6 @@
     <span class="summary_desc"><div class='inline'>
 <p>Returns a list of StakingBalance for the provided network, asset, and addresses.</p>
 </div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#list_page-class_method" title="list_page (class method)">.<strong>list_page</strong>(network_id, asset_id, address_id, start_time, end_time, page)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#stake_api-class_method" title="stake_api (class method)">.<strong>stake_api</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -448,12 +404,12 @@
       <pre class="lines">
 
 
-25
-26
-27</pre>
+27
+28
+29</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 25</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 27</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='id identifier rubyid_model'>model</span>
@@ -473,7 +429,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="list-class_method">
   
-    .<strong>list</strong>(network_id, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::StakingBalance (class)">Coinbase::StakingBalance</a></span>&gt;</tt> 
+    .<strong>list</strong>(network, asset_id, address_id, start_time: DateTime.now.prev_month(1), end_time: DateTime.now)  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::StakingBalance (class)">Coinbase::StakingBalance</a></span>&gt;</tt> 
   
 
   
@@ -493,16 +449,16 @@
   
     <li>
       
-        <span class='name'>network_id</span>
+        <span class='name'>network</span>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Coinbase::Network</a></span></tt>, <tt>Symbol</tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>The network ID</p>
+<p>The Network or Network ID</p>
 </div>
       
     </li>
@@ -608,91 +564,21 @@
 18
 19
 20
-21</pre>
+21
+22
+23</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 15</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='label'>start_time:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_prev_month'>prev_month</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='label'>end_time:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='label'>start_time:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='period'>.</span><span class='id identifier rubyid_prev_month'>prev_month</span><span class='lparen'>(</span><span class='int'>1</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='label'>end_time:</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_network'>network</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='rparen'>)</span>
+
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span>
-    <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_start_time'>start_time</span><span class='comma'>,</span> <span class='id identifier rubyid_end_time'>end_time</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_start_time'>start_time</span><span class='comma'>,</span> <span class='id identifier rubyid_end_time'>end_time</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
   <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_staking_balance'>staking_balance</span><span class='op'>|</span>
     <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_staking_balance'>staking_balance</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="list_page-class_method">
-  
-    .<strong>list_page</strong>(network_id, asset_id, address_id, start_time, end_time, page)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 75</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_start_time'>start_time</span><span class='comma'>,</span> <span class='id identifier rubyid_end_time'>end_time</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_stake_api'>stake_api</span><span class='period'>.</span><span class='id identifier rubyid_fetch_historical_staking_balances'>fetch_historical_staking_balances</span><span class='lparen'>(</span>
-    <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalize_network'><span class='object_link'><a href="../Coinbase.html#normalize_network-class_method" title="Coinbase.normalize_network (method)">normalize_network</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_start_time'>start_time</span><span class='period'>.</span><span class='id identifier rubyid_iso8601'>iso8601</span><span class='comma'>,</span>
-    <span class='id identifier rubyid_end_time'>end_time</span><span class='period'>.</span><span class='id identifier rubyid_iso8601'>iso8601</span><span class='comma'>,</span>
-    <span class='lbrace'>{</span> <span class='label'>next_page:</span> <span class='id identifier rubyid_page'>page</span> <span class='rbrace'>}</span>
-  <span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="stake_api-class_method">
-  
-    .<strong>stake_api</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-71
-72
-73</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 71</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_stake_api'>stake_api</span>
-  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/StakeApi.html" title="Coinbase::Client::StakeApi (class)">StakeApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Client/StakeApi.html#initialize-instance_method" title="Coinbase::Client::StakeApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_client'><span class='object_link'><a href="Configuration.html#api_client-instance_method" title="Coinbase::Configuration#api_client (method)">api_client</a></span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -749,12 +635,12 @@
       <pre class="lines">
 
 
-37
-38
-39</pre>
+39
+40
+41</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_address'>address</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_address'>address</span>
@@ -808,12 +694,12 @@
       <pre class="lines">
 
 
-43
-44
-45</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bonded_stake'>bonded_stake</span>
   <span class='ivar'>@bonded_stake</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Balance.html" title="Coinbase::Balance (class)">Balance</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_model'><span class='object_link'><a href="Balance.html#from_model-class_method" title="Coinbase::Balance.from_model (method)">from_model</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_bonded_stake'>bonded_stake</span><span class='rparen'>)</span>
@@ -867,12 +753,12 @@
       <pre class="lines">
 
 
-31
-32
-33</pre>
+33
+34
+35</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 33</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_date'>date</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_date'>date</span>
@@ -926,12 +812,12 @@
       <pre class="lines">
 
 
-67
-68
-69</pre>
+69
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 67</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -985,12 +871,12 @@
       <pre class="lines">
 
 
-55
-56
-57</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_participant_type'>participant_type</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_participant_type'>participant_type</span>
@@ -1044,12 +930,12 @@
       <pre class="lines">
 
 
-61
-62
-63</pre>
+63
+64
+65</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::StakingBalance{date: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_date'>date</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; address: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_address'>address</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
@@ -1103,12 +989,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/staking_balance.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unbonded_balance'>unbonded_balance</span>
   <span class='ivar'>@unbonded_balance</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Balance.html" title="Coinbase::Balance (class)">Balance</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_model'><span class='object_link'><a href="Balance.html#from_model-class_method" title="Coinbase::Balance.from_model (method)">from_model</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_unbonded_balance'>unbonded_balance</span><span class='rparen'>)</span>

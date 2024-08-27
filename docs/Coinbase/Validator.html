@@ -128,7 +128,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#fetch-class_method" title="fetch (class method)">.<strong>fetch</strong>(network_id, asset_id, validator_id)  &#x21d2; Coinbase::Validator </a>
+      <a href="#fetch-class_method" title="fetch (class method)">.<strong>fetch</strong>(network, asset_id, validator_id)  &#x21d2; Coinbase::Validator </a>
     
 
     
@@ -152,7 +152,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(network_id, asset_id, status: nil)  &#x21d2; Enumerable&lt;Coinbase::Validator&gt; </a>
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(network, asset_id, status: nil)  &#x21d2; Enumerable&lt;Coinbase::Validator&gt; </a>
     
 
     
@@ -169,50 +169,6 @@
     <span class="summary_desc"><div class='inline'>
 <p>Returns a list of Validators for the provided network and asset.</p>
 </div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#list_page-class_method" title="list_page (class method)">.<strong>list_page</strong>(network_id, asset_id, status, page)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#validators_api-class_method" title="validators_api (class method)">.<strong>validators_api</strong>  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -425,7 +381,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="fetch-class_method">
   
-    .<strong>fetch</strong>(network_id, asset_id, validator_id)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Validator (class)">Coinbase::Validator</a></span></tt> 
+    .<strong>fetch</strong>(network, asset_id, validator_id)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Validator (class)">Coinbase::Validator</a></span></tt> 
   
 
   
@@ -445,16 +401,16 @@
   
     <li>
       
-        <span class='name'>network_id</span>
+        <span class='name'>network</span>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Coinbase::Network</a></span></tt>, <tt>Symbol</tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>The network ID</p>
+<p>The Network or Network ID</p>
 </div>
       
     </li>
@@ -518,8 +474,6 @@
       <pre class="lines">
 
 
-30
-31
 32
 33
 34
@@ -527,15 +481,21 @@
 36
 37
 38
-39</pre>
+39
+40
+41
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 32</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_validator_id'>validator_id</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_fetch'>fetch</span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_validator_id'>validator_id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_network'>network</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='rparen'>)</span>
+
   <span class='id identifier rubyid_validator'>validator</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_validators_api'>validators_api</span><span class='period'>.</span><span class='id identifier rubyid_get_validator'>get_validator</span><span class='lparen'>(</span>
-      <span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_normalized_id'>normalized_id</span><span class='comma'>,</span>
       <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span>
       <span class='id identifier rubyid_validator_id'>validator_id</span>
     <span class='rparen'>)</span>
@@ -550,7 +510,7 @@
       <div class="method_details ">
   <h3 class="signature " id="list-class_method">
   
-    .<strong>list</strong>(network_id, asset_id, status: nil)  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Validator (class)">Coinbase::Validator</a></span>&gt;</tt> 
+    .<strong>list</strong>(network, asset_id, status: nil)  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="" title="Coinbase::Validator (class)">Coinbase::Validator</a></span>&gt;</tt> 
   
 
   
@@ -570,16 +530,16 @@
   
     <li>
       
-        <span class='name'>network_id</span>
+        <span class='name'>network</span>
       
       
-        <span class='type'>(<tt>Symbol</tt>)</span>
+        <span class='type'>(<tt>Coinbase::Nework</tt>, <tt>Symbol</tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>The network ID</p>
+<p>The Network or Network ID</p>
 </div>
       
     </li>
@@ -651,95 +611,21 @@
 20
 21
 22
-23</pre>
+23
+24
+25</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 17</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='label'>status:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span>
-    <span class='tlambda'>-&gt;</span><span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='tlambeg'>{</span> <span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
-  <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_validator'>validator</span><span class='op'>|</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='label'>status:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_network'>network</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='rparen'>)</span>
+
+  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_page'>page</span><span class='op'>|</span>
+    <span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span>
+  <span class='rbrace'>}</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_validator'>validator</span><span class='op'>|</span>
     <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_validator'>validator</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="list_page-class_method">
-  
-    .<strong>list_page</strong>(network_id, asset_id, status, page)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 65</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list_page'>list_page</span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_validators_api'>validators_api</span><span class='period'>.</span><span class='id identifier rubyid_list_validators'>list_validators</span><span class='lparen'>(</span>
-      <span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span>
-      <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span>
-      <span class='lbrace'>{</span>
-        <span class='label'>status:</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span>
-        <span class='label'>page:</span> <span class='id identifier rubyid_page'>page</span>
-      <span class='rbrace'>}</span>
-    <span class='rparen'>)</span>
-  <span class='kw'>end</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="validators_api-class_method">
-  
-    .<strong>validators_api</strong>  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-78
-79
-80</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 78</span>
-
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_validators_api'>validators_api</span>
-  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/ValidatorsApi.html" title="Coinbase::Client::ValidatorsApi (class)">ValidatorsApi</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Client/ValidatorsApi.html#initialize-instance_method" title="Coinbase::Client::ValidatorsApi#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_configuration'><span class='object_link'><a href="../Coinbase.html#configuration-class_method" title="Coinbase.configuration (method)">configuration</a></span></span><span class='period'>.</span><span class='id identifier rubyid_api_client'><span class='object_link'><a href="Configuration.html#api_client-instance_method" title="Coinbase::Configuration#api_client (method)">api_client</a></span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -796,12 +682,12 @@
       <pre class="lines">
 
 
-61
-62
-63</pre>
+65
+66
+67</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 61</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -855,12 +741,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+53
+54
+55</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 53</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
@@ -914,12 +800,12 @@
       <pre class="lines">
 
 
-55
-56
-57</pre>
+59
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 59</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Validator{id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_validator_id'>validator_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; status: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_status'>status</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
@@ -973,12 +859,12 @@
       <pre class="lines">
 
 
-43
-44
-45</pre>
+47
+48
+49</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 43</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/validator.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_validator_id'>validator_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_validator_id'>validator_id</span>

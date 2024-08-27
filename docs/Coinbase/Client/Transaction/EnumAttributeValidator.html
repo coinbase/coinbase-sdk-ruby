@@ -257,9 +257,6 @@
       <pre class="lines">
 
 
-44
-45
-46
 47
 48
 49
@@ -268,10 +265,13 @@
 52
 53
 54
-55</pre>
+55
+56
+57
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 44</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 47</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_datatype'>datatype</span><span class='comma'>,</span> <span class='id identifier rubyid_allowable_values'>allowable_values</span><span class='rparen'>)</span>
   <span class='ivar'>@allowable_values</span> <span class='op'>=</span> <span class='id identifier rubyid_allowable_values'>allowable_values</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
@@ -323,12 +323,12 @@
       <pre class="lines">
 
 
-42
-43
-44</pre>
+45
+46
+47</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_allowable_values'>allowable_values</span>
   <span class='ivar'>@allowable_values</span>
@@ -366,12 +366,12 @@
       <pre class="lines">
 
 
-41
-42
-43</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_datatype'>datatype</span>
   <span class='ivar'>@datatype</span>
@@ -425,12 +425,12 @@
       <pre class="lines">
 
 
-57
-58
-59</pre>
+60
+61
+62</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 57</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/transaction.rb', line 60</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='op'>!</span><span class='id identifier rubyid_value'>value</span> <span class='op'>||</span> <span class='id identifier rubyid_allowable_values'>allowable_values</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
