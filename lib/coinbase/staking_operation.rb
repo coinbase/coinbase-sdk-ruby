@@ -17,6 +17,19 @@ module Coinbase
     # @param action [Symbol] The action to perform
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
+    # @option options [String] :integrator_contract_address The integrator contract
+    #   address. [asset_id: :eth, mode: :partial, action: all]
+    # @option options [String] :funding_address The address funding the 32 ETH
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [String] :withdrawal_address The address receiving rewards and withdrawal funds.
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [String] :fee_recipient_address The address receiving transaction fees.
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [Boolean] :immediate To leverage "Coinbase Managed Unstake".
+    #   (default: false i.e. User Managed Unstake) [asset_id: :eth, mode: :native, action: :unstake]
+    # @option options [String] :validator_pub_keys List of comma separated validator public keys to unstake.
+    #   (default: validators picked up on your behalf corresponding to the unstake amount.) [asset_id: :eth,
+    #   mode: :native, action: :unstake]
     # @return [Coinbase::StakingOperation] The staking operation
     def self.build(amount, network, asset_id, address_id, action, mode, options)
       network = Coinbase::Network.from_id(network)
@@ -49,6 +62,19 @@ module Coinbase
     # @param action [Symbol] The action to perform
     # @param mode [Symbol] The staking mode
     # @param options [Hash] Additional options
+    # @option options [String] :integrator_contract_address The integrator contract
+    #   address. [asset_id: :eth, mode: :partial, action: all]
+    # @option options [String] :funding_address The address funding the 32 ETH
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [String] :withdrawal_address The address receiving rewards and withdrawal funds.
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [String] :fee_recipient_address The address receiving transaction fees.
+    #   (default: :address_id) [asset_id: :eth, mode: :native, action: :stake]
+    # @option options [Boolean] :immediate To leverage "Coinbase Managed Unstake".
+    #   (default: false i.e. User Managed Unstake) [asset_id: :eth, mode: :native, action: :unstake]
+    # @option options [String] :validator_pub_keys List of comma separated validator public keys to unstake.
+    #   (default: validators picked up on your behalf corresponding to the unstake amount.) [asset_id: :eth,
+    #   mode: :native, action: :unstake]
     # @return [Coinbase::StakingOperation] The staking operation
     def self.create(amount, network, asset_id, address_id, wallet_id, action, mode, options)
       network = Coinbase::Network.from_id(network)
