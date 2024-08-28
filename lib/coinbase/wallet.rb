@@ -364,10 +364,6 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    def faucet(asset_id: nil)
-      default_address.faucet(asset_id: asset_id)
-    end
-
     # Returns whether the Wallet has a seed with which to derive keys and sign transactions.
     # @return [Boolean] Whether the Wallet has a seed with which to derive keys and sign transactions.
     def can_sign?
