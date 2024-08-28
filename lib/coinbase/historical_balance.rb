@@ -3,18 +3,21 @@
 module Coinbase
   # A representation of an HistoricalBalance.
   class HistoricalBalance
-    # Converts a Coinbase::Client::HistoricalBalance model to a Coinbase::HistoricalBalance
-    # @param historical_balance_model [Coinbase::Client::HistoricalBalance] The historical balance fetched from the API.
-    # @return [HistoricalBalance] The converted HistoricalBalance object.
-    def self.from_model(historical_balance_model)
-      asset = Coinbase::Asset.from_model(historical_balance_model.asset)
+    class << self
+      # Converts a Coinbase::Client::HistoricalBalance model to a Coinbase::HistoricalBalance
+      # @param historical_balance_model [Coinbase::Client::HistoricalBalance] The historical
+      # balance fetched from the API.
+      # @return [HistoricalBalance] The converted HistoricalBalance object.
+      def from_model(historical_balance_model)
+        asset = Coinbase::Asset.from_model(historical_balance_model.asset)
 
-      new(
-        amount: asset.from_atomic_amount(historical_balance_model.amount),
-        block_height: BigDecimal(historical_balance_model.block_height),
-        block_hash: historical_balance_model.block_hash,
-        asset: asset
-      )
+        new(
+          amount: asset.from_atomic_amount(historical_balance_model.amount),
+          block_height: BigDecimal(historical_balance_model.block_height),
+          block_hash: historical_balance_model.block_hash,
+          asset: asset
+        )
+      end
     end
 
     # Returns a new HistoricalBalance object. Do not use this method. Instead, use Balance.from_model or

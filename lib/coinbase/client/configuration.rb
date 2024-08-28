@@ -155,6 +155,13 @@ module Coinbase::Client
 
     attr_accessor :force_ending_format
 
+    class << self
+      # The default Configuration object.
+      def default
+        @@default ||= Configuration.new
+      end
+    end
+
     def initialize
       @scheme = 'https'
       @host = 'api.cdp.coinbase.com'
@@ -184,11 +191,6 @@ module Coinbase::Client
       @logger = defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
 
       yield(self) if block_given?
-    end
-
-    # The default Configuration object.
-    def self.default
-      @@default ||= Configuration.new
     end
 
     def configure
