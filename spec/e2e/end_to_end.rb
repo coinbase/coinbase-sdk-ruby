@@ -99,8 +99,12 @@ def transfer_test(imported_address, new_address)
   puts "Transferred 0.00008 eth from #{imported_address} to #{new_address}"
 
   # Fund the new address with faucet.
-  faucet_tx = new_address.faucet
-  puts "Requested faucet funds: #{faucet_tx}"
+  begin
+    faucet_tx = new_address.faucet
+    puts "Requested faucet funds: #{faucet_tx}"
+  rescue Coinbase::InternalError
+    puts 'Faucet has reached limit. Will continue with test'
+  end
 
   send_amount = new_address.balance(:eth) - 1e-5 # Leave some eth for gas.
 
