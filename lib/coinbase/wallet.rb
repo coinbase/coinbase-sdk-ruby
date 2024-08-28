@@ -365,11 +365,7 @@ module Coinbase
     end
 
     def faucet(asset_id: '')
-      opts = asset_id.empty? ? {} : { asset_id: asset_id }
-
-      Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id, opts))
-      end
+      default_address.faucet(asset_id: asset_id)
     end
 
     # Returns whether the Wallet has a seed with which to derive keys and sign transactions.

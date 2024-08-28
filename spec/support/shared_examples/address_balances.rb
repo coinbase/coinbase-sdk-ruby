@@ -150,7 +150,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
       before do
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id)
+          .with(normalized_network_id, address_id, {})
           .and_return(faucet_tx)
       end
 
@@ -159,7 +159,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
 
         expect(external_addresses_api)
           .to have_received(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id)
+          .with(normalized_network_id, address_id, {})
       end
 
       it 'returns the faucet transaction' do
@@ -175,7 +175,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
       before do
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id)
+          .with(normalized_network_id, address_id, {})
           .and_raise(api_error)
       end
 

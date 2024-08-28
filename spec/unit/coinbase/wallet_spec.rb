@@ -23,6 +23,7 @@ describe Coinbase::Wallet do
   end
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
+  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
   let(:use_server_signer) { false }
   let(:default_network) { build(:network, :base_sepolia) }
@@ -39,6 +40,7 @@ describe Coinbase::Wallet do
   before do
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
     allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
+    allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
 
     allow(Coinbase).to receive(:configuration).and_return(configuration)
 
@@ -1022,9 +1024,9 @@ describe Coinbase::Wallet do
           .with(wallet_id, { limit: 20 })
           .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
 
-        allow(addresses_api)
-          .to receive(:request_faucet_funds)
-          .with(wallet_id, first_address_model.address_id, {})
+        allow(external_addresses_api)
+          .to receive(:request_external_faucet_funds)
+          .with(normalized_network_id, first_address_model.address_id, {})
           .and_return(faucet_transaction_model)
       end
 
@@ -1046,9 +1048,9 @@ describe Coinbase::Wallet do
           .with(wallet_id, { limit: 20 })
           .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
 
-        allow(addresses_api)
-          .to receive(:request_faucet_funds)
-          .with(wallet_id, first_address_model.address_id, { asset_id: :usdc })
+        allow(external_addresses_api)
+          .to receive(:request_external_faucet_funds)
+          .with(normalized_network_id, first_address_model.address_id, { asset_id: :usdc })
           .and_return(faucet_transaction_model)
       end
 
