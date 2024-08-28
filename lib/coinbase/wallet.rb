@@ -364,7 +364,7 @@ module Coinbase
       Data.new(wallet_id: id, seed: @master.seed_hex)
     end
 
-    def faucet(asset_id: '')
+    def faucet(asset_id: nil)
       default_address.faucet(asset_id: asset_id)
     end
 
