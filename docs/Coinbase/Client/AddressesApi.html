@@ -2388,6 +2388,32 @@
   
 </ul>
 
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>opts</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:asset_id</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>The ID of the asset to transfer from the faucet.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -2408,13 +2434,13 @@
       <pre class="lines">
 
 
-391
 392
 393
-394</pre>
+394
+395</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/addresses_api.rb', line 391</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/addresses_api.rb', line 392</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_request_faucet_funds'>request_faucet_funds</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid__status_code'>_status_code</span><span class='comma'>,</span> <span class='id identifier rubyid__headers'>_headers</span> <span class='op'>=</span> <span class='id identifier rubyid_request_faucet_funds_with_http_info'>request_faucet_funds_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span><span class='rparen'>)</span>
@@ -2498,6 +2524,32 @@
   
 </ul>
 
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>opts</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:asset_id</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>The ID of the asset to transfer from the faucet.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -2523,8 +2575,6 @@
       <pre class="lines">
 
 
-402
-403
 404
 405
 406
@@ -2573,10 +2623,13 @@
 449
 450
 451
-452</pre>
+452
+453
+454
+455</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/addresses_api.rb', line 402</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api/addresses_api.rb', line 404</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_request_faucet_funds_with_http_info'>request_faucet_funds_with_http_info</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_address_id'>address_id</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='ivar'>@api_client</span><span class='period'>.</span><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_debugging'>debugging</span>
@@ -2595,6 +2648,7 @@
 
   <span class='comment'># query parameters
 </span>  <span class='id identifier rubyid_query_params'>query_params</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:query_params</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_query_params'>query_params</span><span class='lbracket'>[</span><span class='symbol'>:&#39;asset_id&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;asset_id&#39;</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:&#39;asset_id&#39;</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='comment'># header parameters
 </span>  <span class='id identifier rubyid_header_params'>header_params</span> <span class='op'>=</span> <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:header_params</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
