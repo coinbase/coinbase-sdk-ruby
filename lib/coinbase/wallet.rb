@@ -162,6 +162,7 @@ module Coinbase
     # @return [Coinbase::Trade] The Trade object.
 
     # @!method faucet
+    # @param asset_id [Symbol] The ID of the Asset to transfer to the wallet.
     # Requests funds from the faucet for the Wallet's default address and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
@@ -361,12 +362,6 @@ module Coinbase
       raise 'Cannot export Wallet without loaded seed' if @master.nil?
 
       Data.new(wallet_id: id, seed: @master.seed_hex)
-    end
-
-    def faucet
-      Coinbase.call_api do
-        Coinbase::FaucetTransaction.new(addresses_api.request_faucet_funds(id, default_address.id))
-      end
     end
 
     # Returns whether the Wallet has a seed with which to derive keys and sign transactions.

@@ -387,6 +387,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet the address belongs to.
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
     # @return [FaucetTransaction]
     def request_faucet_funds(wallet_id, address_id, opts = {})
       data, _status_code, _headers = request_faucet_funds_with_http_info(wallet_id, address_id, opts)
@@ -398,6 +399,7 @@ module Coinbase::Client
     # @param wallet_id [String] The ID of the wallet the address belongs to.
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
     # @return [Array<(FaucetTransaction, Integer, Hash)>] FaucetTransaction data, response status code and response headers
     def request_faucet_funds_with_http_info(wallet_id, address_id, opts = {})
       if @api_client.config.debugging
@@ -416,6 +418,7 @@ module Coinbase::Client
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'asset_id'] = opts[:'asset_id'] if !opts[:'asset_id'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}

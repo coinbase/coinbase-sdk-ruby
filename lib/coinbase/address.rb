@@ -74,13 +74,16 @@ module Coinbase
 
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
+    # @param asset_id [Symbol] The ID of the Asset to transfer to the wallet.
     # @return [Coinbase::FaucetTransaction] The successful faucet transaction
     # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
     # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
-    def faucet
+    def faucet(asset_id: nil)
+      opts = { asset_id: asset_id }.compact
+
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(
-          addresses_api.request_external_faucet_funds(network.normalized_id, id)
+          addresses_api.request_external_faucet_funds(network.normalized_id, id, opts)
         )
       end
     end
@@ -90,7 +93,7 @@ module Coinbase
     # @param amount [Integer,String,BigDecimal] The amount of the asset to stake
     # @param asset_id [Symbol] The asset to stake
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the stake operation
+    # @param options [Hash] (Optional) Additional options for the stake operation. ({StakingOperation#build see_more})
     # @return [Coinbase::StakingOperation] The stake operation
     def build_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'stakeable_balance', mode, options)
@@ -102,7 +105,7 @@ module Coinbase
     # @param amount [Integer,String,BigDecimal] The amount of the asset to unstake
     # @param asset_id [Symbol] The asset to unstake
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the unstake operation
+    # @param options [Hash] (Optional) Additional options for the unstake operation. ({StakingOperation#build see_more})
     # @return [Coinbase::StakingOperation] The unstake operation
     def build_unstake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'unstakeable_balance', mode, options)
@@ -114,7 +117,8 @@ module Coinbase
     # @param amount [Integer,String,BigDecimal] The amount of the asset to claim
     # @param asset_id [Symbol] The asset to claim
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the claim_stake operation
+    # @param options [Hash] (Optional) Additional options for the claim_stake operation.
+    #   ({StakingOperation#build see_more})
     # @return [Coinbase::StakingOperation] The claim_stake operation
     def build_claim_stake_operation(amount, asset_id, mode: :default, options: {})
       validate_can_perform_staking_action!(amount, asset_id, 'claimable_balance', mode, options)
@@ -125,7 +129,9 @@ module Coinbase
     # Retrieves the balances used for staking for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve staking balances for
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
+    # @param options [Hash] (Optional) Additional options for fetching the staking balances
+    # @option options [String] (Optional) :validator_pub_keys List of comma separated validator public keys to retrieve
+    #   staking balances for. (default: all validators) [asset_id: :eth, mode: :native]
     # @return [Hash] The staking balances
     # @return [BigDecimal] :stakeable_balance The amount of the asset that can be staked
     # @return [BigDecimal] :unstakeable_balance The amount of the asset that is currently staked and cannot be unstaked
@@ -163,7 +169,7 @@ module Coinbase
     # Retrieves the stakeable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the stakeable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
+    # @param options [Hash] Additional options for fetching the stakeable balance
     # @return [BigDecimal] The stakeable balance
     def stakeable_balance(asset_id, mode: :default, options: {})
       staking_balances(asset_id, mode: mode, options: options)[:stakeable_balance]
@@ -172,7 +178,7 @@ module Coinbase
     # Retrieves the unstakeable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the unstakeable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
+    # @param options [Hash] Additional options for fetching the unstakeable balance
     # @return [BigDecimal] The unstakeable balance
     def unstakeable_balance(asset_id, mode: :default, options: {})
       staking_balances(asset_id, mode: mode, options: options)[:unstakeable_balance]
@@ -181,7 +187,7 @@ module Coinbase
     # Retrieves the claimable balance for the supplied asset.
     # @param asset_id [Symbol] The asset to retrieve the claimable balance for
     # @param mode [Symbol] The staking mode. Defaults to :default.
-    # @param options [Hash] Additional options for the staking operation
+    # @param options [Hash] Additional options for fetching the claimable balance
     # @return [BigDecimal] The claimable balance
     def claimable_balance(asset_id, mode: :default, options: {})
       staking_balances(asset_id, mode: mode, options: options)[:claimable_balance]
