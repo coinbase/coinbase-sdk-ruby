@@ -12,7 +12,7 @@ FactoryBot.define do
     block_height { '123' }
     content do
       Coinbase::Client::EthereumTransaction.new(
-        hash: 'transaction_hash',
+        hash: 'transaction_hash'
       )
     end
 
