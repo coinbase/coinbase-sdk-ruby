@@ -14,12 +14,12 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  module StakingOperationMetadata
+  module TransactionContent
     class << self
       # List of class defined in oneOf (OpenAPI v3)
       def openapi_one_of
         [
-          :'Array<SignedVoluntaryExitMessageMetadata>'
+          :'EthereumTransaction'
         ]
       end
 

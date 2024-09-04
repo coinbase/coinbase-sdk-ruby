@@ -27,6 +27,8 @@ describe Coinbase do
       fetch_addresses_balances_test(imported_wallet)
       imported_address = imported_wallet.addresses[0]
       transfer_test(imported_address, new_address)
+      fetch_address_historical_balances_test(imported_address)
+      list_address_transactions_test(imported_address)
     end
   end
 
@@ -42,6 +44,8 @@ describe Coinbase do
       fetch_addresses_balances_test(existing_wallet)
       existing_address = existing_wallet.addresses[0]
       transfer_test(existing_address, new_address)
+      fetch_address_historical_balances_test(existing_address)
+      list_address_transactions_test(existing_address)
     end
   end
 end
@@ -89,6 +93,21 @@ def fetch_addresses_balances_test(wallet)
   balances = wallet.balances
   expect(balances.length).to be >= 1
   puts "Fetched balances: #{balances}"
+end
+
+def fetch_address_historical_balances_test(address)
+  puts 'Listing address historical balances...'
+  historical_balances = address.historical_balances(:eth)
+  expect(historical_balances.first).not_to be_nil
+  puts "Most recent historical balances: #{historical_balances.first}"
+end
+
+def list_address_transactions_test(address)
+  puts 'Listing address transactions...'
+  txns = address.transactions
+  expect(txns.first).not_to be_nil
+  expect(txns.first.block_hash).not_to be_nil
+  puts "Most recent transaction: #{txns.first}"
 end
 
 def transfer_test(imported_address, new_address)

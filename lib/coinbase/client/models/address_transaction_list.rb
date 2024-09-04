@@ -14,22 +14,22 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateTradeRequest
-    # The amount to trade
-    attr_accessor :amount
+  # 
+  class AddressTransactionList
+    attr_accessor :data
 
-    # The ID of the asset to trade
-    attr_accessor :from_asset_id
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # The ID of the asset to receive from the trade
-    attr_accessor :to_asset_id
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'amount' => :'amount',
-        :'from_asset_id' => :'from_asset_id',
-        :'to_asset_id' => :'to_asset_id'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page'
       }
     end
 
@@ -41,9 +41,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'amount' => :'String',
-        :'from_asset_id' => :'String',
-        :'to_asset_id' => :'String'
+        :'data' => :'Array<Transaction>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String'
       }
     end
 
@@ -57,33 +57,35 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateTradeRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::AddressTransactionList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateTradeRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::AddressTransactionList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'amount')
-        self.amount = attributes[:'amount']
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
+        end
       else
-        self.amount = nil
+        self.data = nil
       end
 
-      if attributes.key?(:'from_asset_id')
-        self.from_asset_id = attributes[:'from_asset_id']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
       else
-        self.from_asset_id = nil
+        self.has_more = nil
       end
 
-      if attributes.key?(:'to_asset_id')
-        self.to_asset_id = attributes[:'to_asset_id']
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
       else
-        self.to_asset_id = nil
+        self.next_page = nil
       end
     end
 
@@ -92,16 +94,16 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @amount.nil?
-        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
       end
 
-      if @from_asset_id.nil?
-        invalid_properties.push('invalid value for "from_asset_id", from_asset_id cannot be nil.')
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
       end
 
-      if @to_asset_id.nil?
-        invalid_properties.push('invalid value for "to_asset_id", to_asset_id cannot be nil.')
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
       end
 
       invalid_properties
@@ -111,9 +113,9 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @amount.nil?
-      return false if @from_asset_id.nil?
-      return false if @to_asset_id.nil?
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
       true
     end
 
@@ -122,9 +124,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          amount == o.amount &&
-          from_asset_id == o.from_asset_id &&
-          to_asset_id == o.to_asset_id
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page
     end
 
     # @see the `==` method
@@ -136,7 +138,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [amount, from_asset_id, to_asset_id].hash
+      [data, has_more, next_page].hash
     end
 
     # Builds the object from hash

@@ -51,6 +51,17 @@ FactoryBot.define do
       broadcasted
       status { 'failed' }
     end
+
+    trait :indexed do
+      block_hash { 'default_block_hash' }
+      block_height { '123' }
+      status { 'complete' }
+      content do
+        Coinbase::Client::EthereumTransaction.new(
+          hash: 'transaction_hash'
+        )
+      end
+    end
   end
 
   factory :transaction, class: Coinbase::Transaction do

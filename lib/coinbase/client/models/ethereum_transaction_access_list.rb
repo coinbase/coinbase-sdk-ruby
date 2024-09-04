@@ -14,22 +14,13 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateTradeRequest
-    # The amount to trade
-    attr_accessor :amount
-
-    # The ID of the asset to trade
-    attr_accessor :from_asset_id
-
-    # The ID of the asset to receive from the trade
-    attr_accessor :to_asset_id
+  class EthereumTransactionAccessList
+    attr_accessor :access_list
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'amount' => :'amount',
-        :'from_asset_id' => :'from_asset_id',
-        :'to_asset_id' => :'to_asset_id'
+        :'access_list' => :'access_list'
       }
     end
 
@@ -41,9 +32,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'amount' => :'String',
-        :'from_asset_id' => :'String',
-        :'to_asset_id' => :'String'
+        :'access_list' => :'Array<EthereumTransactionAccess>'
       }
     end
 
@@ -57,33 +46,21 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateTradeRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumTransactionAccessList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateTradeRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumTransactionAccessList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'amount')
-        self.amount = attributes[:'amount']
-      else
-        self.amount = nil
-      end
-
-      if attributes.key?(:'from_asset_id')
-        self.from_asset_id = attributes[:'from_asset_id']
-      else
-        self.from_asset_id = nil
-      end
-
-      if attributes.key?(:'to_asset_id')
-        self.to_asset_id = attributes[:'to_asset_id']
-      else
-        self.to_asset_id = nil
+      if attributes.key?(:'access_list')
+        if (value = attributes[:'access_list']).is_a?(Array)
+          self.access_list = value
+        end
       end
     end
 
@@ -92,18 +69,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @amount.nil?
-        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
-      end
-
-      if @from_asset_id.nil?
-        invalid_properties.push('invalid value for "from_asset_id", from_asset_id cannot be nil.')
-      end
-
-      if @to_asset_id.nil?
-        invalid_properties.push('invalid value for "to_asset_id", to_asset_id cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -111,9 +76,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @amount.nil?
-      return false if @from_asset_id.nil?
-      return false if @to_asset_id.nil?
       true
     end
 
@@ -122,9 +84,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          amount == o.amount &&
-          from_asset_id == o.from_asset_id &&
-          to_asset_id == o.to_asset_id
+          access_list == o.access_list
     end
 
     # @see the `==` method
@@ -136,7 +96,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [amount, from_asset_id, to_asset_id].hash
+      [access_list].hash
     end
 
     # Builds the object from hash

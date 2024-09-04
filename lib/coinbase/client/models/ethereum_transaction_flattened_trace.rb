@@ -14,22 +14,67 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateTradeRequest
-    # The amount to trade
-    attr_accessor :amount
+  class EthereumTransactionFlattenedTrace
+    attr_accessor :error
 
-    # The ID of the asset to trade
-    attr_accessor :from_asset_id
+    attr_accessor :type
 
-    # The ID of the asset to receive from the trade
-    attr_accessor :to_asset_id
+    attr_accessor :from
+
+    attr_accessor :to
+
+    attr_accessor :value
+
+    attr_accessor :gas
+
+    attr_accessor :gas_used
+
+    attr_accessor :input
+
+    attr_accessor :output
+
+    attr_accessor :sub_traces
+
+    attr_accessor :trace_address
+
+    attr_accessor :trace_type
+
+    attr_accessor :call_type
+
+    attr_accessor :trace_id
+
+    attr_accessor :status
+
+    attr_accessor :block_hash
+
+    attr_accessor :block_number
+
+    attr_accessor :transaction_hash
+
+    attr_accessor :transaction_index
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'amount' => :'amount',
-        :'from_asset_id' => :'from_asset_id',
-        :'to_asset_id' => :'to_asset_id'
+        :'error' => :'error',
+        :'type' => :'type',
+        :'from' => :'from',
+        :'to' => :'to',
+        :'value' => :'value',
+        :'gas' => :'gas',
+        :'gas_used' => :'gas_used',
+        :'input' => :'input',
+        :'output' => :'output',
+        :'sub_traces' => :'sub_traces',
+        :'trace_address' => :'trace_address',
+        :'trace_type' => :'trace_type',
+        :'call_type' => :'call_type',
+        :'trace_id' => :'trace_id',
+        :'status' => :'status',
+        :'block_hash' => :'block_hash',
+        :'block_number' => :'block_number',
+        :'transaction_hash' => :'transaction_hash',
+        :'transaction_index' => :'transaction_index'
       }
     end
 
@@ -41,9 +86,25 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'amount' => :'String',
-        :'from_asset_id' => :'String',
-        :'to_asset_id' => :'String'
+        :'error' => :'String',
+        :'type' => :'String',
+        :'from' => :'String',
+        :'to' => :'String',
+        :'value' => :'String',
+        :'gas' => :'Integer',
+        :'gas_used' => :'Integer',
+        :'input' => :'String',
+        :'output' => :'String',
+        :'sub_traces' => :'Integer',
+        :'trace_address' => :'Array<Integer>',
+        :'trace_type' => :'String',
+        :'call_type' => :'String',
+        :'trace_id' => :'String',
+        :'status' => :'Integer',
+        :'block_hash' => :'String',
+        :'block_number' => :'Integer',
+        :'transaction_hash' => :'String',
+        :'transaction_index' => :'Integer'
       }
     end
 
@@ -57,33 +118,93 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateTradeRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumTransactionFlattenedTrace` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateTradeRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumTransactionFlattenedTrace`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'amount')
-        self.amount = attributes[:'amount']
-      else
-        self.amount = nil
+      if attributes.key?(:'error')
+        self.error = attributes[:'error']
       end
 
-      if attributes.key?(:'from_asset_id')
-        self.from_asset_id = attributes[:'from_asset_id']
-      else
-        self.from_asset_id = nil
+      if attributes.key?(:'type')
+        self.type = attributes[:'type']
       end
 
-      if attributes.key?(:'to_asset_id')
-        self.to_asset_id = attributes[:'to_asset_id']
-      else
-        self.to_asset_id = nil
+      if attributes.key?(:'from')
+        self.from = attributes[:'from']
+      end
+
+      if attributes.key?(:'to')
+        self.to = attributes[:'to']
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
+      end
+
+      if attributes.key?(:'gas')
+        self.gas = attributes[:'gas']
+      end
+
+      if attributes.key?(:'gas_used')
+        self.gas_used = attributes[:'gas_used']
+      end
+
+      if attributes.key?(:'input')
+        self.input = attributes[:'input']
+      end
+
+      if attributes.key?(:'output')
+        self.output = attributes[:'output']
+      end
+
+      if attributes.key?(:'sub_traces')
+        self.sub_traces = attributes[:'sub_traces']
+      end
+
+      if attributes.key?(:'trace_address')
+        if (value = attributes[:'trace_address']).is_a?(Array)
+          self.trace_address = value
+        end
+      end
+
+      if attributes.key?(:'trace_type')
+        self.trace_type = attributes[:'trace_type']
+      end
+
+      if attributes.key?(:'call_type')
+        self.call_type = attributes[:'call_type']
+      end
+
+      if attributes.key?(:'trace_id')
+        self.trace_id = attributes[:'trace_id']
+      end
+
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
+      end
+
+      if attributes.key?(:'block_hash')
+        self.block_hash = attributes[:'block_hash']
+      end
+
+      if attributes.key?(:'block_number')
+        self.block_number = attributes[:'block_number']
+      end
+
+      if attributes.key?(:'transaction_hash')
+        self.transaction_hash = attributes[:'transaction_hash']
+      end
+
+      if attributes.key?(:'transaction_index')
+        self.transaction_index = attributes[:'transaction_index']
       end
     end
 
@@ -92,18 +213,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @amount.nil?
-        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
-      end
-
-      if @from_asset_id.nil?
-        invalid_properties.push('invalid value for "from_asset_id", from_asset_id cannot be nil.')
-      end
-
-      if @to_asset_id.nil?
-        invalid_properties.push('invalid value for "to_asset_id", to_asset_id cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -111,9 +220,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @amount.nil?
-      return false if @from_asset_id.nil?
-      return false if @to_asset_id.nil?
       true
     end
 
@@ -122,9 +228,25 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          amount == o.amount &&
-          from_asset_id == o.from_asset_id &&
-          to_asset_id == o.to_asset_id
+          error == o.error &&
+          type == o.type &&
+          from == o.from &&
+          to == o.to &&
+          value == o.value &&
+          gas == o.gas &&
+          gas_used == o.gas_used &&
+          input == o.input &&
+          output == o.output &&
+          sub_traces == o.sub_traces &&
+          trace_address == o.trace_address &&
+          trace_type == o.trace_type &&
+          call_type == o.call_type &&
+          trace_id == o.trace_id &&
+          status == o.status &&
+          block_hash == o.block_hash &&
+          block_number == o.block_number &&
+          transaction_hash == o.transaction_hash &&
+          transaction_index == o.transaction_index
     end
 
     # @see the `==` method
@@ -136,7 +258,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [amount, from_asset_id, to_asset_id].hash
+      [error, type, from, to, value, gas, gas_used, input, output, sub_traces, trace_address, trace_type, call_type, trace_id, status, block_hash, block_number, transaction_hash, transaction_index].hash
     end
 
     # Builds the object from hash

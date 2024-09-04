@@ -72,6 +72,18 @@ module Coinbase
       end
     end
 
+    # Enumerates the transactions of address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
+    def transactions
+      Coinbase::Pagination.enumerate(
+        ->(page) { list_transaction_page(page) }
+      ) do |transaction|
+        Coinbase::Transaction.new(transaction)
+      end
+    end
+
     # Requests funds for the address from the faucet and returns the faucet transaction.
     # This is only supported on testnet networks.
     # @param asset_id [Symbol] The ID of the Asset to transfer to the wallet.
@@ -246,6 +258,14 @@ module Coinbase
         id,
         Coinbase::Asset.primary_denomination(asset_id).to_s,
         { limit: DEFAULT_PAGE_LIMIT, page: page }
+      )
+    end
+
+    def list_transaction_page(page)
+      addresses_api.list_address_transactions(
+        network.normalized_id,
+        id,
+        { limit: DEFAULT_TRANSACTION_PAGE_LIMIT, page: page }
       )
     end
   end
