@@ -97,7 +97,7 @@ module Coinbase::Client
     # List of attributes with nullable: true
     def self.openapi_nullable
       Set.new([
-              ])
+      ])
     end
 
     # Initializes the object
@@ -170,14 +170,14 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-        id == o.id &&
-        network_id == o.network_id &&
-        event_type == o.event_type &&
-        event_filters == o.event_filters &&
-        notification_uri == o.notification_uri &&
-        created_at == o.created_at &&
-        updated_at == o.updated_at &&
-        signature_header == o.signature_header
+          id == o.id &&
+          network_id == o.network_id &&
+          event_type == o.event_type &&
+          event_filters == o.event_filters &&
+          notification_uri == o.notification_uri &&
+          created_at == o.created_at &&
+          updated_at == o.updated_at &&
+          signature_header == o.signature_header
     end
 
     # @see the `==` method

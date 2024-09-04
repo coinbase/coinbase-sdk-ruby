@@ -977,6 +977,31 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#sign' do
+    subject(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:payload_signature) { instance_double(Coinbase::PayloadSignature) }
+    let(:unsigned_payload) { '0xValidUnsignedPayload' }
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address)
+        .to receive(:sign)
+        .with(unsigned_payload: unsigned_payload)
+        .and_return(payload_signature)
+    end
+
+    it 'creates a payload signature from the default address' do
+      expect(wallet.sign(unsigned_payload: unsigned_payload)).to eq(payload_signature)
+    end
+  end
+
   describe '#export' do
     context 'when not using a server signer' do
       subject(:exported_data) { seed_wallet.export }
