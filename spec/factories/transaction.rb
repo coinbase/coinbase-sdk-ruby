@@ -8,14 +8,6 @@ FactoryBot.define do
 
     from_address_id { key.address.to_s }
 
-    block_hash { 'default_block_hash' }
-    block_height { '123' }
-    content do
-      Coinbase::Client::EthereumTransaction.new(
-        hash: 'transaction_hash'
-      )
-    end
-
     # Default trait.
     pending
 
@@ -58,6 +50,17 @@ FactoryBot.define do
     trait :failed do
       broadcasted
       status { 'failed' }
+    end
+
+    trait :indexed do
+      block_hash { 'default_block_hash' }
+      block_height { '123' }
+      status { 'complete' }
+      content do
+        Coinbase::Client::EthereumTransaction.new(
+          hash: 'transaction_hash'
+        )
+      end
     end
   end
 

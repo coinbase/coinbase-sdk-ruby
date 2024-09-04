@@ -8,7 +8,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
   end
 
   describe '#transactions' do
-    let(:transaction) { build(:transaction_model, from_address_id: 'from_address') }
+    let(:transaction) { build(:transaction_model, :indexed) }
     let(:response) do
       Coinbase::Client::AddressTransactionList.new(
         data: [
@@ -26,7 +26,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
 
     context 'when list transactions' do
       it 'returns the correct transactions' do
-        expect(address.transactions.first.from_address_id).to eq 'from_address'
+        expect(address.transactions.first.block_height).to eq "123"
       end
     end
 

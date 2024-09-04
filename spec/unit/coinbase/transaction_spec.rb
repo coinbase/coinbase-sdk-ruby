@@ -44,20 +44,50 @@ describe Coinbase::Transaction do
   end
 
   describe '#block_height' do
-    it 'returns the block height' do
-      expect(transaction.block_height).to eq(transaction_model.block_height)
+    context 'transaction is indexed' do
+      let(:transaction_model) { build(:transaction_model, :indexed) }
+
+      it 'returns the block height' do
+        expect(transaction.block_height).to eq(transaction_model.block_height)
+      end
+    end
+
+    context 'when the transaction has not been on chain' do
+      it 'returns nil' do
+        expect(transaction.block_height).to be_nil
+      end
     end
   end
 
   describe '#block_hash' do
-    it 'returns the block hash' do
-      expect(transaction.block_hash).to eq(transaction_model.block_hash)
+    context 'transaction is indexed' do
+      let(:transaction_model) { build(:transaction_model, :indexed) }
+
+      it 'returns the block hash' do
+        expect(transaction.block_hash).to eq(transaction_model.block_hash)
+      end
+    end
+
+    context 'when the transaction has not been on chain' do
+      it 'returns nil' do
+        expect(transaction.block_hash).to be_nil
+      end
     end
   end
 
   describe '#content' do
-    it 'returns the content' do
-      expect(transaction.content).to eq(transaction_model.content)
+    context 'transaction is indexed' do
+      let(:transaction_model) { build(:transaction_model, :indexed) }
+
+      it 'returns the content' do
+        expect(transaction.content).to eq(transaction_model.content)
+      end
+    end
+
+    context 'when the transaction has not been on chain' do
+      it 'returns nil' do
+        expect(transaction.content).to be_nil
+      end
     end
   end
 
