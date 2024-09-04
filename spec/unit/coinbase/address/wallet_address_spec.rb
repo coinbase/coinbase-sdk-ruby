@@ -330,6 +330,87 @@ describe Coinbase::WalletAddress do
     end
   end
 
+  describe '#sign_payload' do
+    subject(:payload_signature) { address.sign_payload(unsigned_payload: unsigned_payload) }
+
+    let(:payload_signature_id) { SecureRandom.uuid }
+    let(:signing_key) { build(:key) }
+    let(:address_id) { signing_key.address.to_s }
+    let(:pending_payload_signature_model) do
+      build(:payload_signature_model, :pending, key: signing_key, wallet_id: wallet_id,
+                                                payload_signature_id: payload_signature_id)
+    end
+    let(:signed_payload_signature_model) do
+      build(:payload_signature_model, :signed, key: signing_key, wallet_id: wallet_id,
+                                               payload_signature_id: payload_signature_id)
+    end
+    let(:pending_payload_signature) { Coinbase::PayloadSignature.new(pending_payload_signature_model) }
+    let(:signed_payload_signature) { Coinbase::PayloadSignature.new(signed_payload_signature_model) }
+    let(:unsigned_payload) { pending_payload_signature_model.unsigned_payload }
+    let(:signature) { signed_payload_signature_model.signature }
+    let(:use_server_signer) { false }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when not using server signer' do
+      let(:use_server_signer) { false }
+
+      before do
+        allow(Coinbase::PayloadSignature).to receive(:create).and_return(signed_payload_signature)
+
+        payload_signature
+      end
+
+      it 'returns the payload signature' do
+        expect(payload_signature).to eq(signed_payload_signature)
+      end
+
+      it 'creates the payload signature' do
+        expect(Coinbase::PayloadSignature).to have_received(:create).with(
+          wallet_id: wallet_id,
+          address_id: address_id,
+          unsigned_payload: unsigned_payload,
+          signature: signature
+        )
+      end
+    end
+
+    context 'when using server signer' do
+      let(:use_server_signer) { true }
+
+      before do
+        allow(Coinbase::PayloadSignature).to receive(:create).and_return(pending_payload_signature)
+
+        payload_signature
+      end
+
+      it 'returns the pending payload signature' do
+        expect(payload_signature).to eq(pending_payload_signature)
+      end
+
+      it 'creates the payload signature' do
+        expect(Coinbase::PayloadSignature).to have_received(:create).with(
+          wallet_id: wallet_id,
+          address_id: address_id,
+          unsigned_payload: unsigned_payload,
+          signature: nil
+        )
+      end
+    end
+
+    describe 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an AddressCannotSignError' do
+        expect do
+          unhydrated_address.sign_payload(unsigned_payload: unsigned_payload)
+        end.to raise_error(Coinbase::AddressCannotSignError)
+      end
+    end
+  end
+
   shared_examples 'an address that can do a staking_action' do |operation|
     subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
 

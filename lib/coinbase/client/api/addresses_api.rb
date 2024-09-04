@@ -89,6 +89,82 @@ module Coinbase::Client
       return data, status_code, headers
     end
 
+    # Create a new payload signature.
+    # Create a new payload signature with an address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address to sign the payload with.
+    # @param [Hash] opts the optional parameters
+    # @option opts [CreatePayloadSignatureRequest] :create_payload_signature_request 
+    # @return [PayloadSignature]
+    def create_payload_signature(wallet_id, address_id, opts = {})
+      data, _status_code, _headers = create_payload_signature_with_http_info(wallet_id, address_id, opts)
+      data
+    end
+
+    # Create a new payload signature.
+    # Create a new payload signature with an address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address to sign the payload with.
+    # @param [Hash] opts the optional parameters
+    # @option opts [CreatePayloadSignatureRequest] :create_payload_signature_request 
+    # @return [Array<(PayloadSignature, Integer, Hash)>] PayloadSignature data, response status code and response headers
+    def create_payload_signature_with_http_info(wallet_id, address_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: AddressesApi.create_payload_signature ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling AddressesApi.create_payload_signature"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling AddressesApi.create_payload_signature"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'create_payload_signature_request'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'PayloadSignature'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"AddressesApi.create_payload_signature",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: AddressesApi#create_payload_signature\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Get address by onchain address
     # Get address
     # @param wallet_id [String] The ID of the wallet the address belongs to.
@@ -229,6 +305,81 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: AddressesApi#get_address_balance\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Get payload signature.
+    # Get payload signature.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address that signed the payload.
+    # @param payload_signature_id [String] The ID of the payload signature to fetch.
+    # @param [Hash] opts the optional parameters
+    # @return [PayloadSignature]
+    def get_payload_signature(wallet_id, address_id, payload_signature_id, opts = {})
+      data, _status_code, _headers = get_payload_signature_with_http_info(wallet_id, address_id, payload_signature_id, opts)
+      data
+    end
+
+    # Get payload signature.
+    # Get payload signature.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address that signed the payload.
+    # @param payload_signature_id [String] The ID of the payload signature to fetch.
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(PayloadSignature, Integer, Hash)>] PayloadSignature data, response status code and response headers
+    def get_payload_signature_with_http_info(wallet_id, address_id, payload_signature_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: AddressesApi.get_payload_signature ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling AddressesApi.get_payload_signature"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling AddressesApi.get_payload_signature"
+      end
+      # verify the required parameter 'payload_signature_id' is set
+      if @api_client.config.client_side_validation && payload_signature_id.nil?
+        fail ArgumentError, "Missing the required parameter 'payload_signature_id' when calling AddressesApi.get_payload_signature"
+      end
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures/{payload_signature_id}'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s)).sub('{' + 'payload_signature_id' + '}', CGI.escape(payload_signature_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'PayloadSignature'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"AddressesApi.get_payload_signature",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: AddressesApi#get_payload_signature\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end
@@ -378,6 +529,85 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: AddressesApi#list_addresses\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # List payload signatures for an address.
+    # List payload signatures for an address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address whose payload signatures to fetch.
+    # @param [Hash] opts the optional parameters
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [PayloadSignatureList]
+    def list_payload_signatures(wallet_id, address_id, opts = {})
+      data, _status_code, _headers = list_payload_signatures_with_http_info(wallet_id, address_id, opts)
+      data
+    end
+
+    # List payload signatures for an address.
+    # List payload signatures for an address.
+    # @param wallet_id [String] The ID of the wallet the address belongs to.
+    # @param address_id [String] The onchain address of the address whose payload signatures to fetch.
+    # @param [Hash] opts the optional parameters
+    # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+    # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+    # @return [Array<(PayloadSignatureList, Integer, Hash)>] PayloadSignatureList data, response status code and response headers
+    def list_payload_signatures_with_http_info(wallet_id, address_id, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: AddressesApi.list_payload_signatures ...'
+      end
+      # verify the required parameter 'wallet_id' is set
+      if @api_client.config.client_side_validation && wallet_id.nil?
+        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling AddressesApi.list_payload_signatures"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling AddressesApi.list_payload_signatures"
+      end
+      if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
+        fail ArgumentError, 'invalid value for "opts[:"page"]" when calling AddressesApi.list_payload_signatures, the character length must be smaller than or equal to 5000.'
+      end
+
+      # resource path
+      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+      query_params[:'limit'] = opts[:'limit'] if !opts[:'limit'].nil?
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json'])
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'PayloadSignatureList'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"AddressesApi.list_payload_signatures",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: AddressesApi#list_payload_signatures\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end

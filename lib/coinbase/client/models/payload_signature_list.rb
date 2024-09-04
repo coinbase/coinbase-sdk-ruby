@@ -14,51 +14,26 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class CreateWebhookRequest
-    # The ID of the blockchain network
-    attr_accessor :network_id
+  # 
+  class PayloadSignatureList
+    attr_accessor :data
 
-    attr_accessor :event_type
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
 
-    # The URL to which the notifications will be sent
-    attr_accessor :notification_uri
-
-    # The custom header to be used for x-webhook-signature header on callbacks, so developers can verify the requests are coming from Coinbase.
-    attr_accessor :signature_header
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The total number of payload signatures for the address.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'network_id' => :'network_id',
-        :'event_type' => :'event_type',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri',
-        :'signature_header' => :'signature_header'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -70,11 +45,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'network_id' => :'String',
-        :'event_type' => :'WebhookEventType',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String',
-        :'signature_header' => :'String'
+        :'data' => :'Array<PayloadSignature>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -88,45 +62,41 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::PayloadSignatureList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::PayloadSignatureList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
-      else
-        self.network_id = nil
-      end
-
-      if attributes.key?(:'event_type')
-        self.event_type = attributes[:'event_type']
-      else
-        self.event_type = nil
-      end
-
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
         end
       else
-        self.event_filters = nil
+        self.data = nil
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
       else
-        self.notification_uri = nil
+        self.has_more = nil
       end
 
-      if attributes.key?(:'signature_header')
-        self.signature_header = attributes[:'signature_header']
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
+      else
+        self.next_page = nil
+      end
+
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
+      else
+        self.total_count = nil
       end
     end
 
@@ -135,20 +105,20 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
       end
 
-      if @event_type.nil?
-        invalid_properties.push('invalid value for "event_type", event_type cannot be nil.')
+      if @has_more.nil?
+        invalid_properties.push('invalid value for "has_more", has_more cannot be nil.')
       end
 
-      if @event_filters.nil?
-        invalid_properties.push('invalid value for "event_filters", event_filters cannot be nil.')
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
       end
 
-      if @notification_uri.nil?
-        invalid_properties.push('invalid value for "notification_uri", notification_uri cannot be nil.')
+      if @total_count.nil?
+        invalid_properties.push('invalid value for "total_count", total_count cannot be nil.')
       end
 
       invalid_properties
@@ -158,10 +128,10 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @network_id.nil?
-      return false if @event_type.nil?
-      return false if @event_filters.nil?
-      return false if @notification_uri.nil?
+      return false if @data.nil?
+      return false if @has_more.nil?
+      return false if @next_page.nil?
+      return false if @total_count.nil?
       true
     end
 
@@ -170,11 +140,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          network_id == o.network_id &&
-          event_type == o.event_type &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri &&
-          signature_header == o.signature_header
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -186,7 +155,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, event_type, event_filters, notification_uri, signature_header].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash

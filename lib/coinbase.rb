@@ -31,6 +31,7 @@ require_relative 'coinbase/staking_reward'
 require_relative 'coinbase/validator'
 require_relative 'coinbase/version'
 require_relative 'coinbase/webhook'
+require_relative 'coinbase/payload_signature'
 require 'json'
 
 # The Coinbase SDK.
