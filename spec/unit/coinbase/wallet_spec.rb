@@ -977,7 +977,7 @@ describe Coinbase::Wallet do
     end
   end
 
-  describe '#sign' do
+  describe '#sign_payload' do
     subject(:wallet) do
       described_class.new(model_with_default_address, seed: '')
     end
@@ -992,13 +992,13 @@ describe Coinbase::Wallet do
         .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
 
       allow(wallet.default_address)
-        .to receive(:sign)
+        .to receive(:sign_payload)
         .with(unsigned_payload: unsigned_payload)
         .and_return(payload_signature)
     end
 
     it 'creates a payload signature from the default address' do
-      expect(wallet.sign(unsigned_payload: unsigned_payload)).to eq(payload_signature)
+      expect(wallet.sign_payload(unsigned_payload: unsigned_payload)).to eq(payload_signature)
     end
   end
 

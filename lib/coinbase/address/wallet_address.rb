@@ -98,13 +98,19 @@ module Coinbase
     # Signs the given unsigned payload.
     # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
     # @return [Coinbase::PayloadSignature] The payload signature
-    def sign(unsigned_payload:)
+    def sign_payload(unsigned_payload:)
       ensure_can_sign!
 
-      signature = Coinbase.use_server_signer? ? nil : "0x#{@key.sign(Eth::Util.hex_to_bin(unsigned_payload))}"
+      unless Coinbase.use_server_signer?
+        signature = Eth::Util.prefix_hex(@key.sign(Eth::Util.hex_to_bin(unsigned_payload)))
+      end
 
-      PayloadSignature.create(wallet_id: wallet_id, address_id: id, unsigned_payload: unsigned_payload,
-                              signature: signature)
+      PayloadSignature.create(
+        wallet_id: wallet_id,
+        address_id: id,
+        unsigned_payload: unsigned_payload,
+        signature: signature
+      )
     end
 
     # Stakes the given amount of the given Asset. The stake operation

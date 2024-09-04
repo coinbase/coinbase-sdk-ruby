@@ -105,7 +105,7 @@ module Coinbase
     # Returns the Signature of the Payload Signature.
     # @return [String] The Signature
     def signature
-      @signature ||= @model.signature
+      @model.signature
     end
 
     # Returns the status of the Payload Signature.
@@ -171,6 +171,8 @@ module Coinbase
     def inspect
       to_s
     end
+
+    private
 
     def addresses_api
       Coinbase::Client::AddressesApi.new(Coinbase.configuration.api_client)

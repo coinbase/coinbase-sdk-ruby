@@ -203,7 +203,7 @@ module Coinbase::Client
       return false if @display_name.nil?
       return false if @chain_id.nil?
       return false if @protocol_family.nil?
-      protocol_family_validator = EnumAttributeValidator.new('String', ["evm", "unknown_default_open_api"])
+      protocol_family_validator = EnumAttributeValidator.new('String', ["evm", "solana", "unknown_default_open_api"])
       return false unless protocol_family_validator.valid?(@protocol_family)
       return false if @is_testnet.nil?
       return false if @native_asset.nil?
@@ -214,7 +214,7 @@ module Coinbase::Client
     # Custom attribute writer method checking allowed values (enum).
     # @param [Object] protocol_family Object to be assigned
     def protocol_family=(protocol_family)
-      validator = EnumAttributeValidator.new('String', ["evm", "unknown_default_open_api"])
+      validator = EnumAttributeValidator.new('String', ["evm", "solana", "unknown_default_open_api"])
       unless validator.valid?(protocol_family)
         fail ArgumentError, "invalid value for \"protocol_family\", must be one of #{validator.allowable_values}."
       end

@@ -330,8 +330,8 @@ describe Coinbase::WalletAddress do
     end
   end
 
-  describe '#sign' do
-    subject(:payload_signature) { address.sign(unsigned_payload: unsigned_payload) }
+  describe '#sign_payload' do
+    subject(:payload_signature) { address.sign_payload(unsigned_payload: unsigned_payload) }
 
     let(:payload_signature_id) { SecureRandom.uuid }
     let(:signing_key) { build(:key) }
@@ -405,7 +405,7 @@ describe Coinbase::WalletAddress do
 
       it 'raises an AddressCannotSignError' do
         expect do
-          unhydrated_address.sign(unsigned_payload: unsigned_payload)
+          unhydrated_address.sign_payload(unsigned_payload: unsigned_payload)
         end.to raise_error(Coinbase::AddressCannotSignError)
       end
     end

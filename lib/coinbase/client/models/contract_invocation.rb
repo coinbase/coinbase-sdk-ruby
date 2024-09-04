@@ -34,7 +34,7 @@ module Coinbase::Client
     # The method to be invoked on the contract.
     attr_accessor :method
 
-    # The arguments to be passed to the contract method.
+    # The JSON-encoded arguments to pass to the contract method. The keys should be the argument names and the values should be the argument values.
     attr_accessor :args
 
     # The JSON-encoded ABI of the contract.
@@ -71,7 +71,7 @@ module Coinbase::Client
         :'contract_invocation_id' => :'String',
         :'contract_address' => :'String',
         :'method' => :'String',
-        :'args' => :'Array<String>',
+        :'args' => :'String',
         :'abi' => :'String',
         :'transaction' => :'Transaction'
       }
@@ -135,9 +135,7 @@ module Coinbase::Client
       end
 
       if attributes.key?(:'args')
-        if (value = attributes[:'args']).is_a?(Array)
-          self.args = value
-        end
+        self.args = attributes[:'args']
       else
         self.args = nil
       end
