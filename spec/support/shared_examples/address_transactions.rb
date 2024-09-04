@@ -26,7 +26,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
 
     context 'when list transactions' do
       it 'returns the correct transactions' do
-        expect(address.transactions.first.block_height).to eq "123"
+        expect(address.transactions.first.block_height).to eq '123'
       end
     end
 

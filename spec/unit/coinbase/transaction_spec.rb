@@ -44,7 +44,7 @@ describe Coinbase::Transaction do
   end
 
   describe '#block_height' do
-    context 'transaction is indexed' do
+    context 'when the transaction is indexed' do
       let(:transaction_model) { build(:transaction_model, :indexed) }
 
       it 'returns the block height' do
@@ -60,7 +60,7 @@ describe Coinbase::Transaction do
   end
 
   describe '#block_hash' do
-    context 'transaction is indexed' do
+    context 'when the transaction is indexed' do
       let(:transaction_model) { build(:transaction_model, :indexed) }
 
       it 'returns the block hash' do
@@ -76,7 +76,7 @@ describe Coinbase::Transaction do
   end
 
   describe '#content' do
-    context 'transaction is indexed' do
+    context 'when the transaction is indexed' do
       let(:transaction_model) { build(:transaction_model, :indexed) }
 
       it 'returns the content' do
