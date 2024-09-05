@@ -95,6 +95,33 @@ module Coinbase
       trade
     end
 
+    # Invokes a contract method on the specified contract address, with the given ABI and arguments.
+    # @param contract_address [String] The address of the contract to invoke.
+    # @param abi [Array<Hash>] The ABI of the contract to invoke.
+    # @param method [String] The method to invoke on the contract.
+    # @param args [Hash] The arguments to pass to the contract method.
+    #   The keys should be the argument names, and the values should be the argument values.
+    # @return [Coinbase::ContractInvocation] The contract invocation object.
+    def invoke_contract(contract_address:, abi:, method:, args:)
+      ensure_can_sign!
+
+      invocation = ContractInvocation.create(
+        address_id: id,
+        wallet_id: wallet_id,
+        contract_address: contract_address,
+        abi: abi,
+        method: method,
+        args: args
+      )
+
+      # If a server signer is managing keys, it will sign and broadcast the underlying transaction out of band.
+      return invocation if Coinbase.use_server_signer?
+
+      invocation.sign(@key)
+      invocation.broadcast!
+      invocation
+    end
+
     # Signs the given unsigned payload.
     # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
     # @return [Coinbase::PayloadSignature] The payload signature

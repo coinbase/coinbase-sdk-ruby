@@ -99,9 +99,79 @@ describe Coinbase::WalletAddress do
   end
 
   it_behaves_like 'an address that supports balance queries'
-
   it_behaves_like 'an address that supports requesting faucet funds'
   it_behaves_like 'an address that supports staking'
+
+  describe '#invoke_contract' do
+    subject(:contract_invocation) do
+      address.invoke_contract(
+        contract_address: contract_invocation_model.contract_address,
+        method: contract_invocation_model.method,
+        abi: abi,
+        args: args
+      )
+    end
+
+    let(:contract_invocation_model) { build(:contract_invocation_model) }
+    let(:abi) { JSON.parse(contract_invocation_model.abi) }
+    let(:args) { JSON.parse(contract_invocation_model.args) }
+    let(:use_server_signer) { false }
+    let(:created_invocation) { build(:contract_invocation, network_id, key: key) }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the contract invocation is successful' do
+      before do
+        allow(Coinbase::ContractInvocation).to receive(:create).and_return(created_invocation)
+
+        allow(created_invocation).to receive(:sign)
+        allow(created_invocation).to receive(:broadcast!)
+
+        contract_invocation
+      end
+
+      it 'creates a contract invocation' do
+        expect(Coinbase::ContractInvocation).to have_received(:create).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          contract_address: contract_invocation_model.contract_address,
+          method: contract_invocation_model.method,
+          abi: abi,
+          args: args
+        )
+      end
+
+      it 'returns the created contract invocation' do
+        expect(contract_invocation).to eq(created_invocation)
+      end
+
+      context 'when not using server signer' do
+        let(:use_server_signer) { false }
+
+        it 'signs the transaction with the key' do
+          expect(created_invocation).to have_received(:sign).with(key)
+        end
+
+        it 'broadcasts the transfer' do
+          expect(created_invocation).to have_received(:broadcast!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'does not sign the transaction with the key' do
+          expect(created_invocation).not_to have_received(:sign)
+        end
+
+        it 'does not broadcast the transfer' do
+          expect(created_invocation).not_to have_received(:broadcast!)
+        end
+      end
+    end
+  end
 
   describe '#transfer' do
     subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
@@ -112,7 +182,6 @@ describe Coinbase::WalletAddress do
     let(:to_address_id) { to_key.address.to_s }
     let(:asset_id) { :eth }
     let(:created_transfer) { build(:transfer, network_id, key: key, to_key: to_key) }
-    let(:signed_transfer) { build(:transfer, network_id, :signed, key: key, to_key: to_key) }
     let(:use_server_signer) { false }
 
     before do

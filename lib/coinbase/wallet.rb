@@ -231,8 +231,13 @@ module Coinbase
     # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
     # @return [Coinbase::PayloadSignature] The payload signature
 
+    # @!method invoke_contract
+    # Invokes a contract with the given ABI, method, and arguments.
+    # @param abi [Array<Hash>] The ABI of the contract
+    #
+
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
-                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload
+                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
