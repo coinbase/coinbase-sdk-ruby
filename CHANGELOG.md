@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+## [0.3.0] - 2024-09-05
+
+### Added
+
+- Add support for listing address transactions.
+- Add support for creating arbitrary payload signatures.
+- Add support for invoking Smart Contracts using MPC and Developer-managed Wallets.
+
 ## [0.2.0] - 2024-08-28
 
-Added
+### Added
 - USDC Faucet support on Base-Sepolia
 - Doc updates for staking
 

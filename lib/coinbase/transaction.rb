@@ -26,6 +26,9 @@ module Coinbase
       # The Transaction has failed for some reason.
       FAILED = 'failed'
 
+      # The Transaction isn't specified it's status in Receipt.
+      UNSPECIFIED = 'unspecified'
+
       # The states that are considered terminal on-chain.
       TERMINAL_STATES = [COMPLETE, FAILED].freeze
     end
@@ -80,10 +83,28 @@ module Coinbase
       Status::TERMINAL_STATES.include?(status)
     end
 
+    # Returns the block hash of which the Transaction is recorded.
+    # @return [String] The to block_hash
+    def block_hash
+      @model.block_hash
+    end
+
+    # Returns the block height of which the Transaction is recorded.
+    # @return [String] The to block_height
+    def block_height
+      @model.block_height
+    end
+
     # Returns the link to the transaction on the blockchain explorer.
     # @return [String] The link to the transaction on the blockchain explorer
     def transaction_link
       @model.transaction_link
+    end
+
+    # Returns the block height of which the Transaction is recorded.
+    # @return [String] The to block_height
+    def content
+      @model.content
     end
 
     # Returns the underlying raw transaction.

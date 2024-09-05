@@ -95,6 +95,51 @@ module Coinbase
       trade
     end
 
+    # Invokes a contract method on the specified contract address, with the given ABI and arguments.
+    # @param contract_address [String] The address of the contract to invoke.
+    # @param abi [Array<Hash>] The ABI of the contract to invoke.
+    # @param method [String] The method to invoke on the contract.
+    # @param args [Hash] The arguments to pass to the contract method.
+    #   The keys should be the argument names, and the values should be the argument values.
+    # @return [Coinbase::ContractInvocation] The contract invocation object.
+    def invoke_contract(contract_address:, abi:, method:, args:)
+      ensure_can_sign!
+
+      invocation = ContractInvocation.create(
+        address_id: id,
+        wallet_id: wallet_id,
+        contract_address: contract_address,
+        abi: abi,
+        method: method,
+        args: args
+      )
+
+      # If a server signer is managing keys, it will sign and broadcast the underlying transaction out of band.
+      return invocation if Coinbase.use_server_signer?
+
+      invocation.sign(@key)
+      invocation.broadcast!
+      invocation
+    end
+
+    # Signs the given unsigned payload.
+    # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
+    # @return [Coinbase::PayloadSignature] The payload signature
+    def sign_payload(unsigned_payload:)
+      ensure_can_sign!
+
+      unless Coinbase.use_server_signer?
+        signature = Eth::Util.prefix_hex(@key.sign(Eth::Util.hex_to_bin(unsigned_payload)))
+      end
+
+      PayloadSignature.create(
+        wallet_id: wallet_id,
+        address_id: id,
+        unsigned_payload: unsigned_payload,
+        signature: signature
+      )
+    end
+
     # Stakes the given amount of the given Asset. The stake operation
     # may take a few minutes to complete in the case when infrastructure is spun up.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.
@@ -177,6 +222,14 @@ module Coinbase
     # @return [Enumerable<Coinbase::Trade>] Enumerator that returns the address's trades
     def trades
       Trade.list(wallet_id: wallet_id, address_id: id)
+    end
+
+    # Enumerates the payload signatures associated with the address.
+    # The result is an enumerator that lazily fetches from the server, and can be iterated over,
+    # converted to an array, etc...
+    # @return [Enumerable<Coinbase::PayloadSignature>] Enumerator that returns the address's payload signatures
+    def payload_signatures
+      PayloadSignature.list(wallet_id: wallet_id, address_id: id)
     end
 
     # Returns a String representation of the WalletAddress.

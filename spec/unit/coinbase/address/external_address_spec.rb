@@ -32,5 +32,6 @@ describe Coinbase::ExternalAddress do
 
   it_behaves_like 'an address that supports balance queries'
   it_behaves_like 'an address that supports requesting faucet funds'
+  it_behaves_like 'an address that supports transaction queries'
   it_behaves_like 'an address that supports staking'
 end

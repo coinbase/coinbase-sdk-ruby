@@ -99,9 +99,79 @@ describe Coinbase::WalletAddress do
   end
 
   it_behaves_like 'an address that supports balance queries'
-
   it_behaves_like 'an address that supports requesting faucet funds'
   it_behaves_like 'an address that supports staking'
+
+  describe '#invoke_contract' do
+    subject(:contract_invocation) do
+      address.invoke_contract(
+        contract_address: contract_invocation_model.contract_address,
+        method: contract_invocation_model.method,
+        abi: abi,
+        args: args
+      )
+    end
+
+    let(:contract_invocation_model) { build(:contract_invocation_model) }
+    let(:abi) { JSON.parse(contract_invocation_model.abi) }
+    let(:args) { JSON.parse(contract_invocation_model.args) }
+    let(:use_server_signer) { false }
+    let(:created_invocation) { build(:contract_invocation, network_id, key: key) }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the contract invocation is successful' do
+      before do
+        allow(Coinbase::ContractInvocation).to receive(:create).and_return(created_invocation)
+
+        allow(created_invocation).to receive(:sign)
+        allow(created_invocation).to receive(:broadcast!)
+
+        contract_invocation
+      end
+
+      it 'creates a contract invocation' do
+        expect(Coinbase::ContractInvocation).to have_received(:create).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          contract_address: contract_invocation_model.contract_address,
+          method: contract_invocation_model.method,
+          abi: abi,
+          args: args
+        )
+      end
+
+      it 'returns the created contract invocation' do
+        expect(contract_invocation).to eq(created_invocation)
+      end
+
+      context 'when not using server signer' do
+        let(:use_server_signer) { false }
+
+        it 'signs the transaction with the key' do
+          expect(created_invocation).to have_received(:sign).with(key)
+        end
+
+        it 'broadcasts the transfer' do
+          expect(created_invocation).to have_received(:broadcast!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'does not sign the transaction with the key' do
+          expect(created_invocation).not_to have_received(:sign)
+        end
+
+        it 'does not broadcast the transfer' do
+          expect(created_invocation).not_to have_received(:broadcast!)
+        end
+      end
+    end
+  end
 
   describe '#transfer' do
     subject(:transfer) { address.transfer(amount, asset_id, to_address_id) }
@@ -112,7 +182,6 @@ describe Coinbase::WalletAddress do
     let(:to_address_id) { to_key.address.to_s }
     let(:asset_id) { :eth }
     let(:created_transfer) { build(:transfer, network_id, key: key, to_key: to_key) }
-    let(:signed_transfer) { build(:transfer, network_id, :signed, key: key, to_key: to_key) }
     let(:use_server_signer) { false }
 
     before do
@@ -326,6 +395,87 @@ describe Coinbase::WalletAddress do
         transactions.each do |tx|
           expect(tx).not_to have_received(:sign)
         end
+      end
+    end
+  end
+
+  describe '#sign_payload' do
+    subject(:payload_signature) { address.sign_payload(unsigned_payload: unsigned_payload) }
+
+    let(:payload_signature_id) { SecureRandom.uuid }
+    let(:signing_key) { build(:key) }
+    let(:address_id) { signing_key.address.to_s }
+    let(:pending_payload_signature_model) do
+      build(:payload_signature_model, :pending, key: signing_key, wallet_id: wallet_id,
+                                                payload_signature_id: payload_signature_id)
+    end
+    let(:signed_payload_signature_model) do
+      build(:payload_signature_model, :signed, key: signing_key, wallet_id: wallet_id,
+                                               payload_signature_id: payload_signature_id)
+    end
+    let(:pending_payload_signature) { Coinbase::PayloadSignature.new(pending_payload_signature_model) }
+    let(:signed_payload_signature) { Coinbase::PayloadSignature.new(signed_payload_signature_model) }
+    let(:unsigned_payload) { pending_payload_signature_model.unsigned_payload }
+    let(:signature) { signed_payload_signature_model.signature }
+    let(:use_server_signer) { false }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when not using server signer' do
+      let(:use_server_signer) { false }
+
+      before do
+        allow(Coinbase::PayloadSignature).to receive(:create).and_return(signed_payload_signature)
+
+        payload_signature
+      end
+
+      it 'returns the payload signature' do
+        expect(payload_signature).to eq(signed_payload_signature)
+      end
+
+      it 'creates the payload signature' do
+        expect(Coinbase::PayloadSignature).to have_received(:create).with(
+          wallet_id: wallet_id,
+          address_id: address_id,
+          unsigned_payload: unsigned_payload,
+          signature: signature
+        )
+      end
+    end
+
+    context 'when using server signer' do
+      let(:use_server_signer) { true }
+
+      before do
+        allow(Coinbase::PayloadSignature).to receive(:create).and_return(pending_payload_signature)
+
+        payload_signature
+      end
+
+      it 'returns the pending payload signature' do
+        expect(payload_signature).to eq(pending_payload_signature)
+      end
+
+      it 'creates the payload signature' do
+        expect(Coinbase::PayloadSignature).to have_received(:create).with(
+          wallet_id: wallet_id,
+          address_id: address_id,
+          unsigned_payload: unsigned_payload,
+          signature: nil
+        )
+      end
+    end
+
+    describe 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an AddressCannotSignError' do
+        expect do
+          unhydrated_address.sign_payload(unsigned_payload: unsigned_payload)
+        end.to raise_error(Coinbase::AddressCannotSignError)
       end
     end
   end
