@@ -896,6 +896,47 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#invoke_contract' do
+    subject(:contract_invocation) { wallet.invoke_contract(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_contract_invocation) { build(:contract_invocation) }
+    let(:contract_invocation_model) { build(:contract_invocation_model) }
+    let(:abi) { JSON.parse(contract_invocation_model.abi) }
+    let(:args) { JSON.parse(contract_invocation_model.args) }
+    let(:parameters) do
+      {
+        contract_address: contract_invocation_model.contract_address,
+        method: contract_invocation_model.method,
+        abi: abi,
+        args: args
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:invoke_contract)
+        .and_return(created_contract_invocation)
+
+      contract_invocation
+    end
+
+    it 'returns the contract invocation' do
+      expect(contract_invocation).to eq(created_contract_invocation)
+    end
+
+    it 'calls invoke_contract on the default address' do
+      expect(wallet.default_address).to have_received(:invoke_contract).with(parameters)
+    end
+  end
+
   describe '#transfer' do
     subject(:wallet) do
       described_class.new(model_with_default_address, seed: '')
