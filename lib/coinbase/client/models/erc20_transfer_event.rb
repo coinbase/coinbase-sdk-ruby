@@ -14,23 +14,63 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The event_filter parameter specifies the criteria to filter events from the blockchain. It allows filtering events by contract address, sender address and receiver address. For a single event filter, not all of the properties need to be presented.
-  class WebhookEventFilter
-    # The onchain contract address of the token for which the events should be tracked.
+  # Represents an event triggered by an ERC-20 token transfer on the blockchain. Contains information about the transaction, block, and involved addresses.
+  class ERC20TransferEvent
+    # Unique identifier for the webhook that triggered this event.
+    attr_accessor :webhook_id
+
+    # Type of event, in this case, an ERC-20 token transfer.
+    attr_accessor :event_type
+
+    # Blockchain network where the event occurred.
+    attr_accessor :network
+
+    # Hash of the block containing the transaction.
+    attr_accessor :block_hash
+
+    # Number of the block containing the transaction.
+    attr_accessor :block_number
+
+    # Timestamp when the block was mined.
+    attr_accessor :block_time
+
+    # Hash of the transaction that triggered the event.
+    attr_accessor :transaction_hash
+
+    # Position of the transaction within the block.
+    attr_accessor :transaction_index
+
+    # Position of the event log within the transaction.
+    attr_accessor :log_index
+
+    # Address of the ERC-20 token contract.
     attr_accessor :contract_address
 
-    # The onchain address of the sender. Set this filter to track all transfer events originating from your address.
-    attr_accessor :from_address
+    # Address of the sender in the token transfer.
+    attr_accessor :from
 
-    # The onchain address of the receiver. Set this filter to track all transfer events sent to your address.
-    attr_accessor :to_address
+    # Address of the recipient in the token transfer.
+    attr_accessor :to
+
+    # Amount of tokens transferred, typically in the smallest unit (e.g., wei for Ethereum).
+    attr_accessor :value
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'contract_address' => :'contract_address',
-        :'from_address' => :'from_address',
-        :'to_address' => :'to_address'
+        :'webhook_id' => :'webhookId',
+        :'event_type' => :'eventType',
+        :'network' => :'network',
+        :'block_hash' => :'blockHash',
+        :'block_number' => :'blockNumber',
+        :'block_time' => :'blockTime',
+        :'transaction_hash' => :'transactionHash',
+        :'transaction_index' => :'transactionIndex',
+        :'log_index' => :'logIndex',
+        :'contract_address' => :'contractAddress',
+        :'from' => :'from',
+        :'to' => :'to',
+        :'value' => :'value'
       }
     end
 
@@ -42,43 +82,93 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'webhook_id' => :'String',
+        :'event_type' => :'String',
+        :'network' => :'String',
+        :'block_hash' => :'String',
+        :'block_number' => :'Integer',
+        :'block_time' => :'Time',
+        :'transaction_hash' => :'String',
+        :'transaction_index' => :'Integer',
+        :'log_index' => :'Integer',
         :'contract_address' => :'String',
-        :'from_address' => :'String',
-        :'to_address' => :'String'
+        :'from' => :'String',
+        :'to' => :'String',
+        :'value' => :'String'
       }
     end
 
     # List of attributes with nullable: true
     def self.openapi_nullable
       Set.new([
-              ])
+      ])
     end
 
     # Initializes the object
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::WebhookEventFilter` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ERC20TransferEvent` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::WebhookEventFilter`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ERC20TransferEvent`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
+
+      if attributes.key?(:'webhook_id')
+        self.webhook_id = attributes[:'webhook_id']
+      end
+
+      if attributes.key?(:'event_type')
+        self.event_type = attributes[:'event_type']
+      end
+
+      if attributes.key?(:'network')
+        self.network = attributes[:'network']
+      end
+
+      if attributes.key?(:'block_hash')
+        self.block_hash = attributes[:'block_hash']
+      end
+
+      if attributes.key?(:'block_number')
+        self.block_number = attributes[:'block_number']
+      end
+
+      if attributes.key?(:'block_time')
+        self.block_time = attributes[:'block_time']
+      end
+
+      if attributes.key?(:'transaction_hash')
+        self.transaction_hash = attributes[:'transaction_hash']
+      end
+
+      if attributes.key?(:'transaction_index')
+        self.transaction_index = attributes[:'transaction_index']
+      end
+
+      if attributes.key?(:'log_index')
+        self.log_index = attributes[:'log_index']
+      end
 
       if attributes.key?(:'contract_address')
         self.contract_address = attributes[:'contract_address']
       end
 
-      if attributes.key?(:'from_address')
-        self.from_address = attributes[:'from_address']
+      if attributes.key?(:'from')
+        self.from = attributes[:'from']
       end
 
-      if attributes.key?(:'to_address')
-        self.to_address = attributes[:'to_address']
+      if attributes.key?(:'to')
+        self.to = attributes[:'to']
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
       end
     end
 
@@ -102,9 +192,19 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-        contract_address == o.contract_address &&
-        from_address == o.from_address &&
-        to_address == o.to_address
+          webhook_id == o.webhook_id &&
+          event_type == o.event_type &&
+          network == o.network &&
+          block_hash == o.block_hash &&
+          block_number == o.block_number &&
+          block_time == o.block_time &&
+          transaction_hash == o.transaction_hash &&
+          transaction_index == o.transaction_index &&
+          log_index == o.log_index &&
+          contract_address == o.contract_address &&
+          from == o.from &&
+          to == o.to &&
+          value == o.value
     end
 
     # @see the `==` method
@@ -116,7 +216,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [contract_address, from_address, to_address].hash
+      [webhook_id, event_type, network, block_hash, block_number, block_time, transaction_hash, transaction_index, log_index, contract_address, from, to, value].hash
     end
 
     # Builds the object from hash
