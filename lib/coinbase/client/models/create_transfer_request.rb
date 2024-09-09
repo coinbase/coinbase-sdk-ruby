@@ -24,7 +24,7 @@ module Coinbase::Client
     # The ID of the asset to transfer
     attr_accessor :asset_id
 
-    # The destination address
+    # The destination address, which can be a 0x address, Basename, or ENS name
     attr_accessor :destination
 
     # Whether the transfer uses sponsored gas
