@@ -19,7 +19,7 @@ module Coinbase::Client
     def initialize(api_client = ApiClient.default)
       @api_client = api_client
     end
-    # Get contract events
+    # List contract events
     # Retrieve events for a specific contract
     # @param network_id [String] Unique identifier for the blockchain network
     # @param protocol_name [String] Case-sensitive name of the blockchain protocol
@@ -36,7 +36,7 @@ module Coinbase::Client
       data
     end
 
-    # Get contract events
+    # List contract events
     # Retrieve events for a specific contract
     # @param network_id [String] Unique identifier for the blockchain network
     # @param protocol_name [String] Case-sensitive name of the blockchain protocol
