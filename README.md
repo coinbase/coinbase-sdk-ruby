@@ -20,7 +20,7 @@ Make sure that your developer environment satisfies all of the requirements befo
 
 ### Ruby 2.7+
 
-The Coinbase server-side SDK requires Ruby 2.7 or higher. To view your currently installed version of Ruby, run
+The Coinbase server-side SDK requires Ruby 2.7 or higher (we recommend 2.7.5). To view your currently installed version of Ruby, run
 the following from the command-line:
 
 ```bash
@@ -30,11 +30,11 @@ ruby -v
 We recommend installing and managing Ruby versions with `rbenv`.
 See [Using Package Managers](https://github.com/rbenv/rbenv?tab=readme-ov-file#homebrew) in the rbenv README for instructions on how to install `rbenv`.
 
-Once `rbenv` has been installed, you can install and use Ruby 2.7 by running the following commands:
+Once `rbenv` has been installed, you can install and use Ruby 2.7.5 by running the following commands:
 
 ```bash
-rbenv install 2.7.0
-rbenv global 2.7.0
+rbenv install 2.7.5
+rbenv global 2.7.5
 ```
 
 ### Rbsecp256k1 Gem

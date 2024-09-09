@@ -198,7 +198,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Exports the Address’s private key to a hex string.</p>
+<p>Exports the Address&#39;s private key to a hex string.</p>
 </div></span>
   
 </li>
@@ -233,6 +233,30 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#invoke_contract-instance_method" title="#invoke_contract (instance method)">#<strong>invoke_contract</strong>(contract_address:, abi:, method:, args:)  &#x21d2; Coinbase::ContractInvocation </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Invokes a contract method on the specified contract address, with the given ABI and arguments.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#key=-instance_method" title="#key= (instance method)">#<strong>key=</strong>(key)  &#x21d2; Object </a>
     
 
@@ -249,6 +273,54 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Sets the private key backing the Address.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#payload_signatures-instance_method" title="#payload_signatures (instance method)">#<strong>payload_signatures</strong>  &#x21d2; Enumerable&lt;Coinbase::PayloadSignature&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Enumerates the payload signatures associated with the address.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sign_payload-instance_method" title="#sign_payload (instance method)">#<strong>sign_payload</strong>(unsigned_payload:)  &#x21d2; Coinbase::PayloadSignature </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Signs the given unsigned payload.</p>
 </div></span>
   
 </li>
@@ -459,7 +531,7 @@
   
   
   <h3 class="inherited">Methods inherited from <span class='object_link'><a href="Address.html" title="Coinbase::Address (class)">Address</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Address.html#balance-instance_method" title="Coinbase::Address#balance (method)">#balance</a></span>, <span class='object_link'><a href="Address.html#balances-instance_method" title="Coinbase::Address#balances (method)">#balances</a></span>, <span class='object_link'><a href="Address.html#build_claim_stake_operation-instance_method" title="Coinbase::Address#build_claim_stake_operation (method)">#build_claim_stake_operation</a></span>, <span class='object_link'><a href="Address.html#build_stake_operation-instance_method" title="Coinbase::Address#build_stake_operation (method)">#build_stake_operation</a></span>, <span class='object_link'><a href="Address.html#build_unstake_operation-instance_method" title="Coinbase::Address#build_unstake_operation (method)">#build_unstake_operation</a></span>, <span class='object_link'><a href="Address.html#claimable_balance-instance_method" title="Coinbase::Address#claimable_balance (method)">#claimable_balance</a></span>, <span class='object_link'><a href="Address.html#faucet-instance_method" title="Coinbase::Address#faucet (method)">#faucet</a></span>, <span class='object_link'><a href="Address.html#historical_balances-instance_method" title="Coinbase::Address#historical_balances (method)">#historical_balances</a></span>, <span class='object_link'><a href="Address.html#historical_staking_balances-instance_method" title="Coinbase::Address#historical_staking_balances (method)">#historical_staking_balances</a></span>, <span class='object_link'><a href="Address.html#inspect-instance_method" title="Coinbase::Address#inspect (method)">#inspect</a></span>, <span class='object_link'><a href="Address.html#stakeable_balance-instance_method" title="Coinbase::Address#stakeable_balance (method)">#stakeable_balance</a></span>, <span class='object_link'><a href="Address.html#staking_balances-instance_method" title="Coinbase::Address#staking_balances (method)">#staking_balances</a></span>, <span class='object_link'><a href="Address.html#staking_rewards-instance_method" title="Coinbase::Address#staking_rewards (method)">#staking_rewards</a></span>, <span class='object_link'><a href="Address.html#unstakeable_balance-instance_method" title="Coinbase::Address#unstakeable_balance (method)">#unstakeable_balance</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Address.html#balance-instance_method" title="Coinbase::Address#balance (method)">#balance</a></span>, <span class='object_link'><a href="Address.html#balances-instance_method" title="Coinbase::Address#balances (method)">#balances</a></span>, <span class='object_link'><a href="Address.html#build_claim_stake_operation-instance_method" title="Coinbase::Address#build_claim_stake_operation (method)">#build_claim_stake_operation</a></span>, <span class='object_link'><a href="Address.html#build_stake_operation-instance_method" title="Coinbase::Address#build_stake_operation (method)">#build_stake_operation</a></span>, <span class='object_link'><a href="Address.html#build_unstake_operation-instance_method" title="Coinbase::Address#build_unstake_operation (method)">#build_unstake_operation</a></span>, <span class='object_link'><a href="Address.html#claimable_balance-instance_method" title="Coinbase::Address#claimable_balance (method)">#claimable_balance</a></span>, <span class='object_link'><a href="Address.html#faucet-instance_method" title="Coinbase::Address#faucet (method)">#faucet</a></span>, <span class='object_link'><a href="Address.html#historical_balances-instance_method" title="Coinbase::Address#historical_balances (method)">#historical_balances</a></span>, <span class='object_link'><a href="Address.html#historical_staking_balances-instance_method" title="Coinbase::Address#historical_staking_balances (method)">#historical_staking_balances</a></span>, <span class='object_link'><a href="Address.html#inspect-instance_method" title="Coinbase::Address#inspect (method)">#inspect</a></span>, <span class='object_link'><a href="Address.html#stakeable_balance-instance_method" title="Coinbase::Address#stakeable_balance (method)">#stakeable_balance</a></span>, <span class='object_link'><a href="Address.html#staking_balances-instance_method" title="Coinbase::Address#staking_balances (method)">#staking_balances</a></span>, <span class='object_link'><a href="Address.html#staking_rewards-instance_method" title="Coinbase::Address#staking_rewards (method)">#staking_rewards</a></span>, <span class='object_link'><a href="Address.html#transactions-instance_method" title="Coinbase::Address#transactions (method)">#transactions</a></span>, <span class='object_link'><a href="Address.html#unstakeable_balance-instance_method" title="Coinbase::Address#unstakeable_balance (method)">#unstakeable_balance</a></span></p>
 <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
@@ -475,7 +547,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use the Wallet’s default_address.</p>
+<p>Returns a new Address object. Do not use this method directly. Instead, use Wallet#create_address, or use the Wallet&#39;s default_address.</p>
 
 
   </div>
@@ -597,12 +669,12 @@
       <pre class="lines">
 
 
-154
-155
-156</pre>
+199
+200
+201</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 154</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 199</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_can_sign?'>can_sign?</span>
   <span class='op'>!</span><span class='ivar'>@key</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -782,16 +854,16 @@
       <pre class="lines">
 
 
-144
-145
-146
-147
-148
-149
-150</pre>
+189
+190
+191
+192
+193
+194
+195</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 144</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_claim_stake'>claim_stake</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='symbol'>:default</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>interval_seconds:</span> <span class='int'>5</span><span class='comma'>,</span> <span class='label'>timeout_seconds:</span> <span class='int'>600</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_validate_can_perform_staking_action!'>validate_can_perform_staking_action!</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>claimable_balance</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_mode'>mode</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -817,7 +889,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Exports the Address’s private key to a hex string.</p>
+<p>Exports the Address&#39;s private key to a hex string.</p>
 
 
   </div>
@@ -836,7 +908,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The Address’s private key as a hex String</p>
+<p>The Address&#39;s private key as a hex String</p>
 </div>
       
     </li>
@@ -849,19 +921,178 @@
       <pre class="lines">
 
 
-160
-161
-162
-163
-164</pre>
+205
+206
+207
+208
+209</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 205</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_export'>export</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Cannot export key without private key loaded</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='ivar'>@key</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='ivar'>@key</span><span class='period'>.</span><span class='id identifier rubyid_private_hex'>private_hex</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="invoke_contract-instance_method">
+  
+    #<strong>invoke_contract</strong>(contract_address:, abi:, method:, args:)  &#x21d2; <tt><span class='object_link'><a href="ContractInvocation.html" title="Coinbase::ContractInvocation (class)">Coinbase::ContractInvocation</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Invokes a contract method on the specified contract address, with the given ABI and arguments.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>contract_address</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The address of the contract to invoke.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>abi</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ABI of the contract to invoke.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The method to invoke on the contract.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>args</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The arguments to pass to the contract method. The keys should be the argument names, and the values should be the argument values.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ContractInvocation.html" title="Coinbase::ContractInvocation (class)">Coinbase::ContractInvocation</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The contract invocation object.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 105</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_invoke_contract'>invoke_contract</span><span class='lparen'>(</span><span class='label'>contract_address:</span><span class='comma'>,</span> <span class='label'>abi:</span><span class='comma'>,</span> <span class='label'>method:</span><span class='comma'>,</span> <span class='label'>args:</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ensure_can_sign!'>ensure_can_sign!</span>
+
+  <span class='id identifier rubyid_invocation'>invocation</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="ContractInvocation.html" title="Coinbase::ContractInvocation (class)">ContractInvocation</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create'><span class='object_link'><a href="ContractInvocation.html#create-class_method" title="Coinbase::ContractInvocation.create (method)">create</a></span></span><span class='lparen'>(</span>
+    <span class='label'>address_id:</span> <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+    <span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span>
+    <span class='label'>contract_address:</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+    <span class='label'>abi:</span> <span class='id identifier rubyid_abi'>abi</span><span class='comma'>,</span>
+    <span class='label'>method:</span> <span class='id identifier rubyid_method'>method</span><span class='comma'>,</span>
+    <span class='label'>args:</span> <span class='id identifier rubyid_args'>args</span>
+  <span class='rparen'>)</span>
+
+  <span class='comment'># If a server signer is managing keys, it will sign and broadcast the underlying transaction out of band.
+</span>  <span class='kw'>return</span> <span class='id identifier rubyid_invocation'>invocation</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
+
+  <span class='id identifier rubyid_invocation'>invocation</span><span class='period'>.</span><span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='ivar'>@key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_invocation'>invocation</span><span class='period'>.</span><span class='id identifier rubyid_broadcast!'>broadcast!</span>
+  <span class='id identifier rubyid_invocation'>invocation</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -927,6 +1158,166 @@
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Private key is already set</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='ivar'>@key</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
 
   <span class='ivar'>@key</span> <span class='op'>=</span> <span class='id identifier rubyid_key'>key</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="payload_signatures-instance_method">
+  
+    #<strong>payload_signatures</strong>  &#x21d2; <tt>Enumerable&lt;<span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">Coinbase::PayloadSignature</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Enumerates the payload signatures associated with the address. The result is an enumerator that lazily fetches from the server, and can be iterated over, converted to an array, etc…</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Enumerable&lt;<span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">Coinbase::PayloadSignature</a></span>&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Enumerator that returns the address&#39;s payload signatures</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+231
+232
+233</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 231</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_payload_signatures'>payload_signatures</span>
+  <span class='const'><span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">PayloadSignature</a></span></span><span class='period'>.</span><span class='id identifier rubyid_list'><span class='object_link'><a href="PayloadSignature.html#list-class_method" title="Coinbase::PayloadSignature.list (method)">list</a></span></span><span class='lparen'>(</span><span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sign_payload-instance_method">
+  
+    #<strong>sign_payload</strong>(unsigned_payload:)  &#x21d2; <tt><span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">Coinbase::PayloadSignature</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Signs the given unsigned payload.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>unsigned_payload</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The hex-encoded hashed unsigned payload for the Address to sign.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">Coinbase::PayloadSignature</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The payload signature</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 128</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_sign_payload'>sign_payload</span><span class='lparen'>(</span><span class='label'>unsigned_payload:</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ensure_can_sign!'>ensure_can_sign!</span>
+
+  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_use_server_signer?'><span class='object_link'><a href="../Coinbase.html#use_server_signer%3F-class_method" title="Coinbase.use_server_signer? (method)">use_server_signer?</a></span></span>
+    <span class='id identifier rubyid_signature'>signature</span> <span class='op'>=</span> <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_prefix_hex'>prefix_hex</span><span class='lparen'>(</span><span class='ivar'>@key</span><span class='period'>.</span><span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='const'>Eth</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_hex_to_bin'>hex_to_bin</span><span class='lparen'>(</span><span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='const'><span class='object_link'><a href="PayloadSignature.html" title="Coinbase::PayloadSignature (class)">PayloadSignature</a></span></span><span class='period'>.</span><span class='id identifier rubyid_create'><span class='object_link'><a href="PayloadSignature.html#create-class_method" title="Coinbase::PayloadSignature.create (method)">create</a></span></span><span class='lparen'>(</span>
+    <span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span>
+    <span class='label'>address_id:</span> <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+    <span class='label'>unsigned_payload:</span> <span class='id identifier rubyid_unsigned_payload'>unsigned_payload</span><span class='comma'>,</span>
+    <span class='label'>signature:</span> <span class='id identifier rubyid_signature'>signature</span>
+  <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1103,16 +1494,16 @@
       <pre class="lines">
 
 
-108
-109
-110
-111
-112
-113
-114</pre>
+153
+154
+155
+156
+157
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 153</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_stake'>stake</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='symbol'>:default</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>interval_seconds:</span> <span class='int'>5</span><span class='comma'>,</span> <span class='label'>timeout_seconds:</span> <span class='int'>600</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_validate_can_perform_staking_action!'>validate_can_perform_staking_action!</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>stakeable_balance</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_mode'>mode</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
@@ -1170,12 +1561,12 @@
       <pre class="lines">
 
 
-184
-185
-186</pre>
+237
+238
+239</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 237</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Address{id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, network_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, wallet_id: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
@@ -1367,7 +1758,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Enumerator that returns the address’s trades</p>
+<p>Enumerator that returns the address&#39;s trades</p>
 </div>
       
     </li>
@@ -1380,12 +1771,12 @@
       <pre class="lines">
 
 
-178
-179
-180</pre>
+223
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 178</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 223</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_trades'>trades</span>
   <span class='const'><span class='object_link'><a href="Trade.html" title="Coinbase::Trade (class)">Trade</a></span></span><span class='period'>.</span><span class='id identifier rubyid_list'><span class='object_link'><a href="Trade.html#list-class_method" title="Coinbase::Trade.list (method)">list</a></span></span><span class='lparen'>(</span><span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
@@ -1459,7 +1850,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The destination of the transfer. If a Wallet, sends to the Wallet’s default address. If a String, interprets it as the address ID.</p>
+<p>The destination of the transfer. If a Wallet, sends to the Wallet&#39;s default address. If a String, interprets it as the address ID.</p>
 </div>
       
     </li>
@@ -1591,7 +1982,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Enumerator that returns the address’s transfers</p>
+<p>Enumerator that returns the address&#39;s transfers</p>
 </div>
       
     </li>
@@ -1604,12 +1995,12 @@
       <pre class="lines">
 
 
-170
-171
-172</pre>
+215
+216
+217</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 170</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 215</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transfers'>transfers</span>
   <span class='const'><span class='object_link'><a href="Transfer.html" title="Coinbase::Transfer (class)">Transfer</a></span></span><span class='period'>.</span><span class='id identifier rubyid_list'><span class='object_link'><a href="Transfer.html#list-class_method" title="Coinbase::Transfer.list (method)">list</a></span></span><span class='lparen'>(</span><span class='label'>wallet_id:</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='label'>address_id:</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
@@ -1789,16 +2180,16 @@
       <pre class="lines">
 
 
-126
-127
-128
-129
-130
-131
-132</pre>
+171
+172
+173
+174
+175
+176
+177</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/address/wallet_address.rb', line 171</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unstake'>unstake</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='symbol'>:default</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span> <span class='label'>interval_seconds:</span> <span class='int'>5</span><span class='comma'>,</span> <span class='label'>timeout_seconds:</span> <span class='int'>600</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_validate_can_perform_staking_action!'>validate_can_perform_staking_action!</span><span class='lparen'>(</span><span class='id identifier rubyid_amount'>amount</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unstakeable_balance</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_mode'>mode</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>

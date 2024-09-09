@@ -802,7 +802,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>TLS/SSL setting Any ‘OpenSSL::SSL::` constant (see <a href="https://ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html">ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html</a>).</p>
+<p>TLS/SSL setting Any `OpenSSL::SSL::` constant (see <a href="https://ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html">ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html</a>).</p>
 </div></span>
   
 </li>
@@ -1836,7 +1836,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Set this to enable/disable debugging. When enabled (set to true), HTTP request/response details will be logged with ‘logger.debug` (see the `logger` attribute). Default to false.</p>
+<p>Set this to enable/disable debugging. When enabled (set to true), HTTP request/response details will be logged with `logger.debug` (see the `logger` attribute). Default to false.</p>
 
 
   </div>
@@ -1978,7 +1978,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Set this to ignore operation servers for the API client. This is useful when you need to send requests to a different server than the one specified in the OpenAPI document. Will default to the base url defined in the spec but can be overridden by setting ‘scheme`, `host`, `base_path` directly. Default to false.</p>
+<p>Set this to ignore operation servers for the API client. This is useful when you need to send requests to a different server than the one specified in the OpenAPI document. Will default to the base url defined in the spec but can be overridden by setting `scheme`, `host`, `base_path` directly. Default to false.</p>
 
 
   </div>
@@ -2077,7 +2077,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Defines the logger used for debugging. Default to ‘Rails.logger` (when in Rails) or logging to STDOUT.</p>
+<p>Defines the logger used for debugging. Default to `Rails.logger` (when in Rails) or logging to STDOUT.</p>
 
 
   </div>
@@ -2284,7 +2284,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Set this to return data as binary instead of downloading a temp file. When enabled (set to true) HTTP responses with return type ‘File` will be returned as a stream of binary data. Default to false.</p>
+<p>Set this to return data as binary instead of downloading a temp file. When enabled (set to true) HTTP responses with return type `File` will be returned as a stream of binary data. Default to false.</p>
 
 
   </div>
@@ -2761,7 +2761,7 @@
   </div>
 
 
-<p>TLS/SSL setting Any ‘OpenSSL::SSL::` constant (see <a href="https://ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html">ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html</a>)</p>
+<p>TLS/SSL setting Any `OpenSSL::SSL::` constant (see <a href="https://ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html">ruby-doc.org/stdlib-2.5.1/libdoc/openssl/rdoc/OpenSSL/SSL.html</a>)</p>
 
 
   </div>
@@ -2804,7 +2804,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Defines the temporary folder to store downloaded files (for API endpoints that have file response). Default to use ‘Tempfile`.</p>
+<p>Defines the temporary folder to store downloaded files (for API endpoints that have file response). Default to use `Tempfile`.</p>
 
 
   </div>
@@ -3372,7 +3372,7 @@
     
 <p>Configure Faraday connection directly.</p>
 
-<p>“‘ c.configure_faraday_connection do |conn|</p>
+<p>“` c.configure_faraday_connection do |conn|</p>
 
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_use'>use</span> <span class='const'>Faraday</span><span class='op'>::</span><span class='const'>HttpCache</span><span class='comma'>,</span> <span class='label'>shared_cache:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>logger:</span> <span class='id identifier rubyid_logger'>logger</span>
 <span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_response'>response</span> <span class='symbol'>:logger</span><span class='comma'>,</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>headers:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>bodies:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>log_level:</span> <span class='symbol'>:debug</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_logger'>logger</span><span class='op'>|</span>
@@ -3387,7 +3387,7 @@
 <pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_conn'>conn</span><span class='period'>.</span><span class='id identifier rubyid_adapter'>adapter</span> <span class='symbol'>:typhoeus</span>
 </code></pre>
 
-<p>end “‘</p>
+<p>end “`</p>
 
 
   </div>
@@ -3407,7 +3407,7 @@
       
         &mdash;
         <div class='inline'>
-<p>‘#call`able object that takes one arg, the connection</p>
+<p>`#call`able object that takes one arg, the connection</p>
 </div>
       
     </li>
@@ -3825,7 +3825,7 @@
     
       
         <p class="example_title"><div class='inline'>
-<p>Use the ‘set_faraday_middleware` method to set middleware information</p>
+<p>Use the `set_faraday_middleware` method to set middleware information</p>
 </div></p>
       
       <pre class="example code"><code><span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_set_faraday_middleware'>set_faraday_middleware</span><span class='lparen'>(</span><span class='symbol'>:request</span><span class='comma'>,</span> <span class='symbol'>:retry</span><span class='comma'>,</span> <span class='label'>max:</span> <span class='int'>3</span><span class='comma'>,</span> <span class='label'>methods:</span> <span class='lbracket'>[</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='symbol'>:post</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='label'>retry_statuses:</span> <span class='lbracket'>[</span><span class='int'>503</span><span class='rbracket'>]</span><span class='rparen'>)</span>

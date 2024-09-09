@@ -4,7 +4,7 @@
     <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>
-  Module: Coinbase::SponsoredSend::Status
+  Module: Coinbase::PayloadSignature::Status
   
     &mdash; Documentation by YARD 0.9.36
   
@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="../../css/common.css" type="text/css" />
 
 <script type="text/javascript">
-  pathId = "Coinbase::SponsoredSend::Status";
+  pathId = "Coinbase::PayloadSignature::Status";
   relpath = '../../';
 </script>
 
@@ -37,7 +37,7 @@
         <div id="menu">
   
     <a href="../../_index.html">Index (S)</a> &raquo;
-    <span class='title'><span class='object_link'><a href="../../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../SponsoredSend.html" title="Coinbase::SponsoredSend (class)">SponsoredSend</a></span></span>
+    <span class='title'><span class='object_link'><a href="../../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../PayloadSignature.html" title="Coinbase::PayloadSignature (class)">PayloadSignature</a></span></span>
      &raquo; 
     <span class="title">Status</span>
   
@@ -59,7 +59,7 @@
         <div class="clear"></div>
       </div>
 
-      <div id="content"><h1>Module: Coinbase::SponsoredSend::Status
+      <div id="content"><h1>Module: Coinbase::PayloadSignature::Status
   
   
   
@@ -78,7 +78,7 @@
   
   <dl>
     <dt>Defined in:</dt>
-    <dd>lib/coinbase/sponsored_send.rb</dd>
+    <dd>lib/coinbase/payload_signature.rb</dd>
   </dl>
   
 </div>
@@ -86,7 +86,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>A representation of a Transaction status.</p>
+<p>A representation of a Payload Signature status.</p>
 
 
   </div>
@@ -107,7 +107,7 @@
           <div class="docstring">
   <div class="discussion">
     
-<p>The SponsoredSend is awaiting being signed.</p>
+<p>The Payload Signature is pending signing. At this point, the Signature is not available yet.</p>
 
 
   </div>
@@ -123,7 +123,7 @@
           <div class="docstring">
   <div class="discussion">
     
-<p>The Sponsored Send has been signed, but has not been submitted to be built into a transaction yet.</p>
+<p>The Payload Signature has been signed.</p>
 
 
   </div>
@@ -135,43 +135,11 @@
         </dt>
         <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>signed</span><span class='tstring_end'>&#39;</span></span></pre></dd>
       
-        <dt id="SUBMITTED-constant" class="">SUBMITTED =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>The Sponsored Send has been submitted to be built into a transaction, that the sponsor will sign and submit to the network. At this point, transaction hashes may not yet be assigned.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>submitted</span><span class='tstring_end'>&#39;</span></span></pre></dd>
-      
-        <dt id="COMPLETE-constant" class="">COMPLETE =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>The Sponsored Send&#39;s corresponding transaction is complete and has confirmed on the Network.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>complete</span><span class='tstring_end'>&#39;</span></span></pre></dd>
-      
         <dt id="FAILED-constant" class="">FAILED =
           <div class="docstring">
   <div class="discussion">
     
-<p>The Sponsored Send has failed for some reason.</p>
+<p>The Payload Signature has failed.</p>
 
 
   </div>
@@ -187,7 +155,7 @@
           <div class="docstring">
   <div class="discussion">
     
-<p>The states that are considered terminal on-chain.</p>
+<p>The states that are considered terminal.</p>
 
 
   </div>
@@ -197,7 +165,7 @@
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#COMPLETE-constant" title="Coinbase::SponsoredSend::Status::COMPLETE (constant)">COMPLETE</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#FAILED-constant" title="Coinbase::SponsoredSend::Status::FAILED (constant)">FAILED</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+        <dd><pre class="code"><span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#SIGNED-constant" title="Coinbase::PayloadSignature::Status::SIGNED (constant)">SIGNED</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#FAILED-constant" title="Coinbase::PayloadSignature::Status::FAILED (constant)">FAILED</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
   
