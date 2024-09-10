@@ -12,4 +12,3 @@ describe Coinbase::BalanceHistoryApi do
 
   it_behaves_like 'an address that supports balance queries'
 end
-
