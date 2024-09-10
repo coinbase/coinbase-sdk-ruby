@@ -2,9 +2,11 @@
 
 shared_examples 'an address that supports balance queries' do |_operation|
   let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
+  let(:balance_history_api) { instance_double(Coinbase::Client::BalanceHistoryApi) }
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
+    allow(Coinbase::Client::BalanceHistoryApi).to receive(:new).and_return(balance_history_api)
   end
 
   describe '#balances' do
@@ -114,7 +116,7 @@ shared_examples 'an address that supports balance queries' do |_operation|
     end
 
     before do
-      allow(external_addresses_api)
+      allow(balance_history_api)
         .to receive(:list_address_historical_balance)
         .with(normalized_network_id, address_id, primary_denomination, { limit: 100, page: nil })
         .and_return(response)
