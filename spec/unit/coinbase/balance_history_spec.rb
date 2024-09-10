@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Coinbase::BalanceHistoryApi do
-  subject(:address) { described_class.new(network_id, address_id) }
+describe Coinbase::Client::BalanceHistoryApi do
+  subject(:address) { described_class.new(network_id) }
 
   let(:network) { build(:network, :ethereum_mainnet) }
   let(:network_id) { :ethereum_mainnet }
