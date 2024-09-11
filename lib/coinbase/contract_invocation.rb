@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 module Coinbase
   # A representation of a Contract Invocation.
   class ContractInvocation
@@ -10,6 +12,11 @@ module Coinbase
       # @param contract_address [String] The contract address
       # @param abi [Array<Hash>] The contract ABI
       # @param method [String] The contract method
+      # @param amount [Integer, Float, BigDecimal] The amount of the native Asset
+      #   to send to a payable contract method.
+      # @param asset_id [Symbol] The ID of the Asset to send to a payable contract method.
+      #   The Asset must be a denomination of the native Asset. For Ethereum, :eth, :gwei, and :wei are supported.
+      # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
       # @param args [Hash] The arguments to pass to the contract method.
       #   The keys should be the argument names, and the values should be the argument values.
       # @return [ContractInvocation] The new Contract Invocation object
@@ -20,8 +27,19 @@ module Coinbase
         contract_address:,
         abi:,
         method:,
+        amount:,
+        asset_id:,
+        network:,
         args: {}
       )
+        atomic_amount = nil
+
+        if amount && asset_id && network
+          network = Coinbase::Network.from_id(network)
+          asset = network.get_asset(asset_id)
+          atomic_amount = asset.to_atomic_amount(amount).to_i_to_s
+        end
+
         model = Coinbase.call_api do
           contract_invocation_api.create_contract_invocation(
             wallet_id,
@@ -29,7 +47,8 @@ module Coinbase
             contract_address: contract_address,
             abi: abi.to_json,
             method: method,
-            args: args.to_json
+            args: args.to_json,
+            amount: atomic_amount
           )
         end
 
@@ -119,6 +138,12 @@ module Coinbase
     # @return [Hash] The arguments
     def args
       JSON.parse(@model.args).transform_keys(&:to_sym)
+    end
+
+    # Returns the amount of the native asset sent to a payable contract method, if applicable.
+    # @return [BigDecimal] The amount in atomic units of the native asset
+    def amount
+      BigDecimal(@model.amount)
     end
 
     # Returns the transaction.

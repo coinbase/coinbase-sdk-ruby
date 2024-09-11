@@ -101,9 +101,14 @@ module Coinbase
     # @param method [String] The method to invoke on the contract.
     # @param args [Hash] The arguments to pass to the contract method.
     #   The keys should be the argument names, and the values should be the argument values.
+    # @param amount [Integer, Float, BigDecimal] (Optional) The amount of the native Asset
+    #   to send to a payable contract method.
+    # @param asset_id [Symbol] (Optional) The ID of the Asset to send to a payable contract method.
+    #   The Asset must be a denomination of the native Asset. For Ethereum, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::ContractInvocation] The contract invocation object.
-    def invoke_contract(contract_address:, abi:, method:, args:)
+    def invoke_contract(contract_address:, abi:, method:, args:, amount: nil, asset_id: nil)
       ensure_can_sign!
+      ensure_sufficient_balance!(amount, asset_id) if amount && asset_id
 
       invocation = ContractInvocation.create(
         address_id: id,
@@ -111,7 +116,10 @@ module Coinbase
         contract_address: contract_address,
         abi: abi,
         method: method,
-        args: args
+        args: args,
+        amount: amount,
+        asset_id: asset_id,
+        network: network
       )
 
       # If a server signer is managing keys, it will sign and broadcast the underlying transaction out of band.

@@ -37,6 +37,7 @@ describe Coinbase::ContractInvocation do
       contract_address: contract_address,
       abi: abi.to_json,
       method: method,
+      amount: '0',
       args: args.to_json,
       transaction: transaction_model
     )
@@ -61,6 +62,9 @@ describe Coinbase::ContractInvocation do
         contract_address: contract_address,
         abi: abi,
         method: method,
+        amount: nil,
+        asset_id: nil,
+        network: network,
         args: args
       )
     end
@@ -70,7 +74,8 @@ describe Coinbase::ContractInvocation do
         contract_address: contract_address,
         abi: abi.to_json,
         method: method,
-        args: args.to_json
+        args: args.to_json,
+        amount: nil
       }
     end
 
@@ -176,6 +181,12 @@ describe Coinbase::ContractInvocation do
 
     it 'sets the from_address_id' do
       expect(contract_invocation.transaction.from_address_id).to eq(address_id)
+    end
+  end
+
+  describe '#amount' do
+    it 'returns the Amount' do
+      expect(contract_invocation.amount).to eq(BigDecimal(0))
     end
   end
 
