@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2024-09-11
 
-## Added
+### Added
 - Add Arbitrum-Mainnet support for Native transfers.
 - Add optional arguments to allow setting amount for payable contract method invocations
 
