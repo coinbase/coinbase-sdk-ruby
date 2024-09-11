@@ -121,7 +121,7 @@ def transfer_test(imported_address, new_address)
   begin
     faucet_tx = new_address.faucet
     puts "Requested faucet funds: #{faucet_tx}"
-  rescue Coinbase::InternalError
+  rescue Coinbase::FaucetLimitReachedError
     puts 'Faucet has reached limit. Will continue with test'
   end
 
