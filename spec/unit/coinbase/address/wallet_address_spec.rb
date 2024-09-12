@@ -132,13 +132,16 @@ describe Coinbase::WalletAddress do
         contract_invocation
       end
 
-      it 'creates a contract invocation' do
+      it 'creates a contract invocation' do # rubocop:disable RSpec/ExampleLength
         expect(Coinbase::ContractInvocation).to have_received(:create).with(
           address_id: address_id,
           wallet_id: wallet_id,
           contract_address: contract_invocation_model.contract_address,
           method: contract_invocation_model.method,
           abi: abi,
+          amount: nil,
+          asset_id: nil,
+          network: network,
           args: args
         )
       end
@@ -169,6 +172,54 @@ describe Coinbase::WalletAddress do
         it 'does not broadcast the transfer' do
           expect(created_invocation).not_to have_received(:broadcast!)
         end
+      end
+    end
+
+    context 'when invoking a payable contract method' do
+      subject(:contract_invocation) do
+        address.invoke_contract(
+          contract_address: contract_invocation_model.contract_address,
+          method: contract_invocation_model.method,
+          abi: abi,
+          args: args,
+          amount: 100,
+          asset_id: :wei
+        )
+      end
+
+      let(:balance) { 1_000 }
+      let(:created_invocation) { build(:contract_invocation, network_id, key: key, amount: '100') }
+
+      before do
+        allow(addresses_api)
+          .to receive(:get_external_address_balance)
+          .with(normalized_network_id, address_id, 'eth')
+          .and_return(build(:balance_model, network_id, whole_amount: balance))
+
+        allow(Coinbase::ContractInvocation).to receive(:create).and_return(created_invocation)
+
+        allow(created_invocation).to receive(:sign)
+        allow(created_invocation).to receive(:broadcast!)
+
+        contract_invocation
+      end
+
+      it 'creates a contract invocation' do # rubocop:disable RSpec/ExampleLength
+        expect(Coinbase::ContractInvocation).to have_received(:create).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          contract_address: contract_invocation_model.contract_address,
+          method: contract_invocation_model.method,
+          abi: abi,
+          amount: 100,
+          asset_id: :wei,
+          network: network,
+          args: args
+        )
+      end
+
+      it 'returns the created contract invocation' do
+        expect(contract_invocation).to eq(created_invocation)
       end
     end
   end

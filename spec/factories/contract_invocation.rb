@@ -5,6 +5,7 @@ FactoryBot.define do
     transient do
       key { build(:key) }
       status { 'pending' }
+      amount { '0' }
     end
 
     address_id { key.address.to_s }
@@ -54,6 +55,7 @@ FactoryBot.define do
       network { nil }
       status { nil }
       key { build(:key) }
+      amount { '0' }
     end
 
     model { build(:contract_invocation_model, key: key) }

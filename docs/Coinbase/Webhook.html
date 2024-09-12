@@ -171,7 +171,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#create-class_method" title="create (class method)">.<strong>create</strong>(network_id:, notification_uri:, event_type:, event_filters:)  &#x21d2; Coinbase::Webhook </a>
+      <a href="#create-class_method" title="create (class method)">.<strong>create</strong>(network_id:, notification_uri:, event_type:, event_filters:, signature_header: &#39;&#39;)  &#x21d2; Coinbase::Webhook </a>
     
 
     
@@ -422,6 +422,30 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#signature_header-instance_method" title="#signature_header (instance method)">#<strong>signature_header</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the signature header for the webhook.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#to_s-instance_method" title="#to_s (instance method)">#<strong>to_s</strong>  &#x21d2; String </a>
     
 
@@ -537,14 +561,14 @@
       <pre class="lines">
 
 
-74
-75
-76
-77
-78</pre>
+78
+79
+80
+81
+82</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>model must be a Webhook</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/Webhook.html" title="Coinbase::Client::Webhook (class)">Webhook</a></span></span><span class='rparen'>)</span>
@@ -566,7 +590,7 @@
       <div class="method_details first">
   <h3 class="signature first" id="create-class_method">
   
-    .<strong>create</strong>(network_id:, notification_uri:, event_type:, event_filters:)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Webhook (class)">Coinbase::Webhook</a></span></tt> 
+    .<strong>create</strong>(network_id:, notification_uri:, event_type:, event_filters:, signature_header: &#39;&#39;)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::Webhook (class)">Coinbase::Webhook</a></span></tt> 
   
 
   
@@ -594,7 +618,8 @@
   <span class='label'>network_id:</span> <span class='symbol'>:ethereum_mainnet</span><span class='comma'>,</span>
   <span class='label'>notification_uri:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>https://example.com/callback</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
   <span class='label'>event_type:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>transaction</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
-  <span class='label'>event_filters:</span> <span class='lbracket'>[</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>contract_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>from_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>to_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='rbracket'>]</span>
+  <span class='label'>event_filters:</span> <span class='lbracket'>[</span><span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>contract_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>from_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>to_address</span><span class='tstring_end'>&#39;</span></span> <span class='op'>=&gt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>0x...</span><span class='tstring_end'>&#39;</span></span> <span class='rbrace'>}</span><span class='rbracket'>]</span><span class='comma'>,</span>
+  <span class='label'>signature_header:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>example_header</span><span class='tstring_end'>&#39;</span></span>
 <span class='rparen'>)</span></code></pre>
     
   </div>
@@ -646,9 +671,9 @@
         <div class='inline'>
 <p>The type of event for the webhook. Must be one of the following:</p>
 <ul><li>
-<p>‘Coinbase::Webhook::ERC20_TRANSFER_EVENT`</p>
+<p>`Coinbase::Webhook::ERC20_TRANSFER_EVENT`</p>
 </li><li>
-<p>‘Coinbase::Webhook::ERC721_TRANSFER_EVENT`</p>
+<p>`Coinbase::Webhook::ERC721_TRANSFER_EVENT`</p>
 </li></ul>
 </div>
       
@@ -665,7 +690,25 @@
       
         &mdash;
         <div class='inline'>
-<p>Filters applied to the events that determine which specific events trigger the webhook. Each filter should be a hash that can include keys like ‘contract_address`, `from_address`, or `to_address`.</p>
+<p>Filters applied to the events that determine which specific events trigger the webhook. Each filter should be a hash that can include keys like `contract_address`, `from_address`, or `to_address`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>signature_header</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&#39;&#39;</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The custom header to be used for x-webhook-signature header on callbacks, so developers can verify the requests are coming from Coinbase.</p>
 </div>
       
     </li>
@@ -697,9 +740,6 @@
       <pre class="lines">
 
 
-34
-35
-36
 37
 38
 39
@@ -710,19 +750,24 @@
 44
 45
 46
-47</pre>
+47
+48
+49
+50
+51</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 34</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 37</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>notification_uri:</span><span class='comma'>,</span> <span class='label'>event_type:</span><span class='comma'>,</span> <span class='label'>event_filters:</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span><span class='lparen'>(</span><span class='label'>network_id:</span><span class='comma'>,</span> <span class='label'>notification_uri:</span><span class='comma'>,</span> <span class='label'>event_type:</span><span class='comma'>,</span> <span class='label'>event_filters:</span><span class='comma'>,</span> <span class='label'>signature_header:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_webhooks_api'>webhooks_api</span><span class='period'>.</span><span class='id identifier rubyid_create_webhook'>create_webhook</span><span class='lparen'>(</span>
       <span class='label'>create_webhook_request:</span> <span class='lbrace'>{</span>
         <span class='label'>network_id:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_normalize_network'><span class='object_link'><a href="../Coinbase.html#normalize_network-class_method" title="Coinbase.normalize_network (method)">normalize_network</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span><span class='comma'>,</span>
         <span class='label'>notification_uri:</span> <span class='id identifier rubyid_notification_uri'>notification_uri</span><span class='comma'>,</span>
         <span class='label'>event_type:</span> <span class='id identifier rubyid_event_type'>event_type</span><span class='comma'>,</span>
-        <span class='label'>event_filters:</span> <span class='id identifier rubyid_event_filters'>event_filters</span>
+        <span class='label'>event_filters:</span> <span class='id identifier rubyid_event_filters'>event_filters</span><span class='comma'>,</span>
+        <span class='label'>signature_header:</span> <span class='id identifier rubyid_signature_header'>signature_header</span>
       <span class='rbrace'>}</span>
     <span class='rparen'>)</span>
   <span class='kw'>end</span>
@@ -778,14 +823,14 @@
       <pre class="lines">
 
 
-53
-54
-55
-56
-57</pre>
+57
+58
+59
+60
+61</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='lparen'>(</span><span class='symbol'>:fetch_webhooks_page</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_proc'>to_proc</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_webhook'>webhook</span><span class='op'>|</span>
@@ -859,18 +904,18 @@
       <pre class="lines">
 
 
-146
-147
-148
-149
-150
-151
-152
-153
-154</pre>
+156
+157
+158
+159
+160
+161
+162
+163
+164</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 146</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -930,12 +975,12 @@
       <pre class="lines">
 
 
-111
-112
-113</pre>
+115
+116
+117</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 111</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 115</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_event_filters'>event_filters</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_event_filters'>event_filters</span>
@@ -989,12 +1034,12 @@
       <pre class="lines">
 
 
-104
-105
-106</pre>
+108
+109
+110</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_event_type'>event_type</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_event_type'>event_type</span>
@@ -1048,12 +1093,12 @@
       <pre class="lines">
 
 
-83
-84
-85</pre>
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 87</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
@@ -1107,12 +1152,12 @@
       <pre class="lines">
 
 
-171
-172
-173</pre>
+182
+183
+184</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 171</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1166,12 +1211,12 @@
       <pre class="lines">
 
 
-90
-91
-92</pre>
+94
+95
+96</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 90</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network_id'>network_id</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_to_sym'><span class='object_link'><a href="../Coinbase.html#to_sym-class_method" title="Coinbase.to_sym (method)">to_sym</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
@@ -1225,15 +1270,74 @@
       <pre class="lines">
 
 
-97
-98
-99</pre>
+101
+102
+103</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 97</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 101</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_notification_uri'>notification_uri</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_notification_uri'>notification_uri</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="signature_header-instance_method">
+  
+    #<strong>signature_header</strong>  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the signature header for the webhook. It is used as the value of callback header with key &#39;x-webhook-signature&#39;.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The signature header value.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 123</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_signature_header'>signature_header</span>
+  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_signature_header'>signature_header</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1284,19 +1388,20 @@
       <pre class="lines">
 
 
-158
-159
-160
-161
-162
-163
-164
-165
-166
-167</pre>
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 158</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 168</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pretty_print_object'><span class='object_link'><a href="../Coinbase.html#pretty_print_object-class_method" title="Coinbase.pretty_print_object (method)">pretty_print_object</a></span></span><span class='lparen'>(</span>
@@ -1305,7 +1410,8 @@
     <span class='label'>network_id:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span>
     <span class='label'>event_type:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_event_type'>event_type</span><span class='comma'>,</span>
     <span class='label'>notification_uri:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_notification_uri'>notification_uri</span><span class='comma'>,</span>
-    <span class='label'>event_filters:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_event_filters'>event_filters</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span>
+    <span class='label'>event_filters:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_event_filters'>event_filters</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+    <span class='label'>signature_header:</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_signature_header'>signature_header</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1389,35 +1495,31 @@
       <pre class="lines">
 
 
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
 134
 135
 136
 137
-138</pre>
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 122</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/webhook.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='label'>notification_uri:</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_model'>model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
     <span class='id identifier rubyid_webhooks_api'>webhooks_api</span><span class='period'>.</span><span class='id identifier rubyid_update_webhook'>update_webhook</span><span class='lparen'>(</span>
       <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
       <span class='label'>update_webhook_request:</span> <span class='lbrace'>{</span>
-        <span class='label'>network_id:</span> <span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span>
         <span class='label'>notification_uri:</span> <span class='id identifier rubyid_notification_uri'>notification_uri</span><span class='comma'>,</span>
-        <span class='label'>event_type:</span> <span class='id identifier rubyid_event_type'>event_type</span><span class='comma'>,</span>
         <span class='label'>event_filters:</span> <span class='id identifier rubyid_event_filters'>event_filters</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span>
       <span class='rbrace'>}</span>
     <span class='rparen'>)</span>

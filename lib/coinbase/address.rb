@@ -248,12 +248,16 @@ module Coinbase
       @addresses_api ||= Coinbase::Client::ExternalAddressesApi.new(Coinbase.configuration.api_client)
     end
 
+    def balance_history_api
+      @balance_history_api ||= Coinbase::Client::BalanceHistoryApi.new(Coinbase.configuration.api_client)
+    end
+
     def stake_api
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
 
     def list_page(asset_id, page)
-      addresses_api.list_address_historical_balance(
+      balance_history_api.list_address_historical_balance(
         network.normalized_id,
         id,
         Coinbase::Asset.primary_denomination(asset_id).to_s,
