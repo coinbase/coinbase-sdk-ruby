@@ -24,6 +24,8 @@ module Coinbase::Client
 
     attr_accessor :event_type
 
+    attr_accessor :event_type_filter
+
     # Webhook will monitor all events that matches any one of the event filters.
     attr_accessor :event_filters
 
@@ -67,6 +69,7 @@ module Coinbase::Client
         :'id' => :'id',
         :'network_id' => :'network_id',
         :'event_type' => :'event_type',
+        :'event_type_filter' => :'event_type_filter',
         :'event_filters' => :'event_filters',
         :'notification_uri' => :'notification_uri',
         :'created_at' => :'created_at',
@@ -86,6 +89,7 @@ module Coinbase::Client
         :'id' => :'String',
         :'network_id' => :'String',
         :'event_type' => :'WebhookEventType',
+        :'event_type_filter' => :'WebhookEventTypeFilter',
         :'event_filters' => :'Array<WebhookEventFilter>',
         :'notification_uri' => :'String',
         :'created_at' => :'Time',
@@ -125,6 +129,10 @@ module Coinbase::Client
 
       if attributes.key?(:'event_type')
         self.event_type = attributes[:'event_type']
+      end
+
+      if attributes.key?(:'event_type_filter')
+        self.event_type_filter = attributes[:'event_type_filter']
       end
 
       if attributes.key?(:'event_filters')
@@ -173,6 +181,7 @@ module Coinbase::Client
           id == o.id &&
           network_id == o.network_id &&
           event_type == o.event_type &&
+          event_type_filter == o.event_type_filter &&
           event_filters == o.event_filters &&
           notification_uri == o.notification_uri &&
           created_at == o.created_at &&
@@ -189,7 +198,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network_id, event_type, event_filters, notification_uri, created_at, updated_at, signature_header].hash
+      [id, network_id, event_type, event_type_filter, event_filters, notification_uri, created_at, updated_at, signature_header].hash
     end
 
     # Builds the object from hash

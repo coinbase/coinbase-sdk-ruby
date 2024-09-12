@@ -14,29 +14,66 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The staking balances for an address.
-  class StakingBalance
-    # The onchain address for which the staking balances are being fetched.
-    attr_accessor :address
+  # Represents a smart contract on the blockchain
+  class SmartContract
+    # The unique identifier of the smart contract
+    attr_accessor :smart_contract_id
 
-    # The timestamp of the staking balance in UTC.
-    attr_accessor :date
+    # The name of the blockchain network
+    attr_accessor :network_id
 
-    attr_accessor :bonded_stake
+    # The ID of the wallet that deployed the smart contract
+    attr_accessor :wallet_id
 
-    attr_accessor :unbonded_balance
+    # The EVM address of the smart contract
+    attr_accessor :contract_address
 
-    # The type of staking participation.
-    attr_accessor :participant_type
+    # The EVM address of the account that deployed the smart contract
+    attr_accessor :deployer_address
+
+    attr_accessor :type
+
+    attr_accessor :options
+
+    # The JSON-encoded ABI of the contract
+    attr_accessor :abi
+
+    attr_accessor :transaction
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'address' => :'address',
-        :'date' => :'date',
-        :'bonded_stake' => :'bonded_stake',
-        :'unbonded_balance' => :'unbonded_balance',
-        :'participant_type' => :'participant_type'
+        :'smart_contract_id' => :'smart_contract_id',
+        :'network_id' => :'network_id',
+        :'wallet_id' => :'wallet_id',
+        :'contract_address' => :'contract_address',
+        :'deployer_address' => :'deployer_address',
+        :'type' => :'type',
+        :'options' => :'options',
+        :'abi' => :'abi',
+        :'transaction' => :'transaction'
       }
     end
 
@@ -48,11 +85,15 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'address' => :'String',
-        :'date' => :'Time',
-        :'bonded_stake' => :'Balance',
-        :'unbonded_balance' => :'Balance',
-        :'participant_type' => :'String'
+        :'smart_contract_id' => :'String',
+        :'network_id' => :'String',
+        :'wallet_id' => :'String',
+        :'contract_address' => :'String',
+        :'deployer_address' => :'String',
+        :'type' => :'SmartContractType',
+        :'options' => :'SmartContractOptions',
+        :'abi' => :'String',
+        :'transaction' => :'Transaction'
       }
     end
 
@@ -66,45 +107,69 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingBalance` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SmartContract` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingBalance`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SmartContract`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'address')
-        self.address = attributes[:'address']
+      if attributes.key?(:'smart_contract_id')
+        self.smart_contract_id = attributes[:'smart_contract_id']
       else
-        self.address = nil
+        self.smart_contract_id = nil
       end
 
-      if attributes.key?(:'date')
-        self.date = attributes[:'date']
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
       else
-        self.date = nil
+        self.network_id = nil
       end
 
-      if attributes.key?(:'bonded_stake')
-        self.bonded_stake = attributes[:'bonded_stake']
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
       else
-        self.bonded_stake = nil
+        self.wallet_id = nil
       end
 
-      if attributes.key?(:'unbonded_balance')
-        self.unbonded_balance = attributes[:'unbonded_balance']
+      if attributes.key?(:'contract_address')
+        self.contract_address = attributes[:'contract_address']
       else
-        self.unbonded_balance = nil
+        self.contract_address = nil
       end
 
-      if attributes.key?(:'participant_type')
-        self.participant_type = attributes[:'participant_type']
+      if attributes.key?(:'deployer_address')
+        self.deployer_address = attributes[:'deployer_address']
       else
-        self.participant_type = nil
+        self.deployer_address = nil
+      end
+
+      if attributes.key?(:'type')
+        self.type = attributes[:'type']
+      else
+        self.type = nil
+      end
+
+      if attributes.key?(:'options')
+        self.options = attributes[:'options']
+      else
+        self.options = nil
+      end
+
+      if attributes.key?(:'abi')
+        self.abi = attributes[:'abi']
+      else
+        self.abi = nil
+      end
+
+      if attributes.key?(:'transaction')
+        self.transaction = attributes[:'transaction']
+      else
+        self.transaction = nil
       end
     end
 
@@ -113,24 +178,40 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @address.nil?
-        invalid_properties.push('invalid value for "address", address cannot be nil.')
+      if @smart_contract_id.nil?
+        invalid_properties.push('invalid value for "smart_contract_id", smart_contract_id cannot be nil.')
       end
 
-      if @date.nil?
-        invalid_properties.push('invalid value for "date", date cannot be nil.')
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
       end
 
-      if @bonded_stake.nil?
-        invalid_properties.push('invalid value for "bonded_stake", bonded_stake cannot be nil.')
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
       end
 
-      if @unbonded_balance.nil?
-        invalid_properties.push('invalid value for "unbonded_balance", unbonded_balance cannot be nil.')
+      if @contract_address.nil?
+        invalid_properties.push('invalid value for "contract_address", contract_address cannot be nil.')
       end
 
-      if @participant_type.nil?
-        invalid_properties.push('invalid value for "participant_type", participant_type cannot be nil.')
+      if @deployer_address.nil?
+        invalid_properties.push('invalid value for "deployer_address", deployer_address cannot be nil.')
+      end
+
+      if @type.nil?
+        invalid_properties.push('invalid value for "type", type cannot be nil.')
+      end
+
+      if @options.nil?
+        invalid_properties.push('invalid value for "options", options cannot be nil.')
+      end
+
+      if @abi.nil?
+        invalid_properties.push('invalid value for "abi", abi cannot be nil.')
+      end
+
+      if @transaction.nil?
+        invalid_properties.push('invalid value for "transaction", transaction cannot be nil.')
       end
 
       invalid_properties
@@ -140,11 +221,15 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @address.nil?
-      return false if @date.nil?
-      return false if @bonded_stake.nil?
-      return false if @unbonded_balance.nil?
-      return false if @participant_type.nil?
+      return false if @smart_contract_id.nil?
+      return false if @network_id.nil?
+      return false if @wallet_id.nil?
+      return false if @contract_address.nil?
+      return false if @deployer_address.nil?
+      return false if @type.nil?
+      return false if @options.nil?
+      return false if @abi.nil?
+      return false if @transaction.nil?
       true
     end
 
@@ -153,11 +238,15 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          address == o.address &&
-          date == o.date &&
-          bonded_stake == o.bonded_stake &&
-          unbonded_balance == o.unbonded_balance &&
-          participant_type == o.participant_type
+          smart_contract_id == o.smart_contract_id &&
+          network_id == o.network_id &&
+          wallet_id == o.wallet_id &&
+          contract_address == o.contract_address &&
+          deployer_address == o.deployer_address &&
+          type == o.type &&
+          options == o.options &&
+          abi == o.abi &&
+          transaction == o.transaction
     end
 
     # @see the `==` method
@@ -169,7 +258,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [address, date, bonded_stake, unbonded_balance, participant_type].hash
+      [smart_contract_id, network_id, wallet_id, contract_address, deployer_address, type, options, abi, transaction].hash
     end
 
     # Builds the object from hash

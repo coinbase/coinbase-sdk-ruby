@@ -20,6 +20,8 @@ module Coinbase::Client
 
     attr_accessor :event_type
 
+    attr_accessor :event_type_filter
+
     # Webhook will monitor all events that matches any one of the event filters.
     attr_accessor :event_filters
 
@@ -56,6 +58,7 @@ module Coinbase::Client
       {
         :'network_id' => :'network_id',
         :'event_type' => :'event_type',
+        :'event_type_filter' => :'event_type_filter',
         :'event_filters' => :'event_filters',
         :'notification_uri' => :'notification_uri',
         :'signature_header' => :'signature_header'
@@ -72,6 +75,7 @@ module Coinbase::Client
       {
         :'network_id' => :'String',
         :'event_type' => :'WebhookEventType',
+        :'event_type_filter' => :'WebhookEventTypeFilter',
         :'event_filters' => :'Array<WebhookEventFilter>',
         :'notification_uri' => :'String',
         :'signature_header' => :'String'
@@ -111,12 +115,14 @@ module Coinbase::Client
         self.event_type = nil
       end
 
+      if attributes.key?(:'event_type_filter')
+        self.event_type_filter = attributes[:'event_type_filter']
+      end
+
       if attributes.key?(:'event_filters')
         if (value = attributes[:'event_filters']).is_a?(Array)
           self.event_filters = value
         end
-      else
-        self.event_filters = nil
       end
 
       if attributes.key?(:'notification_uri')
@@ -143,10 +149,6 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "event_type", event_type cannot be nil.')
       end
 
-      if @event_filters.nil?
-        invalid_properties.push('invalid value for "event_filters", event_filters cannot be nil.')
-      end
-
       if @notification_uri.nil?
         invalid_properties.push('invalid value for "notification_uri", notification_uri cannot be nil.')
       end
@@ -160,7 +162,6 @@ module Coinbase::Client
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @network_id.nil?
       return false if @event_type.nil?
-      return false if @event_filters.nil?
       return false if @notification_uri.nil?
       true
     end
@@ -172,6 +173,7 @@ module Coinbase::Client
       self.class == o.class &&
           network_id == o.network_id &&
           event_type == o.event_type &&
+          event_type_filter == o.event_type_filter &&
           event_filters == o.event_filters &&
           notification_uri == o.notification_uri &&
           signature_header == o.signature_header
@@ -186,7 +188,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [network_id, event_type, event_filters, notification_uri, signature_header].hash
+      [network_id, event_type, event_type_filter, event_filters, notification_uri, signature_header].hash
     end
 
     # Builds the object from hash

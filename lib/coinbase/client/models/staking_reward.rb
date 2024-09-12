@@ -19,7 +19,7 @@ module Coinbase::Client
     # The onchain address for which the staking rewards are being fetched.
     attr_accessor :address_id
 
-    # The date of the reward in format 'YYYY-MM-DD' in UTC.
+    # The timestamp of the reward in UTC.
     attr_accessor :date
 
     # The reward amount in requested \"format\". Default is USD.
@@ -75,7 +75,7 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'address_id' => :'String',
-        :'date' => :'Date',
+        :'date' => :'Time',
         :'amount' => :'String',
         :'state' => :'String',
         :'format' => :'StakingRewardFormat',

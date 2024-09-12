@@ -146,18 +146,10 @@ module Coinbase::Client
       if @api_client.config.client_side_validation && start_time.nil?
         fail ArgumentError, "Missing the required parameter 'start_time' when calling StakeApi.fetch_historical_staking_balances"
       end
-      if @api_client.config.client_side_validation && start_time.to_s.length > 5000
-        fail ArgumentError, 'invalid value for "start_time" when calling StakeApi.fetch_historical_staking_balances, the character length must be smaller than or equal to 5000.'
-      end
-
       # verify the required parameter 'end_time' is set
       if @api_client.config.client_side_validation && end_time.nil?
         fail ArgumentError, "Missing the required parameter 'end_time' when calling StakeApi.fetch_historical_staking_balances"
       end
-      if @api_client.config.client_side_validation && end_time.to_s.length > 5000
-        fail ArgumentError, 'invalid value for "end_time" when calling StakeApi.fetch_historical_staking_balances, the character length must be smaller than or equal to 5000.'
-      end
-
       if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
         fail ArgumentError, 'invalid value for "opts[:"page"]" when calling StakeApi.fetch_historical_staking_balances, the character length must be smaller than or equal to 5000.'
       end
