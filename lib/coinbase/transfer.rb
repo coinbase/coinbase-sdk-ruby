@@ -84,7 +84,7 @@ module Coinbase
     end
 
     # Returns the Network of the Transfer.
-    # @return [Symbol] The Network
+    # @return [Coinbase::Network] The Network
     def network
       @network ||= Coinbase::Network.from_id(@model.network_id)
     end

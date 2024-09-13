@@ -896,6 +896,44 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#deploy_token' do
+    subject(:token_contract) { wallet.deploy_token(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_token_contract) { build(:smart_contract, :token) }
+    let(:smart_contract_model) { build(:smart_contract_model) }
+    let(:parameters) do
+      {
+        name: 'Token Name',
+        symbol: 'TOKEN',
+        total_supply: 1_000_000
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:deploy_token)
+        .and_return(created_token_contract)
+
+      token_contract
+    end
+
+    it 'returns the deployed token contract' do
+      expect(token_contract).to eq(created_token_contract)
+    end
+
+    it 'calls deploy_token on the default address' do
+      expect(wallet.default_address).to have_received(:deploy_token).with(parameters)
+    end
+  end
+
   describe '#invoke_contract' do
     subject(:contract_invocation) { wallet.invoke_contract(parameters) }
 

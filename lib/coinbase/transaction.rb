@@ -147,6 +147,9 @@ module Coinbase
     # Signs the Transaction with the provided key and returns the hex signing payload.
     # @return [String] The hex-encoded signed payload
     def sign(key)
+      raise 'Invalid key type' unless key.is_a?(Eth::Key)
+      raise Coinbase::AlreadySignedError if signed?
+
       raw.sign(key)
 
       signature
