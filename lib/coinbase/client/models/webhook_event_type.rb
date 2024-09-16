@@ -18,10 +18,11 @@ module Coinbase::Client
     UNSPECIFIED = "unspecified".freeze
     ERC20_TRANSFER = "erc20_transfer".freeze
     ERC721_TRANSFER = "erc721_transfer".freeze
+    WALLET_ACTIVITY = "wallet_activity".freeze
     UNKNOWN_DEFAULT_OPEN_API = "unknown_default_open_api".freeze
 
     def self.all_vars
-      @all_vars ||= [UNSPECIFIED, ERC20_TRANSFER, ERC721_TRANSFER, UNKNOWN_DEFAULT_OPEN_API].freeze
+      @all_vars ||= [UNSPECIFIED, ERC20_TRANSFER, ERC721_TRANSFER, WALLET_ACTIVITY, UNKNOWN_DEFAULT_OPEN_API].freeze
     end
 
     # Builds the enum from string

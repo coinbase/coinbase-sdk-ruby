@@ -14,67 +14,19 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # Webhook that is used for getting notifications when monitored events occur.
-  class Webhook
-    # Identifier of the webhook.
-    attr_accessor :id
+  # Filter for wallet activity events. This filter allows the client to specify one or more wallet addresses to monitor for activities such as transactions, transfers, or other types of events that are associated with the specified addresses. 
+  class WebhookWalletActivityFilter
+    # A list of wallet addresses to filter on.
+    attr_accessor :addresses
 
-    # The ID of the blockchain network
-    attr_accessor :network_id
-
-    attr_accessor :event_type
-
-    attr_accessor :event_type_filter
-
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
-
-    # The URL to which the notifications will be sent.
-    attr_accessor :notification_uri
-
-    # The date and time the webhook was created.
-    attr_accessor :created_at
-
-    # The date and time the webhook was last updated.
-    attr_accessor :updated_at
-
-    # The header that will contain the signature of the webhook payload.
-    attr_accessor :signature_header
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # The ID of the wallet that owns the webhook.
+    attr_accessor :wallet_id
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'id' => :'id',
-        :'network_id' => :'network_id',
-        :'event_type' => :'event_type',
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri',
-        :'created_at' => :'created_at',
-        :'updated_at' => :'updated_at',
-        :'signature_header' => :'signature_header'
+        :'addresses' => :'addresses',
+        :'wallet_id' => :'wallet_id'
       }
     end
 
@@ -86,15 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'id' => :'String',
-        :'network_id' => :'String',
-        :'event_type' => :'WebhookEventType',
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String',
-        :'created_at' => :'Time',
-        :'updated_at' => :'Time',
-        :'signature_header' => :'String'
+        :'addresses' => :'Array<String>',
+        :'wallet_id' => :'String'
       }
     end
 
@@ -108,53 +53,25 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::Webhook` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::WebhookWalletActivityFilter` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::Webhook`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::WebhookWalletActivityFilter`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'id')
-        self.id = attributes[:'id']
-      end
-
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
-      end
-
-      if attributes.key?(:'event_type')
-        self.event_type = attributes[:'event_type']
-      end
-
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
-      end
-
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
+      if attributes.key?(:'addresses')
+        if (value = attributes[:'addresses']).is_a?(Array)
+          self.addresses = value
         end
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
-      end
-
-      if attributes.key?(:'created_at')
-        self.created_at = attributes[:'created_at']
-      end
-
-      if attributes.key?(:'updated_at')
-        self.updated_at = attributes[:'updated_at']
-      end
-
-      if attributes.key?(:'signature_header')
-        self.signature_header = attributes[:'signature_header']
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
       end
     end
 
@@ -178,15 +95,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          id == o.id &&
-          network_id == o.network_id &&
-          event_type == o.event_type &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri &&
-          created_at == o.created_at &&
-          updated_at == o.updated_at &&
-          signature_header == o.signature_header
+          addresses == o.addresses &&
+          wallet_id == o.wallet_id
     end
 
     # @see the `==` method
@@ -198,7 +108,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [id, network_id, event_type, event_type_filter, event_filters, notification_uri, created_at, updated_at, signature_header].hash
+      [addresses, wallet_id].hash
     end
 
     # Builds the object from hash
