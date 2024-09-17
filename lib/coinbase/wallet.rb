@@ -459,6 +459,19 @@ module Coinbase
       "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
 
+    def create_webhook(notification_uri:, addresses: self.addresses.map(&:id), signature_header: '')
+      Coinbase::Webhook.create(
+        network_id: Coinbase.normalize_network(network),
+        notification_uri: notification_uri,
+        event_type: Coinbase::Webhook::WALLET_ACTIVITY_EVENT,
+        event_type_filter: {
+          addresses: addresses,
+          wallet_id: id,
+        },
+        signature_header: signature_header
+      )
+    end
+
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
@@ -591,19 +604,6 @@ module Coinbase
       @addresses = address_list.data.each_with_index.map do |address_model, index|
         build_wallet_address(address_model, index)
       end
-    end
-
-    def create_webhook(notification_uri:, addresses:, signature_header: '')
-      Coinbase::Webhook.create(
-        network_id: network,
-        notification_uri: notification_uri,
-        event_type: Coinbase::Webhook::WALLET_ACTIVITY_EVENT,
-        event_type_filter: {
-          addresses: addresses,
-          wallet_id: id,
-        },
-        signature_header: signature_header
-      )
     end
   end
 end
