@@ -592,5 +592,18 @@ module Coinbase
         build_wallet_address(address_model, index)
       end
     end
+
+    def create_webhook(notification_uri:, addresses:, signature_header: '')
+      Coinbase::Webhook.create(
+        network_id: network,
+        notification_uri: notification_uri,
+        event_type: Coinbase::Webhook::WALLET_ACTIVITY_EVENT,
+        event_type_filter: {
+          addresses: addresses,
+          wallet_id: id,
+        },
+        signature_header: signature_header
+      )
+    end
   end
 end

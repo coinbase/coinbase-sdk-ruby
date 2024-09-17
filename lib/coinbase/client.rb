@@ -99,6 +99,8 @@ Coinbase::Client.autoload :Webhook, 'coinbase/client/models/webhook'
 Coinbase::Client.autoload :WebhookEventFilter, 'coinbase/client/models/webhook_event_filter'
 Coinbase::Client.autoload :WebhookEventType, 'coinbase/client/models/webhook_event_type'
 Coinbase::Client.autoload :WebhookList, 'coinbase/client/models/webhook_list'
+Coinbase::Client.autoload :WebhookEventTypeFilter, 'coinbase/client/models/webhook_event_type_filter'
+Coinbase::Client.autoload :WebhookWalletActivityFilter, 'coinbase/client/models/webhook_wallet_activity_filter'
 
 # APIs
 Coinbase::Client.autoload :AddressesApi, 'coinbase/client/api/addresses_api'
