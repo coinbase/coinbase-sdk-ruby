@@ -21,10 +21,12 @@ describe Coinbase::Wallet do
   let(:second_address_model) do
     build(:address_model, network_id, :with_seed, seed: seed, wallet_id: wallet_id, index: 1)
   end
+  let(:webhook_model) { build(:webhook_model, :wallet_activity) }
   let(:wallets_api) { instance_double(Coinbase::Client::WalletsApi) }
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
   let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
+  let(:webhooks_api) { instance_double(Coinbase::Client::WebhooksApi) }
   let(:use_server_signer) { false }
   let(:default_network) { build(:network, :base_sepolia) }
   let(:network) { default_network }
@@ -41,6 +43,7 @@ describe Coinbase::Wallet do
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
     allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
+    allow(Coinbase::Client::WebhooksApi).to receive(:new).and_return(webhooks_api)
 
     allow(Coinbase).to receive(:configuration).and_return(configuration)
 
@@ -1383,6 +1386,48 @@ describe Coinbase::Wallet do
       it 'includes the default address' do
         expect(wallet.inspect).to include(first_address_model.address_id)
       end
+    end
+  end
+
+  describe '#create_webhook' do
+    subject(:wallet_webhook) { wallet.create_webhook(notification_uri: notification_uri) }
+
+    let(:wallet) { described_class.new(model, seed: seed) }
+    let(:network_id) { :base_sepolia }
+    let(:notification_uri) { 'https://example.com/notify' }
+    let(:event_type) { 'wallet_activity' }
+    let(:event_type_filter) do
+      {
+        'addresses' => ['0xa3B299855BE3eA231337aC7c40A615e090A3de25'],
+        'wallet_id' => 'd91d652b-d020-48d4-bf19-5c5eb5e280c7'
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+      allow(webhooks_api).to receive(:create_webhook).and_return(webhook_model)
+    end
+
+    it 'creates a new webhook with wallet activity event type' do
+      expect(wallet_webhook.event_type).to eq(event_type)
+    end
+
+    it 'has the correct id' do
+      expect(wallet_webhook.id).to eq('wallet_webhook')
+    end
+
+    it 'has the correct network_id' do
+      expect(wallet_webhook.network_id).to eq(network_id)
+    end
+
+    it 'has the correct notification_uri' do
+      expect(wallet_webhook.notification_uri).to eq(notification_uri)
+    end
+
+    it 'has the correct event_type_filter' do
+      expect(wallet_webhook.event_type_filter).to eq(event_type_filter)
     end
   end
 end

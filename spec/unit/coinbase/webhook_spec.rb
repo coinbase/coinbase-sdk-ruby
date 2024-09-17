@@ -16,7 +16,8 @@ describe Coinbase::Webhook do
         network_id: network_id,
         notification_uri: notification_uri,
         event_type: event_type,
-        event_filters: event_filters
+        event_filters: event_filters,
+        event_type_filter: event_type_filter
       )
     end
 
@@ -24,6 +25,12 @@ describe Coinbase::Webhook do
     let(:notification_uri) { 'https://example.com/notify' }
     let(:event_type) { 'erc20_transfer' }
     let(:event_filters) { [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }] }
+    let(:event_type_filter) do
+      {
+        'addresses' => ['0xa3B299855BE3eA231337aC7c40A615e090A3de25'],
+        'wallet_id' => 'd91d652b-d020-48d4-bf19-5c5eb5e280c7'
+      }
+    end
 
     before do
       allow(webhooks_api).to receive(:create_webhook).and_return(webhook_model)
@@ -52,6 +59,10 @@ describe Coinbase::Webhook do
 
     it 'has the correct event_filters' do
       expect(webhook.event_filters).to eq(event_filters)
+    end
+
+    it 'has the correct event_type_filter' do
+      expect(webhook.event_type_filter).to eq(event_type_filter)
     end
   end
 
