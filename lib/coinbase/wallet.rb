@@ -482,6 +482,22 @@ module Coinbase
       "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
 
+    # Creates a new webhook on the current wallet for tracking wallet activity events.
+    #
+    # @param notification_uri [String] The URI to which the webhook notifications will be sent.
+    #
+    # @return [Coinbase::Client::Webhook] The newly created webhook instance.
+    def create_webhook(notification_uri:)
+      Coinbase.call_api do
+        webhooks_api.create_wallet_webhook(
+          id,
+          create_wallet_webhook_request: {
+            notification_uri: notification_uri
+          }
+        )
+      end
+    end
+
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
@@ -604,6 +620,10 @@ module Coinbase
 
     def wallets_api
       @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+    end
+
+    def webhooks_api
+      @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
     end
 
     def set_addresses
