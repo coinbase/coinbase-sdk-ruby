@@ -42,7 +42,14 @@ module Coinbase
       #       "wallet_id" => "d91d652b-d020-48d4-bf19-5c5eb5e280c7"
       #     }
       #   )
-      def create(network_id:, notification_uri:, event_type:, event_filters: [], signature_header: '', event_type_filter: nil)
+      def create(
+        network_id:,
+        notification_uri:,
+        event_type:,
+        event_filters: [],
+        signature_header: '',
+        event_type_filter: nil
+      )
         model = Coinbase.call_api do
           webhooks_api.create_webhook(
             create_webhook_request: {

@@ -475,7 +475,7 @@ module Coinbase
         event_type: Coinbase::Webhook::WALLET_ACTIVITY_EVENT,
         event_type_filter: {
           addresses: addresses,
-          wallet_id: id,
+          wallet_id: id
         },
         signature_header: signature_header
       )
