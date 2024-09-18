@@ -24,7 +24,8 @@ describe Coinbase::ContractInvocation do
     ]
   end
   let(:method) { 'mint' }
-  let(:contract_address) { '0xa82aB8504fDeb2dADAa3B4F075E967BbE35065b9' }
+  let(:expected_contract_address) { '0xa82aB8504fDeb2dADAa3B4F075E967BbE35065b9' }
+  let(:contract_address) { expected_contract_address }
   let(:args) do
     { recipient: '0x475d41de7A81298Ba263184996800CBcaAD73C0b' }
   end
@@ -34,7 +35,7 @@ describe Coinbase::ContractInvocation do
       wallet_id: wallet_id,
       address_id: address_id,
       contract_invocation_id: contract_invocation_id,
-      contract_address: contract_address,
+      contract_address: expected_contract_address,
       abi: abi.to_json,
       method: method,
       amount: '0',
@@ -71,7 +72,7 @@ describe Coinbase::ContractInvocation do
 
     let(:create_contract_invocation_request) do
       {
-        contract_address: contract_address,
+        contract_address: expected_contract_address,
         abi: abi.to_json,
         method: method,
         args: args.to_json,
@@ -84,6 +85,8 @@ describe Coinbase::ContractInvocation do
         .to receive(:create_contract_invocation)
         .with(wallet_id, address_id, create_contract_invocation_request)
         .and_return(model)
+
+      contract_invocation
     end
 
     it 'creates a new ContractInvocation' do
@@ -92,6 +95,38 @@ describe Coinbase::ContractInvocation do
 
     it 'sets the contract_invocation properties' do
       expect(contract_invocation.id).to eq(contract_invocation_id)
+    end
+
+    it 'creates the contract invocation' do
+      expect(contract_invocations_api)
+        .to have_received(:create_contract_invocation)
+        .with(wallet_id, address_id, create_contract_invocation_request)
+    end
+
+    context 'when the contract address is a SmartContract' do
+      let(:contract_address) do
+        build(:smart_contract, network_id, :token, contract_address: expected_contract_address)
+      end
+
+      let(:create_contract_invocation_request) do
+        {
+          contract_address: expected_contract_address,
+          abi: abi.to_json,
+          method: method,
+          args: args.to_json,
+          amount: nil
+        }
+      end
+
+      it 'sets the contract address' do
+        expect(contract_invocation.contract_address).to eq(expected_contract_address)
+      end
+
+      it 'creates the contract invocation with the SmartContract contract address' do
+        expect(contract_invocations_api)
+          .to have_received(:create_contract_invocation)
+          .with(wallet_id, address_id, create_contract_invocation_request)
+      end
     end
   end
 

@@ -40,6 +40,11 @@ module Coinbase
           atomic_amount = asset.to_atomic_amount(amount).to_i_to_s
         end
 
+        # If the contract address is a SmartContract object, get the contract address from it.
+        if contract_address.is_a?(Coinbase::SmartContract)
+          contract_address = contract_address.contract_address
+        end
+
         model = Coinbase.call_api do
           contract_invocation_api.create_contract_invocation(
             wallet_id,
