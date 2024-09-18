@@ -106,7 +106,7 @@ module Coinbase
     # @param asset_id [Symbol] (Optional) The ID of the Asset to send to a payable contract method.
     #   The Asset must be a denomination of the native Asset. For Ethereum, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::ContractInvocation] The contract invocation object.
-    def invoke_contract(contract_address:, abi:, method:, args:, amount: nil, asset_id: nil)
+    def invoke_contract(contract_address:, method:, args:, abi: nil, amount: nil, asset_id: nil)
       ensure_can_sign!
       ensure_sufficient_balance!(amount, asset_id) if amount && asset_id
 
@@ -128,6 +128,31 @@ module Coinbase
       invocation.sign(@key)
       invocation.broadcast!
       invocation
+    end
+
+    # Deploys a new ERC20 token contract with the given name, symbol, and total supply.
+    # @param name [String] The name of the token.
+    # @param symbol [String] The symbol of the token.
+    # @param total_supply [Integer, BigDecimal] The total supply of the token, denominated in
+    # whole units.
+    # @return [Coinbase::SmartContract] The deployed token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+    def deploy_token(name:, symbol:, total_supply:)
+      ensure_can_sign!
+
+      smart_contract = SmartContract.create_token_contract(
+        address_id: id,
+        wallet_id: wallet_id,
+        name: name,
+        symbol: symbol,
+        total_supply: total_supply
+      )
+
+      return smart_contract if Coinbase.use_server_signer?
+
+      smart_contract.sign(@key)
+      smart_contract.deploy!
+      smart_contract
     end
 
     # Signs the given unsigned payload.

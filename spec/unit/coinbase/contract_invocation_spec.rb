@@ -62,8 +62,6 @@ describe Coinbase::ContractInvocation do
         contract_address: contract_address,
         abi: abi,
         method: method,
-        amount: nil,
-        asset_id: nil,
         network: network,
         args: args
       )
@@ -74,8 +72,7 @@ describe Coinbase::ContractInvocation do
         contract_address: contract_address,
         abi: abi.to_json,
         method: method,
-        args: args.to_json,
-        amount: nil
+        args: args.to_json
       }
     end
 
@@ -92,6 +89,104 @@ describe Coinbase::ContractInvocation do
 
     it 'sets the contract_invocation properties' do
       expect(contract_invocation.id).to eq(contract_invocation_id)
+    end
+
+    it 'creates the contract invocation' do
+      contract_invocation
+
+      expect(contract_invocations_api)
+        .to have_received(:create_contract_invocation)
+        .with(wallet_id, address_id, create_contract_invocation_request)
+    end
+
+    context 'when the ABI is not specified' do
+      subject(:contract_invocation) do
+        described_class.create(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          contract_address: contract_address,
+          method: method,
+          network: network,
+          args: args
+        )
+      end
+
+      let(:create_contract_invocation_request) do
+        {
+          contract_address: contract_address,
+          method: method,
+          args: args.to_json
+        }
+      end
+
+      it 'creates a new ContractInvocation' do
+        expect(contract_invocation).to be_a(described_class)
+      end
+
+      it 'sets the contract_invocation properties' do
+        expect(contract_invocation.id).to eq(contract_invocation_id)
+      end
+
+      it 'creates the contract invocation' do
+        contract_invocation
+
+        expect(contract_invocations_api)
+          .to have_received(:create_contract_invocation)
+          .with(wallet_id, address_id, create_contract_invocation_request)
+      end
+    end
+
+    context 'when the amount and asset ID are specified' do
+      subject(:contract_invocation) do
+        described_class.create(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          contract_address: contract_address,
+          abi: abi,
+          method: method,
+          network: network,
+          args: args,
+          amount: amount,
+          asset_id: asset_id
+        )
+      end
+
+      let(:amount) { 1_000 }
+      let(:asset_id) { :usdc }
+      let(:asset) { build(:asset, network_id, asset_id) }
+
+      let(:create_contract_invocation_request) do
+        {
+          contract_address: contract_address,
+          abi: abi.to_json,
+          method: method,
+          args: args.to_json,
+          amount: (amount * (10**asset.decimals)).to_s
+        }
+      end
+
+      before do
+        allow(Coinbase::Asset)
+          .to receive(:fetch)
+          .with(network, asset_id)
+          .and_return(asset)
+      end
+
+      it 'creates a new ContractInvocation' do
+        expect(contract_invocation).to be_a(described_class)
+      end
+
+      it 'sets the contract_invocation properties' do
+        expect(contract_invocation.id).to eq(contract_invocation_id)
+      end
+
+      it 'creates the contract invocation' do
+        contract_invocation
+
+        expect(contract_invocations_api)
+          .to have_received(:create_contract_invocation)
+          .with(wallet_id, address_id, create_contract_invocation_request)
+      end
     end
   end
 

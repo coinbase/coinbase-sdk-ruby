@@ -234,10 +234,19 @@ module Coinbase
     # @!method invoke_contract
     # Invokes a contract with the given ABI, method, and arguments.
     # @param abi [Array<Hash>] The ABI of the contract
-    #
+
+    # @!method deploy_token
+    # Deploys a new ERC20 token contract with the given name, symbol, and total supply.
+    # @param name [String] The name of the token.
+    # @param symbol [String] The symbol of the token.
+    # @param total_supply [Integer, BigDecimal] The total supply of the token, denominated in
+    # whole units.
+    # @return [Coinbase::SmartContract] The deployed token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
 
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
-                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract
+                   :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract,
+                   :deploy_token
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
