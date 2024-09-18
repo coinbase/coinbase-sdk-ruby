@@ -20,7 +20,7 @@ module Coinbase::Client
       @api_client = api_client
     end
     # Create a new wallet
-    # Create a new wallet scoped to the CDP project.
+    # Create a new wallet scoped to the user.
     # @param [Hash] opts the optional parameters
     # @option opts [CreateWalletRequest] :create_wallet_request 
     # @return [Wallet]
@@ -30,7 +30,7 @@ module Coinbase::Client
     end
 
     # Create a new wallet
-    # Create a new wallet scoped to the CDP project.
+    # Create a new wallet scoped to the user.
     # @param [Hash] opts the optional parameters
     # @option opts [CreateWalletRequest] :create_wallet_request 
     # @return [Array<(Wallet, Integer, Hash)>] Wallet data, response status code and response headers
@@ -279,7 +279,7 @@ module Coinbase::Client
     end
 
     # List wallets
-    # List wallets belonging to the CDP project.
+    # List wallets belonging to the user.
     # @param [Hash] opts the optional parameters
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
@@ -290,7 +290,7 @@ module Coinbase::Client
     end
 
     # List wallets
-    # List wallets belonging to the CDP project.
+    # List wallets belonging to the user.
     # @param [Hash] opts the optional parameters
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.

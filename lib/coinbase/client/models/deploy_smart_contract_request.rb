@@ -14,29 +14,14 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The staking balances for an address.
-  class StakingBalance
-    # The onchain address for which the staking balances are being fetched.
-    attr_accessor :address
-
-    # The timestamp of the staking balance in UTC.
-    attr_accessor :date
-
-    attr_accessor :bonded_stake
-
-    attr_accessor :unbonded_balance
-
-    # The type of staking participation.
-    attr_accessor :participant_type
+  class DeploySmartContractRequest
+    # The hex-encoded signed payload of the contract deployment transaction.
+    attr_accessor :signed_payload
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'address' => :'address',
-        :'date' => :'date',
-        :'bonded_stake' => :'bonded_stake',
-        :'unbonded_balance' => :'unbonded_balance',
-        :'participant_type' => :'participant_type'
+        :'signed_payload' => :'signed_payload'
       }
     end
 
@@ -48,11 +33,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'address' => :'String',
-        :'date' => :'Time',
-        :'bonded_stake' => :'Balance',
-        :'unbonded_balance' => :'Balance',
-        :'participant_type' => :'String'
+        :'signed_payload' => :'String'
       }
     end
 
@@ -66,45 +47,21 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::StakingBalance` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::DeploySmartContractRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::StakingBalance`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::DeploySmartContractRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'address')
-        self.address = attributes[:'address']
+      if attributes.key?(:'signed_payload')
+        self.signed_payload = attributes[:'signed_payload']
       else
-        self.address = nil
-      end
-
-      if attributes.key?(:'date')
-        self.date = attributes[:'date']
-      else
-        self.date = nil
-      end
-
-      if attributes.key?(:'bonded_stake')
-        self.bonded_stake = attributes[:'bonded_stake']
-      else
-        self.bonded_stake = nil
-      end
-
-      if attributes.key?(:'unbonded_balance')
-        self.unbonded_balance = attributes[:'unbonded_balance']
-      else
-        self.unbonded_balance = nil
-      end
-
-      if attributes.key?(:'participant_type')
-        self.participant_type = attributes[:'participant_type']
-      else
-        self.participant_type = nil
+        self.signed_payload = nil
       end
     end
 
@@ -113,24 +70,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @address.nil?
-        invalid_properties.push('invalid value for "address", address cannot be nil.')
-      end
-
-      if @date.nil?
-        invalid_properties.push('invalid value for "date", date cannot be nil.')
-      end
-
-      if @bonded_stake.nil?
-        invalid_properties.push('invalid value for "bonded_stake", bonded_stake cannot be nil.')
-      end
-
-      if @unbonded_balance.nil?
-        invalid_properties.push('invalid value for "unbonded_balance", unbonded_balance cannot be nil.')
-      end
-
-      if @participant_type.nil?
-        invalid_properties.push('invalid value for "participant_type", participant_type cannot be nil.')
+      if @signed_payload.nil?
+        invalid_properties.push('invalid value for "signed_payload", signed_payload cannot be nil.')
       end
 
       invalid_properties
@@ -140,11 +81,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @address.nil?
-      return false if @date.nil?
-      return false if @bonded_stake.nil?
-      return false if @unbonded_balance.nil?
-      return false if @participant_type.nil?
+      return false if @signed_payload.nil?
       true
     end
 
@@ -153,11 +90,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          address == o.address &&
-          date == o.date &&
-          bonded_stake == o.bonded_stake &&
-          unbonded_balance == o.unbonded_balance &&
-          participant_type == o.participant_type
+          signed_payload == o.signed_payload
     end
 
     # @see the `==` method
@@ -169,7 +102,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [address, date, bonded_stake, unbonded_balance, participant_type].hash
+      [signed_payload].hash
     end
 
     # Builds the object from hash

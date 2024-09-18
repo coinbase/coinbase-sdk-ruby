@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add `deploy_token` support for deploying ERC20 tokens from MPC / dev-managed wallets.
+
 ## [0.5.0] - 2024-09-11
 
 ### Added

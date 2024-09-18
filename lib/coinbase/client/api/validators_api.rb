@@ -20,7 +20,7 @@ module Coinbase::Client
       @api_client = api_client
     end
     # Get a validator belonging to the CDP project
-    # Get a validator belonging to the CDP project for a given network, asset and id.
+    # Get a validator belonging to the user for a given network, asset and id.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validator for.
     # @param validator_id [String] The unique id of the validator to fetch details for.
@@ -32,7 +32,7 @@ module Coinbase::Client
     end
 
     # Get a validator belonging to the CDP project
-    # Get a validator belonging to the CDP project for a given network, asset and id.
+    # Get a validator belonging to the user for a given network, asset and id.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validator for.
     # @param validator_id [String] The unique id of the validator to fetch details for.
@@ -95,7 +95,7 @@ module Coinbase::Client
     end
 
     # List validators belonging to the CDP project
-    # List validators belonging to the CDP project for a given network and asset.
+    # List validators belonging to the user for a given network and asset.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validators for.
     # @param [Hash] opts the optional parameters
@@ -109,7 +109,7 @@ module Coinbase::Client
     end
 
     # List validators belonging to the CDP project
-    # List validators belonging to the CDP project for a given network and asset.
+    # List validators belonging to the user for a given network and asset.
     # @param network_id [String] The ID of the blockchain network.
     # @param asset_id [String] The symbol of the asset to get the validators for.
     # @param [Hash] opts the optional parameters

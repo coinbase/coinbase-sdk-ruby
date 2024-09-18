@@ -14,15 +14,13 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class WebhookEventType
-    UNSPECIFIED = "unspecified".freeze
-    ERC20_TRANSFER = "erc20_transfer".freeze
-    ERC721_TRANSFER = "erc721_transfer".freeze
-    WALLET_ACTIVITY = "wallet_activity".freeze
+  class SmartContractType
+    ERC20 = "erc20".freeze
+    ERC721 = "erc721".freeze
     UNKNOWN_DEFAULT_OPEN_API = "unknown_default_open_api".freeze
 
     def self.all_vars
-      @all_vars ||= [UNSPECIFIED, ERC20_TRANSFER, ERC721_TRANSFER, WALLET_ACTIVITY, UNKNOWN_DEFAULT_OPEN_API].freeze
+      @all_vars ||= [ERC20, ERC721, UNKNOWN_DEFAULT_OPEN_API].freeze
     end
 
     # Builds the enum from string
@@ -36,8 +34,8 @@ module Coinbase::Client
     # @param [String] The enum value in the form of the string
     # @return [String] The enum value
     def build_from_hash(value)
-      return value if WebhookEventType.all_vars.include?(value)
-      raise "Invalid ENUM value #{value} for class #WebhookEventType"
+      return value if SmartContractType.all_vars.include?(value)
+      raise "Invalid ENUM value #{value} for class #SmartContractType"
     end
   end
 end

@@ -319,9 +319,17 @@ describe Coinbase::Transaction do
       expect(signature).to eq(transaction.raw.hex)
     end
 
+    context 'when the key is not an Eth::Key' do
+      let(:key) { 'not a key' }
+
+      it 'raises an error' do
+        expect { transaction.sign(key) }.to raise_error(RuntimeError)
+      end
+    end
+
     context 'when it is signed again' do
       it 'raises an error' do
-        expect { transaction.sign(from_key) }.to raise_error(Eth::Signature::SignatureError)
+        expect { transaction.sign(from_key) }.to raise_error(Coinbase::AlreadySignedError)
       end
     end
   end

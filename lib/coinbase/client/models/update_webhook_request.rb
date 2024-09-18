@@ -15,6 +15,8 @@ require 'time'
 
 module Coinbase::Client
   class UpdateWebhookRequest
+    attr_accessor :event_type_filter
+
     # Webhook will monitor all events that matches any one of the event filters.
     attr_accessor :event_filters
 
@@ -24,6 +26,7 @@ module Coinbase::Client
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
+        :'event_type_filter' => :'event_type_filter',
         :'event_filters' => :'event_filters',
         :'notification_uri' => :'notification_uri'
       }
@@ -37,6 +40,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
+        :'event_type_filter' => :'WebhookEventTypeFilter',
         :'event_filters' => :'Array<WebhookEventFilter>',
         :'notification_uri' => :'String'
       }
@@ -63,12 +67,14 @@ module Coinbase::Client
         h[k.to_sym] = v
       }
 
+      if attributes.key?(:'event_type_filter')
+        self.event_type_filter = attributes[:'event_type_filter']
+      end
+
       if attributes.key?(:'event_filters')
         if (value = attributes[:'event_filters']).is_a?(Array)
           self.event_filters = value
         end
-      else
-        self.event_filters = nil
       end
 
       if attributes.key?(:'notification_uri')
@@ -83,10 +89,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @event_filters.nil?
-        invalid_properties.push('invalid value for "event_filters", event_filters cannot be nil.')
-      end
-
       if @notification_uri.nil?
         invalid_properties.push('invalid value for "notification_uri", notification_uri cannot be nil.')
       end
@@ -98,7 +100,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @event_filters.nil?
       return false if @notification_uri.nil?
       true
     end
@@ -108,6 +109,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
+          event_type_filter == o.event_type_filter &&
           event_filters == o.event_filters &&
           notification_uri == o.notification_uri
     end
@@ -121,7 +123,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_filters, notification_uri].hash
+      [event_type_filter, event_filters, notification_uri].hash
     end
 
     # Builds the object from hash

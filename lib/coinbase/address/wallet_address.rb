@@ -130,6 +130,31 @@ module Coinbase
       invocation
     end
 
+    # Deploys a new ERC20 token contract with the given name, symbol, and total supply.
+    # @param name [String] The name of the token.
+    # @param symbol [String] The symbol of the token.
+    # @param total_supply [Integer, BigDecimal] The total supply of the token, denominated in
+    # whole units.
+    # @return [Coinbase::SmartContract] The deployed token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+    def deploy_token(name:, symbol:, total_supply:)
+      ensure_can_sign!
+
+      smart_contract = SmartContract.create_token_contract(
+        address_id: id,
+        wallet_id: wallet_id,
+        name: name,
+        symbol: symbol,
+        total_supply: total_supply
+      )
+
+      return smart_contract if Coinbase.use_server_signer?
+
+      smart_contract.sign(@key)
+      smart_contract.deploy!
+      smart_contract
+    end
+
     # Signs the given unsigned payload.
     # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
     # @return [Coinbase::PayloadSignature] The payload signature
