@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.6.0] - 2024-09-18
+
 ### Added
 - Add `deploy_token` support for deploying ERC20 tokens from MPC / dev-managed wallets.
 - Allow for calling `invoke_contract` without an ABI for known contract types (ERC20, ERC721, and
