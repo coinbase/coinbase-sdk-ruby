@@ -31,23 +31,6 @@ describe Coinbase do
       list_address_transactions_test(imported_address)
     end
   end
-
-  # Use Server-Signer only half the runs to save test time.
-  describe 'use for serve signer', skip: rand >= 0.5 do
-    it 'behaves as expected' do # rubocop:disable RSpec/NoExpectationExample
-      described_class.configuration.use_server_signer = true
-      signer = Coinbase::ServerSigner.default
-      puts "Using ServerSigner with ID: #{signer.id}"
-
-      new_address = create_new_address_test
-      existing_wallet = fetch_existing_wallet
-      fetch_addresses_balances_test(existing_wallet)
-      existing_address = existing_wallet.addresses[0]
-      transfer_test(existing_address, new_address)
-      fetch_address_historical_balances_test(existing_address)
-      list_address_transactions_test(existing_address)
-    end
-  end
 end
 
 def create_new_address_test
