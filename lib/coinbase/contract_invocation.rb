@@ -25,31 +25,30 @@ module Coinbase
         address_id:,
         wallet_id:,
         contract_address:,
-        abi:,
         method:,
-        amount:,
-        asset_id:,
         network:,
-        args: {}
+        args: {},
+        amount: nil,
+        abi: nil,
+        asset_id: nil
       )
-        atomic_amount = nil
+        req = {
+          method: method,
+          args: args.to_json,
+          contract_address: contract_address
+        }
 
+        req[:abi] = abi.to_json unless abi.nil?
+
+        # For payable contract invocations, convert the amount to atomic units of specified asset.
         if amount && asset_id && network
-          network = Coinbase::Network.from_id(network)
-          asset = network.get_asset(asset_id)
-          atomic_amount = asset.to_atomic_amount(amount).to_i_to_s
+          asset = Coinbase::Asset.fetch(network, asset_id)
+
+          req[:amount] = asset.to_atomic_amount(amount).to_i.to_s
         end
 
         model = Coinbase.call_api do
-          contract_invocation_api.create_contract_invocation(
-            wallet_id,
-            address_id,
-            contract_address: contract_address,
-            abi: abi.to_json,
-            method: method,
-            args: args.to_json,
-            amount: atomic_amount
-          )
+          contract_invocation_api.create_contract_invocation(wallet_id, address_id, **req)
         end
 
         new(model)

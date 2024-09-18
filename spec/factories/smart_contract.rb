@@ -78,9 +78,12 @@ FactoryBot.define do
       status { nil }
       key { build(:key) }
       type { :token }
+      contract_address { '0x5FbDB2315678afecb367f032d93F642f64180aa3' }
     end
 
-    model { build(:smart_contract_model, type, key: key) }
+    model do
+      build(:smart_contract_model, type, key: key, contract_address: contract_address)
+    end
 
     trait :token do
       type { :token }
@@ -107,7 +110,10 @@ FactoryBot.define do
         build(
           :smart_contract_model,
           transients,
-          **{ key: transients.key }.compact
+          **{
+            key: transients.key,
+            contract_address: contract_address
+          }.compact
         )
       end
     end
