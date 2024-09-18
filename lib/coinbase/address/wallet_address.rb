@@ -106,7 +106,7 @@ module Coinbase
     # @param asset_id [Symbol] (Optional) The ID of the Asset to send to a payable contract method.
     #   The Asset must be a denomination of the native Asset. For Ethereum, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::ContractInvocation] The contract invocation object.
-    def invoke_contract(contract_address:, abi:, method:, args:, amount: nil, asset_id: nil)
+    def invoke_contract(contract_address:, method:, args:, abi: nil, amount: nil, asset_id: nil)
       ensure_can_sign!
       ensure_sufficient_balance!(amount, asset_id) if amount && asset_id
 

@@ -173,6 +173,30 @@ describe Coinbase::WalletAddress do
           expect(created_invocation).not_to have_received(:broadcast!)
         end
       end
+
+      context 'when ABI is not specified' do
+        subject(:contract_invocation) do
+          address.invoke_contract(
+            contract_address: contract_invocation_model.contract_address,
+            method: contract_invocation_model.method,
+            args: args
+          )
+        end
+
+        it 'creates a contract invocation without an ABI' do # rubocop:disable RSpec/ExampleLength
+          expect(Coinbase::ContractInvocation).to have_received(:create).with(
+            address_id: address_id,
+            wallet_id: wallet_id,
+            contract_address: contract_invocation_model.contract_address,
+            method: contract_invocation_model.method,
+            abi: nil,
+            amount: nil,
+            asset_id: nil,
+            network: network,
+            args: args
+          )
+        end
+      end
     end
 
     context 'when invoking a payable contract method' do
