@@ -252,6 +252,10 @@ module Coinbase
       @balance_history_api ||= Coinbase::Client::BalanceHistoryApi.new(Coinbase.configuration.api_client)
     end
 
+    def transaction_history_api
+      @transaction_history_api ||= Coinbase::Client::TransactionHistoryApi.new(Coinbase.configuration.api_client)
+    end
+
     def stake_api
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
@@ -266,7 +270,7 @@ module Coinbase
     end
 
     def list_transaction_page(page)
-      addresses_api.list_address_transactions(
+      transaction_history_api.list_address_transactions(
         network.normalized_id,
         id,
         { limit: DEFAULT_TRANSACTION_PAGE_LIMIT, page: page }
