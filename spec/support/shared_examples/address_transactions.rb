@@ -6,6 +6,8 @@ shared_examples 'an address that supports transaction queries' do |_operation|
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
+    allow(Coinbase::Client::TransactionHistoryApi).to receive(:new).and_return(transaction_history_api)
+
   end
 
   describe '#transactions' do
