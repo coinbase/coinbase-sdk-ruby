@@ -2,6 +2,7 @@
 
 shared_examples 'an address that supports transaction queries' do |_operation|
   let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
+  let(:transaction_history_api) { instance_double(Coinbase::Client::TransactionHistoryApi) }
 
   before do
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
@@ -18,7 +19,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
     end
 
     before do
-      allow(external_addresses_api)
+      allow(transaction_history_api)
         .to receive(:list_address_transactions)
         .with(normalized_network_id, address_id, { limit: 10, page: nil })
         .and_return(response)
