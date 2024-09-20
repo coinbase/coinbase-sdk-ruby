@@ -123,6 +123,7 @@ Coinbase::Client.autoload :ServerSignersApi, 'coinbase/client/api/server_signers
 Coinbase::Client.autoload :SmartContractsApi, 'coinbase/client/api/smart_contracts_api'
 Coinbase::Client.autoload :StakeApi, 'coinbase/client/api/stake_api'
 Coinbase::Client.autoload :TradesApi, 'coinbase/client/api/trades_api'
+Coinbase::Client.autoload :TransactionHistoryApi, 'coinbase/client/api/transaction_history_api'
 Coinbase::Client.autoload :TransfersApi, 'coinbase/client/api/transfers_api'
 Coinbase::Client.autoload :UsersApi, 'coinbase/client/api/users_api'
 Coinbase::Client.autoload :ValidatorsApi, 'coinbase/client/api/validators_api'
