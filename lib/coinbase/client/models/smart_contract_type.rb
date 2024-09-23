@@ -17,10 +17,11 @@ module Coinbase::Client
   class SmartContractType
     ERC20 = "erc20".freeze
     ERC721 = "erc721".freeze
+    ERC1155 = "erc1155".freeze
     UNKNOWN_DEFAULT_OPEN_API = "unknown_default_open_api".freeze
 
     def self.all_vars
-      @all_vars ||= [ERC20, ERC721, UNKNOWN_DEFAULT_OPEN_API].freeze
+      @all_vars ||= [ERC20, ERC721, ERC1155, UNKNOWN_DEFAULT_OPEN_API].freeze
     end
 
     # Builds the enum from string

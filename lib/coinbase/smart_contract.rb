@@ -72,6 +72,27 @@ module Coinbase
       new(contract)
     end
 
+    def self.create_nft_contract(
+      address_id:,
+      wallet_id:,
+      name:,
+      symbol:,
+      base_uri:
+    )
+      contract = Coinbase.call_api do
+        smart_contracts_api.create_smart_contract(
+          wallet_id,
+          address_id,
+          {
+            type: Coinbase::Client::SmartContractType::ERC721,
+            options: Coinbase::Client::NftContractOptions.new(name: name, symbol: symbol, base_uri: base_uri).to_body
+          }
+        )
+      end
+
+      new(contract)
+    end
+
     def self.contract_events_api
       Coinbase::Client::ContractEventsApi.new(Coinbase.configuration.api_client)
     end
