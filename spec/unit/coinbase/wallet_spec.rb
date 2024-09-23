@@ -934,6 +934,44 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#deploy_nft' do
+    subject(:nft_contract) { wallet.deploy_nft(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_nft_contract) { build(:smart_contract, :nft) }
+    let(:smart_contract_model) { build(:smart_contract_model, :nft) }
+    let(:parameters) do
+      {
+        name: 'NFT Collection',
+        symbol: 'NFTC',
+        base_uri: 'https://example.com/nft/'
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:deploy_nft)
+        .and_return(created_nft_contract)
+
+      nft_contract
+    end
+
+    it 'returns the deployed NFT contract' do
+      expect(nft_contract).to eq(created_nft_contract)
+    end
+
+    it 'calls deploy_nft on the default address' do
+      expect(wallet.default_address).to have_received(:deploy_nft).with(parameters)
+    end
+  end
+
   describe '#invoke_contract' do
     subject(:contract_invocation) { wallet.invoke_contract(parameters) }
 

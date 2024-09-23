@@ -10,6 +10,7 @@ FactoryBot.define do
       name { 'Test Token' }
       symbol { 'TT' }
       total_supply { 1_000 }
+      base_uri { 'https://test.com' }
     end
 
     deployer_address { key.address.to_s }
@@ -48,7 +49,8 @@ FactoryBot.define do
       options do
         Coinbase::Client::NFTContractOptions.new(
           name: name,
-          symbol: symbol
+          symbol: symbol,
+          base_uri: base_uri
         )
       end
     end

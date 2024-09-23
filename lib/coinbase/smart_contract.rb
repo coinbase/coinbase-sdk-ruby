@@ -85,7 +85,11 @@ module Coinbase
           address_id,
           {
             type: Coinbase::Client::SmartContractType::ERC721,
-            options: Coinbase::Client::NftContractOptions.new(name: name, symbol: symbol, base_uri: base_uri).to_body
+            options: Coinbase::Client::NFTContractOptions.new(
+              name: name,
+              symbol: symbol,
+              base_uri: base_uri
+            ).to_body
           }
         )
       end
