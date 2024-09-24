@@ -20,6 +20,7 @@ module Coinbase::Client
       # List of class defined in oneOf (OpenAPI v3)
       def openapi_one_of
         [
+          :'MultiTokenContractOptions',
           :'NFTContractOptions',
           :'TokenContractOptions'
         ]
