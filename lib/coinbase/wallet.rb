@@ -252,9 +252,15 @@ module Coinbase
     # @return [Coinbase::SmartContract] The deployed NFT contract.
     # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
 
+    # @!method deploy_multi_token
+    # Deploys a new ERC1155 multi-token contract with the given URI.
+    # @param uri [String] The URI for the token metadata, where {id} will be replaced with the token ID.
+    # @return [Coinbase::SmartContract] The deployed multi-token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
                    :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract,
-                   :deploy_token, :deploy_nft
+                   :deploy_token, :deploy_nft, :deploy_multi_token
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
