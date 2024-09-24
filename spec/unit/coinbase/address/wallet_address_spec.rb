@@ -631,4 +631,170 @@ describe Coinbase::WalletAddress do
       expect(address.trades).to eq(trade_enumerator)
     end
   end
+
+  describe '#deploy_token' do
+    subject(:deploy_token) do
+      address.deploy_token(
+        name: token_name,
+        symbol: token_symbol,
+        total_supply: token_total_supply
+      )
+    end
+
+    let(:token_name) { 'My Token' }
+    let(:token_symbol) { 'MTK' }
+    let(:token_total_supply) { 1_000_000 }
+    let(:created_smart_contract) { build(:smart_contract, network_id, key: key) }
+    let(:use_server_signer) { false }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the token contract deployment is successful' do
+      before do
+        allow(Coinbase::SmartContract).to receive(:create_token_contract).and_return(created_smart_contract)
+
+        allow(created_smart_contract).to receive(:sign)
+        allow(created_smart_contract).to receive(:deploy!)
+
+        deploy_token
+      end
+
+      it 'creates a token contract' do
+        expect(Coinbase::SmartContract).to have_received(:create_token_contract).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          name: token_name,
+          symbol: token_symbol,
+          total_supply: token_total_supply
+        )
+      end
+
+      it 'returns the created smart contract' do
+        expect(deploy_token).to eq(created_smart_contract)
+      end
+
+      context 'when not using server signer' do
+        let(:use_server_signer) { false }
+
+        it 'signs the contract with the key' do
+          expect(created_smart_contract).to have_received(:sign).with(key)
+        end
+
+        it 'deploys the contract' do
+          expect(created_smart_contract).to have_received(:deploy!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'does not sign the contract with the key' do
+          expect(created_smart_contract).not_to have_received(:sign)
+        end
+
+        it 'does not deploy the contract' do
+          expect(created_smart_contract).not_to have_received(:deploy!)
+        end
+      end
+    end
+
+    context 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an AddressCannotSignError' do
+        expect do
+          unhydrated_address.deploy_token(
+            name: token_name,
+            symbol: token_symbol,
+            total_supply: token_total_supply
+          )
+        end.to raise_error(Coinbase::AddressCannotSignError)
+      end
+    end
+  end
+
+  describe '#deploy_nft' do
+    subject(:deploy_nft) do
+      address.deploy_nft(
+        name: nft_name,
+        symbol: nft_symbol,
+        base_uri: nft_base_uri
+      )
+    end
+
+    let(:nft_name) { 'My NFT Collection' }
+    let(:nft_symbol) { 'MNFT' }
+    let(:nft_base_uri) { 'https://example.com/nft/' }
+    let(:created_smart_contract) { build(:smart_contract, network_id, key: key) }
+    let(:use_server_signer) { false }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the NFT contract deployment is successful' do
+      before do
+        allow(Coinbase::SmartContract).to receive(:create_nft_contract).and_return(created_smart_contract)
+
+        allow(created_smart_contract).to receive(:sign)
+        allow(created_smart_contract).to receive(:deploy!)
+
+        deploy_nft
+      end
+
+      it 'creates an NFT contract' do
+        expect(Coinbase::SmartContract).to have_received(:create_nft_contract).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          name: nft_name,
+          symbol: nft_symbol,
+          base_uri: nft_base_uri
+        )
+      end
+
+      it 'returns the created smart contract' do
+        expect(deploy_nft).to eq(created_smart_contract)
+      end
+
+      context 'when not using server signer' do
+        let(:use_server_signer) { false }
+
+        it 'signs the contract with the key' do
+          expect(created_smart_contract).to have_received(:sign).with(key)
+        end
+
+        it 'deploys the contract' do
+          expect(created_smart_contract).to have_received(:deploy!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'does not sign the contract with the key' do
+          expect(created_smart_contract).not_to have_received(:sign)
+        end
+
+        it 'does not deploy the contract' do
+          expect(created_smart_contract).not_to have_received(:deploy!)
+        end
+      end
+    end
+
+    context 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an AddressCannotSignError' do
+        expect do
+          unhydrated_address.deploy_nft(
+            name: nft_name,
+            symbol: nft_symbol,
+            base_uri: nft_base_uri
+          )
+        end.to raise_error(Coinbase::AddressCannotSignError)
+      end
+    end
+  end
 end

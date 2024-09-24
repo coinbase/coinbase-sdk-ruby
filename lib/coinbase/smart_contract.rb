@@ -72,6 +72,39 @@ module Coinbase
       new(contract)
     end
 
+    # Creates a new ERC721 token contract, that can subsequently be deployed to
+    # the blockchain.
+    # @param address_id [String] The address ID of deployer
+    # @param wallet_id [String] The wallet ID of the deployer
+    # @param name [String] The name of the token
+    # @param symbol [String] The symbol of the token
+    # @param base_uri [String] The base URI for the token metadata
+    # @return [SmartContract] The new ERC721 Token SmartContract object
+    def self.create_nft_contract(
+      address_id:,
+      wallet_id:,
+      name:,
+      symbol:,
+      base_uri:
+    )
+      contract = Coinbase.call_api do
+        smart_contracts_api.create_smart_contract(
+          wallet_id,
+          address_id,
+          {
+            type: Coinbase::Client::SmartContractType::ERC721,
+            options: Coinbase::Client::NFTContractOptions.new(
+              name: name,
+              symbol: symbol,
+              base_uri: base_uri
+            ).to_body
+          }
+        )
+      end
+
+      new(contract)
+    end
+
     def self.contract_events_api
       Coinbase::Client::ContractEventsApi.new(Coinbase.configuration.api_client)
     end

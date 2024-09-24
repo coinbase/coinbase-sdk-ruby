@@ -22,11 +22,15 @@ module Coinbase::Client
     # The symbol of the NFT
     attr_accessor :symbol
 
+    # The base URI for the NFT metadata
+    attr_accessor :base_uri
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
         :'name' => :'name',
-        :'symbol' => :'symbol'
+        :'symbol' => :'symbol',
+        :'base_uri' => :'base_uri'
       }
     end
 
@@ -39,7 +43,8 @@ module Coinbase::Client
     def self.openapi_types
       {
         :'name' => :'String',
-        :'symbol' => :'String'
+        :'symbol' => :'String',
+        :'base_uri' => :'String'
       }
     end
 
@@ -75,6 +80,12 @@ module Coinbase::Client
       else
         self.symbol = nil
       end
+
+      if attributes.key?(:'base_uri')
+        self.base_uri = attributes[:'base_uri']
+      else
+        self.base_uri = nil
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -90,6 +101,10 @@ module Coinbase::Client
         invalid_properties.push('invalid value for "symbol", symbol cannot be nil.')
       end
 
+      if @base_uri.nil?
+        invalid_properties.push('invalid value for "base_uri", base_uri cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -99,6 +114,7 @@ module Coinbase::Client
       warn '[DEPRECATED] the `valid?` method is obsolete'
       return false if @name.nil?
       return false if @symbol.nil?
+      return false if @base_uri.nil?
       true
     end
 
@@ -108,7 +124,8 @@ module Coinbase::Client
       return true if self.equal?(o)
       self.class == o.class &&
           name == o.name &&
-          symbol == o.symbol
+          symbol == o.symbol &&
+          base_uri == o.base_uri
     end
 
     # @see the `==` method
@@ -120,7 +137,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [name, symbol].hash
+      [name, symbol, base_uri].hash
     end
 
     # Builds the object from hash
