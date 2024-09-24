@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add `deploy_nft` support for deploying ERC721 contracts from MPC / dev-managed wallets.
+
 ## [0.6.0] - 2024-09-18
 
 ### Added
