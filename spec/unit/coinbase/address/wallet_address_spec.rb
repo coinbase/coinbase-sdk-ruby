@@ -714,7 +714,7 @@ describe Coinbase::WalletAddress do
       end
     end
   end
-  
+
   describe '#deploy_nft' do
     subject(:deploy_nft) do
       address.deploy_nft(
@@ -797,5 +797,4 @@ describe Coinbase::WalletAddress do
       end
     end
   end
-
 end
