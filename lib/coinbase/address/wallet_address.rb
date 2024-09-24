@@ -179,6 +179,26 @@ module Coinbase
       smart_contract
     end
 
+    # Deploys a new ERC1155 multi-token contract with the given URI.
+    # @param uri [String] The URI for the token metadata, where {id} will be replaced with the token ID.
+    # @return [Coinbase::SmartContract] The deployed multi-token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+    def deploy_multi_token(uri:)
+      ensure_can_sign!
+
+      smart_contract = SmartContract.create_multi_token_contract(
+        address_id: id,
+        wallet_id: wallet_id,
+        uri: uri
+      )
+
+      return smart_contract if Coinbase.use_server_signer?
+
+      smart_contract.sign(@key)
+      smart_contract.deploy!
+      smart_contract
+    end
+
     # Signs the given unsigned payload.
     # @param unsigned_payload [String] The hex-encoded hashed unsigned payload for the Address to sign.
     # @return [Coinbase::PayloadSignature] The payload signature
