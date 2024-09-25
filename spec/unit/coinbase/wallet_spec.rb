@@ -972,6 +972,42 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#deploy_multi_token' do
+    subject(:multi_token_contract) { wallet.deploy_multi_token(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_multi_token_contract) { build(:smart_contract, :multi_token) }
+    let(:smart_contract_model) { build(:smart_contract_model, :multi_token) }
+    let(:parameters) do
+      {
+        uri: 'https://example.com/token/{id}.json'
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:deploy_multi_token)
+        .and_return(created_multi_token_contract)
+
+      multi_token_contract
+    end
+
+    it 'returns the deployed multi-token contract' do
+      expect(multi_token_contract).to eq(created_multi_token_contract)
+    end
+
+    it 'calls deploy_multi_token on the default address' do
+      expect(wallet.default_address).to have_received(:deploy_multi_token).with(parameters)
+    end
+  end
+
   describe '#invoke_contract' do
     subject(:contract_invocation) { wallet.invoke_contract(parameters) }
 

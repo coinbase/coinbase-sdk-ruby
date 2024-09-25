@@ -55,6 +55,14 @@ FactoryBot.define do
       end
     end
 
+    trait :multi_token do
+      options do
+        Coinbase::Client::MultiTokenContractOptions.new(
+          uri: 'https://example.com/token/{id}.json'
+        )
+      end
+    end
+
     NETWORK_TRAITS.each do |network|
       trait network do
         network_id { Coinbase.normalize_network(network) }
@@ -93,6 +101,10 @@ FactoryBot.define do
 
     trait :nft do
       type { :nft }
+    end
+
+    trait :multi_token do
+      type { :multi_token }
     end
 
     TX_TRAITS.each do |status|

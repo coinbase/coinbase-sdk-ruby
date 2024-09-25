@@ -143,6 +143,61 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '.create_multi_token_contract' do
+    subject(:smart_contract) do
+      described_class.create_multi_token_contract(
+        address_id: address_id,
+        wallet_id: wallet_id,
+        uri: uri
+      )
+    end
+
+    let(:uri) { 'https://example.com/token/{id}.json' }
+
+    let(:create_smart_contract_request) do
+      {
+        type: Coinbase::Client::SmartContractType::ERC1155,
+        options: Coinbase::Client::MultiTokenContractOptions.new(
+          uri: uri
+        ).to_body
+      }
+    end
+
+    let(:multi_token_contract_model) do
+      build(:smart_contract_model, network_id,
+            type: Coinbase::Client::SmartContractType::ERC1155,
+            options: Coinbase::Client::MultiTokenContractOptions.new(
+              uri: uri
+            ))
+    end
+
+    before do
+      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
+      allow(smart_contracts_api)
+        .to receive(:create_smart_contract)
+        .with(wallet_id, address_id, create_smart_contract_request)
+        .and_return(multi_token_contract_model)
+    end
+
+    it 'creates a new SmartContract' do
+      expect(smart_contract).to be_a(described_class)
+    end
+
+    it 'sets the smart_contract properties' do
+      expect(smart_contract.id).to eq(multi_token_contract_model.smart_contract_id)
+    end
+
+    it 'sets the correct contract type' do
+      expect(smart_contract.type).to eq(Coinbase::Client::SmartContractType::ERC1155)
+    end
+
+    context 'when checking Multi-Token options' do
+      it 'sets the correct URI' do
+        expect(smart_contract.options.uri).to eq(uri)
+      end
+    end
+  end
+
   describe '.list_events' do
     subject(:enumerator) do
       described_class.list_events(

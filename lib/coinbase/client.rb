@@ -60,6 +60,7 @@ Coinbase::Client.autoload :FetchStakingRewards200Response, 'coinbase/client/mode
 Coinbase::Client.autoload :FetchStakingRewardsRequest, 'coinbase/client/models/fetch_staking_rewards_request'
 Coinbase::Client.autoload :GetStakingContextRequest, 'coinbase/client/models/get_staking_context_request'
 Coinbase::Client.autoload :HistoricalBalance, 'coinbase/client/models/historical_balance'
+Coinbase::Client.autoload :MultiTokenContractOptions, 'coinbase/client/models/multi_token_contract_options'
 Coinbase::Client.autoload :NFTContractOptions, 'coinbase/client/models/nft_contract_options'
 Coinbase::Client.autoload :Network, 'coinbase/client/models/network'
 Coinbase::Client.autoload :NetworkIdentifier, 'coinbase/client/models/network_identifier'

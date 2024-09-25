@@ -797,4 +797,75 @@ describe Coinbase::WalletAddress do
       end
     end
   end
+
+  describe '#deploy_multi_token' do
+    subject(:deploy_multi_token) do
+      address.deploy_multi_token(uri: multi_token_uri)
+    end
+
+    let(:multi_token_uri) { 'https://example.com/multi-token/{id}' }
+    let(:created_smart_contract) { build(:smart_contract, network_id, key: key) }
+    let(:use_server_signer) { false }
+
+    before do
+      allow(Coinbase).to receive(:use_server_signer?).and_return(use_server_signer)
+    end
+
+    context 'when the multi-token contract deployment is successful' do
+      before do
+        allow(Coinbase::SmartContract).to receive(:create_multi_token_contract).and_return(created_smart_contract)
+
+        allow(created_smart_contract).to receive(:sign)
+        allow(created_smart_contract).to receive(:deploy!)
+
+        deploy_multi_token
+      end
+
+      it 'creates a multi-token contract' do
+        expect(Coinbase::SmartContract).to have_received(:create_multi_token_contract).with(
+          address_id: address_id,
+          wallet_id: wallet_id,
+          uri: multi_token_uri
+        )
+      end
+
+      it 'returns the created smart contract' do
+        expect(deploy_multi_token).to eq(created_smart_contract)
+      end
+
+      context 'when not using server signer' do
+        let(:use_server_signer) { false }
+
+        it 'signs the contract with the key' do
+          expect(created_smart_contract).to have_received(:sign).with(key)
+        end
+
+        it 'deploys the contract' do
+          expect(created_smart_contract).to have_received(:deploy!)
+        end
+      end
+
+      context 'when using server signer' do
+        let(:use_server_signer) { true }
+
+        it 'does not sign the contract with the key' do
+          expect(created_smart_contract).not_to have_received(:sign)
+        end
+
+        it 'does not deploy the contract' do
+          expect(created_smart_contract).not_to have_received(:deploy!)
+        end
+      end
+    end
+
+    context 'when the address cannot sign' do
+      let(:unhydrated_address) { described_class.new(model, nil) }
+
+      it 'raises an AddressCannotSignError' do
+        expect do
+          unhydrated_address.deploy_multi_token(uri: multi_token_uri)
+        end.to raise_error(Coinbase::AddressCannotSignError)
+      end
+    end
+  end
 end
