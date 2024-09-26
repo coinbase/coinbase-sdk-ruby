@@ -72,6 +72,132 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '.create_nft_contract' do
+    subject(:smart_contract) do
+      described_class.create_nft_contract(
+        address_id: address_id,
+        wallet_id: wallet_id,
+        name: nft_name,
+        symbol: nft_symbol,
+        base_uri: base_uri
+      )
+    end
+
+    let(:nft_name) { 'Test NFT' }
+    let(:nft_symbol) { 'TNFT' }
+    let(:base_uri) { 'https://example.com/nft/' }
+
+    let(:create_smart_contract_request) do
+      {
+        type: Coinbase::Client::SmartContractType::ERC721,
+        options: Coinbase::Client::NFTContractOptions.new(
+          name: nft_name,
+          symbol: nft_symbol,
+          base_uri: base_uri
+        ).to_body
+      }
+    end
+
+    let(:nft_contract_model) do
+      build(:smart_contract_model, network_id,
+            type: Coinbase::Client::SmartContractType::ERC721,
+            options: Coinbase::Client::NFTContractOptions.new(
+              name: nft_name,
+              symbol: nft_symbol,
+              base_uri: base_uri
+            ))
+    end
+
+    before do
+      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
+      allow(smart_contracts_api)
+        .to receive(:create_smart_contract)
+        .with(wallet_id, address_id, create_smart_contract_request)
+        .and_return(nft_contract_model)
+    end
+
+    it 'creates a new SmartContract' do
+      expect(smart_contract).to be_a(described_class)
+    end
+
+    it 'sets the smart_contract properties' do
+      expect(smart_contract.id).to eq(nft_contract_model.smart_contract_id)
+    end
+
+    it 'sets the correct contract type' do
+      expect(smart_contract.type).to eq(Coinbase::Client::SmartContractType::ERC721)
+    end
+
+    context 'when checking NFT options' do
+      it 'sets the correct name' do
+        expect(smart_contract.options.name).to eq(nft_name)
+      end
+
+      it 'sets the correct symbol' do
+        expect(smart_contract.options.symbol).to eq(nft_symbol)
+      end
+
+      it 'sets the correct base URI' do
+        expect(smart_contract.options.base_uri).to eq(base_uri)
+      end
+    end
+  end
+
+  describe '.create_multi_token_contract' do
+    subject(:smart_contract) do
+      described_class.create_multi_token_contract(
+        address_id: address_id,
+        wallet_id: wallet_id,
+        uri: uri
+      )
+    end
+
+    let(:uri) { 'https://example.com/token/{id}.json' }
+
+    let(:create_smart_contract_request) do
+      {
+        type: Coinbase::Client::SmartContractType::ERC1155,
+        options: Coinbase::Client::MultiTokenContractOptions.new(
+          uri: uri
+        ).to_body
+      }
+    end
+
+    let(:multi_token_contract_model) do
+      build(:smart_contract_model, network_id,
+            type: Coinbase::Client::SmartContractType::ERC1155,
+            options: Coinbase::Client::MultiTokenContractOptions.new(
+              uri: uri
+            ))
+    end
+
+    before do
+      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
+      allow(smart_contracts_api)
+        .to receive(:create_smart_contract)
+        .with(wallet_id, address_id, create_smart_contract_request)
+        .and_return(multi_token_contract_model)
+    end
+
+    it 'creates a new SmartContract' do
+      expect(smart_contract).to be_a(described_class)
+    end
+
+    it 'sets the smart_contract properties' do
+      expect(smart_contract.id).to eq(multi_token_contract_model.smart_contract_id)
+    end
+
+    it 'sets the correct contract type' do
+      expect(smart_contract.type).to eq(Coinbase::Client::SmartContractType::ERC1155)
+    end
+
+    context 'when checking Multi-Token options' do
+      it 'sets the correct URI' do
+        expect(smart_contract.options.uri).to eq(uri)
+      end
+    end
+  end
+
   describe '.list_events' do
     subject(:enumerator) do
       described_class.list_events(

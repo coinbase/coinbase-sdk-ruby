@@ -244,9 +244,23 @@ module Coinbase
     # @return [Coinbase::SmartContract] The deployed token contract.
     # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
 
+    # @!method deploy_nft
+    # Deploys a new ERC721 NFT contract with the given name, symbol, and base URI.
+    # @param name [String] The name of the NFT contract.
+    # @param symbol [String] The symbol of the NFT contract.
+    # @param base_uri [String] The base URI for the NFT contract.
+    # @return [Coinbase::SmartContract] The deployed NFT contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+
+    # @!method deploy_multi_token
+    # Deploys a new ERC1155 multi-token contract with the given URI.
+    # @param uri [String] The URI for the token metadata, where {id} will be replaced with the token ID.
+    # @return [Coinbase::SmartContract] The deployed multi-token contract.
+    # @raise [AddressCannotSignError] if the Address does not have a private key backing it.
+
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
                    :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract,
-                   :deploy_token
+                   :deploy_token, :deploy_nft, :deploy_multi_token
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
@@ -468,6 +482,22 @@ module Coinbase
       "Successfully loaded seed for wallet #{id} from #{file_path}."
     end
 
+    # Creates a new webhook on the current wallet for tracking wallet activity events.
+    #
+    # @param notification_uri [String] The URI to which the webhook notifications will be sent.
+    #
+    # @return [Coinbase::Client::Webhook] The newly created webhook instance.
+    def create_webhook(notification_uri:)
+      Coinbase.call_api do
+        webhooks_api.create_wallet_webhook(
+          id,
+          create_wallet_webhook_request: {
+            notification_uri: notification_uri
+          }
+        )
+      end
+    end
+
     # Returns a String representation of the Wallet.
     # @return [String] a String representation of the Wallet
     def to_s
@@ -590,6 +620,10 @@ module Coinbase
 
     def wallets_api
       @wallets_api ||= Coinbase::Client::WalletsApi.new(Coinbase.configuration.api_client)
+    end
+
+    def webhooks_api
+      @webhooks_api ||= Coinbase::Client::WebhooksApi.new(Coinbase.configuration.api_client)
     end
 
     def set_addresses

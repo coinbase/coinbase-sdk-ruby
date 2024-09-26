@@ -1027,18 +1027,18 @@
       <pre class="lines">
 
 
-233
-234
-235
-236
-237
-238
 239
 240
-241</pre>
+241
+242
+243
+244
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 233</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 239</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_basic_auth'>basic_auth</span><span class='lparen'>(</span><span class='id identifier rubyid_conn'>conn</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_username'>username</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_password'>password</span>
@@ -1100,12 +1100,6 @@
       <pre class="lines">
 
 
-413
-414
-415
-416
-417
-418
 419
 420
 421
@@ -1116,10 +1110,16 @@
 426
 427
 428
-429</pre>
+429
+430
+431
+432
+433
+434
+435</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 413</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 419</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_collection_param'>build_collection_param</span><span class='lparen'>(</span><span class='id identifier rubyid_param'>param</span><span class='comma'>,</span> <span class='id identifier rubyid_collection_format'>collection_format</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_collection_format'>collection_format</span>
@@ -1158,18 +1158,18 @@
       <pre class="lines">
 
 
-213
-214
-215
-216
-217
-218
 219
 220
-221</pre>
+221
+222
+223
+224
+225
+226
+227</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 213</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 219</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_connection'>build_connection</span>
   <span class='const'>Faraday</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='label'>url:</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_base_url'>base_url</span><span class='comma'>,</span> <span class='label'>ssl:</span> <span class='id identifier rubyid_ssl_options'>ssl_options</span><span class='comma'>,</span> <span class='label'>proxy:</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_proxy'>proxy</span><span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
@@ -1581,14 +1581,14 @@
       <pre class="lines">
 
 
-334
-335
-336
-337
-338</pre>
+340
+341
+342
+343
+344</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 334</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 340</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_request_url'>build_request_url</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='id identifier rubyid_opts'>opts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='comment'># Add leading and trailing slashes to path
@@ -1746,12 +1746,12 @@
       <pre class="lines">
 
 
-198
-199
-200</pre>
+204
+205
+206</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 198</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 204</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connection'>connection</span><span class='lparen'>(</span><span class='id identifier rubyid_opts'>opts</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_opts'>opts</span><span class='lbracket'>[</span><span class='symbol'>:header_params</span><span class='rbracket'>]</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Type</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>multipart/form-data</span><span class='tstring_end'>&#39;</span></span> <span class='op'>?</span> <span class='id identifier rubyid_connection_multipart'>connection_multipart</span> <span class='op'>:</span> <span class='id identifier rubyid_connection_regular'>connection_regular</span>
@@ -1776,15 +1776,15 @@
       <pre class="lines">
 
 
-202
-203
-204
-205
-206
-207</pre>
+208
+209
+210
+211
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 202</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 208</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connection_multipart'>connection_multipart</span>
   <span class='ivar'>@connection_multipart</span> <span class='op'>||=</span> <span class='id identifier rubyid_build_connection'>build_connection</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_conn'>conn</span><span class='op'>|</span>
@@ -1812,12 +1812,12 @@
       <pre class="lines">
 
 
-209
-210
-211</pre>
+215
+216
+217</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 209</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 215</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_connection_regular'>connection_regular</span>
   <span class='ivar'>@connection_regular</span> <span class='op'>||=</span> <span class='id identifier rubyid_build_connection'>build_connection</span>
@@ -1907,12 +1907,6 @@
       <pre class="lines">
 
 
-288
-289
-290
-291
-292
-293
 294
 295
 296
@@ -1942,10 +1936,16 @@
 320
 321
 322
-323</pre>
+323
+324
+325
+326
+327
+328
+329</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 288</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 294</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_convert_to_type'>convert_to_type</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_return_type'>return_type</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -2050,12 +2050,6 @@
       <pre class="lines">
 
 
-259
-260
-261
-262
-263
-264
 265
 266
 267
@@ -2073,10 +2067,16 @@
 279
 280
 281
-282</pre>
+282
+283
+284
+285
+286
+287
+288</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 259</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 265</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='comma'>,</span> <span class='id identifier rubyid_return_type'>return_type</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span>
@@ -2122,7 +2122,6 @@
       <pre class="lines">
 
 
-170
 171
 172
 173
@@ -2148,37 +2147,48 @@
 193
 194
 195
-196</pre>
+196
+197
+198
+199
+200
+201
+202</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 170</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 171</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deserialize_file'>deserialize_file</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='comma'>,</span> <span class='id identifier rubyid_stream'>stream</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span>
-  <span class='kw'>if</span> <span class='ivar'>@config</span><span class='period'>.</span><span class='id identifier rubyid_return_binary_data'>return_binary_data</span> <span class='op'>==</span> <span class='kw'>true</span>
-    <span class='comment'># return byte stream
-</span>    <span class='id identifier rubyid_encoding'>encoding</span> <span class='op'>=</span> <span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_encoding'>encoding</span>
-    <span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='period'>.</span><span class='id identifier rubyid_force_encoding'>force_encoding</span><span class='lparen'>(</span><span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_body'>body</span>     <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span>
+  <span class='id identifier rubyid_encoding'>encoding</span> <span class='op'>=</span> <span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_encoding'>encoding</span>
+
+  <span class='comment'># reconstruct content
+</span>  <span class='id identifier rubyid_content'>content</span> <span class='op'>=</span> <span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span>
+  <span class='id identifier rubyid_content'>content</span> <span class='op'>=</span> <span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_unpack'>unpack</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>m</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span> <span class='kw'>if</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Transfer-Encoding</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>binary</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_content'>content</span> <span class='op'>=</span> <span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_force_encoding'>force_encoding</span><span class='lparen'>(</span><span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
+
+  <span class='comment'># return byte stream
+</span>  <span class='kw'>return</span> <span class='id identifier rubyid_content'>content</span> <span class='kw'>if</span> <span class='ivar'>@config</span><span class='period'>.</span><span class='id identifier rubyid_return_binary_data'>return_binary_data</span> <span class='op'>==</span> <span class='kw'>true</span>
+
+  <span class='comment'># return file instead of binary data
+</span>  <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Disposition</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>filename=</span><span class='regexp_end'>/i</span></span>
+    <span class='id identifier rubyid_filename'>filename</span> <span class='op'>=</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span><span class='lbracket'>[</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>filename=[&#39;&quot;]?([^&#39;&quot;\s]+)[&#39;&quot;]?</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='int'>1</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_sanitize_filename'>sanitize_filename</span><span class='lparen'>(</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
-    <span class='comment'># return file instead of binary data
-</span>    <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>=</span> <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_headers'>headers</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Content-Disposition</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
-    <span class='kw'>if</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>filename=</span><span class='regexp_end'>/i</span></span>
-      <span class='id identifier rubyid_filename'>filename</span> <span class='op'>=</span> <span class='id identifier rubyid_content_disposition'>content_disposition</span><span class='lbracket'>[</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>filename=[&#39;&quot;]?([^&#39;&quot;\s]+)[&#39;&quot;]?</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='int'>1</span><span class='rbracket'>]</span>
-      <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_sanitize_filename'>sanitize_filename</span><span class='lparen'>(</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span>
-    <span class='kw'>else</span>
-      <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>download-</span><span class='tstring_end'>&#39;</span></span>
-    <span class='kw'>end</span>
-    <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_prefix'>prefix</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_encoding'>encoding</span> <span class='op'>=</span> <span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_encoding'>encoding</span>
-    <span class='id identifier rubyid_tempfile'>tempfile</span> <span class='op'>=</span> <span class='const'>Tempfile</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_prefix'>prefix</span><span class='comma'>,</span> <span class='ivar'>@config</span><span class='period'>.</span><span class='id identifier rubyid_temp_folder_path'>temp_folder_path</span><span class='comma'>,</span> <span class='label'>encoding:</span> <span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='id identifier rubyid_stream'>stream</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='period'>.</span><span class='id identifier rubyid_force_encoding'>force_encoding</span><span class='lparen'>(</span><span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span><span class='rparen'>)</span>
-    <span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
-    <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Temp file written to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>, please copy the file to a proper folder </span><span class='tstring_end'>&quot;</span></span>\
-                        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>with e.g. `FileUtils.cp(tempfile.path, &#39;/new/file/path&#39;)` otherwise the temp file </span><span class='tstring_end'>&quot;</span></span>\
-                        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>will be deleted automatically with GC. It&#39;s also recommended to delete the temp file </span><span class='tstring_end'>&quot;</span></span>\
-                        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>explicitly with `tempfile.delete`</span><span class='tstring_end'>&quot;</span></span>
-    <span class='id identifier rubyid_tempfile'>tempfile</span>
+    <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>download-</span><span class='tstring_end'>&#39;</span></span>
   <span class='kw'>end</span>
+  <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_prefix'>prefix</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_tempfile'>tempfile</span> <span class='op'>=</span> <span class='const'>Tempfile</span><span class='period'>.</span><span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='id identifier rubyid_prefix'>prefix</span><span class='comma'>,</span> <span class='ivar'>@config</span><span class='period'>.</span><span class='id identifier rubyid_temp_folder_path'>temp_folder_path</span><span class='comma'>,</span> <span class='label'>encoding:</span> <span class='id identifier rubyid_encoding'>encoding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_write'>write</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_close'>close</span>
+
+  <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_logger'>logger</span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Temp file written to </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_tempfile'>tempfile</span><span class='period'>.</span><span class='id identifier rubyid_path'>path</span><span class='embexpr_end'>}</span><span class='tstring_content'>, please copy the file to a proper folder </span><span class='tstring_end'>&quot;</span></span>\
+                      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>with e.g. `FileUtils.cp(tempfile.path, &#39;/new/file/path&#39;)` otherwise the temp file </span><span class='tstring_end'>&quot;</span></span>\
+                      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>will be deleted automatically with GC. It&#39;s also recommended to delete the temp file </span><span class='tstring_end'>&quot;</span></span>\
+                      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>explicitly with `tempfile.delete`</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_tempfile'>tempfile</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2208,7 +2218,8 @@
 165
 166
 167
-168</pre>
+168
+169</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 160</span>
@@ -2220,6 +2231,7 @@
 </span>  <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_on_data'>on_data</span> <span class='op'>=</span> <span class='const'>Proc</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_chunk'>chunk</span><span class='comma'>,</span> <span class='id identifier rubyid_overall_received_bytes'>overall_received_bytes</span><span class='op'>|</span>
     <span class='id identifier rubyid_stream'>stream</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_chunk'>chunk</span>
   <span class='kw'>end</span>
+
   <span class='id identifier rubyid_stream'>stream</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2297,12 +2309,12 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-251
-252
-253</pre>
+257
+258
+259</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 251</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 257</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_json_mime?'>json_mime?</span><span class='lparen'>(</span><span class='id identifier rubyid_mime'>mime</span><span class='rparen'>)</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_mime'>mime</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*/*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='op'>!</span><span class='lparen'>(</span><span class='id identifier rubyid_mime'>mime</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^Application\/.*json(?!p)(;.*)?</span><span class='regexp_end'>/i</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -2376,16 +2388,16 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-403
-404
-405
-406
-407
-408
-409</pre>
+409
+410
+411
+412
+413
+414
+415</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 403</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 409</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_object_to_hash'>object_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_obj'>obj</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_obj'>obj</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_hash</span><span class='rparen'>)</span>
@@ -2463,19 +2475,19 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-389
-390
-391
-392
-393
-394
 395
 396
 397
-398</pre>
+398
+399
+400
+401
+402
+403
+404</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 389</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 395</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_object_to_http_body'>object_to_http_body</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_model'>model</span> <span class='kw'>if</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
@@ -2556,12 +2568,12 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-330
-331
-332</pre>
+336
+337
+338</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 330</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 336</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sanitize_filename'>sanitize_filename</span><span class='lparen'>(</span><span class='id identifier rubyid_filename'>filename</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_filename'>filename</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[\/\\]</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
@@ -2635,15 +2647,15 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-368
-369
-370
-371
-372
-373</pre>
+374
+375
+376
+377
+378
+379</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 368</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 374</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_select_header_accept'>select_header_accept</span><span class='lparen'>(</span><span class='id identifier rubyid_accepts'>accepts</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_accepts'>accepts</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_accepts'>accepts</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
@@ -2720,16 +2732,16 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-378
-379
-380
-381
-382
-383
-384</pre>
+384
+385
+386
+387
+388
+389
+390</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 378</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 384</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_select_header_content_type'>select_header_content_type</span><span class='lparen'>(</span><span class='id identifier rubyid_content_types'>content_types</span><span class='rparen'>)</span>
   <span class='comment'># return nil by default
@@ -2758,18 +2770,18 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-223
-224
-225
-226
-227
-228
 229
 230
-231</pre>
+231
+232
+233
+234
+235
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 223</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 229</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ssl_options'>ssl_options</span>
   <span class='lbrace'>{</span>
@@ -2863,20 +2875,20 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-345
-346
-347
-348
-349
-350
 351
 352
 353
 354
-355</pre>
+355
+356
+357
+358
+359
+360
+361</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 345</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 351</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update_params_for_auth!'>update_params_for_auth!</span><span class='lparen'>(</span><span class='id identifier rubyid_header_params'>header_params</span><span class='comma'>,</span> <span class='id identifier rubyid_query_params'>query_params</span><span class='comma'>,</span> <span class='id identifier rubyid_auth_names'>auth_names</span><span class='rparen'>)</span>
   <span class='const'>Array</span><span class='lparen'>(</span><span class='id identifier rubyid_auth_names'>auth_names</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_auth_name'>auth_name</span><span class='op'>|</span>
@@ -2940,13 +2952,13 @@ APPLICATION/JSON
       <pre class="lines">
 
 
-360
-361
-362
-363</pre>
+366
+367
+368
+369</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 360</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/api_client.rb', line 366</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_user_agent='>user_agent=</span><span class='lparen'>(</span><span class='id identifier rubyid_user_agent'>user_agent</span><span class='rparen'>)</span>
   <span class='ivar'>@user_agent</span> <span class='op'>=</span> <span class='id identifier rubyid_user_agent'>user_agent</span>

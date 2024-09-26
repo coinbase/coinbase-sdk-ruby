@@ -2,6 +2,7 @@ Gemfile.lock
 .yardoc
 lib/**/.DS_Store
 .idea
+.vscode/
 .DS_Store
 seeds.json
 coverage

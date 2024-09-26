@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 shared_examples 'an address that supports transaction queries' do |_operation|
-  let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
+  let(:transaction_history_api) { instance_double(Coinbase::Client::TransactionHistoryApi) }
 
   before do
-    allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
+    allow(Coinbase::Client::TransactionHistoryApi).to receive(:new).and_return(transaction_history_api)
   end
 
   describe '#transactions' do
@@ -18,7 +18,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
     end
 
     before do
-      allow(external_addresses_api)
+      allow(transaction_history_api)
         .to receive(:list_address_transactions)
         .with(normalized_network_id, address_id, { limit: 10, page: nil })
         .and_return(response)
@@ -35,7 +35,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
         address.transactions
       end
 
-      let(:api) { external_addresses_api }
+      let(:api) { transaction_history_api }
       let(:fetch_params) { ->(page) { [normalized_network_id, address_id, { limit: 10, page: page }] } }
       let(:resource_list_klass) { Coinbase::Client::AddressTransactionList }
       let(:item_klass) { Coinbase::Transaction }

@@ -21,11 +21,12 @@ module Coinbase::Client
     ETHEREUM_MAINNET = "ethereum-mainnet".freeze
     POLYGON_MAINNET = "polygon-mainnet".freeze
     SOLANA_DEVNET = "solana-devnet".freeze
+    SOLANA_MAINNET = "solana-mainnet".freeze
     ARBITRUM_MAINNET = "arbitrum-mainnet".freeze
     UNKNOWN_DEFAULT_OPEN_API = "unknown_default_open_api".freeze
 
     def self.all_vars
-      @all_vars ||= [BASE_SEPOLIA, BASE_MAINNET, ETHEREUM_HOLESKY, ETHEREUM_MAINNET, POLYGON_MAINNET, SOLANA_DEVNET, ARBITRUM_MAINNET, UNKNOWN_DEFAULT_OPEN_API].freeze
+      @all_vars ||= [BASE_SEPOLIA, BASE_MAINNET, ETHEREUM_HOLESKY, ETHEREUM_MAINNET, POLYGON_MAINNET, SOLANA_DEVNET, SOLANA_MAINNET, ARBITRUM_MAINNET, UNKNOWN_DEFAULT_OPEN_API].freeze
     end
 
     # Builds the enum from string

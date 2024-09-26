@@ -25,6 +25,7 @@ describe Coinbase::Wallet do
   let(:addresses_api) { instance_double(Coinbase::Client::AddressesApi) }
   let(:external_addresses_api) { instance_double(Coinbase::Client::ExternalAddressesApi) }
   let(:transfers_api) { instance_double(Coinbase::Client::TransfersApi) }
+  let(:webhooks_api) { instance_double(Coinbase::Client::WebhooksApi) }
   let(:use_server_signer) { false }
   let(:default_network) { build(:network, :base_sepolia) }
   let(:network) { default_network }
@@ -41,6 +42,7 @@ describe Coinbase::Wallet do
     allow(Coinbase::Client::AddressesApi).to receive(:new).and_return(addresses_api)
     allow(Coinbase::Client::WalletsApi).to receive(:new).and_return(wallets_api)
     allow(Coinbase::Client::ExternalAddressesApi).to receive(:new).and_return(external_addresses_api)
+    allow(Coinbase::Client::WebhooksApi).to receive(:new).and_return(webhooks_api)
 
     allow(Coinbase).to receive(:configuration).and_return(configuration)
 
@@ -934,6 +936,80 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#deploy_nft' do
+    subject(:nft_contract) { wallet.deploy_nft(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_nft_contract) { build(:smart_contract, :nft) }
+    let(:smart_contract_model) { build(:smart_contract_model, :nft) }
+    let(:parameters) do
+      {
+        name: 'NFT Collection',
+        symbol: 'NFTC',
+        base_uri: 'https://example.com/nft/'
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:deploy_nft)
+        .and_return(created_nft_contract)
+
+      nft_contract
+    end
+
+    it 'returns the deployed NFT contract' do
+      expect(nft_contract).to eq(created_nft_contract)
+    end
+
+    it 'calls deploy_nft on the default address' do
+      expect(wallet.default_address).to have_received(:deploy_nft).with(parameters)
+    end
+  end
+
+  describe '#deploy_multi_token' do
+    subject(:multi_token_contract) { wallet.deploy_multi_token(parameters) }
+
+    let(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:created_multi_token_contract) { build(:smart_contract, :multi_token) }
+    let(:smart_contract_model) { build(:smart_contract_model, :multi_token) }
+    let(:parameters) do
+      {
+        uri: 'https://example.com/token/{id}.json'
+      }
+    end
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address).to receive(:deploy_multi_token)
+        .and_return(created_multi_token_contract)
+
+      multi_token_contract
+    end
+
+    it 'returns the deployed multi-token contract' do
+      expect(multi_token_contract).to eq(created_multi_token_contract)
+    end
+
+    it 'calls deploy_multi_token on the default address' do
+      expect(wallet.default_address).to have_received(:deploy_multi_token).with(parameters)
+    end
+  end
+
   describe '#invoke_contract' do
     subject(:contract_invocation) { wallet.invoke_contract(parameters) }
 
@@ -1421,6 +1497,46 @@ describe Coinbase::Wallet do
       it 'includes the default address' do
         expect(wallet.inspect).to include(first_address_model.address_id)
       end
+    end
+  end
+
+  describe '#create_webhook' do
+    subject(:wallet_webhook) { wallet.create_webhook(notification_uri: notification_uri) }
+
+    let(:webhook_model) { build(:webhook_model, :wallet_activity) }
+    let(:wallet) { described_class.new(model, seed: seed) }
+    let(:network_id) { :base_sepolia }
+    let(:notification_uri) { 'https://example.com/notify' }
+    let(:event_type) { 'wallet_activity' }
+    let(:event_type_filter) do
+      {
+        'addresses' => ['0xa3B299855BE3eA231337aC7c40A615e090A3de25'],
+        'wallet_id' => 'd91d652b-d020-48d4-bf19-5c5eb5e280c7'
+      }
+    end
+
+    before do
+      allow(webhooks_api).to receive(:create_wallet_webhook).and_return(webhook_model)
+    end
+
+    it 'creates a new webhook with wallet activity event type' do
+      expect(wallet_webhook.event_type).to eq(event_type)
+    end
+
+    it 'has the correct id' do
+      expect(wallet_webhook.id).to eq('wallet_webhook')
+    end
+
+    it 'has the correct network_id' do
+      expect(wallet_webhook.network_id).to eq(network_id)
+    end
+
+    it 'has the correct notification_uri' do
+      expect(wallet_webhook.notification_uri).to eq(notification_uri)
+    end
+
+    it 'has the correct event_type_filter' do
+      expect(wallet_webhook.event_type_filter).to eq(event_type_filter)
     end
   end
 end

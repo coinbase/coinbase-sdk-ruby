@@ -10,6 +10,7 @@ FactoryBot.define do
       name { 'Test Token' }
       symbol { 'TT' }
       total_supply { 1_000 }
+      base_uri { 'https://test.com' }
     end
 
     deployer_address { key.address.to_s }
@@ -48,7 +49,16 @@ FactoryBot.define do
       options do
         Coinbase::Client::NFTContractOptions.new(
           name: name,
-          symbol: symbol
+          symbol: symbol,
+          base_uri: base_uri
+        )
+      end
+    end
+
+    trait :multi_token do
+      options do
+        Coinbase::Client::MultiTokenContractOptions.new(
+          uri: 'https://example.com/token/{id}.json'
         )
       end
     end
@@ -91,6 +101,10 @@ FactoryBot.define do
 
     trait :nft do
       type { :nft }
+    end
+
+    trait :multi_token do
+      type { :multi_token }
     end
 
     TX_TRAITS.each do |status|
