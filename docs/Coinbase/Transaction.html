@@ -927,12 +927,12 @@
       <pre class="lines">
 
 
-169
-170
-171</pre>
+172
+173
+174</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 172</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
@@ -1088,6 +1088,19 @@
     </li>
   
 </ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="AlreadySignedError.html" title="Coinbase::AlreadySignedError (class)">Coinbase::AlreadySignedError</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1099,12 +1112,18 @@
 150
 151
 152
-153</pre>
+153
+154
+155
+156</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 149</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Invalid key type</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Eth</span><span class='op'>::</span><span class='const'>Key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="AlreadySignedError.html" title="Coinbase::AlreadySignedError (class)">AlreadySignedError</a></span></span> <span class='kw'>if</span> <span class='id identifier rubyid_signed?'>signed?</span>
+
   <span class='id identifier rubyid_raw'>raw</span><span class='period'>.</span><span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_signature'>signature</span>
@@ -1217,12 +1236,12 @@
       <pre class="lines">
 
 
-157
-158
-159</pre>
+160
+161
+162</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 157</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 160</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_signed?'>signed?</span>
   <span class='const'>Eth</span><span class='op'>::</span><span class='const'>Tx</span><span class='period'>.</span><span class='id identifier rubyid_signed?'>signed?</span><span class='lparen'>(</span><span class='id identifier rubyid_raw'>raw</span><span class='rparen'>)</span>
@@ -1512,12 +1531,12 @@
       <pre class="lines">
 
 
-163
-164
-165</pre>
+166
+167
+168</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 163</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/transaction.rb', line 166</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Coinbase::Transaction{transaction_hash: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_transaction_hash'>transaction_hash</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;, status: &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_status'>status</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;}</span><span class='tstring_end'>&quot;</span></span>
