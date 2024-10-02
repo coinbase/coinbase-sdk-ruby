@@ -22,6 +22,7 @@ module Coinbase
       # @param event_filters [Array<Hash>] Filters applied to the events that determine
       #   which specific events trigger the webhook. Each filter should be a hash that
       #   can include keys like `contract_address`, `from_address`, or `to_address`.
+      # @param event_type_filter [Hash] Filters applied to wallet activity event type.
       # @return [Coinbase::Webhook] A new instance of Webhook.
       #
       # @example Create a new webhook
@@ -29,16 +30,27 @@ module Coinbase
       #     network_id: :ethereum_mainnet,
       #     notification_uri: 'https://example.com/callback',
       #     event_type: 'transaction',
-      #     event_filters: [{ 'contract_address' => '0x...', 'from_address' => '0x...', 'to_address' => '0x...' }]
+      #     event_filters: [{ 'contract_address' => '0x...', 'from_address' => '0x...', 'to_address' => '0x...' }],
+      #     event_type_filter: {
+      #       "addresses" => ["0xa3B299855BE3eA231337aC7c40A615e090A3de25"],
+      #       "wallet_id" => "d91d652b-d020-48d4-bf19-5c5eb5e280c7"
+      #     }
       #   )
-      def create(network_id:, notification_uri:, event_type:, event_filters:)
+      def create(
+        network_id:,
+        notification_uri:,
+        event_type:,
+        event_filters: [],
+        event_type_filter: nil
+      )
         model = Coinbase.call_api do
           webhooks_api.create_webhook(
             create_webhook_request: {
               network_id: Coinbase.normalize_network(network_id),
               notification_uri: notification_uri,
               event_type: event_type,
-              event_filters: event_filters
+              event_filters: event_filters,
+              event_type_filter: event_type_filter
             }
           )
         end
@@ -120,20 +132,29 @@ module Coinbase
       @model.signature_header
     end
 
+    # Returns the event type filters applied to the wallet activity webhook.
+    #
+    # @return [Array<Coinbase::Client::WebhookEventTypeFilter>] A hash of event type filter used by the webhook.
+    def event_type_filter
+      @model.event_type_filter
+    end
+
     # Updates the webhook with a new notification URI.
     #
     # @param notification_uri [String] The new URI for webhook notifications.
+    # @param event_type_filter [Hash] Filters applied to wallet activity event type.
     # @return [self] Returns the updated Webhook object.
     #
     # @example Update the notification URI of a webhook
     #   webhook.update(notification_uri: 'https://new-url.com/callback')
-    def update(notification_uri:)
+    def update(notification_uri:, event_type_filter:)
       model = Coinbase.call_api do
         webhooks_api.update_webhook(
           id,
           update_webhook_request: {
             notification_uri: notification_uri,
-            event_filters: event_filters.map(&:to_hash)
+            event_filters: event_filters.map(&:to_hash),
+            event_type_filter: event_type_filter
           }
         )
       end
@@ -169,7 +190,8 @@ module Coinbase
         event_type: @model.event_type,
         notification_uri: @model.notification_uri,
         event_filters: @model.event_filters.map(&:to_hash).to_json,
-        signature_header: @model.signature_header
+        signature_header: @model.signature_header,
+        event_type_filter: @model.event_type_filter
       )
     end
 

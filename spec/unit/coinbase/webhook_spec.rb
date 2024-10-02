@@ -16,7 +16,8 @@ describe Coinbase::Webhook do
         network_id: network_id,
         notification_uri: notification_uri,
         event_type: event_type,
-        event_filters: event_filters
+        event_filters: event_filters,
+        event_type_filter: event_type_filter
       )
     end
 
@@ -24,6 +25,12 @@ describe Coinbase::Webhook do
     let(:notification_uri) { 'https://example.com/notify' }
     let(:event_type) { 'erc20_transfer' }
     let(:event_filters) { [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }] }
+    let(:event_type_filter) do
+      {
+        'addresses' => ['0xa3B299855BE3eA231337aC7c40A615e090A3de25'],
+        'wallet_id' => 'd91d652b-d020-48d4-bf19-5c5eb5e280c7'
+      }
+    end
 
     before do
       allow(webhooks_api).to receive(:create_webhook).and_return(webhook_model)
@@ -52,6 +59,10 @@ describe Coinbase::Webhook do
 
     it 'has the correct event_filters' do
       expect(webhook.event_filters).to eq(event_filters)
+    end
+
+    it 'has the correct event_type_filter' do
+      expect(webhook.event_type_filter).to eq(event_type_filter)
     end
   end
 
@@ -82,18 +93,37 @@ describe Coinbase::Webhook do
   end
 
   describe '#update' do
-    subject(:updated_webhook) { webhook.update(notification_uri: new_notification_uri) }
+    subject(:updated_webhook) do
+      webhook.update(notification_uri: new_notification_uri, event_type_filter: new_event_type_filter)
+    end
 
     let(:new_notification_uri) { 'https://newurl.com/notify' }
-    let(:updated_webhook_model) { build(:webhook_model, :updated_uri, notification_uri: new_notification_uri) }
+    let(:new_event_type_filter) do
+      {
+        'addresses' => %w[0xa3B299855BE3eA231337aC7c40A615e090A3de25 0x833589fcd6edb6e08f4c7c32d4f71b54bda02913],
+        'wallet_id' => 'd91d652b-d020-48d4-bf19-5c5eb5e280c7'
+      }
+    end
+    let(:updated_webhook_model) do
+      build(
+        :webhook_model,
+        :updated_webhook,
+        notification_uri: new_notification_uri,
+        event_type_filter: new_event_type_filter
+      )
+    end
     let(:webhook) { described_class.new(webhook_model) }
 
     before do
       allow(webhooks_api).to receive(:update_webhook).and_return(updated_webhook_model)
     end
 
-    it 'updates the webhook properties' do
+    it 'updates the webhook notification uri' do
       expect(updated_webhook.notification_uri).to eq(new_notification_uri)
+    end
+
+    it 'updates the webhook event type filter' do
+      expect(updated_webhook.event_type_filter).to eq(new_event_type_filter)
     end
 
     it 'updates the webhook' do
@@ -103,7 +133,8 @@ describe Coinbase::Webhook do
         'webhook_id',
         update_webhook_request: {
           notification_uri: new_notification_uri,
-          event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }]
+          event_filters: [{ 'contract_address' => '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913' }],
+          event_type_filter: new_event_type_filter
         }
       )
     end
