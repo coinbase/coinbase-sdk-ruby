@@ -126,6 +126,71 @@ module Coinbase
       new(contract)
     end
 
+    def self.read(
+      network_id:,
+      contract_address:,
+      method:,
+      abi: nil,
+      args: nil
+    )
+      args_json = args ? JSON.generate(args) : '{}'
+      abi_json = abi ? JSON.generate(abi) : nil
+
+      request = Coinbase::Client::ReadContractRequest.new({
+                                                            'method' => method,
+                                                            'args' => args_json,
+                                                            'abi' => abi_json
+                                                          })
+
+      response = Coinbase.call_api do
+        api_client = smart_contracts_api
+        api_client.read_contract(
+          Coinbase.normalize_network(network_id),
+          contract_address,
+          request
+        )
+      end
+
+      convert_solidity_value(response)
+    end
+
+    private_class_method def self.convert_solidity_value(solidity_value)
+      return nil if solidity_value.nil?
+
+      type = solidity_value.type
+      value = solidity_value.value
+      values = solidity_value.values
+
+      case type
+      when /^(u?int\d*)$/
+        value ? value.to_i : nil
+      when 'address', 'string', /^bytes/
+        value
+      when 'bool'
+        if value.is_a?(String)
+          value == 'true'
+        else
+          !value.nil?
+        end
+      when 'array'
+        values ? values.map { |v| convert_solidity_value(v) } : []
+      when 'tuple'
+        if values
+          result = {}
+          values.each do |v|
+            raise ArgumentError, 'Error: Tuple value without a name' unless v.respond_to?(:name)
+
+            result[v.name] = convert_solidity_value(v)
+          end
+          result
+        else
+          {}
+        end
+      else
+        raise ArgumentError, "Unsupported Solidity type: #{type}"
+      end
+    end
+
     def self.contract_events_api
       Coinbase::Client::ContractEventsApi.new(Coinbase.configuration.api_client)
     end
