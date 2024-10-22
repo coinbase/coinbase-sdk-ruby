@@ -1252,6 +1252,107 @@ describe Coinbase::SmartContract do
       end
     end
 
+    describe 'string type' do
+      let(:method_name_for_context) { 'pureString' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'string',
+                                                'value' => 'Hello, World!'
+                                              })
+        )
+      end
+
+      it 'returns the parsed string value' do
+        expect(result).to eq('Hello, World!')
+      end
+    end
+
+    describe 'function type' do
+      let(:method_name_for_context) { 'returnFunction' }
+      let(:function_bytes) { '0x12341234123412341234123400000000' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'bytes',
+                                                'value' => function_bytes
+                                              })
+        )
+      end
+
+      it 'returns the function as bytes value' do
+        expect(result).to eq(function_bytes)
+      end
+    end
+
+    describe 'tuple type' do
+      let(:method_name_for_context) { 'pureTuple' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new(
+            'type' => 'tuple',
+            'values' => [
+              Coinbase::Client::SolidityValue.new({
+                                                    'type' => 'uint256',
+                                                    'name' => 'a',
+                                                    'value' => '1'
+                                                  }),
+              Coinbase::Client::SolidityValue.new({
+                                                    'type' => 'uint256',
+                                                    'name' => 'b',
+                                                    'value' => '2'
+                                                  })
+            ]
+          )
+        )
+      end
+
+      it 'returns the parsed tuple value' do
+        expect(result).to eq({ 'a' => 1, 'b' => 2 })
+      end
+    end
+
+    describe 'tuple with mixed types' do
+      let(:method_name_for_context) { 'pureTupleMixedTypes' }
+      let(:address) { '0x1234567890123456789012345678901234567890' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new(
+            'type' => 'tuple',
+            'values' => [
+              Coinbase::Client::SolidityValue.new({
+                                                    'type' => 'uint256',
+                                                    'name' => 'a',
+                                                    'value' => '1'
+                                                  }),
+              Coinbase::Client::SolidityValue.new({
+                                                    'type' => 'address',
+                                                    'name' => 'b',
+                                                    'value' => address
+                                                  }),
+              Coinbase::Client::SolidityValue.new({
+                                                    'type' => 'bool',
+                                                    'name' => 'c',
+                                                    'value' => 'true'
+                                                  })
+            ]
+          )
+        )
+      end
+
+      it 'returns the parsed tuple with mixed types' do
+        expect(result).to eq({
+                               'a' => 1,
+                               'b' => address,
+                               'c' => true
+                             })
+      end
+    end
+
     describe 'nested struct type' do
       let(:method_name_for_context) { 'pureNestedStruct' }
 
