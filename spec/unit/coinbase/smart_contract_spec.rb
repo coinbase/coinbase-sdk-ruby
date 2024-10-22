@@ -214,11 +214,8 @@ describe Coinbase::SmartContract do
     let(:method_name) { method_name_for_context }
     let(:args) { {} }
     let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
-
-    # Add network mocking
     let(:network_instance) { instance_double(Coinbase::Network, normalized_id: 'ethereum-mainnet') }
 
-    # Shared examples for API call verification
     shared_examples 'verifies API calls' do
       it 'calls the API with correct network' do
         result
@@ -248,17 +245,14 @@ describe Coinbase::SmartContract do
     before do
       allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
       allow(smart_contracts_api).to receive(:read_contract).and_return(api_response)
-
-      # Mock Network.from_id
       allow(Coinbase::Network)
         .to receive(:from_id)
         .with(network)
         .and_return(network_instance)
     end
 
-    # Special cases for parameter handling
     context 'when abi is not provided' do
-      let(:method_name_for_context) { 'pureUint256' } # Using uint256 as default for parameter tests
+      let(:method_name_for_context) { 'pureUint256' }
       let(:abi) { nil }
       let(:api_response) do
         Coinbase::Client::SolidityValue.new({
