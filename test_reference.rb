@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Omitted all the configuration, private keys, etc.
 
 # ABI definition
