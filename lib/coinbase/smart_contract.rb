@@ -127,12 +127,13 @@ module Coinbase
     end
 
     def self.read(
-      network_id:,
+      network:,
       contract_address:,
       method:,
       abi: nil,
       args: nil
     )
+      network = Coinbase::Network.from_id(network)
       args_json = args.nil? ? 'null' : JSON.generate(args)
       abi_json = abi.nil? ? nil : JSON.generate(abi)
 
@@ -145,7 +146,7 @@ module Coinbase
       response = Coinbase.call_api do
         api_client = smart_contracts_api
         api_client.read_contract(
-          Coinbase.normalize_network(network_id),
+          network.normalized_id,
           contract_address,
           request
         )
@@ -154,7 +155,7 @@ module Coinbase
       convert_solidity_value(response)
     end
 
-    private_class_method def self.convert_solidity_value(solidity_value)
+    def self.convert_solidity_value(solidity_value)
       return nil if solidity_value.nil?
 
       type = solidity_value.type
@@ -164,7 +165,7 @@ module Coinbase
       case type
       when 'uint8', 'uint16', 'uint32', 'uint64', 'uint128', 'uint256',
        'int8', 'int16', 'int32', 'int64', 'int128', 'int256'
-        value ? value.to_i : nil
+        value&.to_i
       when 'address', 'string', /^bytes/
         value
       when 'bool'
@@ -191,6 +192,7 @@ module Coinbase
         raise ArgumentError, "Unsupported Solidity type: #{type}"
       end
     end
+    private_class_method :convert_solidity_value
 
     def self.contract_events_api
       Coinbase::Client::ContractEventsApi.new(Coinbase.configuration.api_client)
