@@ -373,21 +373,72 @@ describe Coinbase::SmartContract do
       end
     end
 
-    describe 'return types' do
-      describe 'uint256' do
-        let(:method_name_for_context) { 'getUint256' }
+    describe 'uint types' do
+      describe 'uint8' do
+        let(:method_name_for_context) { 'getUint8' }
 
         before do
           allow(smart_contracts_api).to receive(:read_contract).and_return(
             Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint256',
-                                                  'value' => '123456789'
+                                                  'type' => 'uint8',
+                                                  'value' => '255'
                                                 })
           )
         end
 
-        it 'returns the parsed uint256 value' do
-          expect(result).to eq(123_456_789)
+        it 'returns the parsed uint8 value' do
+          expect(result).to eq(255)
+        end
+      end
+
+      describe 'uint16' do
+        let(:method_name_for_context) { 'getUint16' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint16',
+                                                  'value' => '65535'
+                                                })
+          )
+        end
+
+        it 'returns the parsed uint16 value' do
+          expect(result).to eq(65_535)
+        end
+      end
+
+      describe 'uint32' do
+        let(:method_name_for_context) { 'getUint32' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint32',
+                                                  'value' => '4294967295'
+                                                })
+          )
+        end
+
+        it 'returns the parsed uint32 value' do
+          expect(result).to eq(4_294_967_295)
+        end
+      end
+
+      describe 'uint64' do
+        let(:method_name_for_context) { 'getUint64' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint64',
+                                                  'value' => '18446744073709551615'
+                                                })
+          )
+        end
+
+        it 'returns the parsed uint64 value' do
+          expect(result).to eq(18_446_744_073_709_551_615)
         end
       end
 
@@ -398,13 +449,144 @@ describe Coinbase::SmartContract do
           allow(smart_contracts_api).to receive(:read_contract).and_return(
             Coinbase::Client::SolidityValue.new({
                                                   'type' => 'uint128',
-                                                  'value' => '12345'
+                                                  'value' => '340282366920938463463374607431768211455'
                                                 })
           )
         end
 
         it 'returns the parsed uint128 value' do
-          expect(result).to eq(12_345)
+          expect(result).to eq(340_282_366_920_938_463_463_374_607_431_768_211_455)
+        end
+      end
+
+      describe 'uint256' do
+        let(:method_name_for_context) { 'getUint256' }
+        let(:uint256_max) do
+          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+        end
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint256',
+                                                  'value' => uint256_max
+                                                })
+          )
+        end
+
+        it 'returns the parsed uint256 value' do
+          max_value =
+            115_792_089_237_316_195_423_570_985_008_687_907_853_269_984_665_640_564_039_457_584_007_913_129_639_935
+          expect(result).to eq(max_value)
+        end
+      end
+    end
+
+    describe 'int types' do
+      describe 'int8' do
+        let(:method_name_for_context) { 'getInt8' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int8',
+                                                  'value' => '-128'
+                                                })
+          )
+        end
+
+        it 'returns the parsed int8 value' do
+          expect(result).to eq(-128)
+        end
+      end
+
+      describe 'int16' do
+        let(:method_name_for_context) { 'getInt16' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int16',
+                                                  'value' => '-32768'
+                                                })
+          )
+        end
+
+        it 'returns the parsed int16 value' do
+          expect(result).to eq(-32_768)
+        end
+      end
+
+      describe 'int32' do
+        let(:method_name_for_context) { 'getInt32' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int32',
+                                                  'value' => '-2147483648'
+                                                })
+          )
+        end
+
+        it 'returns the parsed int32 value' do
+          expect(result).to eq(-2_147_483_648)
+        end
+      end
+
+      describe 'int64' do
+        let(:method_name_for_context) { 'getInt64' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int64',
+                                                  'value' => '-9223372036854775808'
+                                                })
+          )
+        end
+
+        it 'returns the parsed int64 value' do
+          expect(result).to eq(-9_223_372_036_854_775_808)
+        end
+      end
+
+      describe 'int128' do
+        let(:method_name_for_context) { 'getInt128' }
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int128',
+                                                  'value' => '-170141183460469231731687303715884105728'
+                                                })
+          )
+        end
+
+        it 'returns the parsed int128 value' do
+          expect(result).to eq(-170_141_183_460_469_231_731_687_303_715_884_105_728)
+        end
+      end
+
+      describe 'int256' do
+        let(:method_name_for_context) { 'getInt256' }
+        let(:int256_min) do
+          '-57896044618658097711785492504343953926634992332820282019728792003956564819968'
+        end
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'int256',
+                                                  'value' => int256_min
+                                                })
+          )
+        end
+
+        it 'returns the parsed int256 value' do
+          min_value =
+            -57_896_044_618_658_097_711_785_492_504_343_953_926_634_992_332_820_282_019_728_792_003_956_564_819_968
+          expect(result).to eq(min_value)
         end
       end
     end
