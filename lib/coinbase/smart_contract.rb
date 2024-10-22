@@ -139,7 +139,7 @@ module Coinbase
     # @param method [String] The name of the method to call on the contract
     # @param abi [Array, nil] The ABI of the contract. If nil, the method will attempt to use a cached ABI
     # @param args [Hash] The arguments to pass to the contract method.
-    #   The keys should be the argument names, and the values should be the argument values.    #
+    #   The keys should be the argument names, and the values should be the argument values.
     # @return [Object] The result of the contract call, converted to an appropriate Ruby type
     # @raise [Coinbase::ApiError] If there's an error in the API call
     def self.read(
