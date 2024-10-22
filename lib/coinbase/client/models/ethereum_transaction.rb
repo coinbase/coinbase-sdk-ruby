@@ -56,6 +56,8 @@ module Coinbase::Client
 
     attr_accessor :transaction_access_list
 
+    attr_accessor :token_transfers
+
     attr_accessor :flattened_traces
 
     # The timestamp of the block in which the event was emitted
@@ -81,6 +83,7 @@ module Coinbase::Client
         :'max_priority_fee_per_gas' => :'max_priority_fee_per_gas',
         :'priority_fee_per_gas' => :'priority_fee_per_gas',
         :'transaction_access_list' => :'transaction_access_list',
+        :'token_transfers' => :'token_transfers',
         :'flattened_traces' => :'flattened_traces',
         :'block_timestamp' => :'block_timestamp',
         :'mint' => :'mint'
@@ -109,6 +112,7 @@ module Coinbase::Client
         :'max_priority_fee_per_gas' => :'Integer',
         :'priority_fee_per_gas' => :'Integer',
         :'transaction_access_list' => :'EthereumTransactionAccessList',
+        :'token_transfers' => :'Array<EthereumTokenTransfer>',
         :'flattened_traces' => :'Array<EthereumTransactionFlattenedTrace>',
         :'block_timestamp' => :'Time',
         :'mint' => :'String'
@@ -196,6 +200,12 @@ module Coinbase::Client
         self.transaction_access_list = attributes[:'transaction_access_list']
       end
 
+      if attributes.key?(:'token_transfers')
+        if (value = attributes[:'token_transfers']).is_a?(Array)
+          self.token_transfers = value
+        end
+      end
+
       if attributes.key?(:'flattened_traces')
         if (value = attributes[:'flattened_traces']).is_a?(Array)
           self.flattened_traces = value
@@ -255,6 +265,7 @@ module Coinbase::Client
           max_priority_fee_per_gas == o.max_priority_fee_per_gas &&
           priority_fee_per_gas == o.priority_fee_per_gas &&
           transaction_access_list == o.transaction_access_list &&
+          token_transfers == o.token_transfers &&
           flattened_traces == o.flattened_traces &&
           block_timestamp == o.block_timestamp &&
           mint == o.mint
@@ -269,7 +280,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [from, gas, gas_price, hash, input, nonce, to, index, value, type, max_fee_per_gas, max_priority_fee_per_gas, priority_fee_per_gas, transaction_access_list, flattened_traces, block_timestamp, mint].hash
+      [from, gas, gas_price, hash, input, nonce, to, index, value, type, max_fee_per_gas, max_priority_fee_per_gas, priority_fee_per_gas, transaction_access_list, token_transfers, flattened_traces, block_timestamp, mint].hash
     end
 
     # Builds the object from hash

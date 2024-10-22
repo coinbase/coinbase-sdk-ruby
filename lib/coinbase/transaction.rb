@@ -101,8 +101,8 @@ module Coinbase
       @model.transaction_link
     end
 
-    # Returns the block height of which the Transaction is recorded.
-    # @return [String] The to block_height
+    # Returns detailed content the Transaction.
+    # @return [EthereumTransaction] The transaction content
     def content
       @model.content
     end

@@ -14,21 +14,22 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class UpdateWebhookRequest
-    attr_accessor :event_type_filter
+  class ReadContractRequest
+    # The name of the contract method to call
+    attr_accessor :method
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    # The JSON-encoded arguments to pass to the contract method. The keys should be the argument names and the values should be the argument values.
+    attr_accessor :args
 
-    # The Webhook uri that updates to
-    attr_accessor :notification_uri
+    # The JSON-encoded ABI of the contract method (optional, will use cached ABI if not provided)
+    attr_accessor :abi
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri'
+        :'method' => :'method',
+        :'args' => :'args',
+        :'abi' => :'abi'
       }
     end
 
@@ -40,9 +41,9 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String'
+        :'method' => :'String',
+        :'args' => :'String',
+        :'abi' => :'String'
       }
     end
 
@@ -56,29 +57,31 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::ReadContractRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::ReadContractRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
+      if attributes.key?(:'method')
+        self.method = attributes[:'method']
+      else
+        self.method = nil
       end
 
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
-        end
+      if attributes.key?(:'args')
+        self.args = attributes[:'args']
+      else
+        self.args = nil
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
+      if attributes.key?(:'abi')
+        self.abi = attributes[:'abi']
       end
     end
 
@@ -87,6 +90,14 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @method.nil?
+        invalid_properties.push('invalid value for "method", method cannot be nil.')
+      end
+
+      if @args.nil?
+        invalid_properties.push('invalid value for "args", args cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,6 +105,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @method.nil?
+      return false if @args.nil?
       true
     end
 
@@ -102,9 +115,9 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri
+          method == o.method &&
+          args == o.args &&
+          abi == o.abi
     end
 
     # @see the `==` method
@@ -116,7 +129,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_type_filter, event_filters, notification_uri].hash
+      [method, args, abi].hash
     end
 
     # Builds the object from hash
