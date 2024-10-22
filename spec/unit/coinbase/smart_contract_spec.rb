@@ -209,7 +209,6 @@ describe Coinbase::SmartContract do
       )
     end
 
-    # Common setup
     let(:network) { :ethereum_mainnet }
     let(:contract_address) { '0x1234567890123456789012345678901234567890' }
     let(:method_name) { method_name_for_context }
@@ -217,20 +216,12 @@ describe Coinbase::SmartContract do
     let(:abi) { nil }
     let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
     let(:network_instance) { instance_double(Coinbase::Network, normalized_id: 'ethereum-mainnet') }
-    let(:api_response) do
-      Coinbase::Client::SolidityValue.new({
-                                            'type' => 'uint256',
-                                            'value' => '123456789'
-                                          })
-    end
 
     before do
       allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
-      allow(smart_contracts_api).to receive(:read_contract).and_return(api_response)
       allow(Coinbase::Network).to receive(:from_id).with(network).and_return(network_instance)
     end
 
-    # API interaction tests
     describe 'API interaction' do
       let(:method_name_for_context) { 'testMethod' }
       let(:abi) do
@@ -241,6 +232,15 @@ describe Coinbase::SmartContract do
           'outputs' => [{ 'type' => 'uint256' }],
           'stateMutability' => 'pure'
         }]
+      end
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'uint256',
+                                                'value' => '0'
+                                              })
+        )
       end
 
       it 'calls the API with correct network' do
@@ -274,9 +274,17 @@ describe Coinbase::SmartContract do
       end
     end
 
-    # Parameter handling tests
     describe 'abi parameter' do
       let(:method_name_for_context) { 'testMethod' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'uint256',
+                                                'value' => '0'
+                                              })
+        )
+      end
 
       describe 'when explicitly set to nil' do
         let(:abi) { nil }
@@ -326,6 +334,15 @@ describe Coinbase::SmartContract do
     describe 'args parameter' do
       let(:method_name_for_context) { 'testMethod' }
 
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'uint256',
+                                                'value' => '0'
+                                              })
+        )
+      end
+
       describe 'when explicitly set to nil' do
         let(:args) { nil }
 
@@ -364,15 +381,17 @@ describe Coinbase::SmartContract do
       end
     end
 
-    # Return type tests
     describe 'return types' do
       describe 'uint256' do
         let(:method_name_for_context) { 'getUint256' }
-        let(:api_response) do
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'uint256',
-                                                'value' => '123456789'
-                                              })
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint256',
+                                                  'value' => '123456789'
+                                                })
+          )
         end
 
         it 'returns the parsed uint256 value' do
@@ -382,11 +401,14 @@ describe Coinbase::SmartContract do
 
       describe 'uint128' do
         let(:method_name_for_context) { 'getUint128' }
-        let(:api_response) do
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'uint128',
-                                                'value' => '12345'
-                                              })
+
+        before do
+          allow(smart_contracts_api).to receive(:read_contract).and_return(
+            Coinbase::Client::SolidityValue.new({
+                                                  'type' => 'uint128',
+                                                  'value' => '12345'
+                                                })
+          )
         end
 
         it 'returns the parsed uint128 value' do
