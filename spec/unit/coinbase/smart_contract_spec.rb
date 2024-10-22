@@ -209,18 +209,10 @@ describe Coinbase::SmartContract do
       )
     end
 
-    let(:network) { :ethereum_mainnet }
     let(:contract_address) { '0x1234567890123456789012345678901234567890' }
     let(:method_name) { method_name_for_context }
     let(:args) { {} }
     let(:abi) { nil }
-    let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
-    let(:network_instance) { instance_double(Coinbase::Network, normalized_id: 'ethereum-mainnet') }
-
-    before do
-      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
-      allow(Coinbase::Network).to receive(:from_id).with(network).and_return(network_instance)
-    end
 
     describe 'API interaction' do
       let(:method_name_for_context) { 'testMethod' }
@@ -246,7 +238,7 @@ describe Coinbase::SmartContract do
       it 'calls the API with correct network' do
         result
         expect(smart_contracts_api).to have_received(:read_contract)
-          .with('ethereum-mainnet', anything, anything)
+          .with('base-sepolia', anything, anything)
       end
 
       it 'calls the API with correct address' do
