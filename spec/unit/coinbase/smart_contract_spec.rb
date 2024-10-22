@@ -251,9 +251,8 @@ describe Coinbase::SmartContract do
         .and_return(network_instance)
     end
 
-    context 'when abi is not provided' do
+    context 'abi parameter handling' do
       let(:method_name_for_context) { 'pureUint256' }
-      let(:abi) { nil }
       let(:api_response) do
         Coinbase::Client::SolidityValue.new({
                                               'type' => 'uint256',
@@ -261,10 +260,48 @@ describe Coinbase::SmartContract do
                                             })
       end
 
-      it 'sends the request with null abi' do
-        result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, anything, have_attributes(abi: nil))
+      context 'when abi is explicitly set to nil' do
+        let(:abi) { nil }
+
+        it 'sends the request with null abi' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract)
+            .with(anything, anything, have_attributes(abi: nil))
+        end
+      end
+
+      context 'when abi parameter is omitted' do
+        subject(:result) do
+          described_class.read(
+            network: network,
+            contract_address: contract_address,
+            method: method_name
+          )
+        end
+
+        it 'sends the request with null abi' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract)
+            .with(anything, anything, have_attributes(abi: nil))
+        end
+      end
+
+      context 'when abi is provided' do
+        let(:abi) do
+          [{
+            'type' => 'function',
+            'name' => 'pureUint256',
+            'inputs' => [],
+            'outputs' => [{ 'type' => 'uint256' }],
+            'stateMutability' => 'pure'
+          }]
+        end
+
+        it 'sends the request with JSON encoded abi' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract)
+            .with(anything, anything, have_attributes(abi: abi.to_json))
+        end
       end
     end
 
