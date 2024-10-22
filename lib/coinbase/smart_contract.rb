@@ -105,6 +105,12 @@ module Coinbase
       new(contract)
     end
 
+    # Creates a new ERC1155 multi-token contract, that can subsequently be deployed to
+    # the blockchain.
+    # @param address_id [String] The address ID of deployer
+    # @param wallet_id [String] The wallet ID of the deployer
+    # @param uri [String] The URI for the token metadata
+    # @return [SmartContract] The new ERC1155 Multi-Token SmartContract object
     def self.create_multi_token_contract(
       address_id:,
       wallet_id:,
@@ -126,15 +132,25 @@ module Coinbase
       new(contract)
     end
 
+    # Reads data from a deployed smart contract.
+    #
+    # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
+    # @param contract_address [String] The address of the deployed contract
+    # @param method [String] The name of the method to call on the contract
+    # @param abi [Array, nil] The ABI of the contract. If nil, the method will attempt to use a cached ABI
+    # @param args [Hash] The arguments to pass to the contract method.
+    #   The keys should be the argument names, and the values should be the argument values.    #
+    # @return [Object] The result of the contract call, converted to an appropriate Ruby type
+    # @raise [Coinbase::ApiError] If there's an error in the API call
     def self.read(
       network:,
       contract_address:,
       method:,
       abi: nil,
-      args: nil
+      args: {}
     )
       network = Coinbase::Network.from_id(network)
-      args_json = args.nil? ? 'null' : JSON.generate(args)
+      args_json = JSON.generate(args)
       abi_json = abi.nil? ? nil : JSON.generate(abi)
 
       request = Coinbase::Client::ReadContractRequest.new({
@@ -155,6 +171,22 @@ module Coinbase
       convert_solidity_value(response)
     end
 
+    # Converts a Solidity value to an appropriate Ruby type.
+    #
+    # @param solidity_value [Coinbase::Client::SolidityValue] The Solidity value to convert
+    # @return [Object] The converted Ruby value
+    # @raise [ArgumentError] If an unsupported Solidity type is encountered
+    #
+    # This method handles the following Solidity types:
+    # - Integers (uint8, uint16, uint32, uint64, uint128, uint256, int8, int16, int32, int64, int128, int256)
+    # - Address
+    # - String
+    # - Bytes (including fixed-size byte arrays)
+    # - Boolean
+    # - Array
+    # - Tuple (converted to a Hash)
+    #
+    # For complex types like arrays and tuples, the method recursively converts nested values.
     def self.convert_solidity_value(solidity_value)
       return nil if solidity_value.nil?
 
