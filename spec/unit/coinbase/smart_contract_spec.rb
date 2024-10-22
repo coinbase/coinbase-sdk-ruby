@@ -201,7 +201,7 @@ describe Coinbase::SmartContract do
   describe '.read' do
     subject(:result) do
       described_class.read(
-        network_id: network_id,
+        network: network,
         contract_address: contract_address,
         method: method_name,
         abi: abi,
@@ -209,79 +209,63 @@ describe Coinbase::SmartContract do
       )
     end
 
-    let(:network_id) { :ethereum_mainnet }
+    let(:network) { :ethereum_mainnet }
     let(:contract_address) { '0x1234567890123456789012345678901234567890' }
-    let(:method_name) { 'pureUint256' }
+    let(:method_name) { method_name_for_context }
     let(:args) { {} }
-    let(:abi) do
-      [{
-        'type' => 'function',
-        'name' => 'pureUint256',
-        'inputs' => [],
-        'outputs' => [{ 'name' => '', 'type' => 'uint256', 'internalType' => 'uint256' }],
-        'stateMutability' => 'pure'
-      }]
-    end
-
     let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
-    let(:api_response) do
-      Coinbase::Client::SolidityValue.new({
-                                            'type' => 'uint256',
-                                            'value' => '123456789'
-                                          })
-    end
 
-    let(:expected_request_params) do
-      {
-        network: 'ethereum-mainnet',
-        address: contract_address,
-        method: method_name,
-        args: args.to_json,
-        abi: abi.to_json
-      }
+    # Add network mocking
+    let(:network_instance) { instance_double(Coinbase::Network, normalized_id: 'ethereum-mainnet') }
+
+    # Shared examples for API call verification
+    shared_examples 'verifies API calls' do
+      it 'calls the API with correct network' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with('ethereum-mainnet', anything, anything)
+      end
+
+      it 'calls the API with correct address' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(anything, contract_address, anything)
+      end
+
+      it 'calls the API with correct method' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(anything, anything, have_attributes(method: method_name))
+      end
+
+      it 'calls the API with correct ABI' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(anything, anything, have_attributes(abi: abi.to_json))
+      end
     end
 
     before do
       allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
       allow(smart_contracts_api).to receive(:read_contract).and_return(api_response)
+
+      # Mock Network.from_id
+      allow(Coinbase::Network)
+        .to receive(:from_id)
+        .with(network)
+        .and_return(network_instance)
     end
 
-    it 'returns the parsed value' do
-      expect(result).to eq(123_456_789)
-    end
-
-    it 'calls the API with correct network' do
-      result
-      expect(smart_contracts_api).to have_received(:read_contract)
-        .with('ethereum-mainnet', anything, anything)
-    end
-
-    it 'calls the API with correct address' do
-      result
-      expect(smart_contracts_api).to have_received(:read_contract)
-        .with(anything, contract_address, anything)
-    end
-
-    it 'calls the API with correct method' do
-      result
-      expect(smart_contracts_api).to have_received(:read_contract)
-        .with(anything, anything, have_attributes(method: method_name))
-    end
-
-    it 'calls the API with correct arguments' do
-      result
-      expect(smart_contracts_api).to have_received(:read_contract)
-        .with(anything, anything, have_attributes(args: args.to_json))
-    end
-
-    it 'calls the API with correct ABI' do
-      result
-      expect(smart_contracts_api).to have_received(:read_contract)
-        .with(anything, anything, have_attributes(abi: abi.to_json))
-    end
-
+    # Special cases for parameter handling
     context 'when abi is not provided' do
+      let(:method_name_for_context) { 'pureUint256' } # Using uint256 as default for parameter tests
       let(:abi) { nil }
+      let(:api_response) do
+        Coinbase::Client::SolidityValue.new({
+                                              'type' => 'uint256',
+                                              'value' => '123456789'
+                                            })
+      end
 
       it 'sends the request with null abi' do
         result
@@ -290,14 +274,93 @@ describe Coinbase::SmartContract do
       end
     end
 
-    context 'when args are not provided' do
-      let(:args) { nil }
-
-      it 'sends the request with null args' do
-        result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, anything, have_attributes(args: 'null'))
+    context 'with different argument formats' do
+      let(:method_name_for_context) { 'pureUint256' }
+      let(:abi) do
+        [{
+          'type' => 'function',
+          'name' => 'pureUint256',
+          'inputs' => [{ 'name' => 'value', 'type' => 'uint256' }],
+          'outputs' => [{ 'type' => 'uint256' }],
+          'stateMutability' => 'pure'
+        }]
       end
+      let(:api_response) do
+        Coinbase::Client::SolidityValue.new({
+                                              'type' => 'uint256',
+                                              'value' => '123456789'
+                                            })
+      end
+
+      context 'with hash arguments' do
+        let(:args) { { 'value' => 123 } }
+
+        it 'sends the request with JSON encoded args' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract)
+            .with(anything, anything, have_attributes(args: args.to_json))
+        end
+      end
+
+      context 'with explicit nil arguments' do
+        let(:args) { nil }
+
+        it 'sends the request with "null" args' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract)
+            .with(anything, anything, have_attributes(args: 'null'))
+        end
+      end
+    end
+
+    describe 'uint256 return type' do
+      let(:method_name_for_context) { 'pureUint256' }
+      let(:abi) do
+        [{
+          'type' => 'function',
+          'name' => 'pureUint256',
+          'inputs' => [],
+          'outputs' => [{ 'name' => '', 'type' => 'uint256', 'internalType' => 'uint256' }],
+          'stateMutability' => 'pure'
+        }]
+      end
+      let(:api_response) do
+        Coinbase::Client::SolidityValue.new({
+                                              'type' => 'uint256',
+                                              'value' => '123456789'
+                                            })
+      end
+
+      it 'returns the parsed uint256 value' do
+        expect(result).to eq(123_456_789)
+      end
+
+      include_examples 'verifies API calls'
+    end
+
+    describe 'uint128 return type' do
+      let(:method_name_for_context) { 'pureUint128' }
+      let(:abi) do
+        [{
+          'type' => 'function',
+          'name' => 'pureUint128',
+          'inputs' => [],
+          'outputs' => [{ 'name' => '', 'type' => 'uint128', 'internalType' => 'uint128' }],
+          'stateMutability' => 'pure'
+        }]
+      end
+      let(:api_response) do
+        Coinbase::Client::SolidityValue.new({
+                                              'type' => 'uint128',
+                                              'value' => '12345'
+                                            })
+      end
+
+      it 'returns the parsed uint128 value' do
+        expect(result).to eq(12_345)
+      end
+
+      include_examples 'verifies API calls'
     end
   end
 
