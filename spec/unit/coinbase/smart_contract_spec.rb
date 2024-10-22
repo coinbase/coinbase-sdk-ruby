@@ -590,6 +590,174 @@ describe Coinbase::SmartContract do
         end
       end
     end
+
+    describe 'boolean type' do
+      let(:method_name_for_context) { 'pureBool' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'bool',
+                                                'value' => 'true'
+                                              })
+        )
+      end
+
+      it 'returns the parsed boolean value' do
+        expect(result).to be(true)
+      end
+    end
+
+    describe 'address type' do
+      let(:method_name_for_context) { 'pureAddress' }
+      let(:address) { '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'address',
+                                                'value' => address
+                                              })
+        )
+      end
+
+      it 'returns the parsed address value' do
+        expect(result).to eq(address)
+      end
+    end
+
+    describe 'array type' do
+      let(:method_name_for_context) { 'pureArray' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'array',
+                                                'values' => [
+                                                  Coinbase::Client::SolidityValue.new({
+                                                                                        'type' => 'uint256',
+                                                                                        'value' => '1'
+                                                                                      }),
+                                                  Coinbase::Client::SolidityValue.new({
+                                                                                        'type' => 'uint256',
+                                                                                        'value' => '2'
+                                                                                      }),
+                                                  Coinbase::Client::SolidityValue.new({
+                                                                                        'type' => 'uint256',
+                                                                                        'value' => '3'
+                                                                                      })
+                                                ]
+                                              })
+        )
+      end
+
+      it 'returns the parsed array values' do
+        expect(result).to eq([1, 2, 3])
+      end
+    end
+
+    describe 'fixed bytes type' do
+      let(:method_name_for_context) { 'pureBytes12' }
+      let(:bytes_value) { '0x0102030405060708090a0b0c' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'bytes12',
+                                                'value' => bytes_value
+                                              })
+        )
+      end
+
+      it 'returns the parsed fixed bytes value' do
+        expect(result).to eq(bytes_value)
+      end
+    end
+
+    describe 'dynamic bytes type' do
+      let(:method_name_for_context) { 'pureBytes' }
+      let(:bytes_value) { '0x0102030405' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new({
+                                                'type' => 'bytes',
+                                                'value' => bytes_value
+                                              })
+        )
+      end
+
+      it 'returns the parsed dynamic bytes value' do
+        expect(result).to eq(bytes_value)
+      end
+    end
+
+    describe 'nested struct type' do
+      let(:method_name_for_context) { 'pureNestedStruct' }
+
+      before do
+        allow(smart_contracts_api).to receive(:read_contract).and_return(
+          Coinbase::Client::SolidityValue.new(
+            'type' => 'tuple',
+            'values' => [
+              Coinbase::Client::SolidityValue.new(
+                'type' => 'uint256',
+                'name' => 'a',
+                'value' => '123'
+              ),
+              Coinbase::Client::SolidityValue.new(
+                'type' => 'tuple',
+                'name' => 'nestedFields',
+                'values' => [
+                  Coinbase::Client::SolidityValue.new(
+                    'type' => 'tuple',
+                    'name' => 'nestedArray',
+                    'values' => [
+                      Coinbase::Client::SolidityValue.new(
+                        'type' => 'array',
+                        'name' => 'a',
+                        'values' => [
+                          Coinbase::Client::SolidityValue.new(
+                            'type' => 'uint256',
+                            'value' => '1'
+                          ),
+                          Coinbase::Client::SolidityValue.new(
+                            'type' => 'uint256',
+                            'value' => '2'
+                          ),
+                          Coinbase::Client::SolidityValue.new(
+                            'type' => 'uint256',
+                            'value' => '3'
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  Coinbase::Client::SolidityValue.new(
+                    'type' => 'uint256',
+                    'name' => 'a',
+                    'value' => '456'
+                  )
+                ]
+              )
+            ]
+          )
+        )
+      end
+
+      it 'returns the parsed nested struct value with proper type conversion' do
+        expected_result = {
+          'a' => 123,
+          'nestedFields' => {
+            'nestedArray' => {
+              'a' => [1, 2, 3]
+            },
+            'a' => 456
+          }
+        }
+        expect(result).to eq(expected_result)
+      end
+    end
   end
 
   describe '.list_events' do
