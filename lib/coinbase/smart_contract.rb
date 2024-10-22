@@ -133,8 +133,8 @@ module Coinbase
       abi: nil,
       args: nil
     )
-      args_json = args ? JSON.generate(args) : '{}'
-      abi_json = abi ? JSON.generate(abi) : nil
+      args_json = args.nil? ? 'null' : JSON.generate(args)
+      abi_json = abi.nil? ? nil : JSON.generate(abi)
 
       request = Coinbase::Client::ReadContractRequest.new({
                                                             'method' => method,

@@ -198,6 +198,100 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '.read' do
+    subject(:result) do
+      described_class.read(
+        network_id: network_id,
+        contract_address: contract_address,
+        method: method_name,
+        abi: abi,
+        args: args
+      )
+    end
+
+    let(:network_id) { :ethereum_mainnet }
+    let(:contract_address) { '0x1234567890123456789012345678901234567890' }
+    let(:method_name) { 'pureUint256' }
+    let(:args) { {} }
+    let(:abi) do
+      [{
+        'type' => 'function',
+        'name' => 'pureUint256',
+        'inputs' => [],
+        'outputs' => [{ 'name' => '', 'type' => 'uint256', 'internalType' => 'uint256' }],
+        'stateMutability' => 'pure'
+      }]
+    end
+
+    let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
+    let(:api_response) do
+      Coinbase::Client::SolidityValue.new({
+                                            'type' => 'uint256',
+                                            'value' => '123456789'
+                                          })
+    end
+
+    before do
+      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
+
+      # Match against any ReadContractRequest with the expected method, args, and abi
+      allow(smart_contracts_api).to receive(:read_contract) do |network, address, request|
+        expect(network).to eq('ethereum-mainnet')
+        expect(address).to eq(contract_address)
+        expect(request.method).to eq(method_name)
+        expect(request.args).to eq(args.nil? ? 'null' : args.to_json)
+        expect(request.abi).to eq(abi&.to_json)
+        api_response
+      end
+    end
+
+    it 'calls the API with correct parameters' do
+      result
+
+      expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
+        expect(network).to eq('ethereum-mainnet')
+        expect(address).to eq(contract_address)
+        expect(request.method).to eq(method_name)
+        expect(request.args).to eq(args.to_json)
+        expect(request.abi).to eq(abi.to_json)
+      end
+    end
+
+    it 'returns the parsed value' do
+      expect(result).to eq(123_456_789)
+    end
+
+    context 'when abi is not provided' do
+      let(:abi) { nil }
+
+      it 'sends the request with null abi' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
+          expect(network).to eq('ethereum-mainnet')
+          expect(address).to eq(contract_address)
+          expect(request.method).to eq(method_name)
+          expect(request.args).to eq(args.to_json)
+          expect(request.abi).to be_nil
+        end
+      end
+    end
+
+    context 'when args are not provided' do
+      let(:args) { nil }
+
+      it 'sends the request with null args' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
+          expect(network).to eq('ethereum-mainnet')
+          expect(address).to eq(contract_address)
+          expect(request.method).to eq(method_name)
+          expect(request.args).to eq('null')
+          expect(request.abi).to eq(abi.to_json)
+        end
+      end
+    end
+  end
+
   describe '.list_events' do
     subject(:enumerator) do
       described_class.list_events(
