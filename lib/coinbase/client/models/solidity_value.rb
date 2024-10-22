@@ -14,21 +14,47 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class UpdateWebhookRequest
-    attr_accessor :event_type_filter
+  class SolidityValue
+    attr_accessor :type
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    # The field name for tuple types. Not used for other types.
+    attr_accessor :name
 
-    # The Webhook uri that updates to
-    attr_accessor :notification_uri
+    # The value as a string for simple types. Not used for complex types (array, tuple).
+    attr_accessor :value
+
+    # For array and tuple types, the components of the value
+    attr_accessor :values
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri'
+        :'type' => :'type',
+        :'name' => :'name',
+        :'value' => :'value',
+        :'values' => :'values'
       }
     end
 
@@ -40,9 +66,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String'
+        :'type' => :'String',
+        :'name' => :'String',
+        :'value' => :'String',
+        :'values' => :'Array<SolidityValue>'
       }
     end
 
@@ -56,29 +83,35 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SolidityValue` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SolidityValue`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
+      if attributes.key?(:'type')
+        self.type = attributes[:'type']
+      else
+        self.type = nil
       end
 
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
+      if attributes.key?(:'name')
+        self.name = attributes[:'name']
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
+      end
+
+      if attributes.key?(:'values')
+        if (value = attributes[:'values']).is_a?(Array)
+          self.values = value
         end
-      end
-
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
       end
     end
 
@@ -87,6 +120,10 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @type.nil?
+        invalid_properties.push('invalid value for "type", type cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,7 +131,20 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @type.nil?
+      type_validator = EnumAttributeValidator.new('String', ["uint8", "uint16", "uint32", "uint64", "uint128", "uint256", "int8", "int16", "int32", "int64", "int128", "int256", "address", "bool", "string", "bytes", "bytes1", "bytes2", "bytes3", "bytes4", "bytes5", "bytes6", "bytes7", "bytes8", "bytes9", "bytes10", "bytes11", "bytes12", "bytes13", "bytes14", "bytes15", "bytes16", "bytes17", "bytes18", "bytes19", "bytes20", "bytes21", "bytes22", "bytes23", "bytes24", "bytes25", "bytes26", "bytes27", "bytes28", "bytes29", "bytes30", "bytes31", "bytes32", "array", "tuple", "unknown_default_open_api"])
+      return false unless type_validator.valid?(@type)
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] type Object to be assigned
+    def type=(type)
+      validator = EnumAttributeValidator.new('String', ["uint8", "uint16", "uint32", "uint64", "uint128", "uint256", "int8", "int16", "int32", "int64", "int128", "int256", "address", "bool", "string", "bytes", "bytes1", "bytes2", "bytes3", "bytes4", "bytes5", "bytes6", "bytes7", "bytes8", "bytes9", "bytes10", "bytes11", "bytes12", "bytes13", "bytes14", "bytes15", "bytes16", "bytes17", "bytes18", "bytes19", "bytes20", "bytes21", "bytes22", "bytes23", "bytes24", "bytes25", "bytes26", "bytes27", "bytes28", "bytes29", "bytes30", "bytes31", "bytes32", "array", "tuple", "unknown_default_open_api"])
+      unless validator.valid?(type)
+        fail ArgumentError, "invalid value for \"type\", must be one of #{validator.allowable_values}."
+      end
+      @type = type
     end
 
     # Checks equality by comparing each attribute.
@@ -102,9 +152,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri
+          type == o.type &&
+          name == o.name &&
+          value == o.value &&
+          values == o.values
     end
 
     # @see the `==` method
@@ -116,7 +167,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_type_filter, event_filters, notification_uri].hash
+      [type, name, value, values].hash
     end
 
     # Builds the object from hash

@@ -14,21 +14,27 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class UpdateWebhookRequest
-    attr_accessor :event_type_filter
+  # A list of onchain events with pagination information
+  class OnchainNameList
+    # A list of onchain name objects
+    attr_accessor :data
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    # True if this list has another page of items after this one that can be fetched.
+    attr_accessor :has_more
 
-    # The Webhook uri that updates to
-    attr_accessor :notification_uri
+    # The page token to be used to fetch the next page.
+    attr_accessor :next_page
+
+    # The total number of payload signatures for the address.
+    attr_accessor :total_count
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri'
+        :'data' => :'data',
+        :'has_more' => :'has_more',
+        :'next_page' => :'next_page',
+        :'total_count' => :'total_count'
       }
     end
 
@@ -40,9 +46,10 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String'
+        :'data' => :'Array<OnchainName>',
+        :'has_more' => :'Boolean',
+        :'next_page' => :'String',
+        :'total_count' => :'Integer'
       }
     end
 
@@ -56,29 +63,37 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::OnchainNameList` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::OnchainNameList`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
-      end
-
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
+      if attributes.key?(:'data')
+        if (value = attributes[:'data']).is_a?(Array)
+          self.data = value
         end
+      else
+        self.data = nil
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
+      if attributes.key?(:'has_more')
+        self.has_more = attributes[:'has_more']
+      end
+
+      if attributes.key?(:'next_page')
+        self.next_page = attributes[:'next_page']
+      else
+        self.next_page = nil
+      end
+
+      if attributes.key?(:'total_count')
+        self.total_count = attributes[:'total_count']
       end
     end
 
@@ -87,6 +102,14 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @data.nil?
+        invalid_properties.push('invalid value for "data", data cannot be nil.')
+      end
+
+      if @next_page.nil?
+        invalid_properties.push('invalid value for "next_page", next_page cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,6 +117,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @data.nil?
+      return false if @next_page.nil?
       true
     end
 
@@ -102,9 +127,10 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri
+          data == o.data &&
+          has_more == o.has_more &&
+          next_page == o.next_page &&
+          total_count == o.total_count
     end
 
     # @see the `==` method
@@ -116,7 +142,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_type_filter, event_filters, notification_uri].hash
+      [data, has_more, next_page, total_count].hash
     end
 
     # Builds the object from hash
