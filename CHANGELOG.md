@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Include ERC20 and ERC721 token transfer information into transaction content.
+- Add support for reading from smart contracts.
 
 ## [0.7.0] - 2024-09-26
 
