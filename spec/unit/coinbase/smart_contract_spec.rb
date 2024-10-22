@@ -231,34 +231,53 @@ describe Coinbase::SmartContract do
                                           })
     end
 
-    before do
-      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
-
-      # Match against any ReadContractRequest with the expected method, args, and abi
-      allow(smart_contracts_api).to receive(:read_contract) do |network, address, request|
-        expect(network).to eq('ethereum-mainnet')
-        expect(address).to eq(contract_address)
-        expect(request.method).to eq(method_name)
-        expect(request.args).to eq(args.nil? ? 'null' : args.to_json)
-        expect(request.abi).to eq(abi&.to_json)
-        api_response
-      end
+    let(:expected_request_params) do
+      {
+        network: 'ethereum-mainnet',
+        address: contract_address,
+        method: method_name,
+        args: args.to_json,
+        abi: abi.to_json
+      }
     end
 
-    it 'calls the API with correct parameters' do
-      result
-
-      expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
-        expect(network).to eq('ethereum-mainnet')
-        expect(address).to eq(contract_address)
-        expect(request.method).to eq(method_name)
-        expect(request.args).to eq(args.to_json)
-        expect(request.abi).to eq(abi.to_json)
-      end
+    before do
+      allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
+      allow(smart_contracts_api).to receive(:read_contract).and_return(api_response)
     end
 
     it 'returns the parsed value' do
       expect(result).to eq(123_456_789)
+    end
+
+    it 'calls the API with correct network' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with('ethereum-mainnet', anything, anything)
+    end
+
+    it 'calls the API with correct address' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with(anything, contract_address, anything)
+    end
+
+    it 'calls the API with correct method' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with(anything, anything, have_attributes(method: method_name))
+    end
+
+    it 'calls the API with correct arguments' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with(anything, anything, have_attributes(args: args.to_json))
+    end
+
+    it 'calls the API with correct ABI' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with(anything, anything, have_attributes(abi: abi.to_json))
     end
 
     context 'when abi is not provided' do
@@ -266,13 +285,8 @@ describe Coinbase::SmartContract do
 
       it 'sends the request with null abi' do
         result
-        expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
-          expect(network).to eq('ethereum-mainnet')
-          expect(address).to eq(contract_address)
-          expect(request.method).to eq(method_name)
-          expect(request.args).to eq(args.to_json)
-          expect(request.abi).to be_nil
-        end
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(anything, anything, have_attributes(abi: nil))
       end
     end
 
@@ -281,13 +295,8 @@ describe Coinbase::SmartContract do
 
       it 'sends the request with null args' do
         result
-        expect(smart_contracts_api).to have_received(:read_contract) do |network, address, request|
-          expect(network).to eq('ethereum-mainnet')
-          expect(address).to eq(contract_address)
-          expect(request.method).to eq(method_name)
-          expect(request.args).to eq('null')
-          expect(request.abi).to eq(abi.to_json)
-        end
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(anything, anything, have_attributes(args: 'null'))
       end
     end
   end
