@@ -150,15 +150,15 @@ module Coinbase
       args: {}
     )
       network = Coinbase::Network.from_id(network)
-      
+
       response = Coinbase.call_api do
         smart_contracts_api.read_contract(
           network.normalized_id,
           contract_address,
           {
-              method: method,
-              args: args.to_json
-              abi: abi.nil? ? nil : abi.to_json
+            method: method,
+            args: args.to_json,
+            abi: abi&.to_json
           }
         )
       end

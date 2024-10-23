@@ -210,85 +210,53 @@ describe Coinbase::SmartContract do
     end
 
     let(:contract_address) { '0x1234567890123456789012345678901234567890' }
-    let(:method_name) { method_name_for_context }
+    let(:method_name) { 'testMethod' }
     let(:args) { {} }
     let(:abi) { nil }
 
-    describe 'API interaction' do
-      let(:method_name_for_context) { 'testMethod' }
-      let(:abi) do
-        [{
-          'type' => 'function',
-          'name' => 'testMethod',
-          'inputs' => [],
-          'outputs' => [{ 'type' => 'uint256' }],
-          'stateMutability' => 'pure'
-        }]
-      end
+    before do
+      allow(smart_contracts_api).to receive(:read_contract).and_return(
+        Coinbase::Client::SolidityValue.new(type: 'uint256', value: '0')
+      )
+    end
 
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'uint256',
-                                                'value' => '0'
-                                              })
-        )
-      end
-
-      it 'calls the API with correct network' do
+    describe 'network parameter' do
+      it 'uses the correct normalized network ID' do
         result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with('base-sepolia', anything, anything)
+        expect(smart_contracts_api).to have_received(:read_contract).with('base-sepolia', anything, anything)
       end
+    end
 
-      it 'calls the API with correct address' do
+    describe 'address parameter' do
+      it 'uses the provided contract address' do
         result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, contract_address, anything)
+        expect(smart_contracts_api).to have_received(:read_contract).with(anything, contract_address, anything)
       end
+    end
 
-      it 'calls the API with correct method' do
+    describe 'method parameter' do
+      it 'includes the method name in the request params' do
         result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, anything, have_attributes(method: method_name))
-      end
-
-      it 'calls the API with correct ABI' do
-        result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, anything, have_attributes(abi: abi.to_json))
-      end
-
-      it 'calls the API with correct arguments' do
-        result
-        expect(smart_contracts_api).to have_received(:read_contract)
-          .with(anything, anything, have_attributes(args: args.to_json))
+        expect(smart_contracts_api).to have_received(:read_contract).with(anything, anything,
+                                                                          hash_including(method: method_name))
       end
     end
 
     describe 'abi parameter' do
-      let(:method_name_for_context) { 'testMethod' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'uint256',
-                                                'value' => '0'
-                                              })
-        )
-      end
-
-      describe 'when explicitly set to nil' do
+      context 'when explicitly set to nil' do
         let(:abi) { nil }
 
-        it 'sends the request with null abi' do
+        it 'omits the abi from request params' do
           result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(abi: nil))
+          expect(smart_contracts_api).to have_received(:read_contract).with(
+            anything,
+            anything,
+            hash_including(abi: nil)
+          )
         end
       end
 
-      describe 'when omitted' do
+      context 'when omitted' do
         subject(:result) do
           described_class.read(
             network: network,
@@ -297,55 +265,32 @@ describe Coinbase::SmartContract do
           )
         end
 
-        it 'sends the request with null abi' do
+        it 'omits the abi from request params' do
           result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(abi: nil))
-        end
-      end
-
-      describe 'when provided' do
-        let(:abi) do
-          [{
-            'type' => 'function',
-            'name' => 'testMethod',
-            'inputs' => [],
-            'outputs' => [{ 'type' => 'uint256' }],
-            'stateMutability' => 'pure'
-          }]
-        end
-
-        it 'sends the request with JSON encoded abi' do
-          result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(abi: abi.to_json))
+          expect(smart_contracts_api).to have_received(:read_contract).with(
+            anything,
+            anything,
+            hash_including(abi: nil)
+          )
         end
       end
     end
 
     describe 'args parameter' do
-      let(:method_name_for_context) { 'testMethod' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'uint256',
-                                                'value' => '0'
-                                              })
-        )
-      end
-
-      describe 'when explicitly set to nil' do
+      context 'when explicitly set to nil' do
         let(:args) { nil }
 
-        it 'sends the request with "null" args' do
+        it 'sends null as args in request params' do
           result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(args: 'null'))
+          expect(smart_contracts_api).to have_received(:read_contract).with(
+            anything,
+            anything,
+            hash_including(args: 'null')
+          )
         end
       end
 
-      describe 'when omitted' do
+      context 'when omitted' do
         subject(:result) do
           described_class.read(
             network: network,
@@ -355,1068 +300,277 @@ describe Coinbase::SmartContract do
           )
         end
 
-        it 'sends the request with empty hash JSON args' do
+        it 'sends empty JSON object as args in request params' do
           result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(args: {}.to_json))
+          expect(smart_contracts_api).to have_received(:read_contract).with(
+            anything,
+            anything,
+            hash_including(args: '{}')
+          )
         end
       end
 
-      describe 'when provided as a hash' do
+      context 'when provided as a hash' do
         let(:args) { { 'value' => 123 } }
 
-        it 'sends the request with JSON encoded args' do
+        it 'sends JSON encoded hash as args in request params' do
           result
-          expect(smart_contracts_api).to have_received(:read_contract)
-            .with(anything, anything, have_attributes(args: args.to_json))
+          expect(smart_contracts_api).to have_received(:read_contract).with(
+            anything,
+            anything,
+            hash_including(args: args.to_json)
+          )
         end
       end
     end
 
-    describe 'uint types' do
-      describe 'uint8' do
-        let(:method_name_for_context) { 'getUint8' }
+    describe 'return value parsing' do
+      def build_nested_solidity_value(hash)
+        return hash unless hash.is_a?(Hash)
 
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint8',
-                                                  'value' => '255'
-                                                })
-          )
+        values = hash[:values]&.map do |v|
+          v.is_a?(Hash) ? build_nested_solidity_value(v) : v
         end
 
-        it 'returns the parsed uint8 value' do
-          expect(result).to eq(255)
-        end
+        attrs = hash.merge(
+          values: values
+        ).compact
+
+        Coinbase::Client::SolidityValue.new(**attrs)
       end
 
-      describe 'uint16' do
-        let(:method_name_for_context) { 'getUint16' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint16',
-                                                  'value' => '65535'
-                                                })
-          )
-        end
-
-        it 'returns the parsed uint16 value' do
-          expect(result).to eq(65_535)
-        end
-      end
-
-      describe 'uint32' do
-        let(:method_name_for_context) { 'getUint32' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint32',
-                                                  'value' => '4294967295'
-                                                })
-          )
-        end
-
-        it 'returns the parsed uint32 value' do
-          expect(result).to eq(4_294_967_295)
-        end
-      end
-
-      describe 'uint64' do
-        let(:method_name_for_context) { 'getUint64' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint64',
-                                                  'value' => '18446744073709551615'
-                                                })
-          )
-        end
-
-        it 'returns the parsed uint64 value' do
-          expect(result).to eq(18_446_744_073_709_551_615)
-        end
-      end
-
-      describe 'uint128' do
-        let(:method_name_for_context) { 'getUint128' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint128',
-                                                  'value' => '340282366920938463463374607431768211455'
-                                                })
-          )
-        end
-
-        it 'returns the parsed uint128 value' do
-          expect(result).to eq(340_282_366_920_938_463_463_374_607_431_768_211_455)
-        end
-      end
-
-      describe 'uint256' do
-        let(:method_name_for_context) { 'getUint256' }
-        let(:uint256_max) do
-          '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-        end
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'uint256',
-                                                  'value' => uint256_max
-                                                })
-          )
-        end
-
-        it 'returns the parsed uint256 value' do
-          max_value =
-            115_792_089_237_316_195_423_570_985_008_687_907_853_269_984_665_640_564_039_457_584_007_913_129_639_935
-          expect(result).to eq(max_value)
-        end
-      end
-    end
-
-    describe 'int types' do
-      describe 'int8' do
-        let(:method_name_for_context) { 'getInt8' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int8',
-                                                  'value' => '-128'
-                                                })
-          )
-        end
-
-        it 'returns the parsed int8 value' do
-          expect(result).to eq(-128)
-        end
-      end
-
-      describe 'int16' do
-        let(:method_name_for_context) { 'getInt16' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int16',
-                                                  'value' => '-32768'
-                                                })
-          )
-        end
-
-        it 'returns the parsed int16 value' do
-          expect(result).to eq(-32_768)
-        end
-      end
-
-      describe 'int32' do
-        let(:method_name_for_context) { 'getInt32' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int32',
-                                                  'value' => '-2147483648'
-                                                })
-          )
-        end
-
-        it 'returns the parsed int32 value' do
-          expect(result).to eq(-2_147_483_648)
-        end
-      end
-
-      describe 'int64' do
-        let(:method_name_for_context) { 'getInt64' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int64',
-                                                  'value' => '-9223372036854775808'
-                                                })
-          )
-        end
-
-        it 'returns the parsed int64 value' do
-          expect(result).to eq(-9_223_372_036_854_775_808)
-        end
-      end
-
-      describe 'int128' do
-        let(:method_name_for_context) { 'getInt128' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int128',
-                                                  'value' => '-170141183460469231731687303715884105728'
-                                                })
-          )
-        end
-
-        it 'returns the parsed int128 value' do
-          expect(result).to eq(-170_141_183_460_469_231_731_687_303_715_884_105_728)
-        end
-      end
-
-      describe 'int256' do
-        let(:method_name_for_context) { 'getInt256' }
-        let(:int256_min) do
-          '-57896044618658097711785492504343953926634992332820282019728792003956564819968'
-        end
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'int256',
-                                                  'value' => int256_min
-                                                })
-          )
-        end
-
-        it 'returns the parsed int256 value' do
-          min_value =
+      [
+        {
+          test: 'uint8',
+          method_name: 'pureUint8',
+          solidity_value: { type: 'uint8', value: '123' },
+          expected_value: 123
+        },
+        {
+          test: 'uint16',
+          method_name: 'pureUint16',
+          solidity_value: { type: 'uint16', value: '12345' },
+          expected_value: 12_345
+        },
+        {
+          test: 'uint32',
+          method_name: 'pureUint32',
+          solidity_value: { type: 'uint32', value: '4294967295' },
+          expected_value: 4_294_967_295
+        },
+        {
+          test: 'uint64',
+          method_name: 'pureUint64',
+          solidity_value: { type: 'uint64', value: '18446744073709551615' },
+          expected_value: 18_446_744_073_709_551_615
+        },
+        {
+          test: 'uint128',
+          method_name: 'pureUint128',
+          solidity_value: { type: 'uint128', value: '340282366920938463463374607431768211455' },
+          expected_value: 340_282_366_920_938_463_463_374_607_431_768_211_455
+        },
+        {
+          test: 'uint256',
+          method_name: 'pureUint256',
+          solidity_value: {
+            type: 'uint256',
+            value: '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+          },
+          expected_value:
+              115_792_089_237_316_195_423_570_985_008_687_907_853_269_984_665_640_564_039_457_584_007_913_129_639_935
+        },
+        {
+          test: 'int8',
+          method_name: 'pureInt8',
+          solidity_value: { type: 'int8', value: '-128' },
+          expected_value: -128
+        },
+        {
+          test: 'int16',
+          method_name: 'pureInt16',
+          solidity_value: { type: 'int16', value: '-32768' },
+          expected_value: -32_768
+        },
+        {
+          test: 'int32',
+          method_name: 'pureInt32',
+          solidity_value: { type: 'int32', value: '-2147483648' },
+          expected_value: -2_147_483_648
+        },
+        {
+          test: 'int64',
+          method_name: 'pureInt64',
+          solidity_value: { type: 'int64', value: '-9223372036854775808' },
+          expected_value: -9_223_372_036_854_775_808
+        },
+        {
+          test: 'int128',
+          method_name: 'pureInt128',
+          solidity_value: { type: 'int128', value: '-170141183460469231731687303715884105728' },
+          expected_value: -170_141_183_460_469_231_731_687_303_715_884_105_728
+        },
+        {
+          test: 'int256',
+          method_name: 'pureInt256',
+          solidity_value: {
+            type: 'int256',
+            value: '-57896044618658097711785492504343953926634992332820282019728792003956564819968'
+          },
+          expected_value:
             -57_896_044_618_658_097_711_785_492_504_343_953_926_634_992_332_820_282_019_728_792_003_956_564_819_968
-          expect(result).to eq(min_value)
-        end
-      end
-    end
-
-    describe 'boolean type' do
-      let(:method_name_for_context) { 'pureBool' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'bool',
-                                                'value' => 'true'
-                                              })
-        )
-      end
-
-      it 'returns the parsed boolean value' do
-        expect(result).to be(true)
-      end
-    end
-
-    describe 'address type' do
-      let(:method_name_for_context) { 'pureAddress' }
-      let(:address) { '0xd8da6bf26964af9d7eed9e03e53415d37aa96045' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'address',
-                                                'value' => address
-                                              })
-        )
-      end
-
-      it 'returns the parsed address value' do
-        expect(result).to eq(address)
-      end
-    end
-
-    describe 'array type' do
-      let(:method_name_for_context) { 'pureArray' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'array',
-                                                'values' => [
-                                                  Coinbase::Client::SolidityValue.new({
-                                                                                        'type' => 'uint256',
-                                                                                        'value' => '1'
-                                                                                      }),
-                                                  Coinbase::Client::SolidityValue.new({
-                                                                                        'type' => 'uint256',
-                                                                                        'value' => '2'
-                                                                                      }),
-                                                  Coinbase::Client::SolidityValue.new({
-                                                                                        'type' => 'uint256',
-                                                                                        'value' => '3'
-                                                                                      })
-                                                ]
-                                              })
-        )
-      end
-
-      it 'returns the parsed array values' do
-        expect(result).to eq([1, 2, 3])
-      end
-    end
-
-    describe 'fixed bytes types' do
-      describe 'bytes1' do
-        let(:method_name_for_context) { 'pureBytes1' }
-        let(:bytes_value) { '0x01' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes1',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes2' do
-        let(:method_name_for_context) { 'pureBytes2' }
-        let(:bytes_value) { '0x0102' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes2',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes3' do
-        let(:method_name_for_context) { 'pureBytes3' }
-        let(:bytes_value) { '0x010203' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes3',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes4' do
-        let(:method_name_for_context) { 'pureBytes4' }
-        let(:bytes_value) { '0x01020304' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes4',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes5' do
-        let(:method_name_for_context) { 'pureBytes5' }
-        let(:bytes_value) { '0x0102030405' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes5',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes6' do
-        let(:method_name_for_context) { 'pureBytes6' }
-        let(:bytes_value) { '0x010203040506' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes6',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes7' do
-        let(:method_name_for_context) { 'pureBytes7' }
-        let(:bytes_value) { '0x01020304050607' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes7',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes8' do
-        let(:method_name_for_context) { 'pureBytes8' }
-        let(:bytes_value) { '0x0102030405060708' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes8',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes9' do
-        let(:method_name_for_context) { 'pureBytes9' }
-        let(:bytes_value) { '0x010203040506070809' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes9',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes10' do
-        let(:method_name_for_context) { 'pureBytes10' }
-        let(:bytes_value) { '0x0102030405060708090a' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes10',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes11' do
-        let(:method_name_for_context) { 'pureBytes11' }
-        let(:bytes_value) { '0x0102030405060708090a0b' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes11',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes12' do
-        let(:method_name_for_context) { 'pureBytes12' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes12',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes13' do
-        let(:method_name_for_context) { 'pureBytes13' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes13',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes14' do
-        let(:method_name_for_context) { 'pureBytes14' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes14',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes15' do
-        let(:method_name_for_context) { 'pureBytes15' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes15',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes16' do
-        let(:method_name_for_context) { 'pureBytes16' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f10' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes16',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes17' do
-        let(:method_name_for_context) { 'pureBytes17' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f1011' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes17',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes18' do
-        let(:method_name_for_context) { 'pureBytes18' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes18',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes19' do
-        let(:method_name_for_context) { 'pureBytes19' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f10111213' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes19',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes20' do
-        let(:method_name_for_context) { 'pureBytes20' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f1011121314' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes20',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes21' do
-        let(:method_name_for_context) { 'pureBytes21' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes21',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes22' do
-        let(:method_name_for_context) { 'pureBytes22' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f10111213141516' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes22',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes23' do
-        let(:method_name_for_context) { 'pureBytes23' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f1011121314151617' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes23',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes24' do
-        let(:method_name_for_context) { 'pureBytes24' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes24',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes25' do
-        let(:method_name_for_context) { 'pureBytes25' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f10111213141516171819' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes25',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes26' do
-        let(:method_name_for_context) { 'pureBytes26' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes26',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes27' do
-        let(:method_name_for_context) { 'pureBytes27' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes27',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes28' do
-        let(:method_name_for_context) { 'pureBytes28' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes28',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes29' do
-        let(:method_name_for_context) { 'pureBytes29' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes29',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes30' do
-        let(:method_name_for_context) { 'pureBytes30' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes30',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes31' do
-        let(:method_name_for_context) { 'pureBytes31' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes31',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-
-      describe 'bytes32' do
-        let(:method_name_for_context) { 'pureBytes32' }
-        let(:bytes_value) { '0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20' }
-
-        before do
-          allow(smart_contracts_api).to receive(:read_contract).and_return(
-            Coinbase::Client::SolidityValue.new({
-                                                  'type' => 'bytes32',
-                                                  'value' => bytes_value
-                                                })
-          )
-        end
-
-        it 'returns the parsed fixed bytes value' do
-          expect(result).to eq(bytes_value)
-        end
-      end
-    end
-
-    describe 'dynamic bytes type' do
-      let(:method_name_for_context) { 'pureBytes' }
-      let(:bytes_value) { '0x0102030405' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'bytes',
-                                                'value' => bytes_value
-                                              })
-        )
-      end
-
-      it 'returns the parsed dynamic bytes value' do
-        expect(result).to eq(bytes_value)
-      end
-    end
-
-    describe 'string type' do
-      let(:method_name_for_context) { 'pureString' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'string',
-                                                'value' => 'Hello, World!'
-                                              })
-        )
-      end
-
-      it 'returns the parsed string value' do
-        expect(result).to eq('Hello, World!')
-      end
-    end
-
-    describe 'function type' do
-      let(:method_name_for_context) { 'returnFunction' }
-      let(:function_bytes) { '0x12341234123412341234123400000000' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new({
-                                                'type' => 'bytes',
-                                                'value' => function_bytes
-                                              })
-        )
-      end
-
-      it 'returns the function as bytes value' do
-        expect(result).to eq(function_bytes)
-      end
-    end
-
-    describe 'tuple type' do
-      let(:method_name_for_context) { 'pureTuple' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new(
-            'type' => 'tuple',
-            'values' => [
-              Coinbase::Client::SolidityValue.new({
-                                                    'type' => 'uint256',
-                                                    'name' => 'a',
-                                                    'value' => '1'
-                                                  }),
-              Coinbase::Client::SolidityValue.new({
-                                                    'type' => 'uint256',
-                                                    'name' => 'b',
-                                                    'value' => '2'
-                                                  })
+        },
+        {
+          test: 'address',
+          method_name: 'pureAddress',
+          solidity_value: {
+            type: 'address',
+            value: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+          },
+          expected_value: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+        },
+        {
+          test: 'string',
+          method_name: 'pureString',
+          solidity_value: { type: 'string', value: 'Hello, World!' },
+          expected_value: 'Hello, World!'
+        },
+        {
+          test: 'boolean true',
+          method_name: 'pureBool',
+          solidity_value: { type: 'bool', value: 'true' },
+          expected_value: true
+        },
+        {
+          test: 'boolean false',
+          method_name: 'pureBool',
+          solidity_value: { type: 'bool', value: 'false' },
+          expected_value: false
+        },
+        {
+          test: 'function',
+          method_name: 'returnFunction',
+          solidity_value: { type: 'bytes', value: '0x12341234123412341234123400000000' },
+          expected_value: '0x12341234123412341234123400000000'
+        },
+        {
+          test: 'array',
+          method_name: 'pureArray',
+          solidity_value: {
+            type: 'array',
+            values: [
+              { type: 'uint256', value: '1' },
+              { type: 'uint256', value: '2' },
+              { type: 'uint256', value: '3' }
             ]
-          )
-        )
-      end
-
-      it 'returns the parsed tuple value' do
-        expect(result).to eq({ 'a' => 1, 'b' => 2 })
-      end
-    end
-
-    describe 'tuple with mixed types' do
-      let(:method_name_for_context) { 'pureTupleMixedTypes' }
-      let(:address) { '0x1234567890123456789012345678901234567890' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new(
-            'type' => 'tuple',
-            'values' => [
-              Coinbase::Client::SolidityValue.new({
-                                                    'type' => 'uint256',
-                                                    'name' => 'a',
-                                                    'value' => '1'
-                                                  }),
-              Coinbase::Client::SolidityValue.new({
-                                                    'type' => 'address',
-                                                    'name' => 'b',
-                                                    'value' => address
-                                                  }),
-              Coinbase::Client::SolidityValue.new({
-                                                    'type' => 'bool',
-                                                    'name' => 'c',
-                                                    'value' => 'true'
-                                                  })
+          },
+          expected_value: [1, 2, 3]
+        },
+        {
+          test: 'simple tuple',
+          method_name: 'pureTuple',
+          solidity_value: {
+            type: 'tuple',
+            values: [
+              { type: 'uint256', name: 'a', value: '1' },
+              { type: 'uint256', name: 'b', value: '2' }
             ]
-          )
-        )
-      end
-
-      it 'returns the parsed tuple with mixed types' do
-        expect(result).to eq({
-                               'a' => 1,
-                               'b' => address,
-                               'c' => true
-                             })
-      end
-    end
-
-    describe 'nested struct type' do
-      let(:method_name_for_context) { 'pureNestedStruct' }
-
-      before do
-        allow(smart_contracts_api).to receive(:read_contract).and_return(
-          Coinbase::Client::SolidityValue.new(
-            'type' => 'tuple',
-            'values' => [
-              Coinbase::Client::SolidityValue.new(
-                'type' => 'uint256',
-                'name' => 'a',
-                'value' => '123'
-              ),
-              Coinbase::Client::SolidityValue.new(
-                'type' => 'tuple',
-                'name' => 'nestedFields',
-                'values' => [
-                  Coinbase::Client::SolidityValue.new(
-                    'type' => 'tuple',
-                    'name' => 'nestedArray',
-                    'values' => [
-                      Coinbase::Client::SolidityValue.new(
-                        'type' => 'array',
-                        'name' => 'a',
-                        'values' => [
-                          Coinbase::Client::SolidityValue.new(
-                            'type' => 'uint256',
-                            'value' => '1'
-                          ),
-                          Coinbase::Client::SolidityValue.new(
-                            'type' => 'uint256',
-                            'value' => '2'
-                          ),
-                          Coinbase::Client::SolidityValue.new(
-                            'type' => 'uint256',
-                            'value' => '3'
-                          )
+          },
+          expected_value: { 'a' => 1, 'b' => 2 }
+        },
+        {
+          test: 'mixed tuple',
+          method_name: 'pureTupleMixedTypes',
+          solidity_value: {
+            type: 'tuple',
+            values: [
+              { type: 'uint256', name: 'a', value: '1' },
+              { type: 'address', name: 'b', value: '0x1234567890123456789012345678901234567890' },
+              { type: 'bool', name: 'c', value: 'true' }
+            ]
+          },
+          expected_value: {
+            'a' => 1,
+            'b' => '0x1234567890123456789012345678901234567890',
+            'c' => true
+          }
+        },
+        {
+          test: 'nested tuple',
+          method_name: 'pureNestedStruct',
+          solidity_value: {
+            type: 'tuple',
+            values: [
+              { type: 'uint256', name: 'a', value: '123' },
+              {
+                type: 'tuple',
+                name: 'nestedFields',
+                values: [
+                  {
+                    type: 'tuple',
+                    name: 'nestedArray',
+                    values: [
+                      {
+                        type: 'array',
+                        name: 'a',
+                        values: [
+                          { type: 'uint256', value: '1' },
+                          { type: 'uint256', value: '2' },
+                          { type: 'uint256', value: '3' }
                         ]
-                      )
+                      }
                     ]
-                  ),
-                  Coinbase::Client::SolidityValue.new(
-                    'type' => 'uint256',
-                    'name' => 'a',
-                    'value' => '456'
-                  )
+                  },
+                  { type: 'uint256', name: 'a', value: '456' }
                 ]
-              )
+              }
             ]
-          )
-        )
-      end
-
-      it 'returns the parsed nested struct value with proper type conversion' do
-        expected_result = {
-          'a' => 123,
-          'nestedFields' => {
-            'nestedArray' => {
-              'a' => [1, 2, 3]
-            },
-            'a' => 456
+          },
+          expected_value: {
+            'a' => 123,
+            'nestedFields' => {
+              'nestedArray' => {
+                'a' => [1, 2, 3]
+              },
+              'a' => 456
+            }
           }
         }
-        expect(result).to eq(expected_result)
+      ].each do |test_case|
+        context "when the return value is #{test_case[:test]}" do
+          before do
+            solidity_value = build_nested_solidity_value(test_case[:solidity_value])
+            allow(smart_contracts_api).to receive(:read_contract).and_return(solidity_value)
+          end
+
+          it "returns the parsed #{test_case[:test]} value" do
+            expect(result).to eq(test_case[:expected_value])
+          end
+        end
+      end
+
+      # Fixed-size Bytes Tests (bytes1 through bytes32)
+      32.times do |i|
+        size = i + 1
+        hex_value = "0x#{'01' * size}"
+
+        test_case = {
+          test: "bytes#{size}",
+          method_name: "pureBytes#{size}",
+          solidity_value: { type: "bytes#{size}", value: hex_value },
+          expected_value: hex_value
+        }
+
+        context "when the return value is #{test_case[:test]}" do
+          before do
+            solidity_value = build_nested_solidity_value(test_case[:solidity_value])
+            allow(smart_contracts_api).to receive(:read_contract).and_return(solidity_value)
+          end
+
+          it "returns the parsed #{test_case[:test]} value" do
+            expect(result).to eq(test_case[:expected_value])
+          end
+        end
       end
     end
   end
