@@ -14,18 +14,18 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class OnchainNameTextRecordsInner
-    # The key for the text record
-    attr_accessor :key
+  class CreateFundQuoteRequest
+    # The amount of the asset to fund the address with in atomic units.
+    attr_accessor :amount
 
-    # The value for the text record
-    attr_accessor :value
+    # The ID of the asset to fund the address with.
+    attr_accessor :asset_id
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'key' => :'key',
-        :'value' => :'value'
+        :'amount' => :'amount',
+        :'asset_id' => :'asset_id'
       }
     end
 
@@ -37,8 +37,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'key' => :'String',
-        :'value' => :'String'
+        :'amount' => :'String',
+        :'asset_id' => :'String'
       }
     end
 
@@ -52,23 +52,27 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::OnchainNameTextRecordsInner` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CreateFundQuoteRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::OnchainNameTextRecordsInner`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CreateFundQuoteRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'key')
-        self.key = attributes[:'key']
+      if attributes.key?(:'amount')
+        self.amount = attributes[:'amount']
+      else
+        self.amount = nil
       end
 
-      if attributes.key?(:'value')
-        self.value = attributes[:'value']
+      if attributes.key?(:'asset_id')
+        self.asset_id = attributes[:'asset_id']
+      else
+        self.asset_id = nil
       end
     end
 
@@ -77,6 +81,14 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @amount.nil?
+        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
+      end
+
+      if @asset_id.nil?
+        invalid_properties.push('invalid value for "asset_id", asset_id cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -84,6 +96,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @amount.nil?
+      return false if @asset_id.nil?
       true
     end
 
@@ -92,8 +106,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          key == o.key &&
-          value == o.value
+          amount == o.amount &&
+          asset_id == o.asset_id
     end
 
     # @see the `==` method
@@ -105,7 +119,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [key, value].hash
+      [amount, asset_id].hash
     end
 
     # Builds the object from hash
