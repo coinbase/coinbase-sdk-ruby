@@ -215,9 +215,7 @@ describe Coinbase::SmartContract do
     let(:abi) { nil }
 
     before do
-      allow(smart_contracts_api).to receive(:read_contract).and_return(
-        Coinbase::Client::SolidityValue.new(type: 'uint256', value: '0')
-      )
+      allow(smart_contracts_api).to receive(:read_contract)
     end
 
     describe 'network parameter' do
