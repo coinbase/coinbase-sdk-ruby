@@ -217,6 +217,20 @@ module Coinbase
       )
     end
 
+    # Gets a quote for a fund operation to fund the address from your Coinbase platform,
+    # account for the amount of the specified Asset.
+    # @param asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @return [Coinbase::FundQuote] The FundQuote object.
+    def quote_fund(amount, asset_id)
+      FundQuote.create(
+        address_id: id,
+        amount: amount,
+        asset_id: asset_id,
+        network: network,
+        wallet_id: wallet_id
+      )
+    end
+
     # Stakes the given amount of the given Asset. The stake operation
     # may take a few minutes to complete in the case when infrastructure is spun up.
     # @param amount [Integer, Float, BigDecimal] The amount of the Asset to stake.

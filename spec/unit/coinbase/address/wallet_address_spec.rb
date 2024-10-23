@@ -555,6 +555,35 @@ describe Coinbase::WalletAddress do
     end
   end
 
+  describe '#quote_fund' do
+    subject(:fund_quote) { address.quote_fund(amount, asset_id) }
+
+    let(:amount) { '123.45' }
+    let(:asset_id) { :eth }
+    let(:crypto_amount) { build(:crypto_amount, network_id, asset_id, whole_amount: amount) }
+    let(:created_fund_quote) { build(:fund_quote, network_id, key: key, amount: crypto_amount) }
+
+    before do
+      allow(Coinbase::FundQuote).to receive(:create).and_return(created_fund_quote)
+
+      fund_quote
+    end
+
+    it 'returns the created fund quote' do
+      expect(fund_quote).to eq(created_fund_quote)
+    end
+
+    it 'creates the fund quote' do
+      expect(Coinbase::FundQuote).to have_received(:create).with(
+        address_id: address_id,
+        amount: amount,
+        asset_id: asset_id,
+        network: network,
+        wallet_id: wallet_id
+      )
+    end
+  end
+
   shared_examples 'an address that can do a staking_action' do |operation|
     subject(:action) { address.send(operation.to_sym, amount, asset_id, mode: mode) }
 

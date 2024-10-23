@@ -1157,6 +1157,32 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#quote_fund' do
+    subject(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:fund_quote) { build(:fund_quote, network_id) }
+    let(:amount) { '123.45' }
+    let(:asset_id) { :eth }
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address)
+        .to receive(:quote_fund)
+        .with(amount, asset_id)
+        .and_return(fund_quote)
+    end
+
+    it 'creates a fund quote from the default address' do
+      expect(wallet.quote_fund(amount, asset_id)).to eq(fund_quote)
+    end
+  end
+
   describe '#export' do
     context 'when not using a server signer' do
       subject(:exported_data) { seed_wallet.export }
