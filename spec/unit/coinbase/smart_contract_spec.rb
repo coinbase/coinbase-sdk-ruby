@@ -241,6 +241,16 @@ describe Coinbase::SmartContract do
     end
 
     describe 'abi parameter' do
+      context 'when provided' do
+        let(:abi) { [{ 'name' => 'testMethod', 'inputs' => [], 'outputs' => [] }] }
+
+        it 'includes the abi in request params' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract).with(anything, anything,
+                                                                            hash_including(abi: abi.to_json))
+        end
+      end
+
       context 'when explicitly set to nil' do
         let(:abi) { nil }
 
@@ -275,6 +285,16 @@ describe Coinbase::SmartContract do
     end
 
     describe 'args parameter' do
+      context 'when provided' do
+        let(:args) { { 'value' => 123 } }
+
+        it 'includes the args in request params' do
+          result
+          expect(smart_contracts_api).to have_received(:read_contract).with(anything, anything,
+                                                                            hash_including(args: args.to_json))
+        end
+      end
+
       context 'when explicitly set to nil' do
         let(:args) { nil }
 
