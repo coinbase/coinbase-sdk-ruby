@@ -157,7 +157,7 @@ module Coinbase
           contract_address,
           {
             method: method,
-            args: args.to_json,
+            args: (args || {}).to_json,
             abi: abi&.to_json
           }
         )
