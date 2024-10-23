@@ -198,6 +198,411 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '.read' do
+    subject(:result) do
+      described_class.read(
+        network: network,
+        contract_address: contract_address,
+        method: method_name,
+        abi: abi,
+        args: args
+      )
+    end
+
+    let(:contract_address) { '0x1234567890123456789012345678901234567890' }
+    let(:method_name) { 'testMethod' }
+    let(:abi) { [{ 'name' => 'testMethod', 'inputs' => [], 'outputs' => [] }] }
+    let(:args) { { 'value' => 123 } }
+    let(:expected_params) { { method: method_name, abi: abi.to_json, args: args.to_json } }
+
+    before do
+      allow(smart_contracts_api).to receive(:read_contract)
+    end
+
+    it 'calls read_contract with correct parameters' do
+      result
+      expect(smart_contracts_api).to have_received(:read_contract)
+        .with('base-sepolia', contract_address, hash_including(expected_params))
+    end
+
+    context 'when using a different network' do
+      let(:network_id) { :ethereum_mainnet }
+
+      it 'calls read_contract with the normalized network ID' do
+        result
+
+        expect(smart_contracts_api)
+          .to have_received(:read_contract)
+          .with(
+            'ethereum-mainnet',
+            contract_address,
+            anything
+          )
+      end
+    end
+
+    context 'when using a different contract address' do
+      let(:contract_address) { '0x9876543210987654321098765432109876543210' }
+
+      it 'calls read_contract with the provided address' do
+        result
+
+        expect(smart_contracts_api)
+          .to have_received(:read_contract)
+          .with(
+            anything,
+            contract_address,
+            anything
+          )
+      end
+    end
+
+    context 'when using a different method name' do
+      let(:method_name) { 'differentMethod' }
+
+      it 'calls read_contract with the provided method' do
+        result
+
+        expect(smart_contracts_api)
+          .to have_received(:read_contract)
+          .with(
+            anything,
+            anything,
+            hash_including(method: method_name)
+          )
+      end
+    end
+
+    context 'when args parameter is nil' do
+      let(:args) { nil }
+
+      it 'calls read_contract with null args' do
+        result
+
+        expect(smart_contracts_api)
+          .to have_received(:read_contract)
+          .with(
+            anything,
+            anything,
+            hash_including(args: '{}')
+          )
+      end
+    end
+
+    context 'when args parameter is omitted' do
+      subject(:result) do
+        described_class.read(
+          network: network,
+          contract_address: contract_address,
+          method: method_name,
+          abi: abi
+        )
+      end
+
+      it 'calls read_contract with empty args object' do
+        result
+
+        expect(smart_contracts_api)
+          .to have_received(:read_contract)
+          .with(
+            anything,
+            anything,
+            hash_including(args: '{}')
+          )
+      end
+    end
+
+    context 'when ABI parameter is nil' do
+      let(:abi) { nil }
+      let(:expected_params) do
+        {
+          method: method_name,
+          abi: nil,
+          args: args.to_json
+        }
+      end
+
+      it 'calls read_contract with nil ABI' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with('base-sepolia', contract_address, hash_including(expected_params))
+      end
+    end
+
+    context 'when ABI parameter is omitted' do
+      subject(:result) do
+        described_class.read(
+          network: network,
+          contract_address: contract_address,
+          method: method_name,
+          args: args
+        )
+      end
+
+      let(:expected_params) do
+        {
+          method: method_name,
+          abi: nil,
+          args: args.to_json
+        }
+      end
+
+      it 'calls read_contract with nil ABI' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with('base-sepolia', contract_address, hash_including(expected_params))
+      end
+    end
+
+    def build_nested_solidity_value(hash)
+      return hash unless hash.is_a?(Hash)
+
+      values = hash[:values]&.map do |v|
+        v.is_a?(Hash) ? build_nested_solidity_value(v) : v
+      end
+
+      attrs = hash.merge(
+        values: values
+      ).compact
+
+      Coinbase::Client::SolidityValue.new(**attrs)
+    end
+
+    [
+      {
+        test: 'uint8',
+        method_name: 'pureUint8',
+        solidity_value: { type: 'uint8', value: '123' },
+        expected_value: 123
+      },
+      {
+        test: 'uint16',
+        method_name: 'pureUint16',
+        solidity_value: { type: 'uint16', value: '12345' },
+        expected_value: 12_345
+      },
+      {
+        test: 'uint32',
+        method_name: 'pureUint32',
+        solidity_value: { type: 'uint32', value: '4294967295' },
+        expected_value: 4_294_967_295
+      },
+      {
+        test: 'uint64',
+        method_name: 'pureUint64',
+        solidity_value: { type: 'uint64', value: '18446744073709551615' },
+        expected_value: 18_446_744_073_709_551_615
+      },
+      {
+        test: 'uint128',
+        method_name: 'pureUint128',
+        solidity_value: { type: 'uint128', value: '340282366920938463463374607431768211455' },
+        expected_value: 340_282_366_920_938_463_463_374_607_431_768_211_455
+      },
+      {
+        test: 'uint256',
+        method_name: 'pureUint256',
+        solidity_value: {
+          type: 'uint256',
+          value: '115792089237316195423570985008687907853269984665640564039457584007913129639935'
+        },
+        expected_value:
+            115_792_089_237_316_195_423_570_985_008_687_907_853_269_984_665_640_564_039_457_584_007_913_129_639_935
+      },
+      {
+        test: 'int8',
+        method_name: 'pureInt8',
+        solidity_value: { type: 'int8', value: '-128' },
+        expected_value: -128
+      },
+      {
+        test: 'int16',
+        method_name: 'pureInt16',
+        solidity_value: { type: 'int16', value: '-32768' },
+        expected_value: -32_768
+      },
+      {
+        test: 'int32',
+        method_name: 'pureInt32',
+        solidity_value: { type: 'int32', value: '-2147483648' },
+        expected_value: -2_147_483_648
+      },
+      {
+        test: 'int64',
+        method_name: 'pureInt64',
+        solidity_value: { type: 'int64', value: '-9223372036854775808' },
+        expected_value: -9_223_372_036_854_775_808
+      },
+      {
+        test: 'int128',
+        method_name: 'pureInt128',
+        solidity_value: { type: 'int128', value: '-170141183460469231731687303715884105728' },
+        expected_value: -170_141_183_460_469_231_731_687_303_715_884_105_728
+      },
+      {
+        test: 'int256',
+        method_name: 'pureInt256',
+        solidity_value: {
+          type: 'int256',
+          value: '-57896044618658097711785492504343953926634992332820282019728792003956564819968'
+        },
+        expected_value:
+          -57_896_044_618_658_097_711_785_492_504_343_953_926_634_992_332_820_282_019_728_792_003_956_564_819_968
+      },
+      {
+        test: 'address',
+        method_name: 'pureAddress',
+        solidity_value: {
+          type: 'address',
+          value: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+        },
+        expected_value: '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'
+      },
+      {
+        test: 'string',
+        method_name: 'pureString',
+        solidity_value: { type: 'string', value: 'Hello, World!' },
+        expected_value: 'Hello, World!'
+      },
+      {
+        test: 'boolean true',
+        method_name: 'pureBool',
+        solidity_value: { type: 'bool', value: 'true' },
+        expected_value: true
+      },
+      {
+        test: 'boolean false',
+        method_name: 'pureBool',
+        solidity_value: { type: 'bool', value: 'false' },
+        expected_value: false
+      },
+      {
+        test: 'function',
+        method_name: 'returnFunction',
+        solidity_value: { type: 'bytes', value: '0x12341234123412341234123400000000' },
+        expected_value: '0x12341234123412341234123400000000'
+      },
+      {
+        test: 'array',
+        method_name: 'pureArray',
+        solidity_value: {
+          type: 'array',
+          values: [
+            { type: 'uint256', value: '1' },
+            { type: 'uint256', value: '2' },
+            { type: 'uint256', value: '3' }
+          ]
+        },
+        expected_value: [1, 2, 3]
+      },
+      {
+        test: 'simple tuple',
+        method_name: 'pureTuple',
+        solidity_value: {
+          type: 'tuple',
+          values: [
+            { type: 'uint256', name: 'a', value: '1' },
+            { type: 'uint256', name: 'b', value: '2' }
+          ]
+        },
+        expected_value: { 'a' => 1, 'b' => 2 }
+      },
+      {
+        test: 'mixed tuple',
+        method_name: 'pureTupleMixedTypes',
+        solidity_value: {
+          type: 'tuple',
+          values: [
+            { type: 'uint256', name: 'a', value: '1' },
+            { type: 'address', name: 'b', value: '0x1234567890123456789012345678901234567890' },
+            { type: 'bool', name: 'c', value: 'true' }
+          ]
+        },
+        expected_value: {
+          'a' => 1,
+          'b' => '0x1234567890123456789012345678901234567890',
+          'c' => true
+        }
+      },
+      {
+        test: 'nested tuple',
+        method_name: 'pureNestedStruct',
+        solidity_value: {
+          type: 'tuple',
+          values: [
+            { type: 'uint256', name: 'a', value: '123' },
+            {
+              type: 'tuple',
+              name: 'nestedFields',
+              values: [
+                {
+                  type: 'tuple',
+                  name: 'nestedArray',
+                  values: [
+                    {
+                      type: 'array',
+                      name: 'a',
+                      values: [
+                        { type: 'uint256', value: '1' },
+                        { type: 'uint256', value: '2' },
+                        { type: 'uint256', value: '3' }
+                      ]
+                    }
+                  ]
+                },
+                { type: 'uint256', name: 'a', value: '456' }
+              ]
+            }
+          ]
+        },
+        expected_value: {
+          'a' => 123,
+          'nestedFields' => {
+            'nestedArray' => {
+              'a' => [1, 2, 3]
+            },
+            'a' => 456
+          }
+        }
+      }
+    ].each do |test_case|
+      context "when the return value is #{test_case[:test]}" do
+        before do
+          solidity_value = build_nested_solidity_value(test_case[:solidity_value])
+          allow(smart_contracts_api).to receive(:read_contract).and_return(solidity_value)
+        end
+
+        it "returns the parsed #{test_case[:test]} value" do
+          expect(result).to eq(test_case[:expected_value])
+        end
+      end
+    end
+
+    # Fixed-size Bytes Tests (bytes1 through bytes32)
+    32.times do |i|
+      size = i + 1
+      hex_value = "0x#{'01' * size}"
+
+      test_case = {
+        test: "bytes#{size}",
+        method_name: "pureBytes#{size}",
+        solidity_value: { type: "bytes#{size}", value: hex_value },
+        expected_value: hex_value
+      }
+
+      context "when the return value is #{test_case[:test]}" do
+        before do
+          solidity_value = build_nested_solidity_value(test_case[:solidity_value])
+          allow(smart_contracts_api).to receive(:read_contract).and_return(solidity_value)
+        end
+
+        it "returns the parsed #{test_case[:test]} value" do
+          expect(result).to eq(test_case[:expected_value])
+        end
+      end
+    end
+  end
+
   describe '.list_events' do
     subject(:enumerator) do
       described_class.list_events(
