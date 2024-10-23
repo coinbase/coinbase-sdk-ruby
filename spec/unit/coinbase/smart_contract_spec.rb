@@ -329,7 +329,7 @@ describe Coinbase::SmartContract do
       end
     end
 
-    describe 'return value parsing' do
+    describe 'return value' do
       def build_nested_solidity_value(hash)
         return hash unless hash.is_a?(Hash)
 
