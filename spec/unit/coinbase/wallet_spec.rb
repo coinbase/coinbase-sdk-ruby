@@ -1157,6 +1157,32 @@ describe Coinbase::Wallet do
     end
   end
 
+  describe '#fund' do
+    subject(:wallet) do
+      described_class.new(model_with_default_address, seed: '')
+    end
+
+    let(:fund_operation) { build(:fund_operation, network_id) }
+    let(:amount) { '123.45' }
+    let(:asset_id) { :eth }
+
+    before do
+      allow(addresses_api)
+        .to receive(:list_addresses)
+        .with(wallet_id, { limit: 20 })
+        .and_return(Coinbase::Client::AddressList.new(data: [first_address_model], total_count: 1))
+
+      allow(wallet.default_address)
+        .to receive(:fund)
+        .with(amount, asset_id)
+        .and_return(fund_operation)
+    end
+
+    it 'creates a fund operation using the default address' do
+      expect(wallet.fund(amount, asset_id)).to eq(fund_operation)
+    end
+  end
+
   describe '#quote_fund' do
     subject(:wallet) do
       described_class.new(model_with_default_address, seed: '')

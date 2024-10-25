@@ -217,6 +217,20 @@ module Coinbase
       )
     end
 
+    # Funds the address from your account on the Coinbase Platform for the given amount of the given Asset.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to fund the wallet with.
+    # @param asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @return [Coinbase::FundOperation] The FundOperation object.
+    def fund(amount, asset_id)
+      FundOperation.create(
+        address_id: id,
+        amount: amount,
+        asset_id: asset_id,
+        network: network,
+        wallet_id: wallet_id
+      )
+    end
+
     # Gets a quote for a fund operation to fund the address from your Coinbase platform,
     # account for the amount of the specified Asset.
     # @param asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
