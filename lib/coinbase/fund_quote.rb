@@ -79,10 +79,14 @@ module Coinbase
       BigDecimal(@model.crypto_amount.amount) / BigDecimal(10).power(@model.crypto_amount.asset.decimals)
     end
 
+    # Returns the amount of Fiat the FundOperation will cost (inclusive of fees).
+    # @return [BigDecimal] The amount of Fiat
     def fiat_amount
-      @model.fiat_amount.amount
+      BigDecimal(@model.fiat_amount.amount)
     end
 
+    # Returns the Fiat currency of the FundOperation.
+    # @return [String] The Fiat currency
     def fiat_currency
       @model.fiat_amount.currency
     end

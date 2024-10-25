@@ -264,9 +264,15 @@ module Coinbase
     # @param asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
     # @return [Coinbase::FundQuote] The FundQuote object.
 
+    # @!method fund
+    # Funds the address from your account on the Coinbase Platform for the given amount of the given Asset.
+    # @param amount [Integer, Float, BigDecimal] The amount of the Asset to fund the wallet with.
+    # @param asset_id [Symbol] The ID of the Asset to trade from. For Ether, :eth, :gwei, and :wei are supported.
+    # @return [Coinbase::FundOperation] The FundOperation object.
+
     def_delegators :default_address, :transfer, :trade, :faucet, :stake, :unstake, :claim_stake, :staking_balances,
                    :stakeable_balance, :unstakeable_balance, :claimable_balance, :sign_payload, :invoke_contract,
-                   :deploy_token, :deploy_nft, :deploy_multi_token, :quote_fund
+                   :deploy_token, :deploy_nft, :deploy_multi_token, :quote_fund, :fund
 
     # Returns the addresses belonging to the Wallet.
     # @return [Array<Coinbase::WalletAddress>] The addresses belonging to the Wallet
