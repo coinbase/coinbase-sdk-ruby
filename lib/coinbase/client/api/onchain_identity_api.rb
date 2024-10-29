@@ -24,6 +24,7 @@ module Coinbase::Client
     # @param network_id [String] The ID of the blockchain network
     # @param address_id [String] The ID of the address to fetch the identity for
     # @param [Hash] opts the optional parameters
+    # @option opts [Array<String>] :roles A filter by role of the names related to this address (managed or owned)
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [OnchainNameList]
@@ -37,6 +38,7 @@ module Coinbase::Client
     # @param network_id [String] The ID of the blockchain network
     # @param address_id [String] The ID of the address to fetch the identity for
     # @param [Hash] opts the optional parameters
+    # @option opts [Array<String>] :roles A filter by role of the names related to this address (managed or owned)
     # @option opts [Integer] :limit A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
     # @option opts [String] :page A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
     # @return [Array<(OnchainNameList, Integer, Hash)>] OnchainNameList data, response status code and response headers
@@ -52,6 +54,10 @@ module Coinbase::Client
       if @api_client.config.client_side_validation && address_id.nil?
         fail ArgumentError, "Missing the required parameter 'address_id' when calling OnchainIdentityApi.resolve_identity_by_address"
       end
+      allowable_values = ["managed", "owned", "unknown_default_open_api"]
+      if @api_client.config.client_side_validation && opts[:'roles'] && !opts[:'roles'].all? { |item| allowable_values.include?(item) }
+        fail ArgumentError, "invalid value for \"roles\", must include one of #{allowable_values}"
+      end
       if @api_client.config.client_side_validation && !opts[:'page'].nil? && opts[:'page'].to_s.length > 5000
         fail ArgumentError, 'invalid value for "opts[:"page"]" when calling OnchainIdentityApi.resolve_identity_by_address, the character length must be smaller than or equal to 5000.'
       end
@@ -61,6 +67,7 @@ module Coinbase::Client
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'roles'] = @api_client.build_collection_param(opts[:'roles'], :csv) if !opts[:'roles'].nil?
       query_params[:'limit'] = opts[:'limit'] if !opts[:'limit'].nil?
       query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
