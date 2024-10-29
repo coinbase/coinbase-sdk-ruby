@@ -91,11 +91,16 @@ module Coinbase
     # @raise [Coinbase::FaucetLimitReachedError] If the faucet limit has been reached for the address or user.
     # @raise [Coinbase::Client::ApiError] If an unexpected error occurs while requesting faucet funds.
     def faucet(asset_id: nil)
-      opts = { asset_id: asset_id }.compact
-
       Coinbase.call_api do
         Coinbase::FaucetTransaction.new(
-          addresses_api.request_external_faucet_funds(network.normalized_id, id, opts)
+          addresses_api.request_external_faucet_funds(
+            network.normalized_id,
+            id,
+            {
+              asset_id: asset_id,
+              skip_wait: true
+            }.compact
+          )
         )
       end
     end

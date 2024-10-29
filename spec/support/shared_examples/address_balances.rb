@@ -141,10 +141,10 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
   end
 
   describe '#faucet' do
-    let(:tx_hash) { '0xdeadbeef' }
     let(:faucet_tx) do
-      instance_double(Coinbase::Client::FaucetTransaction, transaction_hash: tx_hash)
+      build(:faucet_tx_model, network_id, :broadcasted, to_address_id: address_id)
     end
+    let(:tx_hash) { faucet_tx.transaction.transaction_hash }
 
     context 'when the request is successful' do
       subject(:faucet_response) { address.faucet }
@@ -152,7 +152,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
       before do
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id, {})
+          .with(normalized_network_id, address_id, { skip_wait: true })
           .and_return(faucet_tx)
       end
 
@@ -161,7 +161,7 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
 
         expect(external_addresses_api)
           .to have_received(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id, {})
+          .with(normalized_network_id, address_id, { skip_wait: true })
       end
 
       it 'returns the faucet transaction' do
@@ -173,11 +173,34 @@ shared_examples 'an address that supports requesting faucet funds' do |_operatio
       end
     end
 
-    context 'when the request is unsuccesful' do
+    context 'when using specified asset' do
+      subject(:faucet_response) { address.faucet(asset_id: :usdc) }
+
       before do
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, address_id, {})
+          .with(normalized_network_id, address_id, { asset_id: :usdc, skip_wait: true })
+          .and_return(faucet_tx)
+      end
+
+      it 'requests external faucet funds for the address for the specified asset' do
+        faucet_response
+
+        expect(external_addresses_api)
+          .to have_received(:request_external_faucet_funds)
+          .with(normalized_network_id, address_id, { asset_id: :usdc, skip_wait: true })
+      end
+
+      it 'returns the faucet transaction' do
+        expect(faucet_response).to be_a(Coinbase::FaucetTransaction)
+      end
+    end
+
+    context 'when the request is unsuccessful' do
+      before do
+        allow(external_addresses_api)
+          .to receive(:request_external_faucet_funds)
+          .with(normalized_network_id, address_id, { skip_wait: true })
           .and_raise(api_error)
       end
 

@@ -866,7 +866,7 @@ describe Coinbase::SmartContract do
   end
 
   describe '#inspect' do
-    it 'includes smart contractdetails' do
+    it 'includes smart contract details' do
       expect(smart_contract.inspect).to include(
         address_id,
         Coinbase.to_sym(network_id).to_s,

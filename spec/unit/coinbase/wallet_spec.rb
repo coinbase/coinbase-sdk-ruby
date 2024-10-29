@@ -1190,8 +1190,14 @@ describe Coinbase::Wallet do
   end
 
   describe '#faucet' do
+    let(:tx_hash) { SecureRandom.hex(32) }
     let(:faucet_transaction_model) do
-      Coinbase::Client::FaucetTransaction.new({ transaction_hash: '0x123456789' })
+      build(
+        :faucet_tx_model,
+        :broadcasted,
+        transaction_hash: tx_hash,
+        to_address_id: first_address_model.address_id
+      )
     end
     let(:wallet) { described_class.new(model_with_default_address, seed: '') }
 
@@ -1206,7 +1212,7 @@ describe Coinbase::Wallet do
 
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, first_address_model.address_id, {})
+          .with(normalized_network_id, first_address_model.address_id, { skip_wait: true })
           .and_return(faucet_transaction_model)
       end
 
@@ -1215,7 +1221,7 @@ describe Coinbase::Wallet do
       end
 
       it 'contains the transaction hash' do
-        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+        expect(faucet_transaction.transaction_hash).to eq(tx_hash)
       end
     end
 
@@ -1230,7 +1236,7 @@ describe Coinbase::Wallet do
 
         allow(external_addresses_api)
           .to receive(:request_external_faucet_funds)
-          .with(normalized_network_id, first_address_model.address_id, { asset_id: :usdc })
+          .with(normalized_network_id, first_address_model.address_id, { asset_id: :usdc, skip_wait: true })
           .and_return(faucet_transaction_model)
       end
 
@@ -1239,7 +1245,7 @@ describe Coinbase::Wallet do
       end
 
       it 'contains the transaction hash' do
-        expect(faucet_transaction.transaction_hash).to eq(faucet_transaction_model.transaction_hash)
+        expect(faucet_transaction.transaction_hash).to eq(tx_hash)
       end
     end
   end
