@@ -10,6 +10,13 @@ FactoryBot.define do
 
     # Default trait.
     pending
+    base_sepolia
+
+    NETWORK_TRAITS.each do |network|
+      trait network do
+        network_id { Coinbase.normalize_network(network) }
+      end
+    end
 
     trait :pending do
       status { 'pending' }

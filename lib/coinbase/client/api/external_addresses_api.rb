@@ -94,6 +94,81 @@ module Coinbase::Client
       return data, status_code, headers
     end
 
+    # Get the status of a faucet transaction
+    # Get the status of a faucet transaction
+    # @param network_id [String] The ID of the blockchain network
+    # @param address_id [String] The ID of the address to fetch the faucet transaction for
+    # @param tx_hash [String] The hash of the faucet transaction
+    # @param [Hash] opts the optional parameters
+    # @return [FaucetTransaction]
+    def get_faucet_transaction(network_id, address_id, tx_hash, opts = {})
+      data, _status_code, _headers = get_faucet_transaction_with_http_info(network_id, address_id, tx_hash, opts)
+      data
+    end
+
+    # Get the status of a faucet transaction
+    # Get the status of a faucet transaction
+    # @param network_id [String] The ID of the blockchain network
+    # @param address_id [String] The ID of the address to fetch the faucet transaction for
+    # @param tx_hash [String] The hash of the faucet transaction
+    # @param [Hash] opts the optional parameters
+    # @return [Array<(FaucetTransaction, Integer, Hash)>] FaucetTransaction data, response status code and response headers
+    def get_faucet_transaction_with_http_info(network_id, address_id, tx_hash, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: ExternalAddressesApi.get_faucet_transaction ...'
+      end
+      # verify the required parameter 'network_id' is set
+      if @api_client.config.client_side_validation && network_id.nil?
+        fail ArgumentError, "Missing the required parameter 'network_id' when calling ExternalAddressesApi.get_faucet_transaction"
+      end
+      # verify the required parameter 'address_id' is set
+      if @api_client.config.client_side_validation && address_id.nil?
+        fail ArgumentError, "Missing the required parameter 'address_id' when calling ExternalAddressesApi.get_faucet_transaction"
+      end
+      # verify the required parameter 'tx_hash' is set
+      if @api_client.config.client_side_validation && tx_hash.nil?
+        fail ArgumentError, "Missing the required parameter 'tx_hash' when calling ExternalAddressesApi.get_faucet_transaction"
+      end
+      # resource path
+      local_var_path = '/v1/networks/{network_id}/addresses/{address_id}/faucet/{tx_hash}'.sub('{' + 'network_id' + '}', CGI.escape(network_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s)).sub('{' + 'tx_hash' + '}', CGI.escape(tx_hash.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body]
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'FaucetTransaction'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"ExternalAddressesApi.get_faucet_transaction",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:GET, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: ExternalAddressesApi#get_faucet_transaction\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
     # Get the balances of an external address
     # List all of the balances of an external address
     # @param network_id [String] The ID of the blockchain network
@@ -176,6 +251,7 @@ module Coinbase::Client
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
     # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
+    # @option opts [Boolean] :skip_wait Whether to skip waiting for the transaction to be mined. This will become the default behavior in the future.
     # @return [FaucetTransaction]
     def request_external_faucet_funds(network_id, address_id, opts = {})
       data, _status_code, _headers = request_external_faucet_funds_with_http_info(network_id, address_id, opts)
@@ -188,6 +264,7 @@ module Coinbase::Client
     # @param address_id [String] The onchain address of the address that is being fetched.
     # @param [Hash] opts the optional parameters
     # @option opts [String] :asset_id The ID of the asset to transfer from the faucet.
+    # @option opts [Boolean] :skip_wait Whether to skip waiting for the transaction to be mined. This will become the default behavior in the future.
     # @return [Array<(FaucetTransaction, Integer, Hash)>] FaucetTransaction data, response status code and response headers
     def request_external_faucet_funds_with_http_info(network_id, address_id, opts = {})
       if @api_client.config.debugging
@@ -207,6 +284,7 @@ module Coinbase::Client
       # query parameters
       query_params = opts[:query_params] || {}
       query_params[:'asset_id'] = opts[:'asset_id'] if !opts[:'asset_id'].nil?
+      query_params[:'skip_wait'] = opts[:'skip_wait'] if !opts[:'skip_wait'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}

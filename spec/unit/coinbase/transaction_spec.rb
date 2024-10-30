@@ -3,6 +3,7 @@
 describe Coinbase::Transaction do
   subject(:transaction) { build(:transaction, model: transaction_model) }
 
+  let(:network_id) { :base_sepolia }
   let(:from_key) { build(:key) }
   let(:to_address_id) { '0xe317065De795eFBaC71cf00114c7252BFcd23c29'.downcase }
   let(:transaction_model) { build(:transaction_model, from_address_id: from_key.address.to_s) }
@@ -18,6 +19,12 @@ describe Coinbase::Transaction do
           described_class.new(build(:balance_model, :base_sepolia))
         end.to raise_error(RuntimeError)
       end
+    end
+  end
+
+  describe '#network' do
+    it 'returns the network' do
+      expect(transaction.network.id).to eq(network_id)
     end
   end
 

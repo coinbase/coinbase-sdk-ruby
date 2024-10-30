@@ -14,51 +14,18 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # A representation of an onchain stored name from name systems i.e. ENS or Basenames
-  class OnchainName
-    # The ID for the NFT related to this name
-    attr_accessor :token_id
+  # An amount in cryptocurrency
+  class CryptoAmount
+    # The amount of the crypto in atomic units
+    attr_accessor :amount
 
-    # The onchain address of the owner of the name
-    attr_accessor :owner_address
-
-    # The onchain address of the manager of the name
-    attr_accessor :manager_address
-
-    # The primary onchain address of the name
-    attr_accessor :primary_address
-
-    # The readable format for the name in complete form
-    attr_accessor :domain
-
-    # The visual representation attached to this name
-    attr_accessor :avatar
-
-    # The ID of the blockchain network
-    attr_accessor :network_id
-
-    # The expiration date for this name's ownership
-    attr_accessor :expires_at
-
-    # The metadata attached to this name
-    attr_accessor :text_records
-
-    # Whether this name is the primary name for the owner (This is when the ETH coin address for this name is equal to the primary_address. More info here https://docs.ens.domains/ensip/19)
-    attr_accessor :is_primary
+    attr_accessor :asset
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'token_id' => :'token_id',
-        :'owner_address' => :'owner_address',
-        :'manager_address' => :'manager_address',
-        :'primary_address' => :'primary_address',
-        :'domain' => :'domain',
-        :'avatar' => :'avatar',
-        :'network_id' => :'network_id',
-        :'expires_at' => :'expires_at',
-        :'text_records' => :'text_records',
-        :'is_primary' => :'is_primary'
+        :'amount' => :'amount',
+        :'asset' => :'asset'
       }
     end
 
@@ -70,16 +37,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'token_id' => :'String',
-        :'owner_address' => :'String',
-        :'manager_address' => :'String',
-        :'primary_address' => :'String',
-        :'domain' => :'String',
-        :'avatar' => :'String',
-        :'network_id' => :'String',
-        :'expires_at' => :'Time',
-        :'text_records' => :'Hash<String, String>',
-        :'is_primary' => :'Boolean'
+        :'amount' => :'String',
+        :'asset' => :'Asset'
       }
     end
 
@@ -93,71 +52,27 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::OnchainName` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::CryptoAmount` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::OnchainName`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::CryptoAmount`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'token_id')
-        self.token_id = attributes[:'token_id']
+      if attributes.key?(:'amount')
+        self.amount = attributes[:'amount']
       else
-        self.token_id = nil
+        self.amount = nil
       end
 
-      if attributes.key?(:'owner_address')
-        self.owner_address = attributes[:'owner_address']
+      if attributes.key?(:'asset')
+        self.asset = attributes[:'asset']
       else
-        self.owner_address = nil
-      end
-
-      if attributes.key?(:'manager_address')
-        self.manager_address = attributes[:'manager_address']
-      else
-        self.manager_address = nil
-      end
-
-      if attributes.key?(:'primary_address')
-        self.primary_address = attributes[:'primary_address']
-      end
-
-      if attributes.key?(:'domain')
-        self.domain = attributes[:'domain']
-      else
-        self.domain = nil
-      end
-
-      if attributes.key?(:'avatar')
-        self.avatar = attributes[:'avatar']
-      end
-
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
-      else
-        self.network_id = nil
-      end
-
-      if attributes.key?(:'expires_at')
-        self.expires_at = attributes[:'expires_at']
-      else
-        self.expires_at = nil
-      end
-
-      if attributes.key?(:'text_records')
-        if (value = attributes[:'text_records']).is_a?(Hash)
-          self.text_records = value
-        end
-      end
-
-      if attributes.key?(:'is_primary')
-        self.is_primary = attributes[:'is_primary']
-      else
-        self.is_primary = nil
+        self.asset = nil
       end
     end
 
@@ -166,32 +81,12 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @token_id.nil?
-        invalid_properties.push('invalid value for "token_id", token_id cannot be nil.')
+      if @amount.nil?
+        invalid_properties.push('invalid value for "amount", amount cannot be nil.')
       end
 
-      if @owner_address.nil?
-        invalid_properties.push('invalid value for "owner_address", owner_address cannot be nil.')
-      end
-
-      if @manager_address.nil?
-        invalid_properties.push('invalid value for "manager_address", manager_address cannot be nil.')
-      end
-
-      if @domain.nil?
-        invalid_properties.push('invalid value for "domain", domain cannot be nil.')
-      end
-
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
-      end
-
-      if @expires_at.nil?
-        invalid_properties.push('invalid value for "expires_at", expires_at cannot be nil.')
-      end
-
-      if @is_primary.nil?
-        invalid_properties.push('invalid value for "is_primary", is_primary cannot be nil.')
+      if @asset.nil?
+        invalid_properties.push('invalid value for "asset", asset cannot be nil.')
       end
 
       invalid_properties
@@ -201,13 +96,8 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @token_id.nil?
-      return false if @owner_address.nil?
-      return false if @manager_address.nil?
-      return false if @domain.nil?
-      return false if @network_id.nil?
-      return false if @expires_at.nil?
-      return false if @is_primary.nil?
+      return false if @amount.nil?
+      return false if @asset.nil?
       true
     end
 
@@ -216,16 +106,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          token_id == o.token_id &&
-          owner_address == o.owner_address &&
-          manager_address == o.manager_address &&
-          primary_address == o.primary_address &&
-          domain == o.domain &&
-          avatar == o.avatar &&
-          network_id == o.network_id &&
-          expires_at == o.expires_at &&
-          text_records == o.text_records &&
-          is_primary == o.is_primary
+          amount == o.amount &&
+          asset == o.asset
     end
 
     # @see the `==` method
@@ -237,7 +119,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [token_id, owner_address, manager_address, primary_address, domain, avatar, network_id, expires_at, text_records, is_primary].hash
+      [amount, asset].hash
     end
 
     # Builds the object from hash
