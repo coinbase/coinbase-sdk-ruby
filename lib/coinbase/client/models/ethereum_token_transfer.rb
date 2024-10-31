@@ -14,21 +14,55 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class UpdateWebhookRequest
-    attr_accessor :event_type_filter
+  class EthereumTokenTransfer
+    attr_accessor :contract_address
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    attr_accessor :from_address
 
-    # The Webhook uri that updates to
-    attr_accessor :notification_uri
+    attr_accessor :to_address
+
+    # The value of the transaction in atomic units of the token being transfer for ERC20 or ERC1155 contracts.
+    attr_accessor :value
+
+    # The ID of ERC721 or ERC1155 token being transferred.
+    attr_accessor :token_id
+
+    attr_accessor :log_index
+
+    attr_accessor :token_transfer_type
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri'
+        :'contract_address' => :'contract_address',
+        :'from_address' => :'from_address',
+        :'to_address' => :'to_address',
+        :'value' => :'value',
+        :'token_id' => :'token_id',
+        :'log_index' => :'log_index',
+        :'token_transfer_type' => :'token_transfer_type'
       }
     end
 
@@ -40,9 +74,13 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String'
+        :'contract_address' => :'String',
+        :'from_address' => :'String',
+        :'to_address' => :'String',
+        :'value' => :'String',
+        :'token_id' => :'String',
+        :'log_index' => :'Integer',
+        :'token_transfer_type' => :'TokenTransferType'
       }
     end
 
@@ -56,29 +94,53 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::EthereumTokenTransfer` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::EthereumTokenTransfer`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
+      if attributes.key?(:'contract_address')
+        self.contract_address = attributes[:'contract_address']
+      else
+        self.contract_address = nil
       end
 
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
-        end
+      if attributes.key?(:'from_address')
+        self.from_address = attributes[:'from_address']
+      else
+        self.from_address = nil
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
+      if attributes.key?(:'to_address')
+        self.to_address = attributes[:'to_address']
+      else
+        self.to_address = nil
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
+      end
+
+      if attributes.key?(:'token_id')
+        self.token_id = attributes[:'token_id']
+      end
+
+      if attributes.key?(:'log_index')
+        self.log_index = attributes[:'log_index']
+      else
+        self.log_index = nil
+      end
+
+      if attributes.key?(:'token_transfer_type')
+        self.token_transfer_type = attributes[:'token_transfer_type']
+      else
+        self.token_transfer_type = nil
       end
     end
 
@@ -87,6 +149,26 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @contract_address.nil?
+        invalid_properties.push('invalid value for "contract_address", contract_address cannot be nil.')
+      end
+
+      if @from_address.nil?
+        invalid_properties.push('invalid value for "from_address", from_address cannot be nil.')
+      end
+
+      if @to_address.nil?
+        invalid_properties.push('invalid value for "to_address", to_address cannot be nil.')
+      end
+
+      if @log_index.nil?
+        invalid_properties.push('invalid value for "log_index", log_index cannot be nil.')
+      end
+
+      if @token_transfer_type.nil?
+        invalid_properties.push('invalid value for "token_transfer_type", token_transfer_type cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,6 +176,11 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @contract_address.nil?
+      return false if @from_address.nil?
+      return false if @to_address.nil?
+      return false if @log_index.nil?
+      return false if @token_transfer_type.nil?
       true
     end
 
@@ -102,9 +189,13 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri
+          contract_address == o.contract_address &&
+          from_address == o.from_address &&
+          to_address == o.to_address &&
+          value == o.value &&
+          token_id == o.token_id &&
+          log_index == o.log_index &&
+          token_transfer_type == o.token_transfer_type
     end
 
     # @see the `==` method
@@ -116,7 +207,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_type_filter, event_filters, notification_uri].hash
+      [contract_address, from_address, to_address, value, token_id, log_index, token_transfer_type].hash
     end
 
     # Builds the object from hash

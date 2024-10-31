@@ -180,6 +180,9 @@ testnet ETH. You are allowed one faucet claim per 24-hour window.
 # Fund the wallet with a faucet transaction.
 faucet_tx = wallet1.faucet
 
+# Wait for the faucet transaction to complete.
+faucet_tx.wait!
+
 puts "Faucet transaction successfully completed: #{faucet_tx}"
 ```
 

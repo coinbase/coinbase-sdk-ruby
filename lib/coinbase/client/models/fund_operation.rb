@@ -14,21 +14,62 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  class UpdateWebhookRequest
-    attr_accessor :event_type_filter
+  # An operation to fund a wallet with crypto
+  class FundOperation
+    # The ID of the fund operation
+    attr_accessor :fund_operation_id
 
-    # Webhook will monitor all events that matches any one of the event filters.
-    attr_accessor :event_filters
+    # The ID of the blockchain network
+    attr_accessor :network_id
 
-    # The Webhook uri that updates to
-    attr_accessor :notification_uri
+    # The ID of the wallet that will receive the crypto
+    attr_accessor :wallet_id
+
+    # The ID of the address that will receive the crypto
+    attr_accessor :address_id
+
+    attr_accessor :crypto_amount
+
+    attr_accessor :fiat_amount
+
+    attr_accessor :fees
+
+    # The status of the fund operation
+    attr_accessor :status
+
+    class EnumAttributeValidator
+      attr_reader :datatype
+      attr_reader :allowable_values
+
+      def initialize(datatype, allowable_values)
+        @allowable_values = allowable_values.map do |value|
+          case datatype.to_s
+          when /Integer/i
+            value.to_i
+          when /Float/i
+            value.to_f
+          else
+            value
+          end
+        end
+      end
+
+      def valid?(value)
+        !value || allowable_values.include?(value)
+      end
+    end
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'event_type_filter' => :'event_type_filter',
-        :'event_filters' => :'event_filters',
-        :'notification_uri' => :'notification_uri'
+        :'fund_operation_id' => :'fund_operation_id',
+        :'network_id' => :'network_id',
+        :'wallet_id' => :'wallet_id',
+        :'address_id' => :'address_id',
+        :'crypto_amount' => :'crypto_amount',
+        :'fiat_amount' => :'fiat_amount',
+        :'fees' => :'fees',
+        :'status' => :'status'
       }
     end
 
@@ -40,9 +81,14 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'event_type_filter' => :'WebhookEventTypeFilter',
-        :'event_filters' => :'Array<WebhookEventFilter>',
-        :'notification_uri' => :'String'
+        :'fund_operation_id' => :'String',
+        :'network_id' => :'String',
+        :'wallet_id' => :'String',
+        :'address_id' => :'String',
+        :'crypto_amount' => :'CryptoAmount',
+        :'fiat_amount' => :'FiatAmount',
+        :'fees' => :'FundOperationFees',
+        :'status' => :'String'
       }
     end
 
@@ -56,29 +102,63 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateWebhookRequest` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::FundOperation` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateWebhookRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::FundOperation`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'event_type_filter')
-        self.event_type_filter = attributes[:'event_type_filter']
+      if attributes.key?(:'fund_operation_id')
+        self.fund_operation_id = attributes[:'fund_operation_id']
+      else
+        self.fund_operation_id = nil
       end
 
-      if attributes.key?(:'event_filters')
-        if (value = attributes[:'event_filters']).is_a?(Array)
-          self.event_filters = value
-        end
+      if attributes.key?(:'network_id')
+        self.network_id = attributes[:'network_id']
+      else
+        self.network_id = nil
       end
 
-      if attributes.key?(:'notification_uri')
-        self.notification_uri = attributes[:'notification_uri']
+      if attributes.key?(:'wallet_id')
+        self.wallet_id = attributes[:'wallet_id']
+      else
+        self.wallet_id = nil
+      end
+
+      if attributes.key?(:'address_id')
+        self.address_id = attributes[:'address_id']
+      else
+        self.address_id = nil
+      end
+
+      if attributes.key?(:'crypto_amount')
+        self.crypto_amount = attributes[:'crypto_amount']
+      else
+        self.crypto_amount = nil
+      end
+
+      if attributes.key?(:'fiat_amount')
+        self.fiat_amount = attributes[:'fiat_amount']
+      else
+        self.fiat_amount = nil
+      end
+
+      if attributes.key?(:'fees')
+        self.fees = attributes[:'fees']
+      else
+        self.fees = nil
+      end
+
+      if attributes.key?(:'status')
+        self.status = attributes[:'status']
+      else
+        self.status = nil
       end
     end
 
@@ -87,6 +167,38 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
+      if @fund_operation_id.nil?
+        invalid_properties.push('invalid value for "fund_operation_id", fund_operation_id cannot be nil.')
+      end
+
+      if @network_id.nil?
+        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
+      end
+
+      if @wallet_id.nil?
+        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
+      end
+
+      if @address_id.nil?
+        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
+      end
+
+      if @crypto_amount.nil?
+        invalid_properties.push('invalid value for "crypto_amount", crypto_amount cannot be nil.')
+      end
+
+      if @fiat_amount.nil?
+        invalid_properties.push('invalid value for "fiat_amount", fiat_amount cannot be nil.')
+      end
+
+      if @fees.nil?
+        invalid_properties.push('invalid value for "fees", fees cannot be nil.')
+      end
+
+      if @status.nil?
+        invalid_properties.push('invalid value for "status", status cannot be nil.')
+      end
+
       invalid_properties
     end
 
@@ -94,7 +206,27 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
+      return false if @fund_operation_id.nil?
+      return false if @network_id.nil?
+      return false if @wallet_id.nil?
+      return false if @address_id.nil?
+      return false if @crypto_amount.nil?
+      return false if @fiat_amount.nil?
+      return false if @fees.nil?
+      return false if @status.nil?
+      status_validator = EnumAttributeValidator.new('String', ["pending", "complete", "failed", "unknown_default_open_api"])
+      return false unless status_validator.valid?(@status)
       true
+    end
+
+    # Custom attribute writer method checking allowed values (enum).
+    # @param [Object] status Object to be assigned
+    def status=(status)
+      validator = EnumAttributeValidator.new('String', ["pending", "complete", "failed", "unknown_default_open_api"])
+      unless validator.valid?(status)
+        fail ArgumentError, "invalid value for \"status\", must be one of #{validator.allowable_values}."
+      end
+      @status = status
     end
 
     # Checks equality by comparing each attribute.
@@ -102,9 +234,14 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          event_type_filter == o.event_type_filter &&
-          event_filters == o.event_filters &&
-          notification_uri == o.notification_uri
+          fund_operation_id == o.fund_operation_id &&
+          network_id == o.network_id &&
+          wallet_id == o.wallet_id &&
+          address_id == o.address_id &&
+          crypto_amount == o.crypto_amount &&
+          fiat_amount == o.fiat_amount &&
+          fees == o.fees &&
+          status == o.status
     end
 
     # @see the `==` method
@@ -116,7 +253,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [event_type_filter, event_filters, notification_uri].hash
+      [fund_operation_id, network_id, wallet_id, address_id, crypto_amount, fiat_amount, fees, status].hash
     end
 
     # Builds the object from hash

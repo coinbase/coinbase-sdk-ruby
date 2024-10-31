@@ -23,7 +23,7 @@ module Coinbase::Client
     # Create a new webhook scoped to a wallet
     # @param wallet_id [String] The ID of the wallet to create the webhook for.
     # @param [Hash] opts the optional parameters
-    # @option opts [CreateWalletWebhookRequest] :create_wallet_webhook_request
+    # @option opts [CreateWalletWebhookRequest] :create_wallet_webhook_request 
     # @return [Webhook]
     def create_wallet_webhook(wallet_id, opts = {})
       data, _status_code, _headers = create_wallet_webhook_with_http_info(wallet_id, opts)
@@ -34,7 +34,7 @@ module Coinbase::Client
     # Create a new webhook scoped to a wallet
     # @param wallet_id [String] The ID of the wallet to create the webhook for.
     # @param [Hash] opts the optional parameters
-    # @option opts [CreateWalletWebhookRequest] :create_wallet_webhook_request
+    # @option opts [CreateWalletWebhookRequest] :create_wallet_webhook_request 
     # @return [Array<(Webhook, Integer, Hash)>] Webhook data, response status code and response headers
     def create_wallet_webhook_with_http_info(wallet_id, opts = {})
       if @api_client.config.debugging
@@ -57,7 +57,7 @@ module Coinbase::Client
       # HTTP header 'Content-Type'
       content_type = @api_client.select_header_content_type(['application/json'])
       if !content_type.nil?
-        header_params['Content-Type'] = content_type
+          header_params['Content-Type'] = content_type
       end
 
       # form parameters
@@ -121,7 +121,7 @@ module Coinbase::Client
       # HTTP header 'Content-Type'
       content_type = @api_client.select_header_content_type(['application/json'])
       if !content_type.nil?
-        header_params['Content-Type'] = content_type
+          header_params['Content-Type'] = content_type
       end
 
       # form parameters
@@ -321,7 +321,7 @@ module Coinbase::Client
       # HTTP header 'Content-Type'
       content_type = @api_client.select_header_content_type(['application/json'])
       if !content_type.nil?
-        header_params['Content-Type'] = content_type
+          header_params['Content-Type'] = content_type
       end
 
       # form parameters

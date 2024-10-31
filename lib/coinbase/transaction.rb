@@ -41,6 +41,12 @@ module Coinbase
       @model = model
     end
 
+    # Returns the Network of the Transaction.
+    # @return [Coinbase::Network] The Network
+    def network
+      @network ||= Coinbase::Network.from_id(@model.network_id)
+    end
+
     # Returns the Unsigned Payload of the Transaction.
     # @return [String] The Unsigned Payload
     def unsigned_payload
@@ -101,8 +107,8 @@ module Coinbase
       @model.transaction_link
     end
 
-    # Returns the block height of which the Transaction is recorded.
-    # @return [String] The to block_height
+    # Returns detailed content the Transaction.
+    # @return [EthereumTransaction] The transaction content
     def content
       @model.content
     end

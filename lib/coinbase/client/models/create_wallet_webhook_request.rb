@@ -15,7 +15,7 @@ require 'time'
 
 module Coinbase::Client
   class CreateWalletWebhookRequest
-    # The URL to which the notifications will be sent
+    # The URL to which the notifications will be sent.
     attr_accessor :notification_uri
 
     # The custom header to be used for x-webhook-signature header on callbacks, so developers can verify the requests are coming from Coinbase.
