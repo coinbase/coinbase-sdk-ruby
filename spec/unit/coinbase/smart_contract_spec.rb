@@ -7,12 +7,13 @@ describe Coinbase::SmartContract do
 
   let(:network_id) { :base_sepolia }
   let(:network) { build(:network, network_id) }
-  let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
-
+  let(:default_network) { build(:network, :base_mainnet) }
   let(:token_name) { 'Test token' }
   let(:token_symbol) { 'TST' }
   let(:total_supply) { 1_000_000 }
-
+  let(:wallet_id) { model.wallet_id }
+  let(:address_id) { model.deployer_address }
+  let(:smart_contracts_api) { instance_double(Coinbase::Client::SmartContractsApi) }
   let(:model) do
     build(
       :smart_contract_model,
@@ -22,16 +23,11 @@ describe Coinbase::SmartContract do
       total_supply: total_supply
     )
   end
-  let(:wallet_id) { model.wallet_id }
-  let(:address_id) { model.deployer_address }
 
   before do
     allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
 
-    allow(Coinbase::Network)
-      .to receive(:from_id)
-      .with(satisfy { |n| n == network || n == network_id || n == network.normalized_id })
-      .and_return(network)
+    allow(Coinbase).to receive(:default_network).and_return(default_network)
   end
 
   describe '.create_token_contract' do
@@ -222,7 +218,7 @@ describe Coinbase::SmartContract do
     it 'calls read_contract with correct parameters' do
       result
       expect(smart_contracts_api).to have_received(:read_contract)
-        .with('base-sepolia', contract_address, hash_including(expected_params))
+        .with(network.normalized_id, contract_address, hash_including(expected_params))
     end
 
     context 'when using a different network' do
@@ -238,6 +234,23 @@ describe Coinbase::SmartContract do
             contract_address,
             anything
           )
+      end
+    end
+
+    context 'when using the default network' do
+      subject(:result) do
+        described_class.read(
+          contract_address: contract_address,
+          method: method_name,
+          abi: abi,
+          args: args
+        )
+      end
+
+      it 'calls read_contract with correct parameters' do
+        result
+        expect(smart_contracts_api).to have_received(:read_contract)
+          .with(default_network.normalized_id, contract_address, expected_params)
       end
     end
 
@@ -317,15 +330,15 @@ describe Coinbase::SmartContract do
       let(:expected_params) do
         {
           method: method_name,
-          abi: nil,
           args: args.to_json
         }
       end
 
-      it 'calls read_contract with nil ABI' do
+      it 'calls read_contract without an ABI' do
         result
+
         expect(smart_contracts_api).to have_received(:read_contract)
-          .with('base-sepolia', contract_address, hash_including(expected_params))
+          .with(network.normalized_id, contract_address, hash_including(expected_params))
       end
     end
 
@@ -342,15 +355,15 @@ describe Coinbase::SmartContract do
       let(:expected_params) do
         {
           method: method_name,
-          abi: nil,
           args: args.to_json
         }
       end
 
-      it 'calls read_contract with nil ABI' do
+      it 'calls read_contract without an ABI' do
         result
+
         expect(smart_contracts_api).to have_received(:read_contract)
-          .with('base-sepolia', contract_address, hash_including(expected_params))
+          .with(network.normalized_id, contract_address, expected_params)
       end
     end
 
