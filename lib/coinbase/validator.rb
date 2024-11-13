@@ -33,12 +33,9 @@ module Coinbase
       network = Coinbase::Network.from_id(network)
 
       validator = Coinbase.call_api do
-        validators_api.get_validator(
-          network.normalized_id,
-          asset_id,
-          validator_id
-        )
+        stake_api.get_validator(network.normalized_id, asset_id, validator_id)
       end
+
       new(validator)
     end
 
@@ -57,7 +54,7 @@ module Coinbase
     # Returns a string representation of the Validator.
     # @return [String] a string representation of the Validator
     def to_s
-      "Coinbase::Validator{id: '#{validator_id}' status: '#{status}'}"
+      Coinbase.pretty_print_object(self, validator_id: validator_id, status: status)
     end
 
     # Same as to_s.
@@ -68,7 +65,7 @@ module Coinbase
 
     def self.list_page(network, asset_id, status, page)
       Coinbase.call_api do
-        validators_api.list_validators(
+        stake_api.list_validators(
           network.normalized_id,
           asset_id,
           {
@@ -81,10 +78,10 @@ module Coinbase
 
     private_class_method :list_page
 
-    def self.validators_api
-      Coinbase::Client::ValidatorsApi.new(Coinbase.configuration.api_client)
+    def self.stake_api
+      Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
 
-    private_class_method :validators_api
+    private_class_method :stake_api
   end
 end

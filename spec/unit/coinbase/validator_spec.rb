@@ -6,7 +6,7 @@ describe Coinbase::Validator do
   let(:network) { build(:network, network_id) }
   let(:asset_id) { :asset_id }
   let(:validator_id) { 'validator_id' }
-  let(:stake_api) { instance_double(Coinbase::Client::ValidatorsApi) }
+  let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
   let(:validator_model) do
     instance_double(
       Coinbase::Client::Validator,
@@ -16,7 +16,7 @@ describe Coinbase::Validator do
   end
 
   before do
-    allow(Coinbase::Client::ValidatorsApi).to receive(:new).and_return(stake_api)
+    allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
     allow(stake_api).to receive(:get_validator).and_return(validator_model)
   end
 
