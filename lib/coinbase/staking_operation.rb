@@ -107,7 +107,7 @@ module Coinbase
     private_class_method :stake_api
 
     def self.wallet_stake_api
-      Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
+      Coinbase::Client::MPCWalletStakeApi.new(Coinbase.configuration.api_client)
     end
 
     private_class_method :wallet_stake_api
@@ -324,7 +324,7 @@ module Coinbase
     end
 
     def wallet_stake_api
-      @wallet_stake_api ||= Coinbase::Client::WalletStakeApi.new(Coinbase.configuration.api_client)
+      @wallet_stake_api ||= Coinbase::Client::MPCWalletStakeApi.new(Coinbase.configuration.api_client)
     end
 
     def update_transactions(transactions)

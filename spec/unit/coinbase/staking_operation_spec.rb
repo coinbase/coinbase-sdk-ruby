@@ -26,12 +26,12 @@ describe Coinbase::StakingOperation do
   let(:hex_encoded_transaction) { '0xdeadbeef' }
 
   let(:stake_api) { instance_double(Coinbase::Client::StakeApi) }
-  let(:wallet_stake_api) { instance_double(Coinbase::Client::WalletStakeApi) }
+  let(:wallet_stake_api) { instance_double(Coinbase::Client::MPCWalletStakeApi) }
   let(:raw_tx) { instance_double(Eth::Tx::Eip1559) }
 
   before do
     allow(Coinbase::Client::StakeApi).to receive(:new).and_return(stake_api)
-    allow(Coinbase::Client::WalletStakeApi).to receive(:new).and_return(wallet_stake_api)
+    allow(Coinbase::Client::MPCWalletStakeApi).to receive(:new).and_return(wallet_stake_api)
 
     allow(staking_operation_model).to receive(:transactions).and_return([transaction_model])
     allow(transaction_model).to receive(:unsigned_payload).and_return('some_unsigned_payload')
