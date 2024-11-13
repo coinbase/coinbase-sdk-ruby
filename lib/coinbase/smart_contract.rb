@@ -143,9 +143,9 @@ module Coinbase
     # @return [Object] The result of the contract call, converted to an appropriate Ruby type
     # @raise [Coinbase::ApiError] If there's an error in the API call
     def self.read(
-      network:,
       contract_address:,
       method:,
+      network: Coinbase.default_network,
       abi: nil,
       args: {}
     )
@@ -159,7 +159,7 @@ module Coinbase
             method: method,
             args: (args || {}).to_json,
             abi: abi&.to_json
-          }
+          }.compact
         )
       end
 
