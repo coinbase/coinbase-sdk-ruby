@@ -57,6 +57,20 @@ module Coinbase
       @model.fund_quote_id
     end
 
+    # Executes a fund operation using the quote.
+    # @return [Coinbase::FundOperation] The FundOperation object
+    # @raise [Coinbase::ApiError] If the FundOperation fails
+    def execute!
+      FundOperation.create(
+        wallet_id: wallet_id,
+        address_id: address_id,
+        amount: amount.amount,
+        asset_id: asset.asset_id,
+        network: network.id,
+        quote: self
+      )
+    end
+
     # Returns the Network the fund quote was created on.
     # @return [Coinbase::Network] The Network
     def network
@@ -124,6 +138,12 @@ module Coinbase
     # @return [String] a String representation of the Transfer
     def inspect
       to_s
+    end
+
+    private
+
+    def fund_api
+      @fund_api ||= Coinbase::Client::FundApi.new(Coinbase.configuration.api_client)
     end
   end
 end

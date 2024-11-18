@@ -120,6 +120,37 @@ describe Coinbase::FundQuote do
     end
   end
 
+  describe '#execute!' do
+    subject(:executed_operation) { fund_quote.execute! }
+
+    let(:fund_operation) { build(:fund_operation, network_id) }
+
+    before do
+      allow(Coinbase::FundOperation)
+        .to receive(:create)
+        .and_return(fund_operation)
+
+      executed_operation
+    end
+
+    it 'creates a Fund Operation' do
+      expect(executed_operation).to eq(fund_operation)
+    end
+
+    it 'creates the fund operation with the correct details' do
+      expect(Coinbase::FundOperation)
+        .to have_received(:create)
+        .with(
+          wallet_id: model.wallet_id,
+          address_id: address_id,
+          amount: crypto_amount.amount,
+          asset_id: eth_asset.asset_id,
+          network: network_id,
+          quote: fund_quote
+        )
+    end
+  end
+
   describe '#id' do
     it 'returns the ID of the Fund Quote' do
       expect(fund_quote.id).to eq(model.fund_quote_id)

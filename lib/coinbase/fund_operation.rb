@@ -25,14 +25,17 @@ module Coinbase
 
     class << self
       # Creates a new Fund Operation object.
+      # This takes an optional FundQuote object that can be used to lock in the rate and fees.
+      # Without an explicit quote, we will use the current rate and fees.
       # @param address_id [String] The Address ID of the sending Address
       # @param wallet_id [String] The Wallet ID of the sending Wallet
       # @param amount [BigDecimal] The amount of the Asset to send
       # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
       # @param asset_id [Symbol] The Asset ID of the Asset to send
-      # @return [FundOperation] The new pending FundOperation object
-      # @raise [Coinbase::ApiError] If the FundOperation fails
-      def create(wallet_id:, address_id:, amount:, asset_id:, network:)
+      # @param quote [Coinbase::FundQuote, String] The optional FundQuote to use for the Fund Operation
+      # @return [FundOperation] The new pending Fund Operation object
+      # @raise [Coinbase::ApiError] If the Fund Operation fails
+      def create(wallet_id:, address_id:, amount:, asset_id:, network:, quote: nil)
         network = Coinbase::Network.from_id(network)
         asset = network.get_asset(asset_id)
 
@@ -43,7 +46,8 @@ module Coinbase
             {
               amount: asset.to_atomic_amount(amount).to_i.to_s,
               asset_id: asset.primary_denomination.to_s,
-            }
+              fund_quote_id: quote_id(quote)
+            }.compact
           )
         end
 
@@ -75,6 +79,14 @@ module Coinbase
           limit: DEFAULT_PAGE_LIMIT,
           page: page
         )
+      end
+
+      def quote_id(quote)
+        return nil if quote.nil?
+        return quote.id if quote.is_a?(FundQuote)
+        return quote if quote.is_a?(String)
+
+        raise ArgumentError, 'quote must be a FundQuote object or ID'
       end
     end
 
