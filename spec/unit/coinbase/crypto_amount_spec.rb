@@ -149,11 +149,11 @@ describe Coinbase::CryptoAmount do
   describe '#inspect' do
     subject(:crypto_amount) { described_class.new(amount: amount, asset: asset) }
 
-    let(:amount) { BigDecimal('123.0') }
+    let(:amount) { BigDecimal('123.456') }
     let(:asset) { Coinbase::Asset.from_model(eth_asset) }
 
     it 'includes crypto_amount details' do
-      expect(crypto_amount.inspect).to include('123', 'eth')
+      expect(crypto_amount.inspect).to include('123.456', 'eth')
     end
 
     it 'returns the same value as to_s' do

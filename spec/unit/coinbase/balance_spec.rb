@@ -138,11 +138,11 @@ describe Coinbase::Balance do
   describe '#inspect' do
     subject(:balance) { described_class.new(amount: amount, asset: asset) }
 
-    let(:amount) { BigDecimal('123.0') }
+    let(:amount) { BigDecimal('123.456') }
     let(:asset) { Coinbase::Asset.from_model(eth_asset) }
 
     it 'includes balance details' do
-      expect(balance.inspect).to include('123', 'eth')
+      expect(balance.inspect).to include('123.456', 'eth')
     end
 
     it 'returns the same value as to_s' do

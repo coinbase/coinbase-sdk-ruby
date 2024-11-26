@@ -57,10 +57,10 @@ describe Coinbase::FiatAmount do
   describe '#inspect' do
     subject(:fiat_amount) { described_class.new(amount: amount, currency: currency) }
 
-    let(:amount) { BigDecimal('123.0') }
+    let(:amount) { BigDecimal('123.456') }
 
     it 'includes fiat_amount details' do
-      expect(fiat_amount.inspect).to include('123', 'usd')
+      expect(fiat_amount.inspect).to include('123.456', 'usd')
     end
 
     it 'returns the same value as to_s' do

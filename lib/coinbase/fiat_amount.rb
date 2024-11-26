@@ -28,7 +28,7 @@ module Coinbase
     # Returns a string representation of the FiatAmount.
     # @return [String] a string representation of the FiatAmount
     def to_s
-      Coinbase.pretty_print_object(self.class, amount: amount.to_i, currency: currency)
+      Coinbase.pretty_print_object(self.class, amount: amount.to_s('F'), currency: currency)
     end
 
     # Same as to_s.
