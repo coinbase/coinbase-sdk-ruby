@@ -43,7 +43,7 @@ module Coinbase
     # Returns a string representation of the Balance.
     # @return [String] a string representation of the Balance
     def to_s
-      "Coinbase::Balance{amount: '#{amount.to_i}', asset_id: '#{asset_id}'}"
+      Coinbase.pretty_print_object(self.class, amount: amount.to_s('F'), asset_id: asset_id)
     end
 
     # Same as to_s.

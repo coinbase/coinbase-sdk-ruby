@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+* Add support for funding wallets (Alpha feature release)
+  * Must reach out to CDP SDK Discord channel to be considered for this feature.
+
 ## [0.10.0] - 2024-10-31
 - Include ERC20 and ERC721 token transfer information into transaction content.
 - Add support for reading from smart contracts.
