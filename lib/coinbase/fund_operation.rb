@@ -174,7 +174,7 @@ module Coinbase
     # @param timeout_seconds [Integer] The maximum amount of time to wait for the Fund Operation to complete, in seconds
     # @return [Coinbase::FundOperation] The completed or failed Fund Operation object
     # @raise [Timeout::Error] If the Fund Operation takes longer than the given timeout
-    def wait!(interval_seconds = 1, timeout_seconds = 30)
+    def wait!(interval_seconds = 1, timeout_seconds = 60)
       start_time = Time.now
 
       loop do
