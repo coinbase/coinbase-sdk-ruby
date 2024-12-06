@@ -23,7 +23,6 @@ Coinbase::Client.autoload :AddressHistoricalBalanceList, 'coinbase/client/models
 Coinbase::Client.autoload :AddressList, 'coinbase/client/models/address_list'
 Coinbase::Client.autoload :AddressReputation, 'coinbase/client/models/address_reputation'
 Coinbase::Client.autoload :AddressReputationMetadata, 'coinbase/client/models/address_reputation_metadata'
-Coinbase::Client.autoload :AddressRisk, 'coinbase/client/models/address_risk'
 Coinbase::Client.autoload :AddressTransactionList, 'coinbase/client/models/address_transaction_list'
 Coinbase::Client.autoload :Asset, 'coinbase/client/models/asset'
 Coinbase::Client.autoload :Balance, 'coinbase/client/models/balance'
@@ -82,6 +81,7 @@ Coinbase::Client.autoload :OnchainNameList, 'coinbase/client/models/onchain_name
 Coinbase::Client.autoload :PayloadSignature, 'coinbase/client/models/payload_signature'
 Coinbase::Client.autoload :PayloadSignatureList, 'coinbase/client/models/payload_signature_list'
 Coinbase::Client.autoload :ReadContractRequest, 'coinbase/client/models/read_contract_request'
+Coinbase::Client.autoload :RegisterSmartContractRequest, 'coinbase/client/models/register_smart_contract_request'
 Coinbase::Client.autoload :SeedCreationEvent, 'coinbase/client/models/seed_creation_event'
 Coinbase::Client.autoload :SeedCreationEventResult, 'coinbase/client/models/seed_creation_event_result'
 Coinbase::Client.autoload :ServerSigner, 'coinbase/client/models/server_signer'
@@ -93,6 +93,7 @@ Coinbase::Client.autoload :SignatureCreationEvent, 'coinbase/client/models/signa
 Coinbase::Client.autoload :SignatureCreationEventResult, 'coinbase/client/models/signature_creation_event_result'
 Coinbase::Client.autoload :SignedVoluntaryExitMessageMetadata, 'coinbase/client/models/signed_voluntary_exit_message_metadata'
 Coinbase::Client.autoload :SmartContract, 'coinbase/client/models/smart_contract'
+Coinbase::Client.autoload :SmartContractActivityEvent, 'coinbase/client/models/smart_contract_activity_event'
 Coinbase::Client.autoload :SmartContractList, 'coinbase/client/models/smart_contract_list'
 Coinbase::Client.autoload :SmartContractOptions, 'coinbase/client/models/smart_contract_options'
 Coinbase::Client.autoload :SmartContractType, 'coinbase/client/models/smart_contract_type'
@@ -128,6 +129,7 @@ Coinbase::Client.autoload :WebhookEventFilter, 'coinbase/client/models/webhook_e
 Coinbase::Client.autoload :WebhookEventType, 'coinbase/client/models/webhook_event_type'
 Coinbase::Client.autoload :WebhookEventTypeFilter, 'coinbase/client/models/webhook_event_type_filter'
 Coinbase::Client.autoload :WebhookList, 'coinbase/client/models/webhook_list'
+Coinbase::Client.autoload :WebhookSmartContractEventFilter, 'coinbase/client/models/webhook_smart_contract_event_filter'
 Coinbase::Client.autoload :WebhookWalletActivityFilter, 'coinbase/client/models/webhook_wallet_activity_filter'
 
 # APIs
