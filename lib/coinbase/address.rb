@@ -17,7 +17,14 @@ module Coinbase
     # Returns a String representation of the Address.
     # @return [String] a String representation of the Address
     def to_s
-      Coinbase.pretty_print_object(self.class, id: id, network_id: network.id)
+      Coinbase.pretty_print_object(
+        self.class,
+        **{
+          id: id,
+          network_id: network.id,
+          reputation_score: @reputation.nil? ? nil : reputation.score
+        }.compact
+      )
     end
 
     # Same as to_s.
@@ -30,6 +37,18 @@ module Coinbase
     # @return [Boolean] true if the Address can sign transactions
     def can_sign?
       false
+    end
+
+    # Returns the reputation of the Address.
+    # @return [Coinbase::AddressReputation] The reputation of the Address
+    def reputation
+      @reputation ||= Coinbase::AddressReputation.fetch(network: network, address_id: id)
+    end
+
+    # Returns wheth the Address's reputation is risky.
+    # @return [Boolean] true if the Address's reputation is risky
+    def risky?
+      reputation.risky?
     end
 
     # Returns the balances of the Address.
@@ -66,7 +85,7 @@ module Coinbase
     # @return [Enumerable<Coinbase::HistoricalBalance>] Enumerator that returns historical_balance
     def historical_balances(asset_id)
       Coinbase::Pagination.enumerate(
-        ->(page) { list_page(asset_id, page) }
+        ->(page) { list_historical_balance_page(asset_id, page) }
       ) do |historical_balance|
         Coinbase::HistoricalBalance.from_model(historical_balance)
       end
@@ -265,7 +284,7 @@ module Coinbase
       @stake_api ||= Coinbase::Client::StakeApi.new(Coinbase.configuration.api_client)
     end
 
-    def list_page(asset_id, page)
+    def list_historical_balance_page(asset_id, page)
       balance_history_api.list_address_historical_balance(
         network.normalized_id,
         id,
