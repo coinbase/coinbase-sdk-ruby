@@ -14,18 +14,15 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The reputation score with metadata of a blockchain address.
-  class AddressReputation
-    # The score of a wallet address, ranging from -100 to 100. A negative score indicates a bad reputation, while a positive score indicates a good reputation.
-    attr_accessor :score
-
-    attr_accessor :metadata
+  # Filter for smart contract events. This filter allows the client to specify smart contract addresses to monitor for activities such as contract function calls. 
+  class WebhookSmartContractEventFilter
+    # A list of smart contract addresses to filter on.
+    attr_accessor :contract_addresses
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'score' => :'score',
-        :'metadata' => :'metadata'
+        :'contract_addresses' => :'contract_addresses'
       }
     end
 
@@ -37,8 +34,7 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'score' => :'Integer',
-        :'metadata' => :'AddressReputationMetadata'
+        :'contract_addresses' => :'Array<String>'
       }
     end
 
@@ -52,27 +48,23 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::AddressReputation` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::WebhookSmartContractEventFilter` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::AddressReputation`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::WebhookSmartContractEventFilter`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'score')
-        self.score = attributes[:'score']
+      if attributes.key?(:'contract_addresses')
+        if (value = attributes[:'contract_addresses']).is_a?(Array)
+          self.contract_addresses = value
+        end
       else
-        self.score = nil
-      end
-
-      if attributes.key?(:'metadata')
-        self.metadata = attributes[:'metadata']
-      else
-        self.metadata = nil
+        self.contract_addresses = nil
       end
     end
 
@@ -81,12 +73,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @score.nil?
-        invalid_properties.push('invalid value for "score", score cannot be nil.')
-      end
-
-      if @metadata.nil?
-        invalid_properties.push('invalid value for "metadata", metadata cannot be nil.')
+      if @contract_addresses.nil?
+        invalid_properties.push('invalid value for "contract_addresses", contract_addresses cannot be nil.')
       end
 
       invalid_properties
@@ -96,8 +84,7 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @score.nil?
-      return false if @metadata.nil?
+      return false if @contract_addresses.nil?
       true
     end
 
@@ -106,8 +93,7 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          score == o.score &&
-          metadata == o.metadata
+          contract_addresses == o.contract_addresses
     end
 
     # @see the `==` method
@@ -119,7 +105,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [score, metadata].hash
+      [contract_addresses].hash
     end
 
     # Builds the object from hash

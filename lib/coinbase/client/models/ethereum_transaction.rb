@@ -66,6 +66,9 @@ module Coinbase::Client
     # This is for handling optimism rollup specific EIP-2718 transaction type field.
     attr_accessor :mint
 
+    # RLP encoded transaction as a hex string (prefixed with 0x) for native compatibility with popular eth clients such as etherjs, viem etc.
+    attr_accessor :rlp_encoded_tx
+
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
@@ -86,7 +89,8 @@ module Coinbase::Client
         :'token_transfers' => :'token_transfers',
         :'flattened_traces' => :'flattened_traces',
         :'block_timestamp' => :'block_timestamp',
-        :'mint' => :'mint'
+        :'mint' => :'mint',
+        :'rlp_encoded_tx' => :'rlp_encoded_tx'
       }
     end
 
@@ -115,7 +119,8 @@ module Coinbase::Client
         :'token_transfers' => :'Array<EthereumTokenTransfer>',
         :'flattened_traces' => :'Array<EthereumTransactionFlattenedTrace>',
         :'block_timestamp' => :'Time',
-        :'mint' => :'String'
+        :'mint' => :'String',
+        :'rlp_encoded_tx' => :'String'
       }
     end
 
@@ -219,6 +224,10 @@ module Coinbase::Client
       if attributes.key?(:'mint')
         self.mint = attributes[:'mint']
       end
+
+      if attributes.key?(:'rlp_encoded_tx')
+        self.rlp_encoded_tx = attributes[:'rlp_encoded_tx']
+      end
     end
 
     # Show invalid properties with the reasons. Usually used together with valid?
@@ -268,7 +277,8 @@ module Coinbase::Client
           token_transfers == o.token_transfers &&
           flattened_traces == o.flattened_traces &&
           block_timestamp == o.block_timestamp &&
-          mint == o.mint
+          mint == o.mint &&
+          rlp_encoded_tx == o.rlp_encoded_tx
     end
 
     # @see the `==` method
@@ -280,7 +290,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [from, gas, gas_price, hash, input, nonce, to, index, value, type, max_fee_per_gas, max_priority_fee_per_gas, priority_fee_per_gas, transaction_access_list, token_transfers, flattened_traces, block_timestamp, mint].hash
+      [from, gas, gas_price, hash, input, nonce, to, index, value, type, max_fee_per_gas, max_priority_fee_per_gas, priority_fee_per_gas, transaction_access_list, token_transfers, flattened_traces, block_timestamp, mint, rlp_encoded_tx].hash
     end
 
     # Builds the object from hash
