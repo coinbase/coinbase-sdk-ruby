@@ -35,10 +35,7 @@ module Coinbase
     end
 
     def initialize(model)
-      unless model.is_a?(Coinbase::Client::AddressReputation)
-        raise ArgumentError,
-              'must be an AddressReputation client object'
-      end
+      raise ArgumentError, 'must be an AddressReputation object' unless model.is_a?(Coinbase::Client::AddressReputation)
 
       @model = model
     end
