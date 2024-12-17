@@ -14,74 +14,83 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # Represents a smart contract on the blockchain
-  class SmartContract
-    # The unique identifier of the smart contract.
-    attr_accessor :smart_contract_id
+  # Represents an event triggered by a smart contract activity on the blockchain. Contains information about the function, transaction, block, and involved addresses.
+  class SmartContractActivityEvent
+    # Unique identifier for the webhook that triggered this event.
+    attr_accessor :webhook_id
 
-    # The name of the blockchain network
-    attr_accessor :network_id
+    # Type of event, in this case, an ERC-721 token transfer.
+    attr_accessor :event_type
 
-    # The ID of the wallet that deployed the smart contract. If this smart contract was deployed externally, this will be omitted.
-    attr_accessor :wallet_id
+    # Blockchain network where the event occurred.
+    attr_accessor :network
 
-    # The EVM address of the smart contract
-    attr_accessor :contract_address
+    # Name of the project this smart contract belongs to.
+    attr_accessor :project_name
 
-    # The name of the smart contract
+    # Name of the contract.
     attr_accessor :contract_name
 
-    # The EVM address of the account that deployed the smart contract. If this smart contract was deployed externally, this will be omitted.
-    attr_accessor :deployer_address
+    # Name of the function.
+    attr_accessor :func
 
-    attr_accessor :type
+    # Signature of the function.
+    attr_accessor :sig
 
-    attr_accessor :options
+    # First 4 bytes of the Transaction, a unique ID.
+    attr_accessor :four_bytes
 
-    # The JSON-encoded ABI of the contract
-    attr_accessor :abi
+    # Address of the smart contract.
+    attr_accessor :contract_address
 
-    attr_accessor :transaction
+    # Hash of the block containing the transaction.
+    attr_accessor :block_hash
 
-    # Whether the smart contract was deployed externally. If true, the deployer_address and transaction will be omitted.
-    attr_accessor :is_external
+    # Number of the block containing the transaction.
+    attr_accessor :block_number
 
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
+    # Timestamp when the block was mined.
+    attr_accessor :block_time
 
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
+    # Hash of the transaction that triggered the event.
+    attr_accessor :transaction_hash
 
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # Position of the transaction within the block.
+    attr_accessor :transaction_index
+
+    # Position of the event log within the transaction.
+    attr_accessor :log_index
+
+    # Address of the initiator in the transfer.
+    attr_accessor :from
+
+    # Address of the recipient in the transfer.
+    attr_accessor :to
+
+    # Amount of tokens transferred, typically in the smallest unit (e.g., wei for Ethereum).
+    attr_accessor :value
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'smart_contract_id' => :'smart_contract_id',
-        :'network_id' => :'network_id',
-        :'wallet_id' => :'wallet_id',
-        :'contract_address' => :'contract_address',
-        :'contract_name' => :'contract_name',
-        :'deployer_address' => :'deployer_address',
-        :'type' => :'type',
-        :'options' => :'options',
-        :'abi' => :'abi',
-        :'transaction' => :'transaction',
-        :'is_external' => :'is_external'
+        :'webhook_id' => :'webhookId',
+        :'event_type' => :'eventType',
+        :'network' => :'network',
+        :'project_name' => :'projectName',
+        :'contract_name' => :'contractName',
+        :'func' => :'func',
+        :'sig' => :'sig',
+        :'four_bytes' => :'fourBytes',
+        :'contract_address' => :'contractAddress',
+        :'block_hash' => :'blockHash',
+        :'block_number' => :'blockNumber',
+        :'block_time' => :'blockTime',
+        :'transaction_hash' => :'transactionHash',
+        :'transaction_index' => :'transactionIndex',
+        :'log_index' => :'logIndex',
+        :'from' => :'from',
+        :'to' => :'to',
+        :'value' => :'value'
       }
     end
 
@@ -93,17 +102,24 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'smart_contract_id' => :'String',
-        :'network_id' => :'String',
-        :'wallet_id' => :'String',
-        :'contract_address' => :'String',
+        :'webhook_id' => :'String',
+        :'event_type' => :'String',
+        :'network' => :'String',
+        :'project_name' => :'String',
         :'contract_name' => :'String',
-        :'deployer_address' => :'String',
-        :'type' => :'SmartContractType',
-        :'options' => :'SmartContractOptions',
-        :'abi' => :'String',
-        :'transaction' => :'Transaction',
-        :'is_external' => :'Boolean'
+        :'func' => :'String',
+        :'sig' => :'String',
+        :'four_bytes' => :'String',
+        :'contract_address' => :'String',
+        :'block_hash' => :'String',
+        :'block_number' => :'Integer',
+        :'block_time' => :'Time',
+        :'transaction_hash' => :'String',
+        :'transaction_index' => :'Integer',
+        :'log_index' => :'Integer',
+        :'from' => :'String',
+        :'to' => :'String',
+        :'value' => :'Integer'
       }
     end
 
@@ -117,73 +133,87 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SmartContract` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SmartContractActivityEvent` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SmartContract`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SmartContractActivityEvent`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'smart_contract_id')
-        self.smart_contract_id = attributes[:'smart_contract_id']
-      else
-        self.smart_contract_id = nil
+      if attributes.key?(:'webhook_id')
+        self.webhook_id = attributes[:'webhook_id']
       end
 
-      if attributes.key?(:'network_id')
-        self.network_id = attributes[:'network_id']
-      else
-        self.network_id = nil
+      if attributes.key?(:'event_type')
+        self.event_type = attributes[:'event_type']
       end
 
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
+      if attributes.key?(:'network')
+        self.network = attributes[:'network']
       end
 
-      if attributes.key?(:'contract_address')
-        self.contract_address = attributes[:'contract_address']
-      else
-        self.contract_address = nil
+      if attributes.key?(:'project_name')
+        self.project_name = attributes[:'project_name']
       end
 
       if attributes.key?(:'contract_name')
         self.contract_name = attributes[:'contract_name']
-      else
-        self.contract_name = nil
       end
 
-      if attributes.key?(:'deployer_address')
-        self.deployer_address = attributes[:'deployer_address']
+      if attributes.key?(:'func')
+        self.func = attributes[:'func']
       end
 
-      if attributes.key?(:'type')
-        self.type = attributes[:'type']
-      else
-        self.type = nil
+      if attributes.key?(:'sig')
+        self.sig = attributes[:'sig']
       end
 
-      if attributes.key?(:'options')
-        self.options = attributes[:'options']
+      if attributes.key?(:'four_bytes')
+        self.four_bytes = attributes[:'four_bytes']
       end
 
-      if attributes.key?(:'abi')
-        self.abi = attributes[:'abi']
-      else
-        self.abi = nil
+      if attributes.key?(:'contract_address')
+        self.contract_address = attributes[:'contract_address']
       end
 
-      if attributes.key?(:'transaction')
-        self.transaction = attributes[:'transaction']
+      if attributes.key?(:'block_hash')
+        self.block_hash = attributes[:'block_hash']
       end
 
-      if attributes.key?(:'is_external')
-        self.is_external = attributes[:'is_external']
-      else
-        self.is_external = nil
+      if attributes.key?(:'block_number')
+        self.block_number = attributes[:'block_number']
+      end
+
+      if attributes.key?(:'block_time')
+        self.block_time = attributes[:'block_time']
+      end
+
+      if attributes.key?(:'transaction_hash')
+        self.transaction_hash = attributes[:'transaction_hash']
+      end
+
+      if attributes.key?(:'transaction_index')
+        self.transaction_index = attributes[:'transaction_index']
+      end
+
+      if attributes.key?(:'log_index')
+        self.log_index = attributes[:'log_index']
+      end
+
+      if attributes.key?(:'from')
+        self.from = attributes[:'from']
+      end
+
+      if attributes.key?(:'to')
+        self.to = attributes[:'to']
+      end
+
+      if attributes.key?(:'value')
+        self.value = attributes[:'value']
       end
     end
 
@@ -192,34 +222,6 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @smart_contract_id.nil?
-        invalid_properties.push('invalid value for "smart_contract_id", smart_contract_id cannot be nil.')
-      end
-
-      if @network_id.nil?
-        invalid_properties.push('invalid value for "network_id", network_id cannot be nil.')
-      end
-
-      if @contract_address.nil?
-        invalid_properties.push('invalid value for "contract_address", contract_address cannot be nil.')
-      end
-
-      if @contract_name.nil?
-        invalid_properties.push('invalid value for "contract_name", contract_name cannot be nil.')
-      end
-
-      if @type.nil?
-        invalid_properties.push('invalid value for "type", type cannot be nil.')
-      end
-
-      if @abi.nil?
-        invalid_properties.push('invalid value for "abi", abi cannot be nil.')
-      end
-
-      if @is_external.nil?
-        invalid_properties.push('invalid value for "is_external", is_external cannot be nil.')
-      end
-
       invalid_properties
     end
 
@@ -227,13 +229,6 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @smart_contract_id.nil?
-      return false if @network_id.nil?
-      return false if @contract_address.nil?
-      return false if @contract_name.nil?
-      return false if @type.nil?
-      return false if @abi.nil?
-      return false if @is_external.nil?
       true
     end
 
@@ -242,17 +237,24 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          smart_contract_id == o.smart_contract_id &&
-          network_id == o.network_id &&
-          wallet_id == o.wallet_id &&
-          contract_address == o.contract_address &&
+          webhook_id == o.webhook_id &&
+          event_type == o.event_type &&
+          network == o.network &&
+          project_name == o.project_name &&
           contract_name == o.contract_name &&
-          deployer_address == o.deployer_address &&
-          type == o.type &&
-          options == o.options &&
-          abi == o.abi &&
-          transaction == o.transaction &&
-          is_external == o.is_external
+          func == o.func &&
+          sig == o.sig &&
+          four_bytes == o.four_bytes &&
+          contract_address == o.contract_address &&
+          block_hash == o.block_hash &&
+          block_number == o.block_number &&
+          block_time == o.block_time &&
+          transaction_hash == o.transaction_hash &&
+          transaction_index == o.transaction_index &&
+          log_index == o.log_index &&
+          from == o.from &&
+          to == o.to &&
+          value == o.value
     end
 
     # @see the `==` method
@@ -264,7 +266,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [smart_contract_id, network_id, wallet_id, contract_address, contract_name, deployer_address, type, options, abi, transaction, is_external].hash
+      [webhook_id, event_type, network, project_name, contract_name, func, sig, four_bytes, contract_address, block_hash, block_number, block_time, transaction_hash, transaction_index, log_index, from, to, value].hash
     end
 
     # Builds the object from hash

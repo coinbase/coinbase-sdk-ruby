@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
+require_relative 'coinbase/client'
 require_relative 'coinbase/address'
 require_relative 'coinbase/address/wallet_address'
 require_relative 'coinbase/address/external_address'
+require_relative 'coinbase/address_reputation'
 require_relative 'coinbase/asset'
 require_relative 'coinbase/authenticator'
 require_relative 'coinbase/correlation'
 require_relative 'coinbase/balance'
 require_relative 'coinbase/balance_map'
 require_relative 'coinbase/historical_balance'
-require_relative 'coinbase/client'
 require_relative 'coinbase/constants'
 require_relative 'coinbase/contract_event'
 require_relative 'coinbase/contract_invocation'

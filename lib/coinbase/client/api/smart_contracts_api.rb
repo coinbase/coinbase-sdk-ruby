@@ -260,40 +260,31 @@ module Coinbase::Client
       return data, status_code, headers
     end
 
-    # List smart contracts deployed by address
-    # List all smart contracts deployed by address.
-    # @param wallet_id [String] The ID of the wallet the address belongs to.
-    # @param address_id [String] The ID of the address to fetch the smart contracts for.
+    # List smart contracts
+    # List smart contracts
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :page Pagination token for retrieving the next set of results
     # @return [SmartContractList]
-    def list_smart_contracts(wallet_id, address_id, opts = {})
-      data, _status_code, _headers = list_smart_contracts_with_http_info(wallet_id, address_id, opts)
+    def list_smart_contracts(opts = {})
+      data, _status_code, _headers = list_smart_contracts_with_http_info(opts)
       data
     end
 
-    # List smart contracts deployed by address
-    # List all smart contracts deployed by address.
-    # @param wallet_id [String] The ID of the wallet the address belongs to.
-    # @param address_id [String] The ID of the address to fetch the smart contracts for.
+    # List smart contracts
+    # List smart contracts
     # @param [Hash] opts the optional parameters
+    # @option opts [String] :page Pagination token for retrieving the next set of results
     # @return [Array<(SmartContractList, Integer, Hash)>] SmartContractList data, response status code and response headers
-    def list_smart_contracts_with_http_info(wallet_id, address_id, opts = {})
+    def list_smart_contracts_with_http_info(opts = {})
       if @api_client.config.debugging
         @api_client.config.logger.debug 'Calling API: SmartContractsApi.list_smart_contracts ...'
       end
-      # verify the required parameter 'wallet_id' is set
-      if @api_client.config.client_side_validation && wallet_id.nil?
-        fail ArgumentError, "Missing the required parameter 'wallet_id' when calling SmartContractsApi.list_smart_contracts"
-      end
-      # verify the required parameter 'address_id' is set
-      if @api_client.config.client_side_validation && address_id.nil?
-        fail ArgumentError, "Missing the required parameter 'address_id' when calling SmartContractsApi.list_smart_contracts"
-      end
       # resource path
-      local_var_path = '/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts'.sub('{' + 'wallet_id' + '}', CGI.escape(wallet_id.to_s)).sub('{' + 'address_id' + '}', CGI.escape(address_id.to_s))
+      local_var_path = '/v1/smart_contracts'
 
       # query parameters
       query_params = opts[:query_params] || {}
+      query_params[:'page'] = opts[:'page'] if !opts[:'page'].nil?
 
       # header parameters
       header_params = opts[:header_params] || {}
@@ -405,6 +396,82 @@ module Coinbase::Client
       data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
       if @api_client.config.debugging
         @api_client.config.logger.debug "API called: SmartContractsApi#read_contract\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
+      end
+      return data, status_code, headers
+    end
+
+    # Register a smart contract
+    # Register a smart contract
+    # @param network_id [String] The ID of the network to fetch.
+    # @param contract_address [String] EVM address of the smart contract (42 characters, including &#39;0x&#39;, in lowercase)
+    # @param [Hash] opts the optional parameters
+    # @option opts [RegisterSmartContractRequest] :register_smart_contract_request 
+    # @return [SmartContract]
+    def register_smart_contract(network_id, contract_address, opts = {})
+      data, _status_code, _headers = register_smart_contract_with_http_info(network_id, contract_address, opts)
+      data
+    end
+
+    # Register a smart contract
+    # Register a smart contract
+    # @param network_id [String] The ID of the network to fetch.
+    # @param contract_address [String] EVM address of the smart contract (42 characters, including &#39;0x&#39;, in lowercase)
+    # @param [Hash] opts the optional parameters
+    # @option opts [RegisterSmartContractRequest] :register_smart_contract_request 
+    # @return [Array<(SmartContract, Integer, Hash)>] SmartContract data, response status code and response headers
+    def register_smart_contract_with_http_info(network_id, contract_address, opts = {})
+      if @api_client.config.debugging
+        @api_client.config.logger.debug 'Calling API: SmartContractsApi.register_smart_contract ...'
+      end
+      # verify the required parameter 'network_id' is set
+      if @api_client.config.client_side_validation && network_id.nil?
+        fail ArgumentError, "Missing the required parameter 'network_id' when calling SmartContractsApi.register_smart_contract"
+      end
+      # verify the required parameter 'contract_address' is set
+      if @api_client.config.client_side_validation && contract_address.nil?
+        fail ArgumentError, "Missing the required parameter 'contract_address' when calling SmartContractsApi.register_smart_contract"
+      end
+      # resource path
+      local_var_path = '/v1/networks/{network_id}/smart_contracts/{contract_address}/register'.sub('{' + 'network_id' + '}', CGI.escape(network_id.to_s)).sub('{' + 'contract_address' + '}', CGI.escape(contract_address.to_s))
+
+      # query parameters
+      query_params = opts[:query_params] || {}
+
+      # header parameters
+      header_params = opts[:header_params] || {}
+      # HTTP header 'Accept' (if needed)
+      header_params['Accept'] = @api_client.select_header_accept(['application/json']) unless header_params['Accept']
+      # HTTP header 'Content-Type'
+      content_type = @api_client.select_header_content_type(['application/json'])
+      if !content_type.nil?
+          header_params['Content-Type'] = content_type
+      end
+
+      # form parameters
+      form_params = opts[:form_params] || {}
+
+      # http body (model)
+      post_body = opts[:debug_body] || @api_client.object_to_http_body(opts[:'register_smart_contract_request'])
+
+      # return_type
+      return_type = opts[:debug_return_type] || 'SmartContract'
+
+      # auth_names
+      auth_names = opts[:debug_auth_names] || []
+
+      new_options = opts.merge(
+        :operation => :"SmartContractsApi.register_smart_contract",
+        :header_params => header_params,
+        :query_params => query_params,
+        :form_params => form_params,
+        :body => post_body,
+        :auth_names => auth_names,
+        :return_type => return_type
+      )
+
+      data, status_code, headers = @api_client.call_api(:POST, local_var_path, new_options)
+      if @api_client.config.debugging
+        @api_client.config.logger.debug "API called: SmartContractsApi#register_smart_contract\nData: #{data.inspect}\nStatus code: #{status_code}\nHeaders: #{headers}"
       end
       return data, status_code, headers
     end
