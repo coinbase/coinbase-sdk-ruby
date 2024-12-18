@@ -14,56 +14,19 @@ require 'date'
 require 'time'
 
 module Coinbase::Client
-  # The result to a SignatureCreationEvent.
-  class SignatureCreationEventResult
-    # The ID of the wallet that the event was created for.
-    attr_accessor :wallet_id
+  # Smart Contract data to be updated
+  class UpdateSmartContractRequest
+    # ABI of the smart contract
+    attr_accessor :abi
 
-    # The ID of the user that the wallet belongs to
-    attr_accessor :wallet_user_id
-
-    # The ID of the address the transfer belongs to
-    attr_accessor :address_id
-
-    attr_accessor :transaction_type
-
-    # The ID of the transaction that the Server-Signer has signed for
-    attr_accessor :transaction_id
-
-    # The signature created by the server-signer.
-    attr_accessor :signature
-
-    class EnumAttributeValidator
-      attr_reader :datatype
-      attr_reader :allowable_values
-
-      def initialize(datatype, allowable_values)
-        @allowable_values = allowable_values.map do |value|
-          case datatype.to_s
-          when /Integer/i
-            value.to_i
-          when /Float/i
-            value.to_f
-          else
-            value
-          end
-        end
-      end
-
-      def valid?(value)
-        !value || allowable_values.include?(value)
-      end
-    end
+    # Name of the smart contract
+    attr_accessor :contract_name
 
     # Attribute mapping from ruby-style variable name to JSON key.
     def self.attribute_map
       {
-        :'wallet_id' => :'wallet_id',
-        :'wallet_user_id' => :'wallet_user_id',
-        :'address_id' => :'address_id',
-        :'transaction_type' => :'transaction_type',
-        :'transaction_id' => :'transaction_id',
-        :'signature' => :'signature'
+        :'abi' => :'abi',
+        :'contract_name' => :'contract_name'
       }
     end
 
@@ -75,12 +38,8 @@ module Coinbase::Client
     # Attribute type mapping.
     def self.openapi_types
       {
-        :'wallet_id' => :'String',
-        :'wallet_user_id' => :'String',
-        :'address_id' => :'String',
-        :'transaction_type' => :'TransactionType',
-        :'transaction_id' => :'String',
-        :'signature' => :'String'
+        :'abi' => :'String',
+        :'contract_name' => :'String'
       }
     end
 
@@ -94,51 +53,23 @@ module Coinbase::Client
     # @param [Hash] attributes Model attributes in the form of hash
     def initialize(attributes = {})
       if (!attributes.is_a?(Hash))
-        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::SignatureCreationEventResult` initialize method"
+        fail ArgumentError, "The input argument (attributes) must be a hash in `Coinbase::Client::UpdateSmartContractRequest` initialize method"
       end
 
       # check to see if the attribute exists and convert string to symbol for hash key
       attributes = attributes.each_with_object({}) { |(k, v), h|
         if (!self.class.attribute_map.key?(k.to_sym))
-          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::SignatureCreationEventResult`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
+          fail ArgumentError, "`#{k}` is not a valid attribute in `Coinbase::Client::UpdateSmartContractRequest`. Please check the name to make sure it's valid. List of attributes: " + self.class.attribute_map.keys.inspect
         end
         h[k.to_sym] = v
       }
 
-      if attributes.key?(:'wallet_id')
-        self.wallet_id = attributes[:'wallet_id']
-      else
-        self.wallet_id = nil
+      if attributes.key?(:'abi')
+        self.abi = attributes[:'abi']
       end
 
-      if attributes.key?(:'wallet_user_id')
-        self.wallet_user_id = attributes[:'wallet_user_id']
-      else
-        self.wallet_user_id = nil
-      end
-
-      if attributes.key?(:'address_id')
-        self.address_id = attributes[:'address_id']
-      else
-        self.address_id = nil
-      end
-
-      if attributes.key?(:'transaction_type')
-        self.transaction_type = attributes[:'transaction_type']
-      else
-        self.transaction_type = nil
-      end
-
-      if attributes.key?(:'transaction_id')
-        self.transaction_id = attributes[:'transaction_id']
-      else
-        self.transaction_id = nil
-      end
-
-      if attributes.key?(:'signature')
-        self.signature = attributes[:'signature']
-      else
-        self.signature = nil
+      if attributes.key?(:'contract_name')
+        self.contract_name = attributes[:'contract_name']
       end
     end
 
@@ -147,28 +78,8 @@ module Coinbase::Client
     def list_invalid_properties
       warn '[DEPRECATED] the `list_invalid_properties` method is obsolete'
       invalid_properties = Array.new
-      if @wallet_id.nil?
-        invalid_properties.push('invalid value for "wallet_id", wallet_id cannot be nil.')
-      end
-
-      if @wallet_user_id.nil?
-        invalid_properties.push('invalid value for "wallet_user_id", wallet_user_id cannot be nil.')
-      end
-
-      if @address_id.nil?
-        invalid_properties.push('invalid value for "address_id", address_id cannot be nil.')
-      end
-
-      if @transaction_type.nil?
-        invalid_properties.push('invalid value for "transaction_type", transaction_type cannot be nil.')
-      end
-
-      if @transaction_id.nil?
-        invalid_properties.push('invalid value for "transaction_id", transaction_id cannot be nil.')
-      end
-
-      if @signature.nil?
-        invalid_properties.push('invalid value for "signature", signature cannot be nil.')
+      if !@contract_name.nil? && @contract_name.to_s.length > 100
+        invalid_properties.push('invalid value for "contract_name", the character length must be smaller than or equal to 100.')
       end
 
       invalid_properties
@@ -178,13 +89,22 @@ module Coinbase::Client
     # @return true if the model is valid
     def valid?
       warn '[DEPRECATED] the `valid?` method is obsolete'
-      return false if @wallet_id.nil?
-      return false if @wallet_user_id.nil?
-      return false if @address_id.nil?
-      return false if @transaction_type.nil?
-      return false if @transaction_id.nil?
-      return false if @signature.nil?
+      return false if !@contract_name.nil? && @contract_name.to_s.length > 100
       true
+    end
+
+    # Custom attribute writer method with validation
+    # @param [Object] contract_name Value to be assigned
+    def contract_name=(contract_name)
+      if contract_name.nil?
+        fail ArgumentError, 'contract_name cannot be nil'
+      end
+
+      if contract_name.to_s.length > 100
+        fail ArgumentError, 'invalid value for "contract_name", the character length must be smaller than or equal to 100.'
+      end
+
+      @contract_name = contract_name
     end
 
     # Checks equality by comparing each attribute.
@@ -192,12 +112,8 @@ module Coinbase::Client
     def ==(o)
       return true if self.equal?(o)
       self.class == o.class &&
-          wallet_id == o.wallet_id &&
-          wallet_user_id == o.wallet_user_id &&
-          address_id == o.address_id &&
-          transaction_type == o.transaction_type &&
-          transaction_id == o.transaction_id &&
-          signature == o.signature
+          abi == o.abi &&
+          contract_name == o.contract_name
     end
 
     # @see the `==` method
@@ -209,7 +125,7 @@ module Coinbase::Client
     # Calculates hash code according to all attributes.
     # @return [Integer] Hash code
     def hash
-      [wallet_id, wallet_user_id, address_id, transaction_type, transaction_id, signature].hash
+      [abi, contract_name].hash
     end
 
     # Builds the object from hash

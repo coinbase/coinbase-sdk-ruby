@@ -84,6 +84,14 @@ module Coinbase
     end
   end
 
+  # An error raised when attempting to manage an external contract on-chain,
+  # e.g. sign the deployment tx, deploy the contract, etc...
+  class ManageExternalContractError < StandardError
+    def initialize(action = 'manage')
+      super("Cannot #{action} external smart contract")
+    end
+  end
+
   # An error raised when an address attempts to sign a transaction without a private key.
   class AddressCannotSignError < StandardError
     def initialize(msg = 'Address cannot sign transaction without private key loaded')
