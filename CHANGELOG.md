@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 * Add support for fetching address reputation.
+* Add `network_id` to `WalletData` so that it is saved with the seed data and surfaced via the export function
 
 ## [0.12.0] - Skipped
 
