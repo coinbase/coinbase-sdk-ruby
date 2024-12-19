@@ -263,6 +263,30 @@ describe Coinbase::SmartContract do
         )
     end
 
+    context 'when the name is omitted' do
+      subject(:smart_contract) do
+        described_class.register(
+          network: network,
+          contract_address: contract_address,
+          abi: request_abi
+        )
+      end
+
+      let(:register_smart_contract_request) { { abi: abi.to_json } }
+
+      it 'calls register_smart_contract without a name' do
+        smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:register_smart_contract)
+          .with(
+            network.normalized_id,
+            contract_address,
+            register_smart_contract_request: register_smart_contract_request
+          )
+      end
+    end
+
     context 'when the ABI is passed as a JSON-encoded string' do
       let(:request_abi) { abi.to_json }
 
@@ -1197,6 +1221,7 @@ describe Coinbase::SmartContract do
       expect(smart_contract.inspect).to include(
         address_id,
         Coinbase.to_sym(network_id).to_s,
+        smart_contract.name,
         smart_contract.transaction.status.to_s,
         token_name,
         token_symbol,
@@ -1224,6 +1249,7 @@ describe Coinbase::SmartContract do
         expect(smart_contract.inspect).to include(
           smart_contract.contract_address,
           Coinbase.to_sym(network_id).to_s,
+          smart_contract.name,
           'custom'
         )
       end

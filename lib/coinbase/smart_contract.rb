@@ -134,10 +134,15 @@ module Coinbase
         new(contract)
       end
 
+      # Registers an externally deployed smart contract with the API.
+      # @param contract_address [String] The address of the deployed contract
+      # @param abi [Array, String] The ABI of the contract
+      # @param network [Coinbase::Network, Symbol] The Network or Network ID the contract is deployed on
+      # @param name [String, nil] The optional name of the contract
       def register(
         contract_address:,
         abi:,
-        name:,
+        name: nil,
         network: Coinbase.default_network
       )
         network = Coinbase::Network.from_id(network)
@@ -151,7 +156,7 @@ module Coinbase
             register_smart_contract_request: {
               abi: normalized_abi.to_json,
               contract_name: name
-            }
+            }.compact
           )
         end
 
@@ -485,6 +490,7 @@ module Coinbase
           network: network.id,
           contract_address: contract_address,
           type: type,
+          name: name,
           # Fields only present for CDP managed contracts.
           status: status,
           deployer_address: deployer_address,
