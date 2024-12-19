@@ -199,6 +199,21 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '.list' do
+    subject(:enumerator) { described_class.list }
+
+    let(:api) { smart_contracts_api }
+    let(:fetch_params) { ->(page) { [{ page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::SmartContractList }
+    let(:item_klass) { described_class }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::SmartContract.new(smart_contract_id: id, network_id: :base_sepolia) }
+    end
+
+    it_behaves_like 'it is a paginated enumerator', :smart_contracts
+  end
+
   describe '.register' do
     subject(:smart_contract) do
       described_class.register(

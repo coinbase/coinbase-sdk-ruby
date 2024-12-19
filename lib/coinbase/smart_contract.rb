@@ -197,6 +197,16 @@ module Coinbase
         convert_solidity_value(response)
       end
 
+      def list
+        Coinbase::Pagination.enumerate(
+          lambda { |page|
+            smart_contracts_api.list_smart_contracts(page: page)
+          }
+        ) do |smart_contract|
+          new(smart_contract)
+        end
+      end
+
       # Normalizes an ABI from a String or Array of Hashes to an Array of Hashes.
       # @param abi [String, Array] The ABI to normalize
       # @return [Array<Hash>] The normalized ABI
