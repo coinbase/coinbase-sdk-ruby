@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 describe Coinbase::SmartContract do
-  subject(:smart_contract) do
-    described_class.new(model)
-  end
+  subject(:smart_contract) { described_class.new(model) }
 
   let(:network_id) { :base_sepolia }
   let(:network) { build(:network, network_id) }
@@ -23,6 +21,7 @@ describe Coinbase::SmartContract do
       total_supply: total_supply
     )
   end
+  let(:external_model) { build(:smart_contract_model, network_id, :external) }
 
   before do
     allow(Coinbase::Client::SmartContractsApi).to receive(:new).and_return(smart_contracts_api)
@@ -95,13 +94,16 @@ describe Coinbase::SmartContract do
     end
 
     let(:nft_contract_model) do
-      build(:smart_contract_model, network_id,
-            type: Coinbase::Client::SmartContractType::ERC721,
-            options: Coinbase::Client::NFTContractOptions.new(
-              name: nft_name,
-              symbol: nft_symbol,
-              base_uri: base_uri
-            ))
+      build(
+        :smart_contract_model,
+        network_id,
+        type: Coinbase::Client::SmartContractType::ERC721,
+        options: Coinbase::Client::NFTContractOptions.new(
+          name: nft_name,
+          symbol: nft_symbol,
+          base_uri: base_uri
+        )
+      )
     end
 
     before do
@@ -160,11 +162,14 @@ describe Coinbase::SmartContract do
     end
 
     let(:multi_token_contract_model) do
-      build(:smart_contract_model, network_id,
-            type: Coinbase::Client::SmartContractType::ERC1155,
-            options: Coinbase::Client::MultiTokenContractOptions.new(
-              uri: uri
-            ))
+      build(
+        :smart_contract_model,
+        network_id,
+        type: Coinbase::Client::SmartContractType::ERC1155,
+        options: Coinbase::Client::MultiTokenContractOptions.new(
+          uri: uri
+        )
+      )
     end
 
     before do
@@ -190,6 +195,174 @@ describe Coinbase::SmartContract do
     context 'when checking Multi-Token options' do
       it 'sets the correct URI' do
         expect(smart_contract.options.uri).to eq(uri)
+      end
+    end
+  end
+
+  describe '.list' do
+    subject(:enumerator) { described_class.list }
+
+    let(:api) { smart_contracts_api }
+    let(:fetch_params) { ->(page) { [{ page: page }] } }
+    let(:resource_list_klass) { Coinbase::Client::SmartContractList }
+    let(:item_klass) { described_class }
+    let(:item_initialize_args) { nil }
+    let(:create_model) do
+      ->(id) { Coinbase::Client::SmartContract.new(smart_contract_id: id, network_id: :base_sepolia) }
+    end
+
+    it_behaves_like 'it is a paginated enumerator', :smart_contracts
+  end
+
+  describe '.register' do
+    subject(:smart_contract) do
+      described_class.register(
+        network: network,
+        contract_address: contract_address,
+        name: contract_name,
+        abi: request_abi
+      )
+    end
+
+    let(:contract_name) { 'TestContract' }
+    let(:contract_address) { '0x1234567890123456789012345678901234567890' }
+    let(:abi) { [{ 'name' => 'testMethod', 'inputs' => [], 'outputs' => [] }] }
+    let(:request_abi) { abi }
+    let(:register_smart_contract_request) do
+      {
+        contract_name: contract_name,
+        abi: abi.to_json
+      }
+    end
+
+    let(:external_model) do
+      build(
+        :smart_contract_model,
+        network_id,
+        :external,
+        abi: abi.to_json,
+        contract_address: contract_address,
+        contract_name: contract_name
+      )
+    end
+
+    before do
+      allow(smart_contracts_api)
+        .to receive(:register_smart_contract)
+        .with(
+          network.normalized_id,
+          contract_address,
+          register_smart_contract_request: register_smart_contract_request
+        ).and_return(external_model)
+    end
+
+    it 'creates a new SmartContract' do
+      expect(smart_contract).to be_a(described_class)
+    end
+
+    it 'sets the smart_contract properties' do
+      expect(smart_contract.id).to eq(external_model.smart_contract_id)
+    end
+
+    it 'sets the ABI' do
+      expect(smart_contract.abi).to eq(abi)
+    end
+
+    it 'calls register_smart_contract with correct parameters' do
+      smart_contract
+      expect(smart_contracts_api).to have_received(:register_smart_contract)
+        .with(
+          network.normalized_id,
+          contract_address,
+          register_smart_contract_request: register_smart_contract_request
+        )
+    end
+
+    context 'when the name is omitted' do
+      subject(:smart_contract) do
+        described_class.register(
+          network: network,
+          contract_address: contract_address,
+          abi: request_abi
+        )
+      end
+
+      let(:register_smart_contract_request) { { abi: abi.to_json } }
+
+      it 'calls register_smart_contract without a name' do
+        smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:register_smart_contract)
+          .with(
+            network.normalized_id,
+            contract_address,
+            register_smart_contract_request: register_smart_contract_request
+          )
+      end
+    end
+
+    context 'when the ABI is passed as a JSON-encoded string' do
+      let(:request_abi) { abi.to_json }
+
+      it 'calls register_smart_contract with the ABI as a JSON-encoded string' do
+        smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:register_smart_contract)
+          .with(
+            network.normalized_id,
+            contract_address,
+            register_smart_contract_request: register_smart_contract_request
+          )
+      end
+    end
+
+    context 'when the ABI is not a valid JSON-encoded string' do
+      let(:abi) { 'invalid' }
+
+      it 'raises an error' do
+        expect { smart_contract }.to raise_error(ArgumentError)
+      end
+    end
+
+    context 'when the provided network is a symbol' do
+      let(:network_id) { :ethereum_mainnet }
+
+      it 'calls register_smart_contract with the normalized network ID' do
+        smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:register_smart_contract)
+          .with(
+            'ethereum-mainnet',
+            contract_address,
+            register_smart_contract_request: register_smart_contract_request
+          )
+      end
+    end
+
+    context 'when the network is omitted' do
+      subject(:smart_contract) do
+        described_class.register(
+          contract_address: contract_address,
+          name: contract_name,
+          abi: abi
+        )
+      end
+
+      let(:network) { default_network }
+
+      it 'calls register_smart_contract with the default network' do
+        smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:register_smart_contract)
+          .with(
+            default_network.normalized_id,
+            contract_address,
+            register_smart_contract_request: register_smart_contract_request
+          )
       end
     end
   end
@@ -696,6 +869,12 @@ describe Coinbase::SmartContract do
     end
   end
 
+  describe '#name' do
+    it 'returns the contract name' do
+      expect(smart_contract.name).to eq(model.contract_name)
+    end
+  end
+
   describe '#abi' do
     it 'returns the parsed contract ABI' do
       expect(smart_contract.abi).to eq(JSON.parse(model.abi))
@@ -706,11 +885,27 @@ describe Coinbase::SmartContract do
     it 'returns the wallet ID' do
       expect(smart_contract.wallet_id).to eq(wallet_id)
     end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { described_class.new(external_model) }
+
+      it 'returns nil' do
+        expect(smart_contract.wallet_id).to be_nil
+      end
+    end
   end
 
   describe '#deployer_address' do
     it 'returns the deployer address' do
       expect(smart_contract.deployer_address).to eq(model.deployer_address)
+    end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { described_class.new(external_model) }
+
+      it 'returns nil' do
+        expect(smart_contract.deployer_address).to be_nil
+      end
     end
   end
 
@@ -724,6 +919,14 @@ describe Coinbase::SmartContract do
     it 'returns the smart contract options' do
       expect(smart_contract.options).to eq(model.options)
     end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { described_class.new(external_model) }
+
+      it 'returns nil' do
+        expect(smart_contract.options).to be_nil
+      end
+    end
   end
 
   describe '#transaction' do
@@ -733,6 +936,120 @@ describe Coinbase::SmartContract do
 
     it 'sets the from_address_id' do
       expect(smart_contract.transaction.from_address_id).to eq(address_id)
+    end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { described_class.new(external_model) }
+
+      it 'returns nil' do
+        expect(smart_contract.transaction).to be_nil
+      end
+    end
+  end
+
+  describe '#update' do
+    subject(:updated_smart_contract) { smart_contract.update(**options) }
+
+    let(:smart_contract) { described_class.new(external_model) }
+    let(:updated_abi) { [{ 'name' => 'testMethod', 'inputs' => [], 'outputs' => [] }] }
+    let(:updated_name) { 'Updated contract name' }
+    let(:request_abi) { updated_abi }
+    let(:options) { { name: updated_name, abi: request_abi } }
+    let(:update_smart_contract_request) { { contract_name: updated_name, abi: updated_abi.to_json } }
+    let(:external_model) { build(:smart_contract_model, network_id, :external) }
+    let(:updated_model) do
+      build(
+        :smart_contract_model,
+        network_id,
+        :external,
+        abi: updated_abi.to_json,
+        contract_address: external_model.contract_address,
+        contract_name: updated_name
+      )
+    end
+
+    before do
+      allow(smart_contracts_api)
+        .to receive(:update_smart_contract)
+        .with(
+          network.normalized_id,
+          external_model.contract_address,
+          update_smart_contract_request: update_smart_contract_request
+        ).and_return(updated_model)
+
+      updated_smart_contract
+    end
+
+    it 'returns the updated SmartContract' do
+      expect(updated_smart_contract).to be_a(described_class)
+    end
+
+    it 'calls update_smart_contract with correct parameters' do
+      expect(smart_contracts_api)
+        .to have_received(:update_smart_contract)
+        .with(
+          network.normalized_id,
+          external_model.contract_address,
+          update_smart_contract_request: update_smart_contract_request
+        )
+    end
+
+    it 'returns the updated ABI' do
+      expect(updated_smart_contract.abi).to eq(updated_abi)
+    end
+
+    it 'returns the updated name' do
+      expect(updated_smart_contract.name).to eq(updated_name)
+    end
+
+    context 'when the ABI is passed as a JSON-encoded string' do
+      let(:request_abi) { updated_abi.to_json }
+
+      it 'calls update_smart_contract with the ABI as a JSON-encoded string' do
+        updated_smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:update_smart_contract)
+          .with(
+            network.normalized_id,
+            external_model.contract_address,
+            update_smart_contract_request: update_smart_contract_request
+          )
+      end
+    end
+
+    context 'when ABI is omitted' do
+      let(:options) { { name: updated_name } }
+      let(:update_smart_contract_request) { { contract_name: updated_name } }
+
+      it 'calls update_smart_contract without an ABI' do
+        updated_smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:update_smart_contract)
+          .with(
+            network.normalized_id,
+            external_model.contract_address,
+            update_smart_contract_request: update_smart_contract_request
+          )
+      end
+    end
+
+    context 'when name is omitted' do
+      let(:options) { { abi: updated_abi } }
+      let(:update_smart_contract_request) { { abi: updated_abi.to_json } }
+
+      it 'calls update_smart_contract without a name' do
+        updated_smart_contract
+
+        expect(smart_contracts_api)
+          .to have_received(:update_smart_contract)
+          .with(
+            network.normalized_id,
+            external_model.contract_address,
+            update_smart_contract_request: update_smart_contract_request
+          )
+      end
     end
   end
 
@@ -761,6 +1078,16 @@ describe Coinbase::SmartContract do
 
       it 'raises an error' do
         expect { smart_contract.sign('invalid key') }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { build(:smart_contract, :external) }
+
+      let(:key) { Eth::Key.new }
+
+      it 'raises an error' do
+        expect { smart_contract.sign(key) }.to raise_error(Coinbase::ManageExternalContractError)
       end
     end
   end
@@ -824,6 +1151,14 @@ describe Coinbase::SmartContract do
         expect { deployed_smart_contract }.to raise_error(Coinbase::TransactionNotSignedError)
       end
     end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { build(:smart_contract, :external) }
+
+      it 'raises an error' do
+        expect { smart_contract.deploy! }.to raise_error(Coinbase::ManageExternalContractError)
+      end
+    end
   end
 
   describe '#reload' do
@@ -838,6 +1173,14 @@ describe Coinbase::SmartContract do
 
     it 'updates the smart contract transaction' do
       expect(smart_contract.reload.transaction.status).to eq(Coinbase::Transaction::Status::COMPLETE)
+    end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { build(:smart_contract, :external) }
+
+      it 'raises an error' do
+        expect { smart_contract.reload }.to raise_error(Coinbase::ManageExternalContractError)
+      end
     end
   end
 
@@ -876,6 +1219,16 @@ describe Coinbase::SmartContract do
         end.to raise_error(Timeout::Error, 'SmartContract deployment timed out. Try waiting again.')
       end
     end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { build(:smart_contract, :external) }
+
+      let(:updated_model) { nil }
+
+      it 'raises an error' do
+        expect { smart_contract.wait! }.to raise_error(Coinbase::ManageExternalContractError)
+      end
+    end
   end
 
   describe '#inspect' do
@@ -883,6 +1236,7 @@ describe Coinbase::SmartContract do
       expect(smart_contract.inspect).to include(
         address_id,
         Coinbase.to_sym(network_id).to_s,
+        smart_contract.name,
         smart_contract.transaction.status.to_s,
         token_name,
         token_symbol,
@@ -900,6 +1254,19 @@ describe Coinbase::SmartContract do
 
       it 'includes the updated status' do
         expect(smart_contract.inspect).to include('broadcast')
+      end
+    end
+
+    context 'when the smart contract is external' do
+      subject(:smart_contract) { build(:smart_contract, :external) }
+
+      it 'includes the external smart contract details' do
+        expect(smart_contract.inspect).to include(
+          smart_contract.contract_address,
+          Coinbase.to_sym(network_id).to_s,
+          smart_contract.name,
+          'custom'
+        )
       end
     end
   end
