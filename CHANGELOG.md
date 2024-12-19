@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.13.0] - 2024-12-19
+
+### Added
+- Add support for fetching address reputation.
+- Add `network_id` to `WalletData` so that it is saved with the seed data and surfaced via the export function
+- Add support for registering, updating, and listing smart contracts that are deployed external to CDP.
+
+## [0.12.0] - Skipped
+
 ## [0.11.0] - 2024-11-27
 
 ### Added

@@ -28,6 +28,21 @@ describe Coinbase::Address do
     subject { address.to_s }
 
     it { is_expected.to include(network_id.to_s, address_id) }
+
+    context 'when the address reputation is not loaded' do
+      it { is_expected.not_to include('reputation_score') }
+    end
+
+    context 'when the address reputation is loaded' do
+      let(:score) { 37 }
+      let(:reputation) { build(:address_reputation, score: score) }
+
+      before do
+        address.instance_variable_set(:@reputation, reputation)
+      end
+
+      it { is_expected.to include('reputation_score', score.to_s) }
+    end
   end
 
   describe '#inspect' do
@@ -45,4 +60,5 @@ describe Coinbase::Address do
   it_behaves_like 'an address that supports balance queries'
   it_behaves_like 'an address that supports requesting faucet funds'
   it_behaves_like 'an address that supports transaction queries'
+  it_behaves_like 'an address that supports reputation'
 end

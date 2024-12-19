@@ -18,6 +18,7 @@ require_relative 'support/shared_examples/address_balances'
 require_relative 'support/shared_examples/address_staking'
 require_relative 'support/shared_examples/address_transactions'
 require_relative 'support/shared_examples/pagination'
+require_relative 'support/shared_examples/address_reputation'
 
 # Networks and Asset symbols used in our test factories.
 NETWORK_TRAITS = %i[base_mainnet base_sepolia ethereum_holesky ethereum_mainnet].freeze

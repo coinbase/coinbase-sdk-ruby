@@ -13,6 +13,7 @@ FactoryBot.define do
       base_uri { 'https://test.com' }
     end
 
+    is_external { false }
     deployer_address { key.address.to_s }
     wallet_id { SecureRandom.uuid }
     smart_contract_id { SecureRandom.uuid }
@@ -36,6 +37,7 @@ FactoryBot.define do
     end
 
     trait :token do
+      type { Coinbase::Client::SmartContractType::ERC20 }
       options do
         Coinbase::Client::TokenContractOptions.new(
           name: name,
@@ -43,9 +45,11 @@ FactoryBot.define do
           total_supply: BigDecimal(total_supply).to_i.to_s
         )
       end
+      contract_name { name }
     end
 
     trait :nft do
+      type { Coinbase::Client::SmartContractType::ERC721 }
       options do
         Coinbase::Client::NFTContractOptions.new(
           name: name,
@@ -53,14 +57,25 @@ FactoryBot.define do
           base_uri: base_uri
         )
       end
+      contract_name { name }
     end
 
     trait :multi_token do
+      type { Coinbase::Client::SmartContractType::ERC1155 }
       options do
         Coinbase::Client::MultiTokenContractOptions.new(
           uri: 'https://example.com/token/{id}.json'
         )
       end
+    end
+
+    trait :external do
+      is_external { true }
+      deployer_address { nil }
+      wallet_id { nil }
+      type { Coinbase::Client::SmartContractType::CUSTOM }
+      options { nil }
+      contract_name { 'External Contract' }
     end
 
     NETWORK_TRAITS.each do |network|
@@ -76,7 +91,9 @@ FactoryBot.define do
     end
 
     after(:build) do |invocation, transients|
-      invocation.transaction = build(:transaction_model, transients.status, key: transients.key)
+      unless invocation.is_external
+        invocation.transaction = build(:transaction_model, transients.status, key: transients.key)
+      end
     end
   end
 
@@ -105,6 +122,10 @@ FactoryBot.define do
 
     trait :multi_token do
       type { :multi_token }
+    end
+
+    trait :external do
+      type { :external }
     end
 
     TX_TRAITS.each do |status|
