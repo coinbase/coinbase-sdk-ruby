@@ -1350,7 +1350,13 @@ describe Coinbase::Wallet do
 
       it 'saves the wallet data to the seed file' do
         expect(saved_seed_data[wallet.id])
-          .to eq({ 'seed' => seed, 'encrypted' => false, 'iv' => '', 'auth_tag' => '' })
+          .to eq({
+                   'seed' => seed,
+                   'encrypted' => false,
+                   'iv' => '',
+                   'auth_tag' => '',
+                   'network_id' => network_id.to_s
+                 })
       end
     end
 
@@ -1387,7 +1393,13 @@ describe Coinbase::Wallet do
 
       it 'saves the wallet data to the new file' do
         expect(saved_seed_data[wallet.id])
-          .to eq({ 'seed' => seed, 'encrypted' => false, 'iv' => '', 'auth_tag' => '' })
+          .to eq({
+                   'seed' => seed,
+                   'encrypted' => false,
+                   'iv' => '',
+                   'auth_tag' => '',
+                   'network_id' => network_id.to_s
+                 })
       end
     end
 

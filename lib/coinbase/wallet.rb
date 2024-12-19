@@ -406,7 +406,7 @@ module Coinbase
 
       raise 'Cannot export Wallet without loaded seed' if @master.nil?
 
-      Data.new(wallet_id: id, seed: @master.seed_hex)
+      Data.new(wallet_id: id, seed: @master.seed_hex, network_id: network.id)
     end
 
     # Returns whether the Wallet has a seed with which to derive keys and sign transactions.
@@ -447,7 +447,8 @@ module Coinbase
         seed: seed_to_store,
         encrypted: encrypt,
         auth_tag: auth_tag,
-        iv: iv
+        iv: iv,
+        network_id: network.id
       }
 
       File.write(file_path, JSON.pretty_generate(existing_seeds_in_store))

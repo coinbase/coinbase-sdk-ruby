@@ -101,6 +101,7 @@ describe Coinbase::WalletAddress do
   it_behaves_like 'an address that supports balance queries'
   it_behaves_like 'an address that supports requesting faucet funds'
   it_behaves_like 'an address that supports staking'
+  it_behaves_like 'an address that supports reputation'
 
   describe '#invoke_contract' do
     subject(:contract_invocation) do
