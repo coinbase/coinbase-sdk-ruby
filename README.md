@@ -218,6 +218,12 @@ puts "Wallet successfully created: #{wallet3}"
 transfer = wallet1.transfer(0.00001, :usdc, wallet3, gasless: true).wait!
 ```
 
+By default, gasless transfers are batched with other transfers, and might take longer to submit. If you want to opt out of batching, you can set the `skip_batching` option to `True`, which will submit the transaction immediately.
+
+```ruby
+transfer = wallet1.transfer(0.00001, "usdc", wallet3, gasless: true, skip_batching: true).wait!
+```
+
 ## Listing Transfers
 
 ```

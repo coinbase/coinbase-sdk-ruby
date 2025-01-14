@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add `skip_batching` option to `Wallet.transfer` to allow for lower latency gasless transfers.
+
 ### Breaking
 - Removed support for EOL Ruby v2.7
 

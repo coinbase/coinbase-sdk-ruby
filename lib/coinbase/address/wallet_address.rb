@@ -41,9 +41,11 @@ module Coinbase
     #  default address. If a String, interprets it as the address ID.
     # @param gasless [Boolean] Whether gas fee for the transfer should be covered by Coinbase.
     #   Defaults to false. Check the API documentation for network and asset support.
-    # Whether the transfer should be gasless. Defaults to false.
+    # @param skip_batching [Boolean] When true, the Transfer will be submitted immediately.
+    #   Otherwise, the Transfer will be batched.
+    #   Defaults to false. Note: requires gasless option to be set to true.
     # @return [Coinbase::Transfer] The Transfer object.
-    def transfer(amount, asset_id, destination, gasless: false)
+    def transfer(amount, asset_id, destination, gasless: false, skip_batching: false)
       ensure_can_sign!
       ensure_sufficient_balance!(amount, asset_id)
 
@@ -54,7 +56,8 @@ module Coinbase
         destination: destination,
         network: network,
         wallet_id: wallet_id,
-        gasless: gasless
+        gasless: gasless,
+        skip_batching: skip_batching
       )
 
       # If a server signer is managing keys, it will sign and broadcast the underlying transfer transaction out of band.
