@@ -460,6 +460,33 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#rlp_encoded_tx-instance_method" title="#rlp_encoded_tx (instance method)">#<strong>rlp_encoded_tx</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>RLP encoded transaction as a hex string (prefixed with 0x) for native compatibility with popular eth clients such as etherjs, viem etc.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#to-instance_method" title="#to (instance method)">#<strong>to</strong>  &#x21d2; Object </a>
     
 
@@ -479,6 +506,33 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>The onchain address of the receiver.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#token_transfers-instance_method" title="#token_transfers (instance method)">#<strong>token_transfers</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the value of attribute token_transfers.</p>
 </div></span>
   
 </li>
@@ -1001,15 +1055,6 @@
       <pre class="lines">
 
 
-126
-127
-128
-129
-130
-131
-132
-133
-134
 135
 136
 137
@@ -1087,10 +1132,29 @@
 209
 210
 211
-212</pre>
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 126</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 135</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -1165,6 +1229,12 @@
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_transaction_access_list'>transaction_access_list</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;transaction_access_list&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>end</span>
 
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;token_transfers&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;token_transfers&#39;</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
+      <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_token_transfers'>token_transfers</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
   <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;flattened_traces&#39;</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;flattened_traces&#39;</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
       <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_flattened_traces'>flattened_traces</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span>
@@ -1177,6 +1247,10 @@
 
   <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;mint&#39;</span><span class='rparen'>)</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_mint'>mint</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;mint&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;rlp_encoded_tx&#39;</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_rlp_encoded_tx'>rlp_encoded_tx</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;rlp_encoded_tx&#39;</span><span class='rbracket'>]</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1217,12 +1291,12 @@
       <pre class="lines">
 
 
-62
-63
-64</pre>
+64
+65
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 64</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_block_timestamp'>block_timestamp</span>
   <span class='ivar'>@block_timestamp</span>
@@ -1260,12 +1334,12 @@
       <pre class="lines">
 
 
-59
-60
-61</pre>
+61
+62
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 59</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 61</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_flattened_traces'>flattened_traces</span>
   <span class='ivar'>@flattened_traces</span>
@@ -1665,12 +1739,12 @@
       <pre class="lines">
 
 
-65
-66
-67</pre>
+67
+68
+69</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 65</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 67</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_mint'>mint</span>
   <span class='ivar'>@mint</span>
@@ -1767,6 +1841,49 @@
 </div>
     
       
+      <span id="rlp_encoded_tx=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="rlp_encoded_tx-instance_method">
+  
+    #<strong>rlp_encoded_tx</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>RLP encoded transaction as a hex string (prefixed with 0x) for native compatibility with popular eth clients such as etherjs, viem etc.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+70
+71
+72</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 70</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rlp_encoded_tx'>rlp_encoded_tx</span>
+  <span class='ivar'>@rlp_encoded_tx</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
       <span id="to=-instance_method"></span>
       <div class="method_details ">
   <h3 class="signature " id="to-instance_method">
@@ -1803,6 +1920,49 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to'>to</span>
   <span class='ivar'>@to</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="token_transfers=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="token_transfers-instance_method">
+  
+    #<strong>token_transfers</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the value of attribute token_transfers.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_token_transfers'>token_transfers</span>
+  <span class='ivar'>@token_transfers</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2025,27 +2185,6 @@
       <pre class="lines">
 
 
-302
-303
-304
-305
-306
-307
-308
-309
-310
-311
-312
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
 323
 324
 325
@@ -2062,10 +2201,31 @@
 336
 337
 338
-339</pre>
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 302</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 323</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -2136,12 +2296,12 @@
       <pre class="lines">
 
 
-91
-92
-93</pre>
+98
+99
+100</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -2177,11 +2337,6 @@
       <pre class="lines">
 
 
-68
-69
-70
-71
-72
 73
 74
 75
@@ -2197,10 +2352,17 @@
 85
 86
 87
-88</pre>
+88
+89
+90
+91
+92
+93
+94
+95</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 68</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 73</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
@@ -2218,9 +2380,11 @@
     <span class='symbol'>:&#39;max_priority_fee_per_gas&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;max_priority_fee_per_gas&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;priority_fee_per_gas&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;priority_fee_per_gas&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;transaction_access_list&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;transaction_access_list&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;token_transfers&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;token_transfers&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;flattened_traces&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;flattened_traces&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;block_timestamp&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;block_timestamp&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;mint&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;mint&#39;</span>
+    <span class='symbol'>:&#39;mint&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;mint&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;rlp_encoded_tx&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;rlp_encoded_tx&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2292,28 +2456,28 @@
       <pre class="lines">
 
 
-278
-279
-280
-281
-282
-283
-284
-285
-286
-287
-288
-289
-290
-291
-292
-293
-294
-295
-296</pre>
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 278</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 299</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -2365,13 +2529,13 @@
       <pre class="lines">
 
 
-119
-120
-121
-122</pre>
+128
+129
+130
+131</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 119</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 128</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -2408,13 +2572,6 @@
       <pre class="lines">
 
 
-96
-97
-98
-99
-100
-101
-102
 103
 104
 105
@@ -2428,10 +2585,19 @@
 113
 114
 115
-116</pre>
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 96</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 103</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
@@ -2449,9 +2615,11 @@
     <span class='symbol'>:&#39;max_priority_fee_per_gas&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Integer&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;priority_fee_per_gas&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Integer&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;transaction_access_list&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;EthereumTransactionAccessList&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;token_transfers&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Array&lt;EthereumTokenTransfer&gt;&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;flattened_traces&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Array&lt;EthereumTransactionFlattenedTrace&gt;&#39;</span><span class='comma'>,</span>
     <span class='symbol'>:&#39;block_timestamp&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;Time&#39;</span><span class='comma'>,</span>
-    <span class='symbol'>:&#39;mint&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span>
+    <span class='symbol'>:&#39;mint&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span><span class='comma'>,</span>
+    <span class='symbol'>:&#39;rlp_encoded_tx&#39;</span> <span class='op'>=&gt;</span> <span class='symbol'>:&#39;String&#39;</span>
   <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2511,30 +2679,32 @@
       <pre class="lines">
 
 
-241
-242
-243
-244
-245
-246
-247
-248
-249
-250
-251
-252
-253
-254
-255
-256
-257
-258
-259
 260
-261</pre>
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 241</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 260</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
@@ -2553,9 +2723,11 @@
       <span class='id identifier rubyid_max_priority_fee_per_gas'>max_priority_fee_per_gas</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_max_priority_fee_per_gas'>max_priority_fee_per_gas</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_priority_fee_per_gas'>priority_fee_per_gas</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_priority_fee_per_gas'>priority_fee_per_gas</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_transaction_access_list'>transaction_access_list</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_transaction_access_list'>transaction_access_list</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_token_transfers'>token_transfers</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_token_transfers'>token_transfers</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_flattened_traces'>flattened_traces</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_flattened_traces'>flattened_traces</span> <span class='op'>&amp;&amp;</span>
       <span class='id identifier rubyid_block_timestamp'>block_timestamp</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_block_timestamp'>block_timestamp</span> <span class='op'>&amp;&amp;</span>
-      <span class='id identifier rubyid_mint'>mint</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_mint'>mint</span>
+      <span class='id identifier rubyid_mint'>mint</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_mint'>mint</span> <span class='op'>&amp;&amp;</span>
+      <span class='id identifier rubyid_rlp_encoded_tx'>rlp_encoded_tx</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span><span class='period'>.</span><span class='id identifier rubyid_rlp_encoded_tx'>rlp_encoded_tx</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2626,22 +2798,22 @@
       <pre class="lines">
 
 
-373
-374
-375
-376
-377
-378
-379
-380
-381
-382
-383
-384
-385</pre>
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 373</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 394</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -2725,12 +2897,12 @@
       <pre class="lines">
 
 
-265
-266
-267</pre>
+286
+287
+288</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 265</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 286</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -2784,22 +2956,22 @@
       <pre class="lines">
 
 
-216
-217
-218
-219
-220
-221
-222
-223
-224
-225
-226
-227
-228</pre>
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 216</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 235</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
@@ -2863,12 +3035,12 @@
       <pre class="lines">
 
 
-349
-350
-351</pre>
+370
+371
+372</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 349</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 370</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -2922,22 +3094,22 @@
       <pre class="lines">
 
 
-355
-356
-357
-358
-359
-360
-361
-362
-363
-364
-365
-366
-367</pre>
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 355</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 376</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -3001,12 +3173,12 @@
       <pre class="lines">
 
 
-343
-344
-345</pre>
+364
+365
+366</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 343</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 364</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -3060,15 +3232,15 @@
       <pre class="lines">
 
 
-232
-233
-234
-235
-236
-237</pre>
+251
+252
+253
+254
+255
+256</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 232</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/ethereum_transaction.rb', line 251</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>

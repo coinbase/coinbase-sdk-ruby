@@ -208,7 +208,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the value of attribute options.</p>
+<p>Additional options for the staking operation.</p>
 </div></span>
   
 </li>
@@ -674,7 +674,6 @@
       <pre class="lines">
 
 
-62
 63
 64
 65
@@ -712,10 +711,11 @@
 97
 98
 99
-100</pre>
+100
+101</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 62</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 63</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -909,7 +909,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the value of attribute options.</p>
+<p>Additional options for the staking operation.</p>
 
 
   </div>
@@ -923,12 +923,12 @@
       <pre class="lines">
 
 
-27
 28
-29</pre>
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 28</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@options</span>
@@ -1025,7 +1025,6 @@
       <pre class="lines">
 
 
-187
 188
 189
 190
@@ -1062,10 +1061,11 @@
 221
 222
 223
-224</pre>
+224
+225</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 187</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 188</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1136,12 +1136,12 @@
       <pre class="lines">
 
 
-40
 41
-42</pre>
+42
+43</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_acceptable_attributes'>acceptable_attributes</span>
   <span class='id identifier rubyid_attribute_map'>attribute_map</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
@@ -1177,17 +1177,17 @@
       <pre class="lines">
 
 
-30
 31
 32
 33
 34
 35
 36
-37</pre>
+37
+38</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 30</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 31</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_attribute_map'>attribute_map</span>
   <span class='lbrace'>{</span>
@@ -1266,7 +1266,6 @@
       <pre class="lines">
 
 
-163
 164
 165
 166
@@ -1284,10 +1283,11 @@
 178
 179
 180
-181</pre>
+181
+182</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 163</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 164</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1339,13 +1339,13 @@
       <pre class="lines">
 
 
-55
 56
 57
-58</pre>
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 56</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_nullable'>openapi_nullable</span>
   <span class='const'>Set</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='lbracket'>[</span>
@@ -1382,17 +1382,17 @@
       <pre class="lines">
 
 
-45
 46
 47
 48
 49
 50
 51
-52</pre>
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 45</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_openapi_types'>openapi_types</span>
   <span class='lbrace'>{</span>
@@ -1459,17 +1459,17 @@
       <pre class="lines">
 
 
-139
 140
 141
 142
 143
 144
 145
-146</pre>
+146
+147</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 139</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 140</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
@@ -1548,7 +1548,6 @@
       <pre class="lines">
 
 
-258
 259
 260
 261
@@ -1560,10 +1559,11 @@
 267
 268
 269
-270</pre>
+270
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 258</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 259</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1647,12 +1647,12 @@
       <pre class="lines">
 
 
-150
 151
-152</pre>
+152
+153</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1706,12 +1706,12 @@
       <pre class="lines">
 
 
-156
 157
-158</pre>
+158
+159</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 156</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
   <span class='lbracket'>[</span><span class='id identifier rubyid_network_id'>network_id</span><span class='comma'>,</span> <span class='id identifier rubyid_asset_id'>asset_id</span><span class='comma'>,</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
@@ -1765,7 +1765,6 @@
       <pre class="lines">
 
 
-104
 105
 106
 107
@@ -1785,10 +1784,11 @@
 121
 122
 123
-124</pre>
+124
+125</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 105</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
@@ -1860,12 +1860,12 @@
       <pre class="lines">
 
 
-234
 235
-236</pre>
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 234</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 235</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -1919,7 +1919,6 @@
       <pre class="lines">
 
 
-240
 241
 242
 243
@@ -1931,10 +1930,11 @@
 249
 250
 251
-252</pre>
+252
+253</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 240</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 241</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1998,12 +1998,12 @@
       <pre class="lines">
 
 
-228
 229
-230</pre>
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 228</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 229</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -2057,17 +2057,17 @@
       <pre class="lines">
 
 
-128
 129
 130
 131
 132
 133
 134
-135</pre>
+135
+136</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 128</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/create_staking_operation_request.rb', line 129</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>

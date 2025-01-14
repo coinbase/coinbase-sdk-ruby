@@ -128,6 +128,11 @@
         </dt>
         <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>wallet_activity</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
+        <dt id="SMART_CONTRACT_EVENT_ACTIVITY-constant" class="">SMART_CONTRACT_EVENT_ACTIVITY =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>smart_contract_event_activity</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
         <dt id="UNKNOWN_DEFAULT_OPEN_API-constant" class="">UNKNOWN_DEFAULT_OPEN_API =
           
         </dt>
@@ -253,15 +258,15 @@
       <pre class="lines">
 
 
-24
 25
-26</pre>
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_all_vars'>all_vars</span>
-  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#UNSPECIFIED-constant" title="Coinbase::Client::WebhookEventType::UNSPECIFIED (constant)">UNSPECIFIED</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERC20_TRANSFER-constant" title="Coinbase::Client::WebhookEventType::ERC20_TRANSFER (constant)">ERC20_TRANSFER</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERC721_TRANSFER-constant" title="Coinbase::Client::WebhookEventType::ERC721_TRANSFER (constant)">ERC721_TRANSFER</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#WALLET_ACTIVITY-constant" title="Coinbase::Client::WebhookEventType::WALLET_ACTIVITY (constant)">WALLET_ACTIVITY</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#UNKNOWN_DEFAULT_OPEN_API-constant" title="Coinbase::Client::WebhookEventType::UNKNOWN_DEFAULT_OPEN_API (constant)">UNKNOWN_DEFAULT_OPEN_API</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
+  <span class='ivar'>@all_vars</span> <span class='op'>||=</span> <span class='lbracket'>[</span><span class='const'><span class='object_link'><a href="#UNSPECIFIED-constant" title="Coinbase::Client::WebhookEventType::UNSPECIFIED (constant)">UNSPECIFIED</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERC20_TRANSFER-constant" title="Coinbase::Client::WebhookEventType::ERC20_TRANSFER (constant)">ERC20_TRANSFER</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#ERC721_TRANSFER-constant" title="Coinbase::Client::WebhookEventType::ERC721_TRANSFER (constant)">ERC721_TRANSFER</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#WALLET_ACTIVITY-constant" title="Coinbase::Client::WebhookEventType::WALLET_ACTIVITY (constant)">WALLET_ACTIVITY</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#SMART_CONTRACT_EVENT_ACTIVITY-constant" title="Coinbase::Client::WebhookEventType::SMART_CONTRACT_EVENT_ACTIVITY (constant)">SMART_CONTRACT_EVENT_ACTIVITY</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#UNKNOWN_DEFAULT_OPEN_API-constant" title="Coinbase::Client::WebhookEventType::UNKNOWN_DEFAULT_OPEN_API (constant)">UNKNOWN_DEFAULT_OPEN_API</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -332,12 +337,12 @@
       <pre class="lines">
 
 
-31
 32
-33</pre>
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 31</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_new'>new</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
@@ -417,13 +422,13 @@
       <pre class="lines">
 
 
-38
 39
 40
-41</pre>
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 38</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_event_type.rb', line 39</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='id identifier rubyid_value'>value</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="" title="Coinbase::Client::WebhookEventType (class)">WebhookEventType</a></span></span><span class='period'>.</span><span class='id identifier rubyid_all_vars'><span class='object_link'><a href="#all_vars-class_method" title="Coinbase::Client::WebhookEventType.all_vars (method)">all_vars</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>

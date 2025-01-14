@@ -653,7 +653,9 @@
 73
 74
 75
-76</pre>
+76
+77
+78</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 54</span>
@@ -679,6 +681,8 @@
 
   <span class='kw'>if</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:&#39;wallet_id&#39;</span><span class='rparen'>)</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>=</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='lbracket'>[</span><span class='symbol'>:&#39;wallet_id&#39;</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -864,13 +868,6 @@
       <pre class="lines">
 
 
-141
-142
-143
-144
-145
-146
-147
 148
 149
 150
@@ -901,10 +898,17 @@
 175
 176
 177
-178</pre>
+178
+179
+180
+181
+182
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 148</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid__deserialize'>_deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_type'>type</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1101,13 +1105,6 @@
       <pre class="lines">
 
 
-117
-118
-119
-120
-121
-122
-123
 124
 125
 126
@@ -1119,10 +1116,17 @@
 132
 133
 134
-135</pre>
+135
+136
+137
+138
+139
+140
+141
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 117</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 124</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_build_from_hash'>build_from_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_attributes'>attributes</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>nil</span> <span class='kw'>unless</span> <span class='id identifier rubyid_attributes'>attributes</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
@@ -1290,15 +1294,15 @@
       <pre class="lines">
 
 
-95
-96
-97
-98
-99
-100</pre>
+102
+103
+104
+105
+106
+107</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 95</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='op'>==</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_equal?'>equal?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
@@ -1375,22 +1379,22 @@
       <pre class="lines">
 
 
-212
-213
-214
-215
-216
-217
-218
 219
 220
 221
 222
 223
-224</pre>
+224
+225
+226
+227
+228
+229
+230
+231</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 212</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 219</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid__to_hash'>_to_hash</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -1474,12 +1478,12 @@
       <pre class="lines">
 
 
-104
-105
-106</pre>
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 111</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_eql?'>eql?</span><span class='lparen'>(</span><span class='id identifier rubyid_o'>o</span><span class='rparen'>)</span>
   <span class='kw'>self</span> <span class='op'>==</span> <span class='id identifier rubyid_o'>o</span>
@@ -1533,12 +1537,12 @@
       <pre class="lines">
 
 
-110
-111
-112</pre>
+117
+118
+119</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 117</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash'>hash</span>
   <span class='lbracket'>[</span><span class='id identifier rubyid_addresses'>addresses</span><span class='comma'>,</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_hash'>hash</span>
@@ -1592,18 +1596,26 @@
       <pre class="lines">
 
 
-80
-81
 82
 83
-84</pre>
+84
+85
+86
+87
+88
+89
+90</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 80</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 82</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_list_invalid_properties'>list_invalid_properties</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `list_invalid_properties` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span>
+  <span class='kw'>if</span> <span class='ivar'>@wallet_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='id identifier rubyid_invalid_properties'>invalid_properties</span><span class='period'>.</span><span class='id identifier rubyid_push'>push</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid value for &quot;wallet_id&quot;, wallet_id cannot be nil.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
   <span class='id identifier rubyid_invalid_properties'>invalid_properties</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -1655,12 +1667,12 @@
       <pre class="lines">
 
 
-188
-189
-190</pre>
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 188</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 195</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_body'>to_body</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span>
@@ -1714,22 +1726,22 @@
       <pre class="lines">
 
 
-194
-195
-196
-197
-198
-199
-200
 201
 202
 203
 204
 205
-206</pre>
+206
+207
+208
+209
+210
+211
+212
+213</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 194</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 201</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span>
   <span class='id identifier rubyid_hash'>hash</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1793,12 +1805,12 @@
       <pre class="lines">
 
 
-182
-183
-184</pre>
+189
+190
+191</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 182</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 189</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='id identifier rubyid_to_hash'>to_hash</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1852,16 +1864,18 @@
       <pre class="lines">
 
 
-88
-89
-90
-91</pre>
+94
+95
+96
+97
+98</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 88</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/client/models/webhook_wallet_activity_filter.rb', line 94</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
   <span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[DEPRECATED] the `valid?` method is obsolete</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>if</span> <span class='ivar'>@wallet_id</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
   <span class='kw'>true</span>
 <span class='kw'>end</span></pre>
     </td>

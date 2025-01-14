@@ -102,7 +102,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>A representation of a SmartContract on the blockchain.</p>
+<p>A representation of a SmartContract on the blockchain. rubocop:disable Metrics/ClassLength</p>
 
 
   </div>
@@ -128,7 +128,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#create_multi_token_contract-class_method" title="create_multi_token_contract (class method)">.<strong>create_multi_token_contract</strong>(address_id:, wallet_id:, uri:)  &#x21d2; Object </a>
+      <a href="#create_multi_token_contract-class_method" title="create_multi_token_contract (class method)">.<strong>create_multi_token_contract</strong>(address_id:, wallet_id:, uri:)  &#x21d2; SmartContract </a>
     
 
     
@@ -142,7 +142,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Creates a new ERC1155 multi-token contract, that can subsequently be deployed to the blockchain.</p>
+</div></span>
   
 </li>
 
@@ -198,6 +200,28 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#list_events-class_method" title="list_events (class method)">.<strong>list_events</strong>(network_id:, protocol_name:, contract_address:, contract_name:, event_name:, from_block_height:, to_block_height:)  &#x21d2; Enumerable&lt;Coinbase::ContractEvent&gt; </a>
     
 
@@ -214,6 +238,78 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Returns a list of ContractEvents for the provided network, contract, and event details.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#normalize_abi-class_method" title="normalize_abi (class method)">.<strong>normalize_abi</strong>(abi)  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Normalizes an ABI from a String or Array of Hashes to an Array of Hashes.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#read-class_method" title="read (class method)">.<strong>read</strong>(contract_address:, method:, network: Coinbase.default_network, abi: nil, args: {})  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Reads data from a deployed smart contract.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#register-class_method" title="register (class method)">.<strong>register</strong>(contract_address:, abi:, name: nil, network: Coinbase.default_network)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Registers an externally deployed smart contract with the API.</p>
 </div></span>
   
 </li>
@@ -303,7 +399,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#deployer_address-instance_method" title="#deployer_address (instance method)">#<strong>deployer_address</strong>  &#x21d2; String </a>
+      <a href="#deployer_address-instance_method" title="#deployer_address (instance method)">#<strong>deployer_address</strong>  &#x21d2; String<sup>?</sup> </a>
     
 
     
@@ -318,7 +414,31 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the address of the deployer of the SmartContract.</p>
+<p>Returns the address of the deployer of the SmartContract, if deployed via CDP.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#external%3F-instance_method" title="#external? (instance method)">#<strong>external?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns whether the SmartContract is an externally registered contract or a CDP managed contract.</p>
 </div></span>
   
 </li>
@@ -401,6 +521,30 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#name-instance_method" title="#name (instance method)">#<strong>name</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the name of the SmartContract.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#network-instance_method" title="#network (instance method)">#<strong>network</strong>  &#x21d2; Coinbase::Network </a>
     
 
@@ -425,7 +569,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Coinbase::Client::SmartContractOptions </a>
+      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Coinbase::Client::SmartContractOptions<sup>?</sup> </a>
     
 
     
@@ -440,7 +584,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the options of the SmartContract.</p>
+<p>Returns the options of the SmartContract, if deployed via CDP.</p>
 </div></span>
   
 </li>
@@ -512,7 +656,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the status of the SmartContract.</p>
+<p>Returns the status of the SmartContract, if deployed via CDP.</p>
 </div></span>
   
 </li>
@@ -560,7 +704,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the transaction.</p>
+<p>Returns the transaction, if deployed via CDP.</p>
 </div></span>
   
 </li>
@@ -586,6 +730,28 @@
     <span class="summary_desc"><div class='inline'>
 <p>Returns the type of the SmartContract.</p>
 </div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update-instance_method" title="#update (instance method)">#<strong>update</strong>(name: nil, abi: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
   
 </li>
 
@@ -632,7 +798,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Returns the ID of the wallet that deployed the SmartContract.</p>
+<p>Returns the ID of the wallet that deployed the SmartContract, if deployed via CDP.</p>
 </div></span>
   
 </li>
@@ -690,14 +856,14 @@
       <pre class="lines">
 
 
-164
-165
-166
-167
-168</pre>
+313
+314
+315
+316
+317</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 164</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 313</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_model'>model</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='kw'>unless</span> <span class='id identifier rubyid_model'>model</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client.html" title="Coinbase::Client (module)">Client</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Client/SmartContract.html" title="Coinbase::Client::SmartContract (class)">SmartContract</a></span></span><span class='rparen'>)</span>
@@ -719,26 +885,99 @@
       <div class="method_details first">
   <h3 class="signature first" id="create_multi_token_contract-class_method">
   
-    .<strong>create_multi_token_contract</strong>(address_id:, wallet_id:, uri:)  &#x21d2; <tt>Object</tt> 
+    .<strong>create_multi_token_contract</strong>(address_id:, wallet_id:, uri:)  &#x21d2; <tt><span class='object_link'><a href="" title="Coinbase::SmartContract (class)">SmartContract</a></span></tt> 
   
 
   
 
   
-</h3><table class="source_code">
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Creates a new ERC1155 multi-token contract, that can subsequently be deployed to the blockchain.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>address_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The address ID of deployer</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>wallet_id</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The wallet ID of the deployer</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>uri</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The URI for the token metadata</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Coinbase::SmartContract (class)">SmartContract</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The new ERC1155 Multi-Token SmartContract object</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-108
-109
-110
-111
-112
-113
-114
-115
 116
 117
 118
@@ -750,12 +989,20 @@
 124
 125
 126
-127</pre>
+127
+128
+129
+130
+131
+132
+133
+134
+135</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 116</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_create_multi_token_contract'>create_multi_token_contract</span><span class='lparen'>(</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_create_multi_token_contract'>create_multi_token_contract</span><span class='lparen'>(</span>
   <span class='label'>address_id:</span><span class='comma'>,</span>
   <span class='label'>wallet_id:</span><span class='comma'>,</span>
   <span class='label'>uri:</span>
@@ -908,8 +1155,6 @@
       <pre class="lines">
 
 
-83
-84
 85
 86
 87
@@ -931,12 +1176,14 @@
 103
 104
 105
-106</pre>
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 83</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 85</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_create_nft_contract'>create_nft_contract</span><span class='lparen'>(</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_create_nft_contract'>create_nft_contract</span><span class='lparen'>(</span>
   <span class='label'>address_id:</span><span class='comma'>,</span>
   <span class='label'>wallet_id:</span><span class='comma'>,</span>
   <span class='label'>name:</span><span class='comma'>,</span>
@@ -1093,8 +1340,6 @@
       <pre class="lines">
 
 
-50
-51
 52
 53
 54
@@ -1116,12 +1361,14 @@
 70
 71
 72
-73</pre>
+73
+74
+75</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 50</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 52</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_create_token_contract'>create_token_contract</span><span class='lparen'>(</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_create_token_contract'>create_token_contract</span><span class='lparen'>(</span>
   <span class='label'>address_id:</span><span class='comma'>,</span>
   <span class='label'>wallet_id:</span><span class='comma'>,</span>
   <span class='label'>name:</span><span class='comma'>,</span>
@@ -1144,6 +1391,48 @@
   <span class='kw'>end</span>
 
   <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_contract'>contract</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="list-class_method">
+  
+    .<strong>list</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+200
+201
+202
+203
+204
+205
+206
+207
+208</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 200</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_list'>list</span>
+  <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Pagination.html" title="Coinbase::Pagination (module)">Pagination</a></span></span><span class='period'>.</span><span class='id identifier rubyid_enumerate'><span class='object_link'><a href="Pagination.html#enumerate-class_method" title="Coinbase::Pagination.enumerate (method)">enumerate</a></span></span><span class='lparen'>(</span>
+    <span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_page'>page</span><span class='op'>|</span>
+      <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_list_smart_contracts'>list_smart_contracts</span><span class='lparen'>(</span><span class='label'>page:</span> <span class='id identifier rubyid_page'>page</span><span class='rparen'>)</span>
+    <span class='rbrace'>}</span>
+  <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_smart_contract'>smart_contract</span><span class='op'>|</span>
+    <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_smart_contract'>smart_contract</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1310,8 +1599,6 @@
       <pre class="lines">
 
 
-15
-16
 17
 18
 19
@@ -1335,12 +1622,14 @@
 37
 38
 39
-40</pre>
+40
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 15</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 17</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list_events'>list_events</span><span class='lparen'>(</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_list_events'>list_events</span><span class='lparen'>(</span>
   <span class='label'>network_id:</span><span class='comma'>,</span>
   <span class='label'>protocol_name:</span><span class='comma'>,</span>
   <span class='label'>contract_address:</span><span class='comma'>,</span>
@@ -1365,6 +1654,475 @@
   <span class='rparen'>)</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_contract_event'>contract_event</span><span class='op'>|</span>
     <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="ContractEvent.html" title="Coinbase::ContractEvent (class)">ContractEvent</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="ContractEvent.html#initialize-instance_method" title="Coinbase::ContractEvent#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_contract_event'>contract_event</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="normalize_abi-class_method">
+  
+    .<strong>normalize_abi</strong>(abi)  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Normalizes an ABI from a String or Array of Hashes to an Array of Hashes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>abi</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ABI to normalize</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The normalized ABI</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the ABI is not a valid JSON string or Array</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+214
+215
+216
+217
+218
+219
+220
+221
+222</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 214</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_normalize_abi'>normalize_abi</span><span class='lparen'>(</span><span class='id identifier rubyid_abi'>abi</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_abi'>abi</span> <span class='kw'>if</span> <span class='id identifier rubyid_abi'>abi</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ABI must be an Array or a JSON string</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_abi'>abi</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+
+  <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_abi'>abi</span><span class='rparen'>)</span>
+<span class='kw'>rescue</span> <span class='const'>JSON</span><span class='op'>::</span><span class='const'>ParserError</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'>ArgumentError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Invalid ABI JSON</span><span class='tstring_end'>&#39;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="read-class_method">
+  
+    .<strong>read</strong>(contract_address:, method:, network: Coinbase.default_network, abi: nil, args: {})  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Reads data from a deployed smart contract.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>network</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Coinbase::Network</a></span></tt>, <tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Coinbase.default_network</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Network or Network ID of the Asset</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>contract_address</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The address of the deployed contract</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The name of the method to call on the contract</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>abi</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ABI of the contract. If nil, the method will attempt to use a cached ABI</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>args</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>{}</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The arguments to pass to the contract method. The keys should be the argument names, and the values should be the argument values.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The result of the contract call, converted to an appropriate Ruby type</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Coinbase::ApiError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If there’s an error in the API call</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 176</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span>
+  <span class='label'>contract_address:</span><span class='comma'>,</span>
+  <span class='label'>method:</span><span class='comma'>,</span>
+  <span class='label'>network:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_network'><span class='object_link'><a href="../Coinbase.html#default_network-class_method" title="Coinbase.default_network (method)">default_network</a></span></span><span class='comma'>,</span>
+  <span class='label'>abi:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>args:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='rparen'>)</span>
+  <span class='id identifier rubyid_network'>network</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_read_contract'>read_contract</span><span class='lparen'>(</span>
+      <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_normalized_id'>normalized_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+      <span class='lbrace'>{</span>
+        <span class='label'>method:</span> <span class='id identifier rubyid_method'>method</span><span class='comma'>,</span>
+        <span class='label'>args:</span> <span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+        <span class='label'>abi:</span> <span class='id identifier rubyid_abi'>abi</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_json'>to_json</span>
+      <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_convert_solidity_value'>convert_solidity_value</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="register-class_method">
+  
+    .<strong>register</strong>(contract_address:, abi:, name: nil, network: Coinbase.default_network)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Registers an externally deployed smart contract with the API.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>contract_address</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The address of the deployed contract</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>abi</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>, <tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The ABI of the contract</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>network</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Coinbase::Network</a></span></tt>, <tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>Coinbase.default_network</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The Network or Network ID the contract is deployed on</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The optional name of the contract</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 142</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_register'>register</span><span class='lparen'>(</span>
+  <span class='label'>contract_address:</span><span class='comma'>,</span>
+  <span class='label'>abi:</span><span class='comma'>,</span>
+  <span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>network:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default_network'><span class='object_link'><a href="../Coinbase.html#default_network-class_method" title="Coinbase.default_network (method)">default_network</a></span></span>
+<span class='rparen'>)</span>
+  <span class='id identifier rubyid_network'>network</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_network'>network</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_normalized_abi'>normalized_abi</span> <span class='op'>=</span> <span class='id identifier rubyid_normalize_abi'>normalize_abi</span><span class='lparen'>(</span><span class='id identifier rubyid_abi'>abi</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_smart_contract'>smart_contract</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_register_smart_contract'>register_smart_contract</span><span class='lparen'>(</span>
+      <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_normalized_id'>normalized_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+      <span class='label'>register_smart_contract_request:</span> <span class='lbrace'>{</span>
+        <span class='label'>abi:</span> <span class='id identifier rubyid_normalized_abi'>normalized_abi</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='comma'>,</span>
+        <span class='label'>contract_name:</span> <span class='id identifier rubyid_name'>name</span>
+      <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_smart_contract'>smart_contract</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1421,12 +2179,12 @@
       <pre class="lines">
 
 
-198
-199
-200</pre>
+354
+355
+356</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 198</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 354</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_abi'>abi</span>
   <span class='const'>JSON</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_abi'>abi</span><span class='rparen'>)</span>
@@ -1480,12 +2238,12 @@
       <pre class="lines">
 
 
-186
-187
-188</pre>
+335
+336
+337</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 186</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 335</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_contract_address'>contract_address</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_contract_address'>contract_address</span>
@@ -1549,6 +2307,20 @@
       
     </li>
   
+    <li>
+      
+      
+        <span class='type'>(<tt>RuntimeError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the SmartContract is external</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 </div><table class="source_code">
@@ -1557,27 +2329,29 @@
       <pre class="lines">
 
 
-247
-248
-249
-250
-251
-252
-253
-254
-255
-256
-257
-258
-259
-260
-261
-262</pre>
+430
+431
+432
+433
+434
+435
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 247</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 430</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deploy!'>deploy!</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="ManageExternalContractError.html" title="Coinbase::ManageExternalContractError (class)">ManageExternalContractError</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>deploy</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_external?'>external?</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="TransactionNotSignedError.html" title="Coinbase::TransactionNotSignedError (class)">TransactionNotSignedError</a></span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_signed?'>signed?</span>
 
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
@@ -1601,7 +2375,7 @@
       <div class="method_details ">
   <h3 class="signature " id="deployer_address-instance_method">
   
-    #<strong>deployer_address</strong>  &#x21d2; <tt>String</tt> 
+    #<strong>deployer_address</strong>  &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -1610,7 +2384,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the address of the deployer of the SmartContract.</p>
+<p>Returns the address of the deployer of the SmartContract, if deployed via CDP. Returns nil for externally registered contracts.</p>
 
 
   </div>
@@ -1623,7 +2397,7 @@
     <li>
       
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
       
       
       
@@ -1642,15 +2416,74 @@
       <pre class="lines">
 
 
-192
-193
-194</pre>
+348
+349
+350</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 192</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 348</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_deployer_address'>deployer_address</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_deployer_address'>deployer_address</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="external?-instance_method">
+  
+    #<strong>external?</strong>  &#x21d2; <tt>Boolean</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns whether the SmartContract is an externally registered contract or a CDP managed contract.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Boolean</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Whether the SmartContract is external</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+380
+381
+382</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 380</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_external?'>external?</span>
+  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_is_external'>is_external</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1701,12 +2534,12 @@
       <pre class="lines">
 
 
-174
-175
-176</pre>
+323
+324
+325</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 174</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 323</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_id'>id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_smart_contract_id'>smart_contract_id</span>
@@ -1760,15 +2593,74 @@
       <pre class="lines">
 
 
-307
-308
-309</pre>
+490
+491
+492</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 307</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 490</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
   <span class='id identifier rubyid_to_s'>to_s</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="name-instance_method">
+  
+    #<strong>name</strong>  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the name of the SmartContract.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The contract name</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+341
+342
+343</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 341</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_name'>name</span>
+  <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_contract_name'>contract_name</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1819,12 +2711,12 @@
       <pre class="lines">
 
 
-180
-181
-182</pre>
+329
+330
+331</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 180</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 329</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_network'>network</span>
   <span class='ivar'>@network</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Network.html" title="Coinbase::Network (class)">Network</a></span></span><span class='period'>.</span><span class='id identifier rubyid_from_id'><span class='object_link'><a href="Network.html#from_id-class_method" title="Coinbase::Network.from_id (method)">from_id</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_network_id'>network_id</span><span class='rparen'>)</span>
@@ -1837,7 +2729,7 @@
       <div class="method_details ">
   <h3 class="signature " id="options-instance_method">
   
-    #<strong>options</strong>  &#x21d2; <tt><span class='object_link'><a href="Client/SmartContractOptions.html" title="Coinbase::Client::SmartContractOptions (module)">Coinbase::Client::SmartContractOptions</a></span></tt> 
+    #<strong>options</strong>  &#x21d2; <tt><span class='object_link'><a href="Client/SmartContractOptions.html" title="Coinbase::Client::SmartContractOptions (module)">Coinbase::Client::SmartContractOptions</a></span></tt><sup>?</sup> 
   
 
   
@@ -1846,7 +2738,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the options of the SmartContract.</p>
+<p>Returns the options of the SmartContract, if deployed via CDP. Returns nil for externally registered contracts.</p>
 
 
   </div>
@@ -1859,7 +2751,7 @@
     <li>
       
       
-        <span class='type'>(<tt><span class='object_link'><a href="Client/SmartContractOptions.html" title="Coinbase::Client::SmartContractOptions (module)">Coinbase::Client::SmartContractOptions</a></span></tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="Client/SmartContractOptions.html" title="Coinbase::Client::SmartContractOptions (module)">Coinbase::Client::SmartContractOptions</a></span></tt>, <tt>nil</tt>)</span>
       
       
       
@@ -1878,12 +2770,12 @@
       <pre class="lines">
 
 
-216
-217
-218</pre>
+374
+375
+376</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 216</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 374</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_options'>options</span>
@@ -1930,6 +2822,19 @@
     </li>
   
 </ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="ManageExternalContractError.html" title="Coinbase::ManageExternalContractError (class)">ManageExternalContractError</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
 
 </div><table class="source_code">
   <tr>
@@ -1937,33 +2842,29 @@
       <pre class="lines">
 
 
-266
-267
-268
-269
-270
-271
-272
-273
-274
-275
-276
-277
-278</pre>
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 266</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 450</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="ManageExternalContractError.html" title="Coinbase::ManageExternalContractError (class)">ManageExternalContractError</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>reload</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_external?'>external?</span>
+
   <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_get_smart_contract'>get_smart_contract</span><span class='lparen'>(</span>
-      <span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span>
-      <span class='id identifier rubyid_deployer_address'>deployer_address</span><span class='comma'>,</span>
-      <span class='id identifier rubyid_id'>id</span>
-    <span class='rparen'>)</span>
+    <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_get_smart_contract'>get_smart_contract</span><span class='lparen'>(</span><span class='id identifier rubyid_wallet_id'>wallet_id</span><span class='comma'>,</span> <span class='id identifier rubyid_deployer_address'>deployer_address</span><span class='comma'>,</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
   <span class='kw'>end</span>
 
-  <span class='ivar'>@transaction</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
+  <span class='ivar'>@transaction</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span>
 
   <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
@@ -2049,6 +2950,20 @@
     <li>
       
       
+        <span class='type'>(<tt>RuntimeError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the SmartContract is external</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
         <span class='type'>(<tt><span class='object_link'><a href="AlreadySignedError.html" title="Coinbase::AlreadySignedError (class)">Coinbase::AlreadySignedError</a></span></tt>)</span>
       
       
@@ -2068,16 +2983,18 @@
       <pre class="lines">
 
 
-238
-239
-240
-241
-242</pre>
+419
+420
+421
+422
+423
+424</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 238</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 419</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="ManageExternalContractError.html" title="Coinbase::ManageExternalContractError (class)">ManageExternalContractError</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>sign</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_external?'>external?</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='kw'>unless</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Eth</span><span class='op'>::</span><span class='const'>Key</span><span class='rparen'>)</span>
 
   <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_sign'>sign</span><span class='lparen'>(</span><span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
@@ -2099,7 +3016,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the status of the SmartContract.</p>
+<p>Returns the status of the SmartContract, if deployed via CDP.</p>
 
 
   </div>
@@ -2131,15 +3048,15 @@
       <pre class="lines">
 
 
-228
-229
-230</pre>
+392
+393
+394</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 228</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 392</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_status'>status</span>
-  <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span>
+  <span class='id identifier rubyid_transaction'>transaction</span><span class='op'>&amp;.</span><span class='id identifier rubyid_status'>status</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2190,30 +3107,38 @@
       <pre class="lines">
 
 
-313
-314
-315
-316
-317
-318
-319
-320
-321
-322
-323</pre>
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508
+509
+510</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 313</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 496</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_to_s'>to_s</span>
   <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pretty_print_object'><span class='object_link'><a href="../Coinbase.html#pretty_print_object-class_method" title="Coinbase.pretty_print_object (method)">pretty_print_object</a></span></span><span class='lparen'>(</span>
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span>
-    <span class='label'>network:</span> <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
-    <span class='label'>contract_address:</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
-    <span class='label'>deployer_address:</span> <span class='id identifier rubyid_deployer_address'>deployer_address</span><span class='comma'>,</span>
-    <span class='label'>type:</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span>
-    <span class='label'>status:</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span>
-    <span class='label'>options:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pretty_print_object'><span class='object_link'><a href="../Coinbase.html#pretty_print_object-class_method" title="Coinbase.pretty_print_object (method)">pretty_print_object</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Options</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+    <span class='op'>**</span><span class='lbrace'>{</span>
+      <span class='label'>network:</span> <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span>
+      <span class='label'>contract_address:</span> <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+      <span class='label'>type:</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span>
+      <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span>
+      <span class='comment'># Fields only present for CDP managed contracts.
+</span>      <span class='label'>status:</span> <span class='id identifier rubyid_status'>status</span><span class='comma'>,</span>
+      <span class='label'>deployer_address:</span> <span class='id identifier rubyid_deployer_address'>deployer_address</span><span class='comma'>,</span>
+      <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pretty_print_object'><span class='object_link'><a href="../Coinbase.html#pretty_print_object-class_method" title="Coinbase.pretty_print_object (method)">pretty_print_object</a></span></span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Options</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
   <span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2233,7 +3158,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the transaction.</p>
+<p>Returns the transaction, if deployed via CDP.</p>
 
 
   </div>
@@ -2252,7 +3177,7 @@
       
         &mdash;
         <div class='inline'>
-<p>The SmartContracy deployment transaction</p>
+<p>The SmartContract deployment transaction</p>
 </div>
       
     </li>
@@ -2265,15 +3190,15 @@
       <pre class="lines">
 
 
-222
-223
-224</pre>
+386
+387
+388</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 386</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_transaction'>transaction</span>
-  <span class='ivar'>@transaction</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
+  <span class='ivar'>@transaction</span> <span class='op'>||=</span> <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>?</span> <span class='kw'>nil</span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Transaction.html" title="Coinbase::Transaction (class)">Transaction</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Transaction.html#initialize-instance_method" title="Coinbase::Transaction#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_transaction'>transaction</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2324,15 +3249,69 @@
       <pre class="lines">
 
 
-210
-211
-212</pre>
+367
+368
+369</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 367</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_type'>type</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="update-instance_method">
+  
+    #<strong>update</strong>(name: nil, abi: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 396</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>abi:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_req'>req</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_req'>req</span><span class='lbracket'>[</span><span class='symbol'>:contract_name</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span> <span class='kw'>unless</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_req'>req</span><span class='lbracket'>[</span><span class='symbol'>:abi</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_normalize_abi'>normalize_abi</span><span class='lparen'>(</span><span class='id identifier rubyid_abi'>abi</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span> <span class='kw'>unless</span> <span class='id identifier rubyid_abi'>abi</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+
+  <span class='ivar'>@model</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Coinbase.html" title="Coinbase (module)">Coinbase</a></span></span><span class='period'>.</span><span class='id identifier rubyid_call_api'><span class='object_link'><a href="../Coinbase.html#call_api-class_method" title="Coinbase.call_api (method)">call_api</a></span></span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_smart_contracts_api'>smart_contracts_api</span><span class='period'>.</span><span class='id identifier rubyid_update_smart_contract'>update_smart_contract</span><span class='lparen'>(</span>
+      <span class='id identifier rubyid_network'>network</span><span class='period'>.</span><span class='id identifier rubyid_normalized_id'>normalized_id</span><span class='comma'>,</span>
+      <span class='id identifier rubyid_contract_address'>contract_address</span><span class='comma'>,</span>
+      <span class='label'>update_smart_contract_request:</span> <span class='id identifier rubyid_req'>req</span>
+    <span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2441,29 +3420,32 @@
       <pre class="lines">
 
 
-286
-287
-288
-289
-290
-291
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303</pre>
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 286</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 468</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wait!'>wait!</span><span class='lparen'>(</span><span class='id identifier rubyid_interval_seconds'>interval_seconds</span> <span class='op'>=</span> <span class='float'>0.2</span><span class='comma'>,</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span> <span class='op'>=</span> <span class='int'>20</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='const'><span class='object_link'><a href="ManageExternalContractError.html" title="Coinbase::ManageExternalContractError (class)">ManageExternalContractError</a></span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>wait!</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_external?'>external?</span>
+
   <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
 
   <span class='id identifier rubyid_loop'>loop</span> <span class='kw'>do</span>
@@ -2472,8 +3454,7 @@
     <span class='kw'>return</span> <span class='kw'>self</span> <span class='kw'>if</span> <span class='id identifier rubyid_transaction'>transaction</span><span class='period'>.</span><span class='id identifier rubyid_terminal_state?'>terminal_state?</span>
 
     <span class='kw'>if</span> <span class='const'>Time</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span> <span class='op'>-</span> <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_timeout_seconds'>timeout_seconds</span>
-      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Timeout</span><span class='op'>::</span><span class='const'>Error</span><span class='comma'>,</span>
-            <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SmartContract deployment timed out. Try waiting again.</span><span class='tstring_end'>&#39;</span></span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>Timeout</span><span class='op'>::</span><span class='const'>Error</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SmartContract deployment timed out. Try waiting again.</span><span class='tstring_end'>&#39;</span></span>
     <span class='kw'>end</span>
 
     <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sleep'>sleep</span> <span class='id identifier rubyid_interval_seconds'>interval_seconds</span>
@@ -2498,7 +3479,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Returns the ID of the wallet that deployed the SmartContract.</p>
+<p>Returns the ID of the wallet that deployed the SmartContract, if deployed via CDP. Returns nil for externally registered contracts.</p>
 
 
   </div>
@@ -2530,12 +3511,12 @@
       <pre class="lines">
 
 
-204
-205
-206</pre>
+361
+362
+363</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 204</span>
+      <pre class="code"><span class="info file"># File 'lib/coinbase/smart_contract.rb', line 361</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wallet_id'>wallet_id</span>
   <span class='ivar'>@model</span><span class='period'>.</span><span class='id identifier rubyid_wallet_id'>wallet_id</span>
