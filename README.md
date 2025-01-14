@@ -18,9 +18,9 @@ The SDK supports various verbs on Developer-custodied Wallets across multiple ne
 
 Make sure that your developer environment satisfies all of the requirements before proceeding through the quickstart.
 
-### Ruby 2.7+
+### Ruby 3+
 
-The Coinbase server-side SDK requires Ruby 2.7 or higher (we recommend 2.7.5). To view your currently installed version of Ruby, run
+The Coinbase server-side SDK requires Ruby 3.0 or higher. To view your currently installed version of Ruby, run
 the following from the command-line:
 
 ```bash
@@ -30,11 +30,11 @@ ruby -v
 We recommend installing and managing Ruby versions with `rbenv`.
 See [Using Package Managers](https://github.com/rbenv/rbenv?tab=readme-ov-file#homebrew) in the rbenv README for instructions on how to install `rbenv`.
 
-Once `rbenv` has been installed, you can install and use Ruby 2.7.5 by running the following commands:
+Once `rbenv` has been installed, you can install and use Ruby v3 by running the following commands:
 
 ```bash
-rbenv install 2.7.5
-rbenv global 2.7.5
+rbenv install 3.3.0
+rbenv global 3.3.0
 ```
 
 ### Rbsecp256k1 Gem
@@ -334,11 +334,11 @@ See [External Addresses docs](./docs/external-addresses.md) for more information
 
 ### Ruby Version
 
-Developing in this repository requires Ruby >= 2.7.0. To install this on an M2 Mac,
+Developing in this repository requires Ruby >= 3.0.0. To install this on an M2 Mac,
 run the [following command](https://github.com/rbenv/ruby-build/discussions/2034):
 
 ```bash
-RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 2.7.0
+RUBY_CFLAGS=-DUSE_FFI_CLOSURE_ALLOC rbenv install 3.3.0
 ```
 
 ### Set-up
