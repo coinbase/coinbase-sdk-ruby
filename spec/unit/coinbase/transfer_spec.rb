@@ -52,7 +52,8 @@ describe Coinbase::Transfer do
         asset_id: normalized_asset_id,
         destination: to_address_id,
         network_id: normalized_network_id,
-        gasless: false
+        gasless: false,
+        skip_batching: false
       }
     end
 
@@ -74,6 +75,25 @@ describe Coinbase::Transfer do
 
     it 'sets the transfer properties' do
       expect(transfer.id).to eq(model.transfer_id)
+    end
+
+    context 'when skip_batching is true and gasless is false' do
+      subject(:transfer) do
+        described_class.create(
+          address_id: from_address_id,
+          asset_id: asset_id,
+          amount: whole_amount,
+          destination: destination,
+          network: network_id,
+          wallet_id: wallet_id,
+          gasless: false,
+          skip_batching: true
+        )
+      end
+
+      it 'raises an error' do
+        expect { transfer }.to raise_error(ArgumentError, /Cannot skip batching without gasless option set to true/)
+      end
     end
 
     context 'when the destination is not valid' do
@@ -119,7 +139,8 @@ describe Coinbase::Transfer do
           asset_id: normalized_asset_id,
           destination: to_address_id,
           network_id: normalized_network_id,
-          gasless: true
+          gasless: true,
+          skip_batching: false
         }
       end
 

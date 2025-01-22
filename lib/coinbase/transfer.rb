@@ -22,9 +22,24 @@ module Coinbase
       #   If the destination is a String, it uses it as the Address ID.
       # @param network [Coinbase::Network, Symbol] The Network or Network ID of the Asset
       # @param wallet_id [String] The Wallet ID of the sending Wallet
+      # @param gasless [Boolean] Whether the transfer should be gasless. Defaults to false.
+      # @param skip_batching [Boolean] When true, the Transfer will be submitted immediately.
+      #   Otherwise, the Transfer will be batched. Defaults to false.
+      #   Note: requires gasless option to be set to true.
       # @return [Transfer] The new pending Transfer object
       # @raise [Coinbase::ApiError] If the Transfer fails
-      def create(address_id:, amount:, asset_id:, destination:, network:, wallet_id:, gasless: false)
+      def create(
+        address_id:,
+        amount:,
+        asset_id:,
+        destination:,
+        network:,
+        wallet_id:,
+        gasless: false,
+        skip_batching: false
+      )
+        ensure_can_skip_batching!(gasless, skip_batching)
+
         network = Coinbase::Network.from_id(network)
         asset = network.get_asset(asset_id)
 
@@ -37,7 +52,8 @@ module Coinbase
               asset_id: asset.primary_denomination.to_s,
               destination: Coinbase::Destination.new(destination, network: network).address_id,
               network_id: network.normalized_id,
-              gasless: gasless
+              gasless: gasless,
+              skip_batching: skip_batching
             }
           )
         end
@@ -65,6 +81,12 @@ module Coinbase
 
       def fetch_page(wallet_id, address_id, page)
         transfers_api.list_transfers(wallet_id, address_id, { limit: DEFAULT_PAGE_LIMIT, page: page })
+      end
+
+      def ensure_can_skip_batching!(gasless, skip_batching)
+        return unless skip_batching && !gasless
+
+        raise ArgumentError, 'Cannot skip batching without gasless option set to true'
       end
     end
 

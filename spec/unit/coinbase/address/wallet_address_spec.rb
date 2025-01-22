@@ -310,7 +310,8 @@ describe Coinbase::WalletAddress do
             destination: to_address_id,
             network: network,
             wallet_id: wallet_id,
-            gasless: false
+            gasless: false,
+            skip_batching: false
           )
         end
 
