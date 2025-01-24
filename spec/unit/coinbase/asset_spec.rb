@@ -91,6 +91,27 @@ describe Coinbase::Asset do
         expect(asset.address_id).to eq(contract_address)
       end
     end
+
+    context 'when the asset_id is non-checksummed' do
+      subject(:asset) { described_class.from_model(asset_model, asset_id: lowercase_address) }
+
+      let(:checksummed_address) { '0x8309fbdF021eDF768DC13195741940ba544dEa98' }
+      let(:lowercase_address) { checksummed_address.downcase }
+      let(:asset_model) { build(:asset_model, asset_id: checksummed_address) }
+
+      it 'handles case-insensitive address matching' do
+        expect(asset.asset_id).to eq(lowercase_address)
+      end
+    end
+
+    context 'when the asset_id is checksummed' do
+      let(:contract_address) { '0x8309fbdF021eDF768DC13195741940ba544dEa98' }
+      let(:asset_model) { build(:asset_model, network_id, :usdc, contract_address: contract_address) }
+
+      it 'sets the address_id as the checksummed address' do
+        expect(asset.address_id).to eq(contract_address)
+      end
+    end
   end
 
   describe '.primary_denomination' do
