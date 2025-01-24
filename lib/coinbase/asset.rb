@@ -23,7 +23,7 @@ module Coinbase
 
         # Handle the non-primary denomination case at the asset level.
         # TODO: Push this logic down to the backend.
-        if asset_id && asset_model.asset_id 
+        if asset_id && asset_model.asset_id
           normalized_asset_id = asset_id.downcase
           normalized_asset_model_id = asset_model.asset_id.downcase
 
