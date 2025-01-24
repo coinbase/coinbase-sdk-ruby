@@ -23,14 +23,19 @@ module Coinbase
 
         # Handle the non-primary denomination case at the asset level.
         # TODO: Push this logic down to the backend.
-        if asset_id && Coinbase.to_sym(asset_id) != Coinbase.to_sym(asset_model.asset_id)
-          case asset_id
-          when :gwei
-            decimals = GWEI_DECIMALS
-          when :wei
-            decimals = 0
-          else
-            raise ArgumentError, "Unsupported asset ID: #{asset_id}"
+        if asset_id && asset_model.asset_id 
+          normalized_asset_id = asset_id.downcase
+          normalized_asset_model_id = asset_model.asset_id.downcase
+
+          if Coinbase.to_sym(normalized_asset_id) != Coinbase.to_sym(normalized_asset_model_id)
+            case normalized_asset_id
+            when :gwei
+              decimals = GWEI_DECIMALS
+            when :wei
+              decimals = 0
+            else
+              raise ArgumentError, "Unsupported asset ID: #{asset_id}"
+            end
           end
         end
 
