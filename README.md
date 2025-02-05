@@ -1,13 +1,17 @@
 # Coinbase Ruby SDK
 
+[![Gem version](https://img.shields.io/gem/v/coinbase-sdk?style=flat-square&logo=ruby)](https://rubygems.org/gems/coinbase-sdk)
+[![Gem total downloads](https://img.shields.io/gem/dtv/coinbase-sdk)](https://bestgems.org/gems/coinbase-sdk)
+
+
+⚠️ **Note: The Coinbase Ruby SDK is in maintenance mode. Please use the [Python SDK](https://github.com/coinbase/cdp-sdk-python) or the [Node.js SDK](https://github.com/coinbase/coinbase-sdk-nodejs) instead.**
+
 The Coinbase Ruby SDK enables the simple integration of crypto into your app.
 By calling Coinbase's Platform APIs, the SDK allows you to provision crypto wallets,
 send crypto into/out of those wallets, track wallet balances, and trade crypto from
 one asset into another.
 
 The SDK supports various verbs on Developer-custodied Wallets across multiple networks, as documented [here](https://docs.cdp.coinbase.com/cdp-sdk/docs/networks).
-
-**CDP SDK v0 is a pre-alpha release, which means that the APIs and SDK methods are subject to change. We will continuously release updates to support new capabilities and improve the developer experience.**
 
 ## Documentation
 
