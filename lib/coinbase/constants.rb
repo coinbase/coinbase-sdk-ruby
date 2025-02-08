@@ -11,5 +11,5 @@ module Coinbase
   DEFAULT_PAGE_LIMIT = 100
 
   # The default page limit for transaction paginated API request.
-  DEFAULT_TRANSACTION_PAGE_LIMIT = 10
+  DEFAULT_TRANSACTION_PAGE_LIMIT = 1
 end
