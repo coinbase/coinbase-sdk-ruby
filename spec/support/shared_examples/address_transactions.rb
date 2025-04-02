@@ -20,7 +20,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
     before do
       allow(transaction_history_api)
         .to receive(:list_address_transactions)
-        .with(normalized_network_id, address_id, { limit: 10, page: nil })
+        .with(normalized_network_id, address_id, { limit: 1, page: nil })
         .and_return(response)
     end
 
@@ -36,7 +36,7 @@ shared_examples 'an address that supports transaction queries' do |_operation|
       end
 
       let(:api) { transaction_history_api }
-      let(:fetch_params) { ->(page) { [normalized_network_id, address_id, { limit: 10, page: page }] } }
+      let(:fetch_params) { ->(page) { [normalized_network_id, address_id, { limit: 1, page: page }] } }
       let(:resource_list_klass) { Coinbase::Client::AddressTransactionList }
       let(:item_klass) { Coinbase::Transaction }
       let(:item_initialize_args) { nil }
